@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+coverage/
+.venv/
+__pycache__/
+*.py[cod]
+playwright/.auth/
+browser-profiles/
+test-results/
+playwright-report/
+tmp/
+evidence/raw/
