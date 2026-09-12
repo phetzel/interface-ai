@@ -1,0 +1,13 @@
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "member-field", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [135, 421, 202, 437]}
+{"kind": "action", "sequence": 1, "action": "click", "status": "completed", "durationMs": 13.182}
+{"kind": "action", "sequence": 2, "action": "type", "status": "completed", "durationMs": 69.77}
+{"kind": "action", "sequence": 3, "action": "press", "status": "completed", "durationMs": 10.834}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [101, 235, 378, 268]}
+{"kind": "match", "target": "member-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [101, 235, 378, 268]}
+{"kind": "ocr", "field": "memberId", "status": "read", "confidence": 96.375, "box": [241, 375, 329, 393]}
+{"kind": "ocr", "field": "memberName", "status": "read", "confidence": 95.632, "box": [179, 345, 501, 373]}
+{"kind": "match", "target": "savings-label", "status": "rejected", "code": "ambiguous_target", "candidateCount": 2}

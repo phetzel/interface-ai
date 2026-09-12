@@ -1,14 +1,16 @@
-# Desktop adapter · M1-03
+# Desktop adapter and local vision · M1-03/04
 
 `interface_ai.desktop.Desktop` is the shared input boundary for the native pad and Chromium in the isolated Linux X11 desktop. It does not implement discovery, visual target recognition, balance extraction, capability artifacts, or human takeover.
 
-The image includes the package source on `PYTHONPATH`; use `python -m interface_ai.cli`. Python 3.11 and the existing hash-locked desktop dependencies are required. Host unit tests use a fake backend and do not need desktop libraries:
+M1-04 adds the separate [local vision package](src/interface_ai/vision/README.md): anchor matching, contextual Tesseract OCR, exact amount parsing, and bounded visual predicates. The desktop adapter continues to own every input action.
+
+The image includes the package source on `PYTHONPATH`; use `python -m interface_ai.cli`. Python 3.11 and the hash-locked desktop dependencies are required. The desktop-only host tests use a fake backend and do not need desktop libraries:
 
 ```sh
-PYTHONPATH=engine/src python3 -m unittest discover -s engine/tests -v
+PYTHONPATH=engine/src python3 -m unittest discover -s engine/tests -p test_desktop.py -v
 ```
 
-Inside the running desktop, `./scripts/desktop test` runs the same tests with its actual Python environment. The native and browser smoke commands exercise the real backend separately.
+Inside the running desktop, `./scripts/desktop test` runs desktop and vision tests, including actual local OCR with the pinned model. The native/browser smoke and visual probe commands exercise the real backend separately.
 
 ## API
 

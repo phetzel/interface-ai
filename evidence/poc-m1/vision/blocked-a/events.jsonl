@@ -1,0 +1,40 @@
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "member-field", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [135, 421, 202, 437]}
+{"kind": "action", "sequence": 1, "action": "click", "status": "completed", "durationMs": 12.53}
+{"kind": "action", "sequence": 2, "action": "type", "status": "completed", "durationMs": 69.15}
+{"kind": "action", "sequence": 3, "action": "press", "status": "completed", "durationMs": 12.165}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}

@@ -1,6 +1,6 @@
 # Current planning direction
 
-Updated 2026-09-12. M1-01 through M1-03 are implemented: an isolated Linux ARM64 desktop and viewer, the React/TypeScript banking fixture with 13 passing fixture tests, and a shared Python adapter controlling both the native pad and sandboxed Chromium. Adapter validation includes 15 unit tests, eight native checks, eight browser checks per member, and six live guard checks. See [README](../README.md) for commands and [ROADMAP.md](ROADMAP.md) for remaining gates. Visual recognition, banking replay, and model integration are not implemented.
+Updated 2026-09-12. M1-01 through M1-04 are implemented. The isolated Linux ARM64 desktop, banking fixture, shared adapter, and sandboxed Chromium now support local visual target matching and contextual Tesseract OCR. Twenty-seven unit tests and eight reset-based primitive checks pass, including exact outputs for both members, +40 px translation, delayed loading, and deliberate failure cases. See [README](../README.md) and [visual evidence](../evidence/poc-m1/vision/README.md). Capability artifacts/replay, model integration, and human takeover remain later work.
 
 ## Confirmed and open choices
 
@@ -14,7 +14,7 @@ Updated 2026-09-12. M1-01 through M1-03 are implemented: an isolated Linux ARM64
 | Schema | Pydantic as the source; portable JSON and exported JSON Schema | Exact locator, checkpoint, and outcome definitions |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted; the implementation assumptions below still need proof. The desktop gate has passed on native and browser calibration fixtures; recognition, banking replay, policy, and human handoff remain unverified.
+Initial directions are accepted; the implementation assumptions below still need proof. The desktop gate has passed on native and browser calibration fixtures; local recognition primitives now pass their bounded checks; artifact replay, policy, and human handoff remain unverified.
 
 ## Revised language comparison
 
@@ -89,10 +89,10 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 
 ## Next design work
 
-1. Implement M1-04 visual targeting and extraction on the verified desktop and fixture.
+1. Implement M1-05’s validated manual capability and interpreter using the proven visual primitives.
 2. Define the visual locator and output-extraction contract before expanding the sample app.
 3. Use the implemented banking workflow and failure fixtures to test the locator assumptions.
 4. Define desktop ownership, allowlist enforcement, and safe evidence export.
 5. Once implementation is requested, validate one real discovery and no-model visual replay before adding polish or a second surface.
 
-At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was then completed and verified; the user subsequently requested its commit and push. Future pushes require an explicit request.
+At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was subsequently committed and pushed as `79bf84e`. The user clarified that M1-04 was next; that work is now verified and included in this revision. Future pushes require an explicit request.

@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Host-only M1-04 harness. The independent oracle never enters the runner."""
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import uuid
+
+ROOT = Path(__file__).resolve().parent.parent
+SUITE = ROOT / 'tmp' / 'vision-checks' / (datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8])
+SUITE.mkdir(parents=True)
+oracle = json.loads((ROOT / 'apps/bank-fixture/tests/oracle.json').read_text())['successes']
+cases = [('baseline-a', 'default', 0, None), ('baseline-b', 'default', 1, None),
+         ('translated-a', 'translated', 0, None), ('translated-b', 'translated', 1, None),
+         ('delayed-a', 'delayed', 0, None), ('duplicate-a', 'duplicate', 0, 'ambiguous_target'),
+         ('unreadable-a', 'unreadable', 0, ('invalid_amount', 'ocr_uncertain')),
+         ('blocked-a', 'blocked', 0, 'checkpoint_timeout')]
+summary = {'kind': 'M1-04-primitive-checks', 'status': 'running', 'cases': [],
+           'scope': 'Manual primitive harness; no capability artifact or replay interpreter',
+           'oracleSha256': hashlib.sha256((ROOT/'apps/bank-fixture/tests/oracle.json').read_bytes()).hexdigest()}
+
+def run(args, **kwargs):
+    return subprocess.run(args, cwd=ROOT, timeout=180, **kwargs)
+
+try:
+    for name, scenario, member_index, expected_code in cases:
+        item = {'case': name, 'scenario': scenario, 'status': 'running'}
+        summary['cases'].append(item)
+        try:
+            with (SUITE / (name+'-startup.log')).open('w') as log:
+                run(['./scripts/desktop', 'reset', 'bank', scenario], stdout=log, stderr=log, check=True)
+            expected = oracle[member_index]
+            result = run(['./scripts/desktop', 'vision-probe', '--member-id', expected['memberId']], capture_output=True, text=True)
+            (SUITE / (name+'-probe.log')).write_text(result.stdout+result.stderr)
+            response = json.loads(result.stdout)
+            relative = Path(response['evidence']).relative_to('/artifacts')
+            evidence = ROOT / 'tmp/desktop-artifacts' / relative
+            report = json.loads((evidence / 'report.json').read_text())
+            item.update(evidence=str(evidence.relative_to(ROOT)), observedStatus=report['status'],
+                        code=report.get('code'), actionsCompleted=report['actionsCompleted'],
+                        elapsedSeconds=report['elapsedSeconds'])
+            if expected_code is None:
+                assert result.returncode == 0 and report['status'] == 'completed'
+                actual = json.loads((evidence / 'result.json').read_text())
+                assert actual == {key: expected[key] for key in ['memberId', 'memberName', 'accountType', 'currency', 'amountMinor']}
+                item['exactOracleMatch'] = True
+            else:
+                codes = expected_code if isinstance(expected_code, tuple) else (expected_code,)
+                assert result.returncode == 1 and report['status'] == 'stopped' and report['code'] in codes
+                assert not (evidence / 'result.json').exists()
+                assert report['actionsCompleted'] == (4 if scenario == 'unreadable' else 3)
+                item['noResultOrSubsequentAction'] = True
+            item['status'] = 'passed'
+        except Exception as exc:
+            item.update(status='failed', error=type(exc).__name__)
+        finally:
+            print(item['status'].upper()+' '+name, flush=True)
+            (SUITE / 'summary.json').write_text(json.dumps(summary, indent=2)+'\n')
+    summary['status'] = 'passed' if all(case['status']=='passed' for case in summary['cases']) else 'failed'
+finally:
+    (SUITE / 'summary.json').write_text(json.dumps(summary, indent=2)+'\n')
+    print('Evidence: '+str(SUITE), flush=True)
+sys.exit(0 if summary['status']=='passed' else 1)

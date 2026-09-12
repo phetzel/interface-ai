@@ -176,6 +176,9 @@ class Desktop:
         while self.clock() < deadline:
             self._check()
             value = predicate()
+            self._check()
+            if self.clock() >= deadline:
+                break
             if value:
                 return value
             time.sleep(0.05)

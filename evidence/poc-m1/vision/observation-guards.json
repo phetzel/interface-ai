@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "actionsDispatched": 0,
+  "checks": [
+    {
+      "check": "wrong_requested_identity_rejected_from_real_capture",
+      "status": "passed"
+    },
+    {
+      "check": "operator_stop_interrupts_visual_wait",
+      "status": "passed",
+      "elapsedSeconds": 0.184
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "manual-visual-primitives-probe",
+  "sessionId": "305b6cc0-cfeb-40d9-b52d-2d81480531f5",
+  "status": "stopped",
+  "modelCalls": 0,
+  "display": [
+    1280,
+    800
+  ],
+  "recognition": {
+    "opencv": "4.12.0",
+    "numpy": "2.2.6",
+    "englishModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "matchThreshold": 0.92,
+    "ocrMinimumConfidence": 80,
+    "ocrScale": 3,
+    "ocrPSM": 7
+  },
+  "actionsCompleted": 3,
+  "code": "ambiguous_target",
+  "elapsedSeconds": 0.704,
+  "eventsSha256": "d54dffd914c1c8af0f8b031ecfdf7eb479157abd22ea29572c619e0db67359d9"
+}

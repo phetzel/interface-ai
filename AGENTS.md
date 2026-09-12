@@ -4,7 +4,7 @@
 
 - Do not push this repository unless the user explicitly requests a push. The earlier repository-creation request does not authorize subsequent pushes.
 - Do not bypass this restriction by uploading repository changes through a GitHub API or another tool. Local edits may be prepared within the user's requested scope.
-- M1-01 through M1-03 are complete and verified. M1-01/M1-02 were previously committed and pushed at the user's requests; the latest request explicitly authorizes committing and pushing existing M1-03 work. The user clarified that M1-04 is next and authorized implementing visual targeting and OCR locally after this push. The current push covers existing M1-03 work, not subsequent M1-04 changes. Visual recognition, capability replay, and model integration remain later packages.
+- M1-01 through M1-04 are complete and verified. The latest user request explicitly authorizes committing/pushing existing M1-04 work, then implementing M1-05 locally: a validated manual capability, interpreter, input bindings, typed outputs, and member-not-found branch. The push does not cover subsequent M1-05 changes. Full repeated acceptance (M1-06), model integration, and human takeover remain later packages.
 
 ## Current planning constraints
 

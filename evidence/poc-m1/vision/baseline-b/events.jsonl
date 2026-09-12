@@ -1,0 +1,23 @@
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "search-heading", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [108, 235, 336, 268]}
+{"kind": "match", "target": "member-field", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [135, 421, 202, 437]}
+{"kind": "action", "sequence": 1, "action": "click", "status": "completed", "durationMs": 14.352}
+{"kind": "action", "sequence": 2, "action": "type", "status": "completed", "durationMs": 71.074}
+{"kind": "action", "sequence": 3, "action": "press", "status": "completed", "durationMs": 11.046}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "member-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [101, 235, 378, 268]}
+{"kind": "match", "target": "member-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [101, 235, 378, 268]}
+{"kind": "ocr", "field": "memberId", "status": "read", "confidence": 96.169, "box": [241, 375, 329, 393]}
+{"kind": "ocr", "field": "memberName", "status": "read", "confidence": 90.999, "box": [179, 345, 501, 373]}
+{"kind": "match", "target": "savings-label", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [184, 610, 243, 629]}
+{"kind": "match", "target": "view-account", "status": "matched", "candidateCount": 1, "score": 1.0, "box": [1010, 621, 1088, 638]}
+{"kind": "action", "sequence": 4, "action": "click", "status": "completed", "durationMs": 11.944}
+{"kind": "match", "target": "account-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "match", "target": "account-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [108, 235, 384, 268]}
+{"kind": "match", "target": "account-heading", "status": "matched", "candidateCount": 1, "score": 0.999999, "box": [108, 235, 384, 268]}
+{"kind": "ocr", "field": "memberId", "status": "read", "confidence": 95.135, "box": [248, 375, 336, 393]}
+{"kind": "ocr", "field": "memberName", "status": "read", "confidence": 92.108, "box": [186, 345, 508, 373]}
+{"kind": "ocr", "field": "accountType", "status": "read", "confidence": 96.796, "box": [1082, 460, 1151, 484]}
+{"kind": "ocr", "field": "currency", "status": "read", "confidence": 96.178, "box": [1098, 531, 1151, 556]}
+{"kind": "ocr", "field": "balance", "status": "read", "confidence": 96.719, "box": [138, 513, 828, 588]}

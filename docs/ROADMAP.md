@@ -2,7 +2,7 @@
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-Status 2026-09-12: M1-01 through M1-03 are implemented. The desktop PoC A now passes native and browser input calibration through one adapter, with sandboxed Chromium bootstrap, a read-only viewer, and live stop/concurrency checks. The banking fixture, oracle, and six scenarios pass 13 independent fixture tests. See [adapter evidence](../evidence/poc-m1/adapter/README.md). M1-01 and M1-02 were pushed at explicit requests; the user has now requested committing and pushing M1-03. Visual replay and the other gates remain planned.
+Status 2026-09-12: M1-01 through M1-04 are implemented. Desktop input, sandboxed Chromium, local anchors, and OCR pass their bounded checks. The M1-04 manual primitive suite passes both members at baseline/+40 px, delayed loading, and three deliberate rejection cases, with 27 passing unit tests. See [visual evidence](../evidence/poc-m1/vision/README.md). This validates recognition feasibility; PoC C’s artifact-based repeated replay gate still requires M1-05/06. M1-03 was pushed as `79bf84e`; M1-04 is included in this revision.
 
 ## Objective and order of work
 
@@ -170,12 +170,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | M1-04 and subsequent packages; M1-01 through M1-03 were requested and completed | Plans and dependency definitions are ready |
+| Further implementation scope | M1-05 and subsequent packages; M1-01 through M1-04 were requested and completed | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
-| Visual recognition/extraction gate | Stable artifact and honest replay claims | Handoff and policy can proceed |
+| Visual recognition/extraction primitives — bounded checks passed | Manual artifact/interpreter and repeated replay acceptance | Handoff and policy can proceed |
 | Policy/evidence gate | Controlled real model execution and safe retention | Local deterministic recognition experiments can proceed |
 | Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-The next implementation package is M1-04: visual anchors, local OCR, bounded predicates, and ambiguity detection. The desktop adapter, bank bootstrap, and fixture/oracle are ready. Recognition, replay, policy, and handoff gates still need implementation and verification.
+The next implementation package is M1-05: the validated manual artifact and interpreter. The desktop, fixture/oracle, and visual primitives are ready. Repeated artifact replay, policy, and handoff gates still need implementation and verification.

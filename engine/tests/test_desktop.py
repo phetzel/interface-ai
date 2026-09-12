@@ -134,6 +134,14 @@ class DesktopTests(unittest.TestCase):
         with self.desktop() as desktop:
             self.assert_code('checkpoint_timeout',lambda: desktop.wait('missing',lambda:False,timeout=.01))
 
+    def test_late_predicate_success_does_not_escape_wait_deadline(self):
+        now = [0]
+        def late():
+            now[0] = 2
+            return True
+        with self.desktop(clock=lambda: now[0]) as desktop:
+            self.assert_code('checkpoint_timeout', lambda: desktop.wait('late', late, timeout=1))
+
     def test_backend_failure_is_not_retried(self):
         def fail(): raise OSError('synthetic failure')
         self.backend.hook = fail

@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONPATH=/opt/engine/src
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates chromium fonts-dejavu-core \
+    ca-certificates chromium fonts-dejavu-core tesseract-ocr=5.3.0-2 tesseract-ocr-eng=1:4.1.0-2 \
     novnc openbox scrot websockify x11-utils x11vnc xauth xvfb \
     python3 python3-dev python3-tk python3-venv \
     && rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,68 @@
+{
+  "search-heading": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/01-search.png",
+    "sourceSha256": "f9e89c0959206145dc3b4593cd591f038cc036f01ca1a22697531142ae57fa0e",
+    "crop": [
+      108,
+      235,
+      336,
+      268
+    ],
+    "sha256": "fe35ab2b3e26a788cd27f774db824545d6e134da44bc5c854a0371f5a4315940"
+  },
+  "member-heading": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/03-member.png",
+    "sourceSha256": "cca762fb0061eaa3f32783033988b24f9a49a3c13bcc2f2ad53ad986e7eb97c4",
+    "crop": [
+      101,
+      235,
+      378,
+      268
+    ],
+    "sha256": "7e80ede74989cf52dc06346858f40fe505475744961e40636d4da3532de259b5"
+  },
+  "account-heading": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/04-account.png",
+    "sourceSha256": "e548b58e2b86ed3a79095a78ff178838fa1db5e4c4861b231e9240ce7f7a52b2",
+    "crop": [
+      108,
+      235,
+      384,
+      268
+    ],
+    "sha256": "08f498ce38034a03bb7769caab57381ae6bd9e1f28eea209cd88dd049fc9bef4"
+  },
+  "member-field": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/01-search.png",
+    "sourceSha256": "f9e89c0959206145dc3b4593cd591f038cc036f01ca1a22697531142ae57fa0e",
+    "crop": [
+      135,
+      421,
+      202,
+      437
+    ],
+    "sha256": "5ba5ec895a2a0254532c99a8714c0c0e369c55eb6bf10abe8ec2aa0512aba71b"
+  },
+  "savings-label": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/03-member.png",
+    "sourceSha256": "cca762fb0061eaa3f32783033988b24f9a49a3c13bcc2f2ad53ad986e7eb97c4",
+    "crop": [
+      184,
+      610,
+      243,
+      629
+    ],
+    "sha256": "af3ee4e6aa71933a1705c4f400bd8b4f7e44cc1c6afb5f28fbe1f356cb59c2a8"
+  },
+  "view-account": {
+    "source": "/artifacts/20260912T090530Z-bank-96513eeb/03-member.png",
+    "sourceSha256": "cca762fb0061eaa3f32783033988b24f9a49a3c13bcc2f2ad53ad986e7eb97c4",
+    "crop": [
+      1010,
+      621,
+      1088,
+      638
+    ],
+    "sha256": "cd9283ceb37f9459f9bec3f82ba15ef6cdede318923b9069c42a6855f27a2c83"
+  }
+}

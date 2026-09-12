@@ -1,0 +1,96 @@
+{
+  "kind": "M1-04-primitive-checks",
+  "status": "passed",
+  "cases": [
+    {
+      "case": "baseline-a",
+      "scenario": "default",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173054Z-vision-7dfc2fc7",
+      "observedStatus": "completed",
+      "code": null,
+      "actionsCompleted": 4,
+      "elapsedSeconds": 1.207,
+      "exactOracleMatch": true
+    },
+    {
+      "case": "baseline-b",
+      "scenario": "default",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173111Z-vision-f054fe45",
+      "observedStatus": "completed",
+      "code": null,
+      "actionsCompleted": 4,
+      "elapsedSeconds": 1.419,
+      "exactOracleMatch": true
+    },
+    {
+      "case": "translated-a",
+      "scenario": "translated",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173128Z-vision-159afcec",
+      "observedStatus": "completed",
+      "code": null,
+      "actionsCompleted": 4,
+      "elapsedSeconds": 1.222,
+      "exactOracleMatch": true
+    },
+    {
+      "case": "translated-b",
+      "scenario": "translated",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173144Z-vision-17beabad",
+      "observedStatus": "completed",
+      "code": null,
+      "actionsCompleted": 4,
+      "elapsedSeconds": 1.318,
+      "exactOracleMatch": true
+    },
+    {
+      "case": "delayed-a",
+      "scenario": "delayed",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173200Z-vision-703abf5a",
+      "observedStatus": "completed",
+      "code": null,
+      "actionsCompleted": 4,
+      "elapsedSeconds": 2.963,
+      "exactOracleMatch": true
+    },
+    {
+      "case": "duplicate-a",
+      "scenario": "duplicate",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173218Z-vision-928b6854",
+      "observedStatus": "stopped",
+      "code": "ambiguous_target",
+      "actionsCompleted": 3,
+      "elapsedSeconds": 0.704,
+      "noResultOrSubsequentAction": true
+    },
+    {
+      "case": "unreadable-a",
+      "scenario": "unreadable",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173234Z-vision-08b264d4",
+      "observedStatus": "stopped",
+      "code": "ocr_uncertain",
+      "actionsCompleted": 4,
+      "elapsedSeconds": 1.464,
+      "noResultOrSubsequentAction": true
+    },
+    {
+      "case": "blocked-a",
+      "scenario": "blocked",
+      "status": "passed",
+      "evidence": "tmp/desktop-artifacts/20260912T173251Z-vision-def9271b",
+      "observedStatus": "stopped",
+      "code": "checkpoint_timeout",
+      "actionsCompleted": 3,
+      "elapsedSeconds": 5.261,
+      "noResultOrSubsequentAction": true
+    }
+  ],
+  "scope": "Manual primitive harness; no capability artifact or replay interpreter",
+  "oracleSha256": "4cae9832c57f6e6dcdf30b05e7176932282913f78f91f921dee3e4ecd245a83f"
+}
