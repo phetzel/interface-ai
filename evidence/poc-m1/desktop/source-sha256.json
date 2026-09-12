@@ -1,0 +1,14 @@
+{
+  "compose.yaml": "25eeadfb9d09ec6c6b5a90c1d251c426b8583400510130ea8357b2c6aa256121",
+  "scripts/desktop": "f1f96d70c572fca56fa61495b23c8439d3d5eee25ee8fc0f36f2a3d8286233b8",
+  "infra/desktop/.dockerignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+  "infra/desktop/Dockerfile": "ff2080e42f5a63fb4533656606d742472f88b1c5320adef62ec8ca204811c760",
+  "infra/desktop/common.py": "2d74842edbd2f267f98fdefb6cb32209053e8894cd98e1524d0b7b817cac9c5f",
+  "infra/desktop/control.py": "c7cf5c67f3998b6648f4c4b88a486dfad7de7f0ab4c22fab8de28af289e50d2a",
+  "infra/desktop/pad.py": "3d9d5eafc8e135d0c267be6d7fce0dd9ae40a233d2c9e4e27cfd1f9019b3999a",
+  "infra/desktop/requirements.in": "de55ead1db617fb68c6ccd250271a01920dfcd51075818289b0f2fc9565cd5f4",
+  "infra/desktop/requirements.lock": "b6b01f795fa7e66305950df3089aea661235850638a99ebf667882d4ff1ae1f4",
+  "infra/desktop/smoke.py": "141f6f91a62c82fdd3a5fb463215e842e92b614145a43b4f1be3d14ee57bac11",
+  "infra/desktop/start.py": "fd5db0db353bb56ae198a241d1fddc27f40739a9cb30546a3421d4dee8b2d24d",
+  "infra/desktop/viewer_relay.py": "181cd1b4f0149024f4268a0b4493ad979cf6b3e4032c9de102b727871f935bb1"
+}

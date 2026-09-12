@@ -1,0 +1,158 @@
+{
+  "status": "passed",
+  "checks": [
+    "shutdown_removes_viewer",
+    "readiness_rejects_stopped_service",
+    "cached_image_restart",
+    "new_session_on_restart",
+    "operator_stop_rejects_run",
+    "no_input_after_operator_stop",
+    "reset_clears_stop_and_changes_session",
+    "native_smoke_after_reset",
+    "standalone_screenshot",
+    "host_viewer_http_200"
+  ],
+  "commands": [
+    {
+      "command": [
+        "./scripts/desktop",
+        "ready"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\": \"3d6596f5-97b5-451f-b165-dd1cf7ed705c\", \"display\": \":99\", \"width\": 1280, \"height\": 800, \"viewer\": \"read-only\", \"pids\": {\"display\": 8, \"window manager\": 13, \"native test pad\": 20, \"read-only VNC\": 34, \"web viewer\": 35}}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "down"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Container interface-ai-viewer-1  Stopping\n Container interface-ai-viewer-1  Stopped\n Container interface-ai-viewer-1  Removing\n Container interface-ai-viewer-1  Removed\n Container interface-ai-desktop-1  Stopping\n Container interface-ai-desktop-1  Stopped\n Container interface-ai-desktop-1  Removing\n Container interface-ai-desktop-1  Removed\n Network interface-ai_desktop  Removing\n Network interface-ai_viewer  Removing\n Network interface-ai_viewer  Removed\n Network interface-ai_desktop  Removed"
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "ready"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "service \"desktop\" is not running"
+    },
+    {
+      "command": [
+        "curl",
+        "--silent",
+        "--fail",
+        "--max-time",
+        "3",
+        "http://127.0.0.1:6080/vnc.html"
+      ],
+      "exitCode": 7,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "up"
+      ],
+      "exitCode": 0,
+      "stdout": "Read-only viewer: http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true",
+      "stderr": "Network interface-ai_desktop  Creating\n Network interface-ai_desktop  Created\n Network interface-ai_viewer  Creating\n Network interface-ai_viewer  Created\n Container interface-ai-desktop-1  Creating\n Container interface-ai-desktop-1  Created\n Container interface-ai-viewer-1  Creating\n Container interface-ai-viewer-1  Created\n Container interface-ai-desktop-1  Starting\n Container interface-ai-desktop-1  Started\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Starting\n Container interface-ai-viewer-1  Started\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-viewer-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Healthy"
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "ready"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\": \"d2fa7bf7-964b-4ce0-b199-31d03867074b\", \"display\": \":99\", \"width\": 1280, \"height\": 800, \"viewer\": \"read-only\", \"pids\": {\"display\": 9, \"window manager\": 14, \"native test pad\": 21, \"read-only VNC\": 35, \"web viewer\": 36}}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "stop-input"
+      ],
+      "exitCode": 0,
+      "stdout": "Cooperative stop requested. Reset the desktop to allow a new smoke run.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "smoke"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Smoke failed: Input stopped; reset the desktop before starting another run"
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "desktop",
+        "cat",
+        "/tmp/interface-ai/pad.json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\n  \"ready\": true,\n  \"clicks\": [],\n  \"submitted\": \"\",\n  \"scrollTop\": 0.0,\n  \"entry\": \"\"\n}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "reset"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\": \"ee2f9b6a-c1df-419c-86ac-8310b6c05de3\", \"display\": \":99\", \"width\": 1280, \"height\": 800, \"viewer\": \"read-only\", \"pids\": {\"display\": 9, \"window manager\": 14, \"native test pad\": 21, \"read-only VNC\": 35, \"web viewer\": 36}}",
+      "stderr": "Container interface-ai-desktop-1  Recreate\n Container interface-ai-desktop-1  Recreated\n Container interface-ai-viewer-1  Recreate\n Container interface-ai-viewer-1  Recreated\n Container interface-ai-desktop-1  Starting\n Container interface-ai-desktop-1  Started\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Starting\n Container interface-ai-viewer-1  Started\n Container interface-ai-viewer-1  Waiting\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Healthy"
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "ready"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\": \"ee2f9b6a-c1df-419c-86ac-8310b6c05de3\", \"display\": \":99\", \"width\": 1280, \"height\": 800, \"viewer\": \"read-only\", \"pids\": {\"display\": 9, \"window manager\": 14, \"native test pad\": 21, \"read-only VNC\": 35, \"web viewer\": 36}}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "smoke"
+      ],
+      "exitCode": 0,
+      "stdout": "PASS screenshot_dimensions_and_fixture\nPASS same_framebuffer_and_server_view_only\nPASS three_pointer_coordinates_and_pixel_changes\nPASS native_typing_selection_and_enter\nPASS native_scroll\nPASS selected_external_egress_blocked\nPASS cooperative_stop_blocks_dispatch\nPASS session_preserved\nEvidence: /artifacts/20260912T080017Z-2a8c3c52",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "screenshot"
+      ],
+      "exitCode": 0,
+      "stdout": "/artifacts/desktop.png",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "curl",
+        "--silent",
+        "--fail",
+        "--output",
+        "/dev/null",
+        "--write-out",
+        "%{http_code}",
+        "http://127.0.0.1:6080/vnc.html"
+      ],
+      "exitCode": 0,
+      "stdout": "200",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # Options and recommended decisions
 
+**Historical comparison:** this document records the initial recommendations. The user's subsequent choices and the revised computer-use direction are in [CURRENT_PLAN.md](CURRENT_PLAN.md), which takes precedence. Browser-first execution, multiple model providers, and TypeScript as the default are no longer active recommendations.
+
 Prepared 2026-09-11. Planning only; nothing described here is implemented or measured. Recommendations assume similar familiarity with TypeScript and Python. Account-level model access remains unverified.
 
 The assignment's Section 4 leaves seven areas open: language/runtime/frameworks; model and agent loop; computer-use technology; target application; artifact/schema storage; deterministic execution; and architecture. This document compares those choices and adds the preparation decisions that remain.

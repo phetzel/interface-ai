@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+usage() {
+  echo 'Usage: ./scripts/desktop {build|up|ready|smoke|screenshot|stop-input|reset|down|logs|viewer}'
+}
+
+case "${1:-help}" in
+  help|-h|--help) usage; exit 0 ;;
+  viewer)
+    printf 'Read-only viewer: http://127.0.0.1:%s/vnc.html?autoconnect=true&resize=scale&view_only=true\n' "${DESKTOP_PORT:-6080}"
+    exit 0
+    ;;
+  build|up|ready|smoke|screenshot|stop-input|reset|down|logs) ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo 'Docker CLI is missing. Install/start Docker Desktop first.' >&2
+  exit 1
+fi
+if ! docker info >/dev/null 2>&1; then
+  echo 'Docker is unavailable. Start Docker Desktop, then retry.' >&2
+  exit 1
+fi
+
+case "$1" in
+  build) docker compose build desktop ;;
+  up)
+    mkdir -p tmp/desktop-artifacts
+    if ! docker image inspect interface-ai-desktop:local >/dev/null 2>&1; then
+      docker compose build desktop
+    fi
+    docker compose up --no-build --pull never --detach --wait --wait-timeout 120
+    "$0" viewer
+    ;;
+  ready) docker compose exec -T desktop python /opt/desktop/control.py ready ;;
+  smoke) docker compose exec -T desktop python /opt/desktop/smoke.py ;;
+  screenshot) docker compose exec -T desktop python /opt/desktop/control.py screenshot ;;
+  stop-input) docker compose exec -T desktop python /opt/desktop/control.py stop-input ;;
+  reset)
+    mkdir -p tmp/desktop-artifacts
+    docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 120
+    "$0" ready
+    ;;
+  down) docker compose down --timeout 10 ;;
+  logs) docker compose logs --tail 100 desktop viewer ;;
+esac

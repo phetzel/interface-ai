@@ -1,0 +1,3 @@
+{"check": "screenshot_dimensions_and_fixture", "status": "passed", "details": {}}
+{"check": "same_framebuffer_and_server_view_only", "status": "passed", "details": {"dimensions": [1280, 800], "serverRejectedInput": true}}
+{"check": "three_pointer_coordinates_and_pixel_changes", "status": "passed", "details": {}}

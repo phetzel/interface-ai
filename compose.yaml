@@ -1,0 +1,57 @@
+name: interface-ai
+
+services:
+  desktop:
+    image: interface-ai-desktop:local
+    build:
+      context: infra/desktop
+    init: true
+    shm_size: 256mb
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 256
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    environment:
+      DISPLAY: :99
+      XAUTHORITY: /tmp/interface-ai/Xauthority
+      XDG_SESSION_TYPE: x11
+      DESKTOP_WIDTH: "1280"
+      DESKTOP_HEIGHT: "800"
+    volumes:
+      - ./tmp/desktop-artifacts:/artifacts
+    networks: [desktop]
+    healthcheck:
+      test: [CMD, /opt/venv/bin/python, /opt/desktop/control.py, ready]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    stop_grace_period: 10s
+
+  viewer:
+    image: interface-ai-desktop:local
+    pull_policy: never
+    entrypoint: [python, /opt/desktop/viewer_relay.py]
+    init: true
+    depends_on:
+      desktop:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${DESKTOP_PORT:-6080}:6080"
+    networks: [desktop, viewer]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128mb
+    cpus: 0.5
+    pids_limit: 64
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6080/vnc.html', timeout=2).close()"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+networks:
+  desktop:
+    internal: true
+  viewer:

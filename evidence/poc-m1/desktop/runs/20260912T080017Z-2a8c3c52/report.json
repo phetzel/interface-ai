@@ -1,0 +1,81 @@
+{
+  "runId": "20260912T080017Z-2a8c3c52",
+  "sessionId": "ee2f9b6a-c1df-419c-86ac-8310b6c05de3",
+  "status": "passed",
+  "kind": "native-desktop-calibration",
+  "modelCalls": 0,
+  "architecture": "aarch64",
+  "display": [
+    1280,
+    800
+  ],
+  "checks": [
+    {
+      "check": "screenshot_dimensions_and_fixture",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "same_framebuffer_and_server_view_only",
+      "status": "passed",
+      "details": {
+        "dimensions": [
+          1280,
+          800
+        ],
+        "serverRejectedInput": true
+      }
+    },
+    {
+      "check": "three_pointer_coordinates_and_pixel_changes",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "native_typing_selection_and_enter",
+      "status": "passed",
+      "details": {
+        "matchedSyntheticInput": true
+      }
+    },
+    {
+      "check": "native_scroll",
+      "status": "passed",
+      "details": {
+        "topFraction": 0.14204545454545456
+      }
+    },
+    {
+      "check": "selected_external_egress_blocked",
+      "status": "passed",
+      "details": {
+        "noDefaultIPv4Route": true,
+        "blockedTcpProbes": [
+          "1.1.1.1",
+          "8.8.8.8"
+        ],
+        "scope": "Selected IPv4 probes; not a comprehensive network policy audit"
+      }
+    },
+    {
+      "check": "cooperative_stop_blocks_dispatch",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "session_preserved",
+      "status": "passed",
+      "details": {}
+    }
+  ],
+  "python": "3.11.2",
+  "packages": {
+    "PyAutoGUI": "0.9.54",
+    "Pillow": "11.3.0",
+    "PyScreeze": "1.0.1",
+    "python3-xlib": "0.15"
+  },
+  "chromium": "Chromium 152.0.7977.82 built on Debian GNU/Linux 12 (bookworm)",
+  "systemPackagesSha256": "5f87e19de19f58361416c5b2038f932a0fc4299c4c4ee3a872e0c15004c27e4e",
+  "elapsedSeconds": 3.066
+}

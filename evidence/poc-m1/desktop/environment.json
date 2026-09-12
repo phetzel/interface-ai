@@ -1,0 +1,57 @@
+{
+  "image": {
+    "id": "sha256:a031a60129ef447ca60a7493c6300c2236439a50cf2c9096ae5959f4c2428de4",
+    "architecture": "arm64",
+    "sizeBytes": 436725036
+  },
+  "desktopNetworkInternal": true,
+  "containers": [
+    {
+      "name": "/interface-ai-desktop-1",
+      "user": "desktop",
+      "health": "healthy",
+      "capDrop": [
+        "ALL"
+      ],
+      "securityOptions": [
+        "no-new-privileges:true"
+      ],
+      "networks": [
+        "interface-ai_desktop"
+      ],
+      "publishedPorts": {},
+      "mounts": [
+        {
+          "type": "bind",
+          "destination": "/artifacts",
+          "readWrite": true,
+          "source": "tmp/desktop-artifacts"
+        }
+      ]
+    },
+    {
+      "name": "/interface-ai-viewer-1",
+      "user": "desktop",
+      "health": "healthy",
+      "capDrop": [
+        "ALL"
+      ],
+      "securityOptions": [
+        "no-new-privileges:true"
+      ],
+      "networks": [
+        "interface-ai_desktop",
+        "interface-ai_viewer"
+      ],
+      "publishedPorts": {
+        "6080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "6080"
+          }
+        ]
+      },
+      "mounts": []
+    }
+  ]
+}

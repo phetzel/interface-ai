@@ -1,0 +1,49 @@
+{
+  "runId": "20260912T075100Z-8fdf0b5e",
+  "sessionId": "a738524e-7927-4777-bbda-639a7b54aa5c",
+  "status": "failed",
+  "kind": "native-desktop-calibration",
+  "modelCalls": 0,
+  "architecture": "aarch64",
+  "display": [
+    1280,
+    800
+  ],
+  "checks": [
+    {
+      "check": "screenshot_dimensions_and_fixture",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "same_framebuffer_and_server_view_only",
+      "status": "passed",
+      "details": {
+        "dimensions": [
+          1280,
+          800
+        ],
+        "serverRejectedInput": true
+      }
+    },
+    {
+      "check": "three_pointer_coordinates_and_pixel_changes",
+      "status": "passed",
+      "details": {}
+    }
+  ],
+  "python": "3.11.2",
+  "packages": {
+    "PyAutoGUI": "0.9.54",
+    "Pillow": "11.3.0",
+    "PyScreeze": "1.0.1",
+    "python3-xlib": "0.15"
+  },
+  "chromium": "Chromium 152.0.7977.82 built on Debian GNU/Linux 12 (bookworm)",
+  "systemPackagesSha256": "5f87e19de19f58361416c5b2038f932a0fc4299c4c4ee3a872e0c15004c27e4e",
+  "error": {
+    "type": "TimeoutError",
+    "message": "submitted keyboard text not ready within 3s; last error: None"
+  },
+  "elapsedSeconds": 5.675
+}
