@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 usage() {
   echo 'Usage: ./scripts/desktop {up|reset} [native|bank] [fixture-scenario]'
-  echo '       ./scripts/desktop {build|ready|smoke|browser-smoke|vision-probe|screenshot|stop-input|test|down|logs|viewer}'
+  echo '       ./scripts/desktop {build|ready|smoke|browser-smoke|vision-probe|replay|validate-capability|screenshot|stop-input|test|down|logs|viewer}'
   echo '       ./scripts/desktop action --session SESSION_ID --json ACTION_JSON'
 }
 command_name="${1:-help}"
@@ -12,7 +12,7 @@ case "$command_name" in
   viewer)
     printf 'Read-only viewer: http://127.0.0.1:%s/vnc.html?autoconnect=true&resize=scale&view_only=true\n' "${DESKTOP_PORT:-6080}"
     exit 0 ;;
-  build|up|ready|smoke|browser-smoke|vision-probe|screenshot|stop-input|reset|down|logs|action|test) ;;
+  build|up|ready|smoke|browser-smoke|vision-probe|replay|validate-capability|screenshot|stop-input|reset|down|logs|action|test) ;;
   *) usage >&2; exit 2 ;;
 esac
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
@@ -43,6 +43,7 @@ case "$command_name" in
   smoke) docker compose exec -T desktop python /opt/desktop/smoke.py ;;
   browser-smoke) docker compose exec -T desktop python /opt/desktop/browser_smoke.py "$@" ;;
   vision-probe) docker compose exec -T desktop python /opt/desktop/vision_probe.py "$@" ;;
+  replay|validate-capability) docker compose exec -T desktop python -m interface_ai.cli "$command_name" "$@" ;;
   action) docker compose exec -T desktop python -m interface_ai.cli action "$@" ;;
   test) docker compose exec -T desktop python -m unittest discover -s /opt/engine/tests -v ;;
   down) docker compose --profile bank down --timeout 10 ;;

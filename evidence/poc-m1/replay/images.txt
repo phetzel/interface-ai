@@ -1,0 +1,2 @@
+[interface-ai-desktop:local] sha256:65e4526750d98f6b7722aa52d70bfb650e687829592da9fbb96904c11f283bc6 arm64
+[interface-ai-bank-fixture:local] sha256:787c62e3ac7ade85a98f8358901e52edae5908238b2ae29ef77eee60c8e8e68d arm64

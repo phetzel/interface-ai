@@ -24,6 +24,8 @@ RUN python3 -m venv /opt/venv \
 
 COPY infra/desktop/*.py /opt/desktop/
 COPY engine /opt/engine/
+COPY capabilities /opt/capabilities/
+RUN python -m interface_ai.contracts.schema --output-dir /opt/capabilities/schemas
 USER desktop
 WORKDIR /home/desktop
 EXPOSE 6080

@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "BusinessOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "business_outcome",
+          "default": "business_outcome",
+          "title": "Status",
+          "type": "string"
+        },
+        "outcome": {
+          "const": "member_not_found",
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome"
+      ],
+      "title": "BusinessOutcome",
+      "type": "object"
+    },
+    "Failure": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "failure",
+          "default": "failure",
+          "title": "Status",
+          "type": "string"
+        },
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "step": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,47}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step"
+        },
+        "expected": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "type": "string"
+          },
+          "maxItems": 2,
+          "title": "Expected",
+          "type": "array"
+        },
+        "observed": {
+          "default": "rejected",
+          "enum": [
+            "unavailable",
+            "checkpoint_not_satisfied",
+            "rejected"
+          ],
+          "title": "Observed",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Failure",
+      "type": "object"
+    },
+    "SavingsOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "memberId": {
+          "pattern": "^[0-9]{5}$",
+          "title": "Memberid",
+          "type": "string"
+        },
+        "memberName": {
+          "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+          "title": "Membername",
+          "type": "string"
+        },
+        "accountType": {
+          "const": "Savings",
+          "title": "Accounttype",
+          "type": "string"
+        },
+        "currency": {
+          "const": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "amountMinor": {
+          "maximum": 99999999999999,
+          "minimum": 0,
+          "title": "Amountminor",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memberId",
+        "memberName",
+        "accountType",
+        "currency",
+        "amountMinor"
+      ],
+      "title": "SavingsOutput",
+      "type": "object"
+    },
+    "Success": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "success",
+          "default": "success",
+          "title": "Status",
+          "type": "string"
+        },
+        "output": {
+          "$ref": "#/$defs/SavingsOutput"
+        }
+      },
+      "required": [
+        "output"
+      ],
+      "title": "Success",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "business_outcome": "#/$defs/BusinessOutcome",
+      "failure": "#/$defs/Failure",
+      "success": "#/$defs/Success"
+    },
+    "propertyName": "status"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Success"
+    },
+    {
+      "$ref": "#/$defs/BusinessOutcome"
+    },
+    {
+      "$ref": "#/$defs/Failure"
+    }
+  ]
+}

@@ -1,0 +1,480 @@
+{
+  "schemaVersion": "1.0",
+  "name": "savings-balance",
+  "capabilityVersion": "0.1.0",
+  "provenance": "manually-authored-poc",
+  "description": "Manual PoC: search a synthetic member, verify identity, open unique Savings, and extract validated USD balance. Not discovered by a model.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      }
+    },
+    "required": [
+      "memberId"
+    ],
+    "title": "MemberInput",
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      },
+      "memberName": {
+        "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+        "title": "Membername",
+        "type": "string"
+      },
+      "accountType": {
+        "const": "Savings",
+        "title": "Accounttype",
+        "type": "string"
+      },
+      "currency": {
+        "const": "USD",
+        "title": "Currency",
+        "type": "string"
+      },
+      "amountMinor": {
+        "maximum": 99999999999999,
+        "minimum": 0,
+        "title": "Amountminor",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "memberId",
+      "memberName",
+      "accountType",
+      "currency",
+      "amountMinor"
+    ],
+    "title": "SavingsOutput",
+    "type": "object"
+  },
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "assets": {
+    "account-heading": {
+      "file": "anchors/account-heading.png",
+      "sha256": "08f498ce38034a03bb7769caab57381ae6bd9e1f28eea209cd88dd049fc9bef4"
+    },
+    "member-field": {
+      "file": "anchors/member-field.png",
+      "sha256": "5ba5ec895a2a0254532c99a8714c0c0e369c55eb6bf10abe8ec2aa0512aba71b"
+    },
+    "member-heading": {
+      "file": "anchors/member-heading.png",
+      "sha256": "7e80ede74989cf52dc06346858f40fe505475744961e40636d4da3532de259b5"
+    },
+    "not-found-label": {
+      "file": "anchors/not-found-label.png",
+      "sha256": "f4d030fa651720b43179f8a5313aeb9840f83b1f55b4e063f33c478fa39f201d"
+    },
+    "savings-label": {
+      "file": "anchors/savings-label.png",
+      "sha256": "af3ee4e6aa71933a1705c4f400bd8b4f7e44cc1c6afb5f28fbe1f356cb59c2a8"
+    },
+    "search-heading": {
+      "file": "anchors/search-heading.png",
+      "sha256": "fe35ab2b3e26a788cd27f774db824545d6e134da44bc5c854a0371f5a4315940"
+    },
+    "view-account": {
+      "file": "anchors/view-account.png",
+      "sha256": "cd9283ceb37f9459f9bec3f82ba15ef6cdede318923b9069c42a6855f27a2c83"
+    }
+  },
+  "targets": {
+    "search-heading": {
+      "kind": "anchor",
+      "asset": "search-heading",
+      "region": {
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "relativeTo": null,
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "member-heading": {
+      "kind": "anchor",
+      "asset": "member-heading",
+      "region": {
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "relativeTo": null,
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "account-heading": {
+      "kind": "anchor",
+      "asset": "account-heading",
+      "region": {
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "relativeTo": null,
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "member-field": {
+      "kind": "anchor",
+      "asset": "member-field",
+      "region": {
+        "box": [
+          0,
+          140,
+          700,
+          260
+        ],
+        "relativeTo": "search-heading",
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "member-input": {
+      "kind": "relative",
+      "region": {
+        "box": [
+          80,
+          60,
+          160,
+          90
+        ],
+        "relativeTo": "member-field",
+        "clipToDisplay": false
+      }
+    },
+    "savings-label": {
+      "kind": "anchor",
+      "asset": "savings-label",
+      "region": {
+        "box": [
+          0,
+          250,
+          1080,
+          565
+        ],
+        "relativeTo": "member-heading",
+        "clipToDisplay": true
+      },
+      "threshold": 0.92
+    },
+    "savings-button": {
+      "kind": "anchor",
+      "asset": "view-account",
+      "region": {
+        "box": [
+          700,
+          -10,
+          985,
+          45
+        ],
+        "relativeTo": "savings-label",
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "not-found": {
+      "kind": "anchor",
+      "asset": "not-found-label",
+      "region": {
+        "box": [
+          0,
+          290,
+          730,
+          420
+        ],
+        "relativeTo": "search-heading",
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    }
+  },
+  "fields": {
+    "entered-id": {
+      "region": {
+        "box": [
+          8,
+          57,
+          140,
+          88
+        ],
+        "relativeTo": "member-field",
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "member-id": {
+      "region": {
+        "box": [
+          140,
+          140,
+          228,
+          158
+        ],
+        "relativeTo": "member-heading",
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "account-member-id": {
+      "region": {
+        "box": [
+          140,
+          140,
+          228,
+          158
+        ],
+        "relativeTo": "account-heading",
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "member-name": {
+      "region": {
+        "box": [
+          78,
+          110,
+          400,
+          138
+        ],
+        "relativeTo": "account-heading",
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "account-type": {
+      "region": {
+        "box": [
+          974,
+          225,
+          1043,
+          249
+        ],
+        "relativeTo": "account-heading",
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "currency": {
+      "region": {
+        "box": [
+          990,
+          296,
+          1043,
+          321
+        ],
+        "relativeTo": "account-heading",
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "balance": {
+      "region": {
+        "box": [
+          30,
+          278,
+          720,
+          353
+        ],
+        "relativeTo": "account-heading",
+        "clipToDisplay": false
+      },
+      "parser": "usd_minor"
+    },
+    "missing-message": {
+      "region": {
+        "box": [
+          -2,
+          20,
+          370,
+          46
+        ],
+        "relativeTo": "not-found",
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    }
+  },
+  "checkpoints": {
+    "search-ready": {
+      "targets": [
+        "search-heading"
+      ],
+      "assertions": []
+    },
+    "input-entered": {
+      "targets": [
+        "search-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "entered-id",
+          "input": "memberId"
+        }
+      ]
+    },
+    "member-ready": {
+      "targets": [
+        "member-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "member-id",
+          "input": "memberId"
+        }
+      ]
+    },
+    "account-ready": {
+      "targets": [
+        "account-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "account-member-id",
+          "input": "memberId"
+        },
+        {
+          "kind": "text_equals",
+          "field": "account-type",
+          "text": "Savings"
+        },
+        {
+          "kind": "text_equals",
+          "field": "currency",
+          "text": "USD"
+        }
+      ]
+    },
+    "member-not-found": {
+      "targets": [
+        "not-found"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "missing-message",
+          "input": "memberId",
+          "prefix": "No member matches ID ",
+          "suffix": ". Check the ID and search again."
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "focus-member",
+      "action": "click",
+      "precondition": "search-ready",
+      "timeoutSeconds": 5.0,
+      "target": "member-input",
+      "postconditions": [
+        {
+          "checkpoint": "search-ready"
+        }
+      ]
+    },
+    {
+      "id": "select-input",
+      "action": "hotkey",
+      "precondition": "search-ready",
+      "timeoutSeconds": 5.0,
+      "keys": [
+        "ctrl",
+        "a"
+      ],
+      "postconditions": [
+        {
+          "checkpoint": "search-ready"
+        }
+      ]
+    },
+    {
+      "id": "enter-member",
+      "action": "type",
+      "precondition": "search-ready",
+      "timeoutSeconds": 5.0,
+      "input": "memberId",
+      "postconditions": [
+        {
+          "checkpoint": "input-entered"
+        }
+      ]
+    },
+    {
+      "id": "search-member",
+      "action": "press",
+      "precondition": "input-entered",
+      "timeoutSeconds": 5.0,
+      "key": "enter",
+      "postconditions": [
+        {
+          "checkpoint": "member-ready"
+        },
+        {
+          "checkpoint": "member-not-found",
+          "outcome": "member_not_found"
+        }
+      ]
+    },
+    {
+      "id": "open-savings",
+      "action": "click",
+      "precondition": "member-ready",
+      "timeoutSeconds": 5.0,
+      "target": "savings-button",
+      "postconditions": [
+        {
+          "checkpoint": "account-ready"
+        }
+      ]
+    },
+    {
+      "id": "read-balance",
+      "action": "extract",
+      "precondition": "account-ready",
+      "timeoutSeconds": 5.0,
+      "fields": {
+        "memberId": "account-member-id",
+        "memberName": "member-name",
+        "accountType": "account-type",
+        "currency": "currency",
+        "amountMinor": "balance"
+      }
+    }
+  ]
+}

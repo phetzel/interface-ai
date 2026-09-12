@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "validator": "jsonschema 4.25.1 / Draft 2020-12",
+  "schemasChecked": 4,
+  "artifactValid": true,
+  "resultsValidated": 11,
+  "invalidDocumentsRejected": 3
+}

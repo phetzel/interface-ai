@@ -15,9 +15,24 @@ def main():
     action = commands.add_parser('action')
     action.add_argument('--session', required=True)
     action.add_argument('--json', required=True)
+    validate = commands.add_parser('validate-capability')
+    validate.add_argument('--capability', default='/opt/capabilities/poc/savings-balance/capability.json')
+    replay = commands.add_parser('replay')
+    replay.add_argument('--capability', default='/opt/capabilities/poc/savings-balance/capability.json')
+    replay.add_argument('--session')
+    inputs = replay.add_mutually_exclusive_group(required=True)
+    inputs.add_argument('--member-id')
+    inputs.add_argument('--inputs-json')
     args = parser.parse_args()
     try:
-        if args.command == 'status':
+        if args.command == 'replay':
+            from .replay.command import replay as run
+            return run(args)
+        if args.command == 'validate-capability':
+            from .replay.loader import load_bundle
+            bundle = load_bundle(args.capability)
+            result = {'status': 'valid', 'capability': bundle.capability.name, 'sha256': bundle.sha256}
+        elif args.command == 'status':
             result = read_session() | {'inputStopped': STOP.exists()}
         elif args.command == 'stop':
             request_stop()

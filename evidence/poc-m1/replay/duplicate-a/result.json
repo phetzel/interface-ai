@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "code": "ambiguous_target",
+  "step": "open-savings",
+  "expected": [
+    "account-ready"
+  ],
+  "observed": "rejected"
+}

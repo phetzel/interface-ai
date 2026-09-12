@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "memberId": {
+      "pattern": "^[0-9]{5}$",
+      "title": "Memberid",
+      "type": "string"
+    },
+    "memberName": {
+      "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+      "title": "Membername",
+      "type": "string"
+    },
+    "accountType": {
+      "const": "Savings",
+      "title": "Accounttype",
+      "type": "string"
+    },
+    "currency": {
+      "const": "USD",
+      "title": "Currency",
+      "type": "string"
+    },
+    "amountMinor": {
+      "maximum": 99999999999999,
+      "minimum": 0,
+      "title": "Amountminor",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "memberId",
+    "memberName",
+    "accountType",
+    "currency",
+    "amountMinor"
+  ],
+  "title": "SavingsOutput",
+  "type": "object"
+}

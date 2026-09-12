@@ -1,0 +1,15 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "memberId": {
+      "pattern": "^[0-9]{5}$",
+      "title": "Memberid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "memberId"
+  ],
+  "title": "MemberInput",
+  "type": "object"
+}

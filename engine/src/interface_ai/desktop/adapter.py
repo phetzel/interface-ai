@@ -124,6 +124,10 @@ class Desktop:
             raise DesktopError('display_changed', 'Screenshot dimensions changed')
         return image
 
+    def checkpoint(self):
+        """Recheck session, focus, stop, display, and total deadline without input."""
+        self._check()
+
     def execute(self, action):
         kind = validate(action, self.width, self.height)
         self._sequence += 1

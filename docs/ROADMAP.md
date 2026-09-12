@@ -2,7 +2,7 @@
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-Status 2026-09-12: M1-01 through M1-04 are implemented. Desktop input, sandboxed Chromium, local anchors, and OCR pass their bounded checks. The M1-04 manual primitive suite passes both members at baseline/+40 px, delayed loading, and three deliberate rejection cases, with 27 passing unit tests. See [visual evidence](../evidence/poc-m1/vision/README.md). This validates recognition feasibility; PoC C’s artifact-based repeated replay gate still requires M1-05/06. M1-03 was pushed as `79bf84e`; M1-04 is included in this revision.
+Status 2026-09-12: M1-01 through M1-05 are implemented. The strict manual capability now drives real desktop replay, including both members, translation, delay, named member-not-found, and deliberate failure cases. Forty-four unit tests and nine artifact integration cases pass; see [evidence](../evidence/poc-m1/replay/README.md). PoC C’s full repeated/reproducibility gate still requires M1-06. M1-04 was pushed as `1d89ba8`; M1-05 is committed locally and unpushed.
 
 ## Objective and order of work
 
@@ -170,12 +170,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | M1-05 and subsequent packages; M1-01 through M1-04 were requested and completed | Plans and dependency definitions are ready |
+| Further implementation scope | M1-06 and subsequent packages; M1-01 through M1-05 were requested and completed | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
-| Visual recognition/extraction primitives — bounded checks passed | Manual artifact/interpreter and repeated replay acceptance | Handoff and policy can proceed |
+| Visual recognition and manual artifact integration — bounded checks passed | Repeated replay acceptance | Handoff and policy can proceed |
 | Policy/evidence gate | Controlled real model execution and safe retention | Local deterministic recognition experiments can proceed |
 | Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-The next implementation package is M1-05: the validated manual artifact and interpreter. The desktop, fixture/oracle, and visual primitives are ready. Repeated artifact replay, policy, and handoff gates still need implementation and verification.
+The next implementation package is M1-06: repeated acceptance and final M1 evidence/reproducibility. The desktop, fixture/oracle, visual primitives, and validated manual artifact/interpreter are ready. Repeated artifact replay, policy, and handoff gates still need implementation and verification.

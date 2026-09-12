@@ -1,6 +1,6 @@
 # Milestone 1: Isolated desktop and model-free banking replay
 
-Status: M1-01 through M1-04 implemented and verified on 2026-09-12. The Linux ARM64 desktop, banking fixture/oracle, shared adapter, sandboxed Chromium, and local visual/OCR primitives are available. M1-04 passes 27 unit tests and eight scenario checks; see [visual evidence](../evidence/poc-m1/vision/README.md). M1-05/06 remain planned, and full M1 is not complete. M1-01 through M1-03 were pushed at the user’s explicit requests (`c426a49`, `37bbd60`, `79bf84e`). M1-04 is included in this revision; no model calls have been made.
+Status: M1-01 through M1-05 implemented and verified on 2026-09-12. A strict manually authored JSON capability now drives the desktop/visual interpreter, binds member inputs, returns validated outputs, and handles member not found. Forty-four unit tests and nine artifact integration cases pass; see [M1-05 evidence](../evidence/poc-m1/replay/README.md). M1-06’s repeated acceptance/reproducibility gate remains planned; full M1 is not complete. M1-04 was pushed as `1d89ba8` at the user’s request. M1-05 is committed locally and unpushed, with no model calls.
 
 ## Outcome
 
@@ -16,14 +16,14 @@ This milestone validates the desktop and deterministic replay assumptions. The m
 - Node/npm, system Python, and uv are on PATH. Host Tesseract was not found on PATH; it can be packaged in the desktop image instead.
 - M1-01 built and ran a native ARM64 Debian desktop with PyAutoGUI/Pillow and a native Tk calibration pad. Desktop input, viewing, and lifecycle checks passed. M1-03 now validates the same adapter in sandboxed Chromium against both synthetic members; M1-04 now verifies visual anchors and local OCR on the baseline, translated, delayed, duplicate, unreadable, and blocked cases.
 
-The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. Chromium desktop input now passes its calibration checks. OpenCV/Tesseract primitives now pass the bounded fixture checks; capability replay and the full repeated acceptance gate remain later work. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
+The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. Chromium desktop input now passes its calibration checks. OpenCV/Tesseract primitives now pass the bounded fixture checks; the manual artifact/interpreter now passes nine integration cases, while the full repeated acceptance gate remains later work. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
 
 ## Initial environment design
 
 The target milestone adds a fixture service to the implemented desktop and viewer relay:
 
 1. **fixture:** the built React/TypeScript banking app, served as static assets with bundled synthetic data.
-2. **desktop:** Linux X11 virtual display, a lightweight window manager, Chromium, VNC/noVNC viewing, and the Python runner with PyAutoGUI, OpenCV, Tesseract, and Pydantic. PyAutoGUI/Pillow, the shared adapter, OpenCV, and Tesseract are installed through M1-04; Pydantic and the interpreter remain M1-05.
+2. **desktop:** Linux X11 virtual display, a lightweight window manager, Chromium, VNC/noVNC viewing, and the Python runner with PyAutoGUI, OpenCV, Tesseract, and Pydantic. PyAutoGUI/Pillow, the shared adapter, OpenCV, and Tesseract are installed through M1-04; M1-05 also installs pinned Pydantic and the bounded interpreter.
 3. **viewer:** a fixed-destination relay that publishes a loopback port while the desktop retains its internal-only network. See the implementation evidence for the measured Docker Desktop networking issue.
 
 The runner executes inside the desktop environment so screenshot and input coordinates refer to the same display. The tested baseline is a 1280×800 display, one monitor, browser zoom 100%, en-US locale, USD currency, and fixed font assets. Both native and bank calibration screens fit these verified dimensions. Host Retina scaling and viewer zoom must not change the runner's coordinate space.
@@ -104,7 +104,7 @@ An OCR confidence threshold is a rejection heuristic, not proof of accuracy. Exa
 | M1-02 (done) | Fixture and oracle | Three views, synthetic records, harness-only scenario controls, expected results | Agreed workflow; can proceed while environment is prepared |
 | M1-03 (done) | Desktop adapter | Pixel/input agreement, trusted app bootstrap, stop checks, native text-entry smoke | M1-01 |
 | M1-04 (done) | Visual primitives | Anchor matching, OCR extraction, bounded visual predicates, ambiguity detection | M1-02 and M1-03 |
-| M1-05 | Manual artifact and interpreter | Validated JSON capability, input bindings, typed outputs, known not-found branch | M1-04; draft types can be written earlier |
+| M1-05 (done) | Manual artifact and interpreter | Validated JSON capability, input bindings, typed outputs, known not-found branch | M1-04; draft types can be written earlier |
 | M1-06 | Acceptance and evidence | Reset-based scenario suite, safe events/crops, measured results, README commands | M1-05 |
 
 Within each package, build the smallest working path and add its failure check before proceeding. Keep all input dispatch in one executor so later model actions and ownership enforcement can use the same boundary.
@@ -113,7 +113,7 @@ Draft types and fixture UI are independent of Docker availability. The final tar
 
 ## Proposed repository layout
 
-The engine desktop and vision packages, CLI, banking fixture, infrastructure, helpers, and four evidence bundles now exist. Contracts, replay, and capability paths below remain planned:
+The desktop, vision, contracts, and replay packages, CLI, fixture, infrastructure, helpers, manual capability, and five evidence bundles now exist:
 
 ```text
 apps/bank-fixture/                 React/TypeScript app and fixture scenarios
@@ -176,7 +176,7 @@ If one bounded correction and rerun does not resolve a major recognition failure
 | Question | Default/answer | Blocking? |
 | --- | --- | --- |
 | Is there a time budget or demo date? | User confirmed neither needs to constrain the milestone; use the acceptance gates above | No |
-| Which execution environment? | Existing Docker Desktop on this ARM64 Mac; isolated Linux desktop now verified | Native/browser input and visual primitive checks passed; artifact replay remains untested |
+| Which execution environment? | Existing Docker Desktop on this ARM64 Mac; isolated Linux desktop now verified | Input, visual, and artifact integration checks passed; repeated acceptance remains pending |
 | Does M1 need an OpenAI key? | No; genuine discovery follows later | No |
 | Must it work on Windows or native macOS now? | No; one tested Linux environment with surface-neutral interfaces | No additional user decision needed |
 | Must the viewer support full human takeover now? | No; same-session observation and stop are included, ownership/capture/resume follow later | Does not block M1; remains mandatory for the final system |

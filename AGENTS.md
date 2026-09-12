@@ -4,7 +4,7 @@
 
 - Do not push this repository unless the user explicitly requests a push. The earlier repository-creation request does not authorize subsequent pushes.
 - Do not bypass this restriction by uploading repository changes through a GitHub API or another tool. Local edits may be prepared within the user's requested scope.
-- M1-01 through M1-04 are complete and verified. The latest user request explicitly authorizes committing/pushing existing M1-04 work, then implementing M1-05 locally: a validated manual capability, interpreter, input bindings, typed outputs, and member-not-found branch. The push does not cover subsequent M1-05 changes. Full repeated acceptance (M1-06), model integration, and human takeover remain later packages.
+- M1-01 through M1-05 are complete and verified. M1-04 was committed and pushed as `1d89ba8` at the user's request. M1-05 adds the strict manual capability, interpreter, input bindings, typed results, and member-not-found branch, and is committed locally at the user's request. Do not push it without an explicit request. Full repeated acceptance (M1-06), model integration, and human takeover remain later work.
 
 ## Current planning constraints
 

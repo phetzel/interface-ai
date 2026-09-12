@@ -2,7 +2,7 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**Implemented: M1-01 through M1-04.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR now locate controls and extract verified synthetic balances. Capability artifacts/replay, model integration, and human takeover remain later work. No OpenAI key is needed for these steps.
+**Implemented: M1-01 through M1-05.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR now locate controls and extract verified synthetic balances. A strict manual JSON capability now drives the interpreter, with typed outputs and a member-not-found branch. Model discovery, the full repeated acceptance gate, and human takeover remain later work. No OpenAI key is needed for these steps.
 
 ## Run the banking desktop
 
@@ -11,12 +11,13 @@ With Docker Desktop running, from the repository root:
 ```sh
 ./scripts/desktop build
 ./scripts/desktop up bank
-./scripts/desktop vision-probe --member-id 00123
+./scripts/desktop validate-capability
+./scripts/desktop replay --member-id 00123
 ```
 
-Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The visual probe finds the member field and Savings control from pixels, enters the ID through the desktop adapter, and reads identity, account type, currency, and balance using local OCR. It writes an explicit synthetic `result.json` under the printed evidence directory. This is a manually authored primitive exercise; the capability artifact/interpreter is still M1-05. [Engine API and limits](engine/README.md) · [M1-04 evidence](evidence/poc-m1/vision/README.md).
+Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The interpreter loads the [manual capability](capabilities/poc/savings-balance/capability.json), resolves its visual targets, executes through the desktop adapter, and verifies its checkpoints and typed output. The printed evidence directory contains a separate `result.json` plus routine reports/events without typed values or OCR text. The artifact is explicitly manually authored, not model-discovered. [Capability and commands](capabilities/poc/savings-balance/README.md) · [M1-05 evidence](evidence/poc-m1/replay/README.md).
 
-Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop vision-probe --member-id 00456`. `./scripts/desktop reset bank translated` selects the tested +40 px layout variation. Reload the viewer after resets. Run `./scripts/vision-check` for the eight-case reset-based primitive suite; it finishes on the blocked scenario, so reset bank afterwards.
+Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop replay --member-id 00456`. Use `00999` for the named member-not-found outcome. `./scripts/desktop reset bank translated` selects the tested +40 px layout variation. Reload the viewer after resets. Run `./scripts/replay-check` for the nine-case reset-based artifact integration suite; it finishes on the blocked scenario, so reset bank afterwards.
 
 ## Preview the banking fixture
 
@@ -50,7 +51,10 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
 | `./scripts/desktop ready` | Check processes, display, expected window focus, and viewer; print session ID, mode, and stop state |
 | `./scripts/desktop smoke` | Run eight bounded checks on a fresh calibration pad; exit nonzero on failure |
 | `./scripts/desktop browser-smoke --member-id 00123` | Run eight input/pixel checks in a fresh default banking desktop; also accepts `00456` |
-| `./scripts/desktop test` | Run 27 desktop/vision unit tests, including actual local OCR |
+| `./scripts/desktop test` | Run 44 desktop, vision, contract, and interpreter tests |
+| `./scripts/desktop validate-capability` | Validate the complete manual artifact and all anchor assets before input |
+| `./scripts/desktop replay --member-id 00123` | Execute the manual JSON capability; output success, named business outcome, or structured failure |
+| `./scripts/replay-check` | Run nine artifact integration cases against the host-only oracle |
 | `./scripts/desktop vision-probe --member-id 00123` | Exercise visual targeting, identity checks, and OCR; print the result/evidence location |
 | `./scripts/vision-check` | Run eight reset-based baseline, translated, delayed, and rejection cases against the host-only oracle |
 | `./scripts/desktop action --session ID --json ACTION_JSON` | Dispatch one validated primitive through the shared adapter; see the engine README |
@@ -70,14 +74,15 @@ Smoke output is written under `tmp/desktop-artifacts/<run-id>/`: `report.json`, 
 
 - Native PyAutoGUI clicks arrive at the exact screenshot coordinates and visibly change all three targets.
 - Typing, selection/replacement, Enter, and scrolling reach a native Tk application.
-- The visual probe locates targets and extracts both members’ identities, Savings account type, USD currency, and exact balances against an independent oracle. Both default and +40 px layouts pass without changing anchors/settings.
+- The unchanged manual artifact locates targets and extracts both members’ identities, Savings account type, USD currency, and exact balances against an independent oracle. Both default and +40 px layouts pass without changing anchors/settings.
+- The known missing-member message yields `member_not_found` after verifying the exact queried ID, without an account click or fabricated balance.
 - A delayed search succeeds; duplicate Savings targets, unreadable balances, and blocked loading stop without returning guessed data or dispatching a later action.
 - VNC serves pixels from the same X11 display and rejects attempted input at the server, beyond the viewer's client setting.
 - Cooperative stop prevents dispatch; reset and shutdown/start produce fresh sessions.
 - Live guard checks reject invalid/stale requests and a second controller, interrupt typing, and retain observation access after stop.
 - The desktop has no default IPv4 route, and the tested external TCP destinations are unreachable.
 
-The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. The separate M1-04 visual probe now verifies local recognition and typed results. There are no model calls. Capability replay, cross-OS portability, and human takeover remain unverified.
+The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. M1-04 verified local recognition; M1-05 now verifies a manually authored artifact driving the interpreter across nine integration cases. There are no model calls. The full repeated acceptance gate, cross-OS portability, and human takeover remain unverified.
 
 ## Environment and boundaries
 
@@ -115,6 +120,6 @@ JSON
 - [Full first milestone](docs/MILESTONE_1.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-Next is M1-05: a validated manual capability and interpreter, including the known member-not-found branch. The full repeated acceptance suite follows in M1-06. Full M1 is not complete. M1-01, M1-02, and M1-03 were committed and pushed as `c426a49`, `37bbd60`, and `79bf84e` at the user's requests. The completed M1-04 implementation and evidence are included in this revision.
+Next is M1-06: the repeated acceptance suite and final M1 evidence/reproducibility gate. Full M1 is not complete. M1-01 through M1-04 were pushed at the user's requests (`c426a49`, `37bbd60`, `79bf84e`, `1d89ba8`). M1-05 is committed locally at the user's request and has not been pushed.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""Host-only M1-05 integration checks; no oracle enters the interpreter."""
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import uuid
+
+ROOT = Path(__file__).resolve().parent.parent
+OUTPUT = ROOT/'tmp/replay-checks'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8])
+OUTPUT.mkdir(parents=True)
+oracle = json.loads((ROOT/'apps/bank-fixture/tests/oracle.json').read_text())
+artifact_hash = hashlib.sha256((ROOT/'capabilities/poc/savings-balance/capability.json').read_bytes()).hexdigest()
+cases = [('baseline-a','default',0,None),('baseline-b','default',1,None),
+         ('missing','default',None,'member_not_found'),('translated-a','translated',0,None),
+         ('translated-b','translated',1,None),('delayed-a','delayed',0,None),
+         ('duplicate-a','duplicate',0,'ambiguous_target'),('unreadable-a','unreadable',0,'ocr_uncertain'),
+         ('blocked-a','blocked',0,'checkpoint_timeout')]
+summary = {'kind':'M1-05-artifact-integration', 'status':'running', 'capabilitySha256':artifact_hash,
+           'scope':'One pass per integration case; M1-06 repeated acceptance remains pending', 'cases':[]}
+
+def run(args, **kwargs):
+    return subprocess.run(args, cwd=ROOT, timeout=180, **kwargs)
+
+try:
+    for name,scenario,index,expected in cases:
+        item={'case':name,'scenario':scenario,'status':'running'};summary['cases'].append(item)
+        try:
+            with (OUTPUT/(name+'-startup.log')).open('w') as log:
+                run(['./scripts/desktop','reset','bank',scenario],stdout=log,stderr=log,check=True)
+            member_id=oracle['missing']['memberId'] if index is None else oracle['successes'][index]['memberId']
+            response=run(['./scripts/desktop','replay','--member-id',member_id],capture_output=True,text=True)
+            (OUTPUT/(name+'-command.log')).write_text(response.stdout+response.stderr)
+            response_json=json.loads(response.stdout)
+            relative=Path(response_json['evidence']).relative_to('/artifacts')
+            directory=ROOT/'tmp/desktop-artifacts'/relative
+            report=json.loads((directory/'report.json').read_text())
+            result=json.loads((directory/'result.json').read_text())
+            assert report['capabilitySha256']==artifact_hash
+            assert report['modelCalls']==0
+            item.update(evidence=str(directory.relative_to(ROOT)),observedStatus=result['status'],
+                        code=result.get('code'),outcome=result.get('outcome'),failedStep=result.get('step'),
+                        actionsCompleted=report['actionsCompleted'],elapsedSeconds=report['elapsedSeconds'])
+            if expected is None:
+                assert response.returncode==0 and result['status']=='success'
+                wanted=oracle['successes'][index]
+                assert result['output']=={key:wanted[key] for key in ['memberId','memberName','accountType','currency','amountMinor']}
+                item['exactOracleMatch']=True
+            elif expected=='member_not_found':
+                assert response.returncode==0 and result=={'status':'business_outcome','outcome':expected}
+                assert report['actionsCompleted']==4
+                item['noAccountClickOrExtraction']=True
+            else:
+                assert response.returncode==1 and result['status']=='failure' and result['code']==expected
+                assert 'output' not in result and report['actionsCompleted']==(5 if scenario=='unreadable' else 4)
+                item['noResultOrSubsequentAction']=True
+            item['status']='passed'
+        except Exception as exc:
+            item.update(status='failed',error=type(exc).__name__)
+        finally:
+            print(item['status'].upper()+' '+name,flush=True)
+            (OUTPUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    summary['status']='passed' if all(c['status']=='passed' for c in summary['cases']) else 'failed'
+finally:
+    (OUTPUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+    print('Evidence: '+str(OUTPUT),flush=True)
+sys.exit(0 if summary['status']=='passed' else 1)
