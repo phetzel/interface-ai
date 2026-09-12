@@ -2,7 +2,21 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**Implemented: M1-01 (isolated desktop) and M1-02 (banking fixture and oracle).** The native desktop supports real screenshots, mouse/keyboard input, and read-only viewing. The React/TypeScript fixture provides member search, account selection, balances, and controlled failure scenarios. Shared desktop/browser integration, visual replay, model integration, and human takeover remain later work. No OpenAI key is needed for these steps.
+**Implemented: M1-01 through M1-03.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Visual recognition, capability replay, model integration, and human takeover remain later work. No OpenAI key is needed for these steps.
+
+## Run the banking desktop
+
+With Docker Desktop running, from the repository root:
+
+```sh
+./scripts/desktop build
+./scripts/desktop up bank
+./scripts/desktop browser-smoke --member-id 00123
+```
+
+Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The smoke enters the member ID, opens Savings, and returns to search using actual desktop input. It checks pixel changes; it does not extract the balance or implement a reusable capability. [Adapter API and limits](engine/README.md) · [M1-03 evidence](evidence/poc-m1/adapter/README.md).
+
+Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop browser-smoke --member-id 00456`. Reload the viewer after resets. These calibration runs require the default, unshifted scenario; visual targeting and scenario replay belong to M1-04 onward.
 
 ## Preview the banking fixture
 
@@ -15,7 +29,7 @@ npm run preview
 
 Open the [banking preview](http://127.0.0.1:4173). Search for `00123` or `00456`, then open Savings; `00999` demonstrates member not found. [Fixture setup, scenario controls, and tests](apps/bank-fixture/README.md) · [M1-02 evidence](evidence/poc-m1/fixture/README.md).
 
-To run the fixture inside the desktop network, use `./scripts/fixture up` from the root. It serves `http://fixture:4173` internally. The current noVNC desktop still shows the calibration pad; launching and controlling Chromium through the shared adapter is M1-03.
+The host preview is a separate development surface. `./scripts/desktop up bank` starts the fixture inside the desktop network and launches Chromium there. `./scripts/fixture up` starts only the internal fixture service.
 
 ## Run the native desktop step
 
@@ -24,7 +38,7 @@ Prerequisite: Docker Desktop running with Docker Compose v2. Tested on an Apple 
 From the repository root:
 
 ```sh
-./scripts/desktop up
+./scripts/desktop reset native
 ./scripts/desktop smoke
 ```
 
@@ -32,18 +46,21 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
 
 | Command | Behavior |
 | --- | --- |
-| `./scripts/desktop up` | Build if the image is absent, start services, wait for readiness, print viewer URL |
-| `./scripts/desktop ready` | Check required processes, native pad, display dimensions, and desktop web endpoint; print session ID |
+| `./scripts/desktop up [native\|bank] [scenario]` | Build if absent, start the selected surface, wait for readiness, print viewer URL; omitted mode preserves the running mode, or defaults to native |
+| `./scripts/desktop ready` | Check processes, display, expected window focus, and viewer; print session ID, mode, and stop state |
 | `./scripts/desktop smoke` | Run eight bounded checks on a fresh calibration pad; exit nonzero on failure |
+| `./scripts/desktop browser-smoke --member-id 00123` | Run eight input/pixel checks in a fresh default banking desktop; also accepts `00456` |
+| `./scripts/desktop test` | Run the 15 adapter unit tests inside the container |
+| `./scripts/desktop action --session ID --json ACTION_JSON` | Dispatch one validated primitive through the shared adapter; see the engine README |
 | `./scripts/desktop screenshot` | Save the known synthetic screen to `tmp/desktop-artifacts/desktop.png` |
-| `./scripts/desktop stop-input` | Prevent the smoke executor's next input dispatch; reset required to run again |
-| `./scripts/desktop reset` | Recreate both containers with a fresh session and pad; preserve exported evidence |
+| `./scripts/desktop stop-input` | Block subsequent adapter input, including the next character during typing; reset required to run again |
+| `./scripts/desktop reset [native\|bank] [scenario]` | Recreate desktop/viewer with a new session; bank also resets the fixture; preserve exported evidence |
 | `./scripts/desktop down` | Stop and remove all project services, including the optional fixture; keep images and evidence |
 | `./scripts/desktop build` | Explicitly rebuild after changing desktop source/dependencies |
 | `./scripts/desktop logs` | Show recent desktop and viewer logs |
 | `./scripts/desktop viewer` | Print the local viewer URL |
 
-Run `reset` before each repeated smoke test. After editing image contents, run `build`, then `reset`. If port 6080 is occupied, use `DESKTOP_PORT=6081 ./scripts/desktop up` and use the same value for later commands. After a reset, reload/reconnect the viewer.
+Run `reset` before each repeated smoke test. `up bank` also creates a fresh desktop; `up native` can reuse it. After editing image contents, run `build`, then `reset`. If port 6080 is occupied, use `DESKTOP_PORT=6081 ./scripts/desktop up bank` and use the same value for later commands. After a reset, reload/reconnect the viewer.
 
 Smoke output is written under `tmp/desktop-artifacts/<run-id>/`: `report.json`, `events.jsonl`, and before/after PNGs. Reports include dependency versions, architecture, display dimensions, session ID, elapsed time, and checks. Failed executions after run initialization also retain a report. Preconditions rejected before initialization print a diagnostic and do not create a run bundle. Raw local output is ignored by Git. Reviewed results live in [desktop evidence](evidence/poc-m1/desktop/README.md).
 
@@ -51,15 +68,17 @@ Smoke output is written under `tmp/desktop-artifacts/<run-id>/`: `report.json`, 
 
 - Native PyAutoGUI clicks arrive at the exact screenshot coordinates and visibly change all three targets.
 - Typing, selection/replacement, Enter, and scrolling reach a native Tk application.
+- The same adapter enters both synthetic member IDs and opens Savings in Chromium. Reviewed captures show the expected identities and balances; automated business-output extraction is still pending.
 - VNC serves pixels from the same X11 display and rejects attempted input at the server, beyond the viewer's client setting.
 - Cooperative stop prevents dispatch; reset and shutdown/start produce fresh sessions.
+- Live guard checks reject invalid/stale requests and a second controller, interrupt typing, and retain observation access after stop.
 - The desktop has no default IPv4 route, and the tested external TCP destinations are unreachable.
 
-The test pad's fixed coordinates and independent state oracle are calibration fixtures, not reusable visual locators or replay. There are no model calls. This does not yet validate banking lookup, browser bootstrap, OCR, cross-OS portability, or human takeover.
+The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. There are no model calls. OCR, typed banking results, cross-OS portability, and human takeover remain unverified.
 
 ## Environment and boundaries
 
-`infra/desktop/` packages Xvfb, Openbox, PyAutoGUI, a native Tk test pad, Chromium, x11vnc, and noVNC. Chromium is installed for the next step; a browser workflow has not been launched or validated. Python dependencies are version/hash locked; the Debian base image is digest pinned. Debian packages are resolved at build time and their exact versions recorded in `/opt/desktop/system-packages.txt`, so a later clean build can receive updated OS packages.
+`infra/desktop/` packages Xvfb, Openbox, PyAutoGUI, a native Tk test pad, Chromium, x11vnc, and noVNC. The engine captures X11 pixels directly into memory; it does not create temporary screenshot files. Chromium uses its user-namespace sandbox and a [documented seccomp profile](infra/desktop/SECCOMP.md); startup verifies renderer isolation. Python dependencies are version/hash locked; the Debian base image is digest pinned. Debian packages are resolved at build time and their exact versions recorded in `/opt/desktop/system-packages.txt`, so a later clean build can receive updated OS packages.
 
 The non-root desktop joins an internal Compose network. Only `tmp/desktop-artifacts` is mounted; no host home, browser profile, credentials, or Docker socket is exposed. A separate fixed-destination TCP relay publishes the viewer at `127.0.0.1:6080`. It joins an ordinary bridge network for Docker Desktop port publishing and the internal network to reach the desktop. The relay forwards only to `desktop:6080`; the desktop itself has no default route. This arrangement was necessary because a published port on an internal-only network was not reachable on the tested host.
 
@@ -68,7 +87,7 @@ The viewer is unauthenticated and read-only, intended for synthetic local data. 
 ## Troubleshooting
 
 - **Docker unavailable:** start Docker Desktop and retry. Logs/readiness errors should identify an unhealthy component.
-- **Fresh-pad error:** run `./scripts/desktop reset`, then `smoke`.
+- **Wrong mode or stale screen:** run `./scripts/desktop reset native` for `smoke`, or `reset bank` for `browser-smoke`.
 - **Input stopped:** reset clears the stop and creates a new session.
 - **Image changes not reflected:** run `build`, then `reset`; ordinary `up` deliberately reuses the image.
 - **Build hangs at public base-image metadata:** on the tested Mac, `docker-credential-desktop` stalled during a public pull. An anonymous, temporary client configuration worked without changing global Docker credentials. For that specific issue on macOS, the following builds using the active daemon and public registries:
@@ -93,6 +112,6 @@ JSON
 - [Full first milestone](docs/MILESTONE_1.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-M1-02 is implemented and passes its 13 fixture tests. Next is M1-03: promote the proven desktop primitives into a shared adapter and validate Chromium bootstrap against the banking fixture. Visual recognition and the manual replay artifact follow. Full M1 is not complete. M1-01 was committed and pushed as `c426a49` at the user’s request; subsequent M1-02 changes remain local.
+Next is M1-04: local visual target matching, OCR extraction, bounded visual predicates, and ambiguity detection. The manual capability/interpreter and full scenario suite follow in M1-05/06. Full M1 is not complete. M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60` at the user's requests. M1-03 implementation and evidence are included in this revision.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

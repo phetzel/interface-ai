@@ -1,0 +1,9 @@
+**
+!infra/
+!infra/desktop/
+!infra/desktop/**
+!engine/
+!engine/**
+**/__pycache__/
+**/*.pyc
+**/.venv/

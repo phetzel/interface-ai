@@ -1,0 +1,20 @@
+test_all_invalid_arguments_rejected_before_input (test_desktop.DesktopTests.test_all_invalid_arguments_rejected_before_input) ... ok
+test_backend_failure_is_not_retried (test_desktop.DesktopTests.test_backend_failure_is_not_retried) ... ok
+test_deadline_during_typing (test_desktop.DesktopTests.test_deadline_during_typing) ... ok
+test_display_change_rejects_input (test_desktop.DesktopTests.test_display_change_rejects_input) ... ok
+test_explicit_stale_id_fails_at_construction (test_desktop.DesktopTests.test_explicit_stale_id_fails_at_construction) ... ok
+test_focus_change_rejects_input (test_desktop.DesktopTests.test_focus_change_rejects_input) ... ok
+test_hotkey_backend_failure_also_releases (test_desktop.DesktopTests.test_hotkey_backend_failure_also_releases) ... ok
+test_hotkey_stop_releases_pressed_modifier (test_desktop.DesktopTests.test_hotkey_stop_releases_pressed_modifier) ... ok
+test_invalid_deadlines_rejected (test_desktop.DesktopTests.test_invalid_deadlines_rejected) ... ok
+test_missing_checkpoint_has_bounded_timeout (test_desktop.DesktopTests.test_missing_checkpoint_has_bounded_timeout) ... ok
+test_reset_rejects_old_session_actions (test_desktop.DesktopTests.test_reset_rejects_old_session_actions) ... ok
+test_second_controller_rejected_and_lock_released (test_desktop.DesktopTests.test_second_controller_rejected_and_lock_released) ... ok
+test_stop_before_action_but_observation_allowed (test_desktop.DesktopTests.test_stop_before_action_but_observation_allowed) ... ok
+test_stop_interrupts_typing_between_characters (test_desktop.DesktopTests.test_stop_interrupts_typing_between_characters) ... ok
+test_typing_and_events_omit_input (test_desktop.DesktopTests.test_typing_and_events_omit_input) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.055s
+
+OK

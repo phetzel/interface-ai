@@ -1,6 +1,6 @@
 # Milestone 1: Isolated desktop and model-free banking replay
 
-Status: M1-01 and M1-02 implemented and verified on 2026-09-12. The isolated ARM64 desktop and native smoke are available, as are the three-view React/TypeScript banking fixture, independent expected results, and six harness-controlled scenarios. See [README](../README.md), [desktop evidence](../evidence/poc-m1/desktop/README.md), and [fixture evidence](../evidence/poc-m1/fixture/README.md). M1-03 through M1-06 remain planned; full M1 is not complete. M1-01 was committed and pushed as `c426a49` at the user's request. M1-02 changes remain local; no model calls have been made.
+Status: M1-01 through M1-03 implemented and verified on 2026-09-12. The Linux ARM64 desktop, banking fixture/oracle, shared Python adapter, and sandboxed Chromium bootstrap are available. See [README](../README.md), [desktop evidence](../evidence/poc-m1/desktop/README.md), [fixture evidence](../evidence/poc-m1/fixture/README.md), and [adapter evidence](../evidence/poc-m1/adapter/README.md). M1-04 through M1-06 remain planned; full M1 is not complete. M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60` at the user's requests. M1-03 implementation and evidence are included in this revision; no model calls have been made.
 
 ## Outcome
 
@@ -14,19 +14,19 @@ This milestone validates the desktop and deterministic replay assumptions. The m
 - Docker CLI 28.3.2 is installed and selects the `desktop-linux` context.
 - After the user opened Docker Desktop, the daemon was verified reachable: client/server 28.3.2, Linux architecture `aarch64`, 10 CPUs, and 8,218,034,176 bytes of memory allocated (approximately 7.65 GiB). The earlier daemon-readiness blocker is resolved.
 - Node/npm, system Python, and uv are on PATH. Host Tesseract was not found on PATH; it can be packaged in the desktop image instead.
-- M1-01 built and ran a native ARM64 Debian desktop with PyAutoGUI/Pillow and a native Tk calibration pad. Desktop input, viewing, and lifecycle checks passed. Browser workflow and recognition packages remain later work.
+- M1-01 built and ran a native ARM64 Debian desktop with PyAutoGUI/Pillow and a native Tk calibration pad. Desktop input, viewing, and lifecycle checks passed. M1-03 now validates the same adapter in sandboxed Chromium against both synthetic members; recognition remains later work.
 
-The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. OpenCV/Tesseract and Chromium desktop-workflow compatibility still require their later PoCs. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
+The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. Chromium desktop input now passes its calibration checks. OpenCV/Tesseract recognition still requires its later PoC. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
 
 ## Initial environment design
 
 The target milestone adds a fixture service to the implemented desktop and viewer relay:
 
 1. **fixture:** the built React/TypeScript banking app, served as static assets with bundled synthetic data.
-2. **desktop:** Linux X11 virtual display, a lightweight window manager, Chromium, VNC/noVNC viewing, and the Python runner with PyAutoGUI, OpenCV, Tesseract, and Pydantic. Only PyAutoGUI/Pillow and desktop packages are installed in M1-01.
+2. **desktop:** Linux X11 virtual display, a lightweight window manager, Chromium, VNC/noVNC viewing, and the Python runner with PyAutoGUI, OpenCV, Tesseract, and Pydantic. PyAutoGUI/Pillow, desktop packages, and the shared adapter are installed through M1-03; recognition and schema packages remain later work.
 3. **viewer:** a fixed-destination relay that publishes a loopback port while the desktop retains its internal-only network. See the implementation evidence for the measured Docker Desktop networking issue.
 
-The runner executes inside the desktop environment so screenshot and input coordinates refer to the same display. Start with a proposed 1280×800 display, one monitor, browser zoom 100%, en-US locale, USD currency, and fixed font assets. Verify those dimensions are sufficient for the fixture before freezing the baseline. Host Retina scaling and viewer zoom must not change the runner's coordinate space.
+The runner executes inside the desktop environment so screenshot and input coordinates refer to the same display. The tested baseline is a 1280×800 display, one monitor, browser zoom 100%, en-US locale, USD currency, and fixed font assets. Both native and bank calibration screens fit these verified dimensions. Host Retina scaling and viewer zoom must not change the runner's coordinate space.
 
 Expose the viewer on an available loopback-only port, initially proposed as 6080. Start it view-only during replay to avoid manual input races. Full operator control and human-action capture are deferred. noVNC is a browser-based VNC client, not an automation or ownership system. [noVNC](https://novnc.com/info.html)
 
@@ -102,7 +102,7 @@ An OCR confidence threshold is a rejection heuristic, not proof of accuracy. Exa
 | --- | --- | --- | --- |
 | M1-01 (done) | Environment and readiness | Compose definition, desktop image, viewer, ready/reset/stop commands, native ARM64 smoke check | Reachable Docker daemon |
 | M1-02 (done) | Fixture and oracle | Three views, synthetic records, harness-only scenario controls, expected results | Agreed workflow; can proceed while environment is prepared |
-| M1-03 | Desktop adapter | Pixel/input agreement, trusted app bootstrap, stop checks, native text-entry smoke | M1-01 |
+| M1-03 (done) | Desktop adapter | Pixel/input agreement, trusted app bootstrap, stop checks, native text-entry smoke | M1-01 |
 | M1-04 | Visual primitives | Anchor matching, OCR extraction, bounded visual predicates, ambiguity detection | M1-02 and M1-03 |
 | M1-05 | Manual artifact and interpreter | Validated JSON capability, input bindings, typed outputs, known not-found branch | M1-04; draft types can be written earlier |
 | M1-06 | Acceptance and evidence | Reset-based scenario suite, safe events/crops, measured results, README commands | M1-05 |
@@ -113,7 +113,7 @@ Draft types and fixture UI are independent of Docker availability. The final tar
 
 ## Proposed repository layout
 
-The engine and capability paths below remain planned. The banking fixture, desktop infrastructure, Compose services, helper scripts, and both evidence bundles now exist:
+The engine desktop package and CLI, banking fixture, desktop infrastructure, helper scripts, and three evidence bundles now exist. The vision, contracts, replay, and capability paths below remain planned:
 
 ```text
 apps/bank-fixture/                 React/TypeScript app and fixture scenarios
@@ -176,7 +176,7 @@ If one bounded correction and rerun does not resolve a major recognition failure
 | Question | Default/answer | Blocking? |
 | --- | --- | --- |
 | Is there a time budget or demo date? | User confirmed neither needs to constrain the milestone; use the acceptance gates above | No |
-| Which execution environment? | Existing Docker Desktop on this ARM64 Mac; isolated Linux desktop now verified | Desktop gate passed; browser workflow and recognition remain untested |
+| Which execution environment? | Existing Docker Desktop on this ARM64 Mac; isolated Linux desktop now verified | Native/browser input gates passed; recognition remains untested |
 | Does M1 need an OpenAI key? | No; genuine discovery follows later | No |
 | Must it work on Windows or native macOS now? | No; one tested Linux environment with surface-neutral interfaces | No additional user decision needed |
 | Must the viewer support full human takeover now? | No; same-session observation and stop are included, ownership/capture/resume follow later | Does not block M1; remains mandatory for the final system |

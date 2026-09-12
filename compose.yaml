@@ -25,15 +25,19 @@ services:
   desktop:
     image: interface-ai-desktop:local
     build:
-      context: infra/desktop
+      context: .
+      dockerfile: infra/desktop/Dockerfile
     init: true
     shm_size: 256mb
     mem_limit: 2g
     cpus: 2
     pids_limit: 256
     cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:./infra/desktop/chromium-seccomp.json
     environment:
+      DESKTOP_APP: ${DESKTOP_APP:-native}
       DISPLAY: :99
       XAUTHORITY: /tmp/interface-ai/Xauthority
       XDG_SESSION_TYPE: x11

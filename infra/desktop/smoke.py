@@ -21,20 +21,7 @@ from pathlib import Path
 
 from common import HEIGHT, RUNTIME, SESSION, STATE, STOP, WIDTH, read_json, wait_for, write_json
 from control import ready
-
-
-class Stopped(RuntimeError):
-    pass
-
-
-def check_stop():
-    if STOP.exists():
-        raise Stopped('Input stopped; reset the desktop before starting another run')
-
-
-def act(function, *args, **kwargs):
-    check_stop()
-    return function(*args, **kwargs)
+from interface_ai.desktop import Desktop, DesktopError
 
 
 def assert_calibration_screen(screen):
@@ -136,10 +123,16 @@ def verify_network():
 
 
 def main():
-    import pyautogui as gui
-
     session = ready()
-    check_stop()
+    if session['mode'] != 'native':
+        raise RuntimeError('Native smoke requires ./scripts/desktop reset native')
+    if session['inputStopped']:
+        raise DesktopError('stopped', 'Input stopped; reset before another run')
+    with Desktop(session['id']) as gui:
+        run(gui, session)
+
+
+def run(gui, session):
     initial = read_json(STATE)
     if initial['clicks'] or initial['entry'] or initial['submitted'] or initial['scrollTop']:
         raise RuntimeError('Smoke test requires a fresh pad. Run ./scripts/desktop reset first.')
@@ -147,7 +140,7 @@ def main():
     output = Path('/artifacts') / run_id
     output.mkdir()
     report = {'runId': run_id, 'sessionId': session['id'], 'status': 'running',
-              'kind': 'native-desktop-calibration', 'modelCalls': 0,
+              'kind': 'native-desktop-calibration', 'adapter': 'interface_ai.desktop.Desktop', 'modelCalls': 0,
               'architecture': platform.machine(), 'display': [WIDTH, HEIGHT], 'checks': [],
               'python': platform.python_version(),
               'packages': {name: importlib.metadata.version(name)
@@ -171,7 +164,7 @@ def main():
         record('screenshot_dimensions_and_fixture')
         record('same_framebuffer_and_server_view_only', verify_vnc())
         for number, x in [(1, 100), (2, 320), (3, 540)]:
-            act(gui.click, x, 190)
+            gui.click(x, 190)
             wait_for(f'click {number}', lambda: len(read_json(STATE)['clicks']) == number, 3)
             actual = read_json(STATE)['clicks'][-1]
             if actual != {'target': number, 'x': x, 'y': 190}:
@@ -179,17 +172,17 @@ def main():
             wait_for('green target', lambda: gui.screenshot().getpixel((x + 5, 195))[:3]
                      == (22, 163, 74), 3)
         record('three_pointer_coordinates_and_pixel_changes')
-        act(gui.click, 180, 405)
-        act(gui.write, 'synthetic-input', interval=0.025)
-        act(gui.press, 'home')
-        act(gui.hotkey, 'shift', 'end')
+        gui.click(180, 405)
+        gui.type_text('synthetic-input')
+        gui.press('home')
+        gui.hotkey('shift', 'end')
         expected = 'desktop-' + run_id[-8:]
-        act(gui.write, expected, interval=0.025)
-        act(gui.press, 'enter')
+        gui.type_text(expected)
+        gui.press('enter')
         wait_for('submitted keyboard text', lambda: read_json(STATE)['submitted'] == expected, 3)
         record('native_typing_selection_and_enter', {'matchedSyntheticInput': True})
-        act(gui.moveTo, 1000, 350)
-        act(gui.scroll, -5)
+        gui.move(1000, 350)
+        gui.scroll(-5)
         wait_for('native scroll', lambda: read_json(STATE)['scrollTop'] > 0, 3)
         record('native_scroll', {'topFraction': read_json(STATE)['scrollTop']})
         record('selected_external_egress_blocked', verify_network())
@@ -200,9 +193,10 @@ def main():
             stop_file.write(marker)
         try:
             try:
-                act(gui.click, 100, 190)
-            except Stopped:
-                pass
+                gui.click(100, 190)
+            except DesktopError as exc:
+                if exc.code != 'stopped':
+                    raise
             else:
                 raise AssertionError('Stopped executor dispatched an action')
             if read_json(STATE)['clicks'] != before_stop:

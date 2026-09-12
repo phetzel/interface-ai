@@ -1,0 +1,3 @@
+[interface-ai-desktop:local] sha256:fb69bdfdbce9f10f48d7cd052f4343b514792bfffaab832d4d6ba3bd6b1c24d1 arm64
+[interface-ai-bank-fixture:local] sha256:787c62e3ac7ade85a98f8358901e52edae5908238b2ae29ef77eee60c8e8e68d arm64
+Final reviewed image: sha256:8ab2a59de7346086731e3d7f75db9301cbdd5853e505a510b86deeb278799311 arm64

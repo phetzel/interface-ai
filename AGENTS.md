@@ -4,7 +4,7 @@
 
 - Do not push this repository unless the user explicitly requests a push. The earlier repository-creation request does not authorize subsequent pushes.
 - Do not bypass this restriction by uploading repository changes through a GitHub API or another tool. Local edits may be prepared within the user's requested scope.
-- M1-01 is complete. The user requested a commit/push of that work, followed by M1-02: the React/TypeScript banking fixture, synthetic records, harness scenario controls, and independent expected results. Implement and verify M1-02 locally. Full desktop/browser integration, replay, and model integration remain later packages. The requested push covered the existing M1-01 work, not subsequent M1-02 changes.
+- M1-01 through M1-03 are complete and verified. M1-01/M1-02 were previously committed and pushed at the user's requests; the latest request explicitly authorizes committing and pushing existing M1-03 work. The user clarified that M1-04 is next and authorized implementing visual targeting and OCR locally after this push. The current push covers existing M1-03 work, not subsequent M1-04 changes. Visual recognition, capability replay, and model integration remain later packages.
 
 ## Current planning constraints
 

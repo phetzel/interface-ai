@@ -5,7 +5,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=C.UTF-8 \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH=/opt/venv/bin:$PATH
+    PATH=/opt/venv/bin:$PATH \
+    PYTHONPATH=/opt/engine/src
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates chromium fonts-dejavu-core \
@@ -13,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-dev python3-tk python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.lock /opt/desktop/requirements.lock
+COPY infra/desktop/requirements.lock /opt/desktop/requirements.lock
 RUN python3 -m venv /opt/venv \
     && pip install --no-cache-dir --require-hashes -r /opt/desktop/requirements.lock \
     && useradd --create-home --uid 1000 desktop \
@@ -21,7 +22,8 @@ RUN python3 -m venv /opt/venv \
     && chown desktop:desktop /artifacts \
     && dpkg-query -W > /opt/desktop/system-packages.txt
 
-COPY *.py /opt/desktop/
+COPY infra/desktop/*.py /opt/desktop/
+COPY engine /opt/engine/
 USER desktop
 WORKDIR /home/desktop
 EXPOSE 6080

@@ -1,0 +1,7 @@
+{"sequence": 1, "action": "click", "status": "completed", "durationMs": 13.216}
+{"sequence": 2, "action": "type", "status": "completed", "durationMs": 147.986}
+{"sequence": 3, "action": "hotkey", "status": "completed", "durationMs": 24.327}
+{"sequence": 4, "action": "type", "status": "completed", "durationMs": 72.987}
+{"sequence": 5, "action": "press", "status": "completed", "durationMs": 12.161}
+{"sequence": 6, "action": "click", "status": "completed", "durationMs": 12.574}
+{"sequence": 7, "action": "click", "status": "completed", "durationMs": 11.9}

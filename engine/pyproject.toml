@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "interface-ai"
+version = "0.1.0"
+description = "Desktop execution primitives for the interface-ai assignment"
+requires-python = ">=3.11,<3.12"
+dependencies = ["PyAutoGUI==0.9.54", "Pillow==11.3.0"]
+
+[project.scripts]
+interface-ai = "interface_ai.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

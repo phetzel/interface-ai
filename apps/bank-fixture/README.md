@@ -34,7 +34,7 @@ The container serves `http://fixture:4173` to the desktop's internal Compose net
 
 The Compose `bank` profile keeps the fixture optional for the native desktop calibration test. `./scripts/desktop down` shuts down all project services, including this optional fixture. `./scripts/fixture down` stops only the fixture. Reset recreates the service and selects the scenario; reload an open page to receive that configuration and clear UI state.
 
-M1-03 will launch Chromium at this entry point through the shared desktop adapter. The current noVNC desktop still shows the native calibration pad. The host preview is for fixture development and review, not evidence of computer-use replay.
+M1-03 now launches sandboxed Chromium at this entry point with `./scripts/desktop up bank`. The noVNC viewer shows that isolated desktop; `./scripts/desktop browser-smoke --member-id 00123` exercises fixed-coordinate input through the shared Python adapter. Use `./scripts/desktop reset bank delayed` to start a fresh bank desktop with a scenario. Recognition-based scenario replay remains later work. The host preview is a separate fixture-development surface.
 
 ## Records and scenarios
 

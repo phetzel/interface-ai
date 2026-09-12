@@ -1,49 +1,49 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-
 usage() {
-  echo 'Usage: ./scripts/desktop {build|up|ready|smoke|screenshot|stop-input|reset|down|logs|viewer}'
+  echo 'Usage: ./scripts/desktop {up|reset} [native|bank] [fixture-scenario]'
+  echo '       ./scripts/desktop {build|ready|smoke|browser-smoke|screenshot|stop-input|test|down|logs|viewer}'
+  echo '       ./scripts/desktop action --session SESSION_ID --json ACTION_JSON'
 }
-
-case "${1:-help}" in
+command_name="${1:-help}"
+case "$command_name" in
   help|-h|--help) usage; exit 0 ;;
   viewer)
     printf 'Read-only viewer: http://127.0.0.1:%s/vnc.html?autoconnect=true&resize=scale&view_only=true\n' "${DESKTOP_PORT:-6080}"
-    exit 0
-    ;;
-  build|up|ready|smoke|screenshot|stop-input|reset|down|logs) ;;
+    exit 0 ;;
+  build|up|ready|smoke|browser-smoke|screenshot|stop-input|reset|down|logs|action|test) ;;
   *) usage >&2; exit 2 ;;
 esac
-
-if ! command -v docker >/dev/null 2>&1; then
-  echo 'Docker CLI is missing. Install/start Docker Desktop first.' >&2
-  exit 1
-fi
-if ! docker info >/dev/null 2>&1; then
+if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
   echo 'Docker is unavailable. Start Docker Desktop, then retry.' >&2
   exit 1
 fi
-
-case "$1" in
+shift
+case "$command_name" in
   build) docker compose build desktop ;;
-  up)
+  up|reset)
+    # Preserve a running mode unless the operator explicitly chooses another.
+    current_mode="$(docker compose exec -T desktop python -c "import os; print(os.environ.get('DESKTOP_APP','native'))" 2>/dev/null || true)"
+    desktop_mode="${1:-${current_mode:-native}}"
+    case "$desktop_mode" in native|bank) ;; *) echo 'Mode must be native or bank' >&2; exit 2 ;; esac
+    export DESKTOP_APP="$desktop_mode"
+    if [[ "$desktop_mode" == bank ]]; then ./scripts/fixture up "${2:-default}"; fi
     mkdir -p tmp/desktop-artifacts
-    if ! docker image inspect interface-ai-desktop:local >/dev/null 2>&1; then
-      docker compose build desktop
+    if ! docker image inspect interface-ai-desktop:local >/dev/null 2>&1; then docker compose build desktop; fi
+    if [[ "$command_name" == reset || "$desktop_mode" == bank ]]; then
+      docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 120 desktop viewer
+    else
+      docker compose up --no-build --pull never --detach --wait --wait-timeout 120 desktop viewer
     fi
-    docker compose up --no-build --pull never --detach --wait --wait-timeout 120
+    "$0" ready
     "$0" viewer
     ;;
-  ready) docker compose exec -T desktop python /opt/desktop/control.py ready ;;
+  ready|screenshot|stop-input) docker compose exec -T desktop python /opt/desktop/control.py "$command_name" ;;
   smoke) docker compose exec -T desktop python /opt/desktop/smoke.py ;;
-  screenshot) docker compose exec -T desktop python /opt/desktop/control.py screenshot ;;
-  stop-input) docker compose exec -T desktop python /opt/desktop/control.py stop-input ;;
-  reset)
-    mkdir -p tmp/desktop-artifacts
-    docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 120
-    "$0" ready
-    ;;
+  browser-smoke) docker compose exec -T desktop python /opt/desktop/browser_smoke.py "$@" ;;
+  action) docker compose exec -T desktop python -m interface_ai.cli action "$@" ;;
+  test) docker compose exec -T desktop python -m unittest discover -s /opt/engine/tests -v ;;
   down) docker compose --profile bank down --timeout 10 ;;
   logs) docker compose logs --tail 100 desktop viewer ;;
 esac

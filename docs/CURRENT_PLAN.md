@@ -1,6 +1,6 @@
 # Current planning direction
 
-Updated 2026-09-12. The user authorized the first implementation step. M1-01 provides a verified isolated Linux ARM64 desktop, native input smoke, read-only viewer, and lifecycle commands. M1-02 now adds the React/TypeScript banking fixture, harness scenarios, and independent oracle, with 13 passing browser tests. See [README](../README.md) for actual commands and [ROADMAP.md](ROADMAP.md) for the remaining gates. Banking replay and model integration are not implemented.
+Updated 2026-09-12. M1-01 through M1-03 are implemented: an isolated Linux ARM64 desktop and viewer, the React/TypeScript banking fixture with 13 passing fixture tests, and a shared Python adapter controlling both the native pad and sandboxed Chromium. Adapter validation includes 15 unit tests, eight native checks, eight browser checks per member, and six live guard checks. See [README](../README.md) for commands and [ROADMAP.md](ROADMAP.md) for remaining gates. Visual recognition, banking replay, and model integration are not implemented.
 
 ## Confirmed and open choices
 
@@ -10,11 +10,11 @@ Updated 2026-09-12. The user authorized the first implementation step. M1-01 pro
 | UI | React/TypeScript as the initial sample-app direction | Keep operator UI minimal; no polished console yet |
 | Models | OpenAI only, using one provider key; start with GPT-5.6 Sol | Account access and performance on the actual fixture |
 | Automation | Computer use across application surfaces; start with PyAutoGUI and local visual recognition | Environment packaging and measured replay reliability |
-| Target | Small banking-style app | Exact workflow and fixture screens |
+| Target | Three-view synthetic banking app; read-only savings lookup | Visual targeting and validated output extraction |
 | Schema | Pydantic as the source; portable JSON and exported JSON Schema | Exact locator, checkpoint, and outcome definitions |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted; the implementation assumptions below still need proof. The basic desktop gate has passed on the native calibration fixture; recognition, banking replay, policy, and human handoff remain unverified.
+Initial directions are accepted; the implementation assumptions below still need proof. The desktop gate has passed on native and browser calibration fixtures; recognition, banking replay, policy, and human handoff remain unverified.
 
 ## Revised language comparison
 
@@ -42,7 +42,7 @@ Separate the model-facing computer interface from its OS-specific implementation
 
 The first banking-style application can still run in a browser window. The difference is that the runtime operates the desktop view of that application through the same primitives it could use for a native app. This demonstrates a reusable control mechanism; it does not establish support for every OS, app, or workflow.
 
-Start with one OS, one virtual display, a fixed initial display scale, and synthetic data. A dedicated local desktop VM or isolated Linux desktop is a candidate execution environment. Exact packaging is undecided: it must support screenshots, manual access, and input capture without letting the automation operate the user's personal desktop. This is environment setup, not an infrastructure-scaling project.
+The tested environment is a non-root Linux ARM64 Docker desktop with one 1280×800 X11 display, fixed scale, and synthetic data. Screenshot/input agreement, read-only viewing, and sandboxed Chromium are verified. Interactive human control and event capture remain separate gates. The automation operates the isolated desktop rather than the host desktop.
 
 Playwright can remain useful for testing the sample app or an optional browser adapter later. It is no longer the primary automation abstraction.
 
@@ -89,10 +89,10 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 
 ## Next design work
 
-1. Specify one isolated desktop environment and validate Python input, screenshot, and human-event capture options for it when implementation is requested.
+1. Implement M1-04 visual targeting and extraction on the verified desktop and fixture.
 2. Define the visual locator and output-extraction contract before expanding the sample app.
-3. Specify the minimum banking workflow and its failure fixtures.
+3. Use the implemented banking workflow and failure fixtures to test the locator assumptions.
 4. Define desktop ownership, allowlist enforcement, and safe evidence export.
 5. Once implementation is requested, validate one real discovery and no-model visual replay before adding polish or a second surface.
 
-At the user’s subsequent request, M1-01 was committed and pushed as `c426a49`; M1-02 was then implemented locally. M1-02 remains uncommitted. Future pushes require an explicit request.
+At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was then completed and verified; the user subsequently requested its commit and push. Future pushes require an explicit request.
