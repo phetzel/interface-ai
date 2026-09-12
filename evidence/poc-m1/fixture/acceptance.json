@@ -1,0 +1,112 @@
+{
+  "kind": "fixture-browser-acceptance",
+  "stats": {
+    "startTime": "2026-09-12T08:17:51.979Z",
+    "duration": 5374.144,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "name": "savings lookup preserves identity 00123",
+      "status": "passed",
+      "durationMs": 677,
+      "screenshots": [
+        "search.png",
+        "member.png",
+        "account-a.png"
+      ]
+    },
+    {
+      "name": "savings lookup preserves identity 00456",
+      "status": "passed",
+      "durationMs": 627,
+      "screenshots": [
+        "account-b.png"
+      ]
+    },
+    {
+      "name": "return navigation and another member never retain the old balance",
+      "status": "passed",
+      "durationMs": 988,
+      "screenshots": []
+    },
+    {
+      "name": "missing member is explicit and a later valid search recovers",
+      "status": "passed",
+      "durationMs": 773,
+      "screenshots": []
+    },
+    {
+      "name": "invalid IDs are rejected without trimming, coercion, or silent padding",
+      "status": "passed",
+      "durationMs": 336,
+      "screenshots": []
+    },
+    {
+      "name": "delayed search shows loading before resolving",
+      "status": "passed",
+      "durationMs": 2150,
+      "screenshots": []
+    },
+    {
+      "name": "cancelled delayed search cannot overwrite a fresh search screen",
+      "status": "passed",
+      "durationMs": 2271,
+      "screenshots": []
+    },
+    {
+      "name": "blocked search never reaches a result and can be reset",
+      "status": "passed",
+      "durationMs": 2259,
+      "screenshots": []
+    },
+    {
+      "name": "duplicate scenario presents two indistinguishable savings targets",
+      "status": "passed",
+      "durationMs": 479,
+      "screenshots": [
+        "duplicate.png"
+      ]
+    },
+    {
+      "name": "unreadable output never presents a numerical savings balance",
+      "status": "passed",
+      "durationMs": 465,
+      "screenshots": [
+        "unreadable.png"
+      ]
+    },
+    {
+      "name": "translated content moves 40 pixels on both axes and remains usable",
+      "status": "passed",
+      "durationMs": 582,
+      "screenshots": [
+        "translated.png"
+      ]
+    },
+    {
+      "name": "only launch-time scenario controls apply; oracle and source are not served",
+      "status": "passed",
+      "durationMs": 514,
+      "screenshots": []
+    },
+    {
+      "name": "configuration fetch failure does not silently use the default fixture",
+      "status": "passed",
+      "durationMs": 107,
+      "screenshots": []
+    }
+  ],
+  "browser": "Chrome for Testing 153.0.8010.12 (Playwright Chromium v1243, mac-arm64)",
+  "viewport": [
+    1280,
+    800
+  ],
+  "locale": "en-US",
+  "modelCalls": 0,
+  "rawReportSha256": "023e2e83ce816811e987dea1d9afc4e91537c93eab72c4889b773de309f4467e",
+  "scope": "DOM-based fixture tests, not computer-use replay or model discovery"
+}

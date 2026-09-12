@@ -44,6 +44,6 @@ case "$1" in
     docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 120
     "$0" ready
     ;;
-  down) docker compose down --timeout 10 ;;
+  down) docker compose --profile bank down --timeout 10 ;;
   logs) docker compose logs --tail 100 desktop viewer ;;
 esac

@@ -1,6 +1,6 @@
 # Milestone 1: Isolated desktop and model-free banking replay
 
-Status: M1-01 implemented and verified on 2026-09-12. The isolated ARM64 desktop, native calibration smoke, read-only viewer, readiness/reset/stop/shutdown commands are available; see [README](../README.md) and [desktop evidence](../evidence/poc-m1/desktop/README.md). All remaining packages below are still planned. Full M1 is not complete. No model calls, commits, or pushes were made for this implementation step.
+Status: M1-01 and M1-02 implemented and verified on 2026-09-12. The isolated ARM64 desktop and native smoke are available, as are the three-view React/TypeScript banking fixture, independent expected results, and six harness-controlled scenarios. See [README](../README.md), [desktop evidence](../evidence/poc-m1/desktop/README.md), and [fixture evidence](../evidence/poc-m1/fixture/README.md). M1-03 through M1-06 remain planned; full M1 is not complete. M1-01 was committed and pushed as `c426a49` at the user's request. M1-02 changes remain local; no model calls have been made.
 
 ## Outcome
 
@@ -16,7 +16,7 @@ This milestone validates the desktop and deterministic replay assumptions. The m
 - Node/npm, system Python, and uv are on PATH. Host Tesseract was not found on PATH; it can be packaged in the desktop image instead.
 - M1-01 built and ran a native ARM64 Debian desktop with PyAutoGUI/Pillow and a native Tk calibration pad. Desktop input, viewing, and lifecycle checks passed. Browser workflow and recognition packages remain later work.
 
-The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. OpenCV/Tesseract and Chromium workflow compatibility still require their later PoCs. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
+The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. OpenCV/Tesseract and Chromium desktop-workflow compatibility still require their later PoCs. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
 
 ## Initial environment design
 
@@ -65,7 +65,7 @@ Use three small views:
 2. **Member detail:** visible member identity and an account list containing both checking and savings.
 3. **Account detail:** visible member identity, account type, balance, currency, and a route back to search.
 
-Initial proposed fixtures:
+Implemented fixtures (expected results belong to the harness):
 
 | Input | Visible savings balance | Expected typed result |
 | --- | --- | --- |
@@ -77,7 +77,7 @@ Use visibly synthetic labels such as Demo Member A/B. Preserve leading zeroes in
 
 The app does not require a backend in M1. Scenario configuration and data reset belong to the test harness, not the replay action contract. The harness may read expected values and configure failure scenarios; the runner may not obtain results from fixture source, app state, DOM, browser evaluation, an HTTP API, or hidden metadata. The interpreter sees only declared inputs, its artifact, screenshots, and local recognition results.
 
-Fixture variants: default, bounded loading delay, permanently blocked loading/checkpoint, duplicated target in the same search scope, unreadable output, and a modest content/window translation within the display.
+Implemented variants: default (250 ms search), delayed (1,800 ms), permanently blocked search, duplicated savings target in the same account list, unreadable balance, and +40 px main-content translation on both axes at desktop widths. Controls are launch-time environment settings, not UI or query-string options. The app and expected-result oracle are tested independently of the future replay engine; see [fixture README](../apps/bank-fixture/README.md).
 
 ## Minimal contracts
 
@@ -101,7 +101,7 @@ An OCR confidence threshold is a rejection heuristic, not proof of accuracy. Exa
 | Order | Package | Concrete deliverable | Depends on |
 | --- | --- | --- | --- |
 | M1-01 (done) | Environment and readiness | Compose definition, desktop image, viewer, ready/reset/stop commands, native ARM64 smoke check | Reachable Docker daemon |
-| M1-02 | Fixture and oracle | Three views, synthetic records, harness-only scenario controls, expected results | Agreed workflow; can proceed while environment is prepared |
+| M1-02 (done) | Fixture and oracle | Three views, synthetic records, harness-only scenario controls, expected results | Agreed workflow; can proceed while environment is prepared |
 | M1-03 | Desktop adapter | Pixel/input agreement, trusted app bootstrap, stop checks, native text-entry smoke | M1-01 |
 | M1-04 | Visual primitives | Anchor matching, OCR extraction, bounded visual predicates, ambiguity detection | M1-02 and M1-03 |
 | M1-05 | Manual artifact and interpreter | Validated JSON capability, input bindings, typed outputs, known not-found branch | M1-04; draft types can be written earlier |
@@ -113,7 +113,7 @@ Draft types and fixture UI are independent of Docker availability. The final tar
 
 ## Proposed repository layout
 
-The engine, banking fixture, and capability paths below remain planned. `infra/desktop/`, `compose.yaml`, `scripts/desktop`, and desktop evidence now exist:
+The engine and capability paths below remain planned. The banking fixture, desktop infrastructure, Compose services, helper scripts, and both evidence bundles now exist:
 
 ```text
 apps/bank-fixture/                 React/TypeScript app and fixture scenarios

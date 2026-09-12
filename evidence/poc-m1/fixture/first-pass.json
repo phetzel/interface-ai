@@ -1,0 +1,12 @@
+{
+  "stats": {
+    "startTime": "2026-09-12T08:15:55.605Z",
+    "duration": 8631.100999999999,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "rawReportSha256": "e50fcf6ac2c8f49722cec7cab7150dc4c7d55ad9d7418925789b47533631f571",
+  "errorMessages": []
+}

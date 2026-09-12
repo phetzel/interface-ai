@@ -1,0 +1,21 @@
+{
+  "files": {
+    "assets/index-BB7uY-0N.js": "d146ea4f04f2a5b2b4e8337e6d78bc890f050d2d4da241e15c0fcfeb8cbb0345",
+    "assets/index-C437a0s7.css": "0b647265c47b2a0c180c766b13d7511b454fb14af2f24b966c4ca6923c950aae",
+    "assets/inter-latin-400-normal-C38fXH4l.woff2": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc",
+    "assets/inter-latin-400-normal-CyCys3Eg.woff": "e20fa0b4fd2dd26e4d14b3ac3cc922509c3a63fa5e910e90c614544aa042dd45",
+    "assets/inter-latin-500-normal-BL9OpVg8.woff": "9b42c108da48b5ed55a3072e815ffee2d271562e6c0dd6998910e8f9c09e0a3d",
+    "assets/inter-latin-500-normal-Cerq10X2.woff2": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f",
+    "assets/inter-latin-600-normal-CiBQ2DWP.woff": "6a9cb3a509b4eeaf12b7dda6c4aacac3e85d07f4201bf4dd716e332e692b87bd",
+    "assets/inter-latin-600-normal-LgqL8muc.woff2": "f9a06e79cd3a2a20951c0f0e28f66dd0e6d3fda73911d640a2125c8fcb78f21a",
+    "assets/inter-latin-700-normal-BLAVimhd.woff": "7c5ed5655730de337704d3fc94628515cd7e3d8d32368871709bf56ac0397e7a",
+    "assets/inter-latin-700-normal-Yt3aPRUw.woff2": "6f56409fd3d64bb85f7d070bce20749db2d66b6d63cec586cc22d1c761be2491",
+    "index.html": "3521448923e84d839e6948281a21ff51f3ad7506528001c5fd9da7c97b56991e"
+  },
+  "fontLicenseIncluded": true,
+  "healthy": true,
+  "status": "passed",
+  "imageId": "sha256:787c62e3ac7ade85a98f8358901e52edae5908238b2ae29ef77eee60c8e8e68d",
+  "architecture": "arm64",
+  "browserTestedAssetsMatch": true
+}

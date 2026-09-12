@@ -1,0 +1,173 @@
+{
+  "status": "passed",
+  "kind": "fixture-container-integration",
+  "commands": [
+    {
+      "command": [
+        "./scripts/desktop",
+        "down"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "Container interface-ai-fixture-1  Stopping\n Container interface-ai-viewer-1  Stopping\n Container interface-ai-fixture-1  Stopped\n Container interface-ai-fixture-1  Removing\n Container interface-ai-fixture-1  Removed\n Container interface-ai-viewer-1  Stopped\n Container interface-ai-viewer-1  Removing\n Container interface-ai-viewer-1  Removed\n Container interface-ai-desktop-1  Stopping\n Container interface-ai-desktop-1  Stopped\n Container interface-ai-desktop-1  Removing\n Container interface-ai-desktop-1  Removed\n Network interface-ai_viewer  Removing\n Network interface-ai_desktop  Removing\n Network interface-ai_desktop  Removed\n Network interface-ai_viewer  Removed"
+    },
+    {
+      "command": [
+        "./scripts/fixture",
+        "ready"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "service \"fixture\" is not running"
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "up"
+      ],
+      "exitCode": 0,
+      "stdout": "Read-only viewer: http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true",
+      "stderr": "Network interface-ai_desktop  Creating\n Network interface-ai_desktop  Created\n Network interface-ai_viewer  Creating\n Network interface-ai_viewer  Created\n Container interface-ai-desktop-1  Creating\n Container interface-ai-desktop-1  Created\n Container interface-ai-viewer-1  Creating\n Container interface-ai-viewer-1  Created\n Container interface-ai-desktop-1  Starting\n Container interface-ai-desktop-1  Started\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Starting\n Container interface-ai-viewer-1  Started\n Container interface-ai-desktop-1  Waiting\n Container interface-ai-viewer-1  Waiting\n Container interface-ai-desktop-1  Healthy\n Container interface-ai-viewer-1  Healthy"
+    },
+    {
+      "command": [
+        "./scripts/fixture",
+        "up"
+      ],
+      "exitCode": 0,
+      "stdout": "Fixture ready: http://fixture:4173 inside the desktop network; scenario=default. Reload any open fixture page after reset.",
+      "stderr": "Container interface-ai-fixture-1  Creating\n Container interface-ai-fixture-1  Created\n Container interface-ai-fixture-1  Starting\n Container interface-ai-fixture-1  Started\n Container interface-ai-fixture-1  Waiting\n Container interface-ai-fixture-1  Healthy"
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "desktop",
+        "python",
+        "-c",
+        "import urllib.request; print(urllib.request.urlopen('http://fixture:4173/fixture-config.json', timeout=3).read().decode())"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"searchDelayMs\":250,\"blockSearch\":false,\"duplicateSavings\":false,\"hideBalance\":false,\"offsetPx\":0}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/fixture",
+        "reset",
+        "delayed"
+      ],
+      "exitCode": 0,
+      "stdout": "Fixture ready: http://fixture:4173 inside the desktop network; scenario=delayed. Reload any open fixture page after reset.",
+      "stderr": "Container interface-ai-fixture-1  Recreate\n Container interface-ai-fixture-1  Recreated\n Container interface-ai-fixture-1  Starting\n Container interface-ai-fixture-1  Started\n Container interface-ai-fixture-1  Waiting\n Container interface-ai-fixture-1  Healthy"
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "desktop",
+        "python",
+        "-c",
+        "import urllib.request; print(urllib.request.urlopen('http://fixture:4173/fixture-config.json', timeout=3).read().decode())"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"searchDelayMs\":1800,\"blockSearch\":false,\"duplicateSavings\":false,\"hideBalance\":false,\"offsetPx\":0}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/fixture",
+        "reset",
+        "typo"
+      ],
+      "exitCode": 2,
+      "stdout": "",
+      "stderr": "Unknown fixture scenario: typo\nUsage: ./scripts/fixture {up|reset|build|ready|logs|down|preview} [default|delayed|blocked|duplicate|unreadable|translated]"
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "desktop",
+        "python",
+        "-c",
+        "import urllib.request; print(urllib.request.urlopen('http://fixture:4173/fixture-config.json', timeout=3).read().decode())"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"searchDelayMs\":1800,\"blockSearch\":false,\"duplicateSavings\":false,\"hideBalance\":false,\"offsetPx\":0}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/fixture",
+        "reset"
+      ],
+      "exitCode": 0,
+      "stdout": "Fixture ready: http://fixture:4173 inside the desktop network; scenario=default. Reload any open fixture page after reset.",
+      "stderr": "Container interface-ai-fixture-1  Recreate\n Container interface-ai-fixture-1  Recreated\n Container interface-ai-fixture-1  Starting\n Container interface-ai-fixture-1  Started\n Container interface-ai-fixture-1  Waiting\n Container interface-ai-fixture-1  Healthy"
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "desktop",
+        "python",
+        "-c",
+        "import urllib.request; print(urllib.request.urlopen('http://fixture:4173/fixture-config.json', timeout=3).read().decode())"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"searchDelayMs\":250,\"blockSearch\":false,\"duplicateSavings\":false,\"hideBalance\":false,\"offsetPx\":0}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "exec",
+        "-T",
+        "fixture",
+        "node",
+        "-e",
+        "const fs=require('node:fs'); const routes=fs.readFileSync('/proc/net/route','utf8').trim().split('\\n').slice(1); if(routes.some(r=>r.split(/\\s+/)[1]==='00000000')) process.exit(1); for(const p of ['/app/tests','/app/src','/app/node_modules']) if(fs.existsSync(p)) process.exit(1); console.log(JSON.stringify({node:process.version,arch:process.arch,noDefaultIpv4Route:true,noOracleSourceOrDependencies:true}))"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"node\":\"v22.23.2\",\"arch\":\"arm64\",\"noDefaultIpv4Route\":true,\"noOracleSourceOrDependencies\":true}",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "./scripts/desktop",
+        "ready"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\": \"06f98b46-0a77-439d-a199-6079f0e8df08\", \"display\": \":99\", \"width\": 1280, \"height\": 800, \"viewer\": \"read-only\", \"pids\": {\"display\": 9, \"window manager\": 14, \"native test pad\": 21, \"read-only VNC\": 35, \"web viewer\": 36}}",
+      "stderr": ""
+    }
+  ],
+  "imageId": "sha256:da00580ce69a4722bdfcec2db1c17ef12feaf010e2db00f418f7d6e1b12d1c4f",
+  "runtime": {
+    "node": "v22.23.2",
+    "arch": "arm64",
+    "noDefaultIpv4Route": true,
+    "noOracleSourceOrDependencies": true
+  },
+  "checks": [
+    "project_shutdown_includes_fixture",
+    "desktop_and_fixture_start_healthy",
+    "desktop_can_fetch_fixture_config",
+    "scenario_reset_to_delayed_and_default",
+    "invalid_scenario_rejected_without_mutation",
+    "non_root_read_only_no_mounts",
+    "internal_network_only_no_published_ports",
+    "no_default_ipv4_route",
+    "oracle_source_and_npm_dependencies_absent_from_runtime"
+  ]
+}

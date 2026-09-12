@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "description": "Harness-only expectations, authored independently from src/data.ts. Never imported into the app or served.",
+  "successes": [
+    {
+      "memberId": "00123",
+      "memberName": "Demo Member A",
+      "accountType": "Savings",
+      "lastFour": "7421",
+      "amountMinor": 123456,
+      "currency": "USD",
+      "displayBalance": "$1,234.56"
+    },
+    {
+      "memberId": "00456",
+      "memberName": "Demo Member B",
+      "accountType": "Savings",
+      "lastFour": "1956",
+      "amountMinor": 9807,
+      "currency": "USD",
+      "displayBalance": "$98.07"
+    }
+  ],
+  "missing": {
+    "memberId": "00999",
+    "outcome": "member_not_found",
+    "message": "Member not found"
+  },
+  "invalidIds": ["", "123", "123456", "00a23", " 00123", "00123 ", "１２３４５"]
+}

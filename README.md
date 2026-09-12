@@ -2,9 +2,22 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**Implemented: M1-01, the isolated desktop and native input smoke test.** It runs a synthetic native calibration pad in Linux on Docker Desktop, with real screenshots, mouse/keyboard input, and a read-only live viewer. The banking app, visual replay, model integration, and human takeover are still planned. No OpenAI key is needed for this step.
+**Implemented: M1-01 (isolated desktop) and M1-02 (banking fixture and oracle).** The native desktop supports real screenshots, mouse/keyboard input, and read-only viewing. The React/TypeScript fixture provides member search, account selection, balances, and controlled failure scenarios. Shared desktop/browser integration, visual replay, model integration, and human takeover remain later work. No OpenAI key is needed for these steps.
 
-## Run the first step
+## Preview the banking fixture
+
+```sh
+cd apps/bank-fixture
+npm ci
+npm run build
+npm run preview
+```
+
+Open the [banking preview](http://127.0.0.1:4173). Search for `00123` or `00456`, then open Savings; `00999` demonstrates member not found. [Fixture setup, scenario controls, and tests](apps/bank-fixture/README.md) · [M1-02 evidence](evidence/poc-m1/fixture/README.md).
+
+To run the fixture inside the desktop network, use `./scripts/fixture up` from the root. It serves `http://fixture:4173` internally. The current noVNC desktop still shows the calibration pad; launching and controlling Chromium through the shared adapter is M1-03.
+
+## Run the native desktop step
 
 Prerequisite: Docker Desktop running with Docker Compose v2. Tested on an Apple Silicon Mac with native Linux ARM64 containers, Docker 28.3.2 and Compose 2.39.1. No host Python or Node installation is required. The first build downloads public Debian and Python packages and needs internet access; subsequent starts reuse the local image. The desktop is limited to 2 CPUs/2 GiB and the viewer relay to 0.5 CPU/128 MiB.
 
@@ -25,7 +38,7 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
 | `./scripts/desktop screenshot` | Save the known synthetic screen to `tmp/desktop-artifacts/desktop.png` |
 | `./scripts/desktop stop-input` | Prevent the smoke executor's next input dispatch; reset required to run again |
 | `./scripts/desktop reset` | Recreate both containers with a fresh session and pad; preserve exported evidence |
-| `./scripts/desktop down` | Stop and remove this project's containers/networks; keep image and evidence |
+| `./scripts/desktop down` | Stop and remove all project services, including the optional fixture; keep images and evidence |
 | `./scripts/desktop build` | Explicitly rebuild after changing desktop source/dependencies |
 | `./scripts/desktop logs` | Show recent desktop and viewer logs |
 | `./scripts/desktop viewer` | Print the local viewer URL |
@@ -80,6 +93,6 @@ JSON
 - [Full first milestone](docs/MILESTONE_1.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-Next is M1-02: the small React/TypeScript banking fixture and independent expected results. M1-03 then promotes the proven input primitives into a shared adapter and validates browser bootstrap. Visual recognition and the manual replay artifact follow. Full M1 is not complete.
+M1-02 is implemented and passes its 13 fixture tests. Next is M1-03: promote the proven desktop primitives into a shared adapter and validate Chromium bootstrap against the banking fixture. Visual recognition and the manual replay artifact follow. Full M1 is not complete. M1-01 was committed and pushed as `c426a49` at the user’s request; subsequent M1-02 changes remain local.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

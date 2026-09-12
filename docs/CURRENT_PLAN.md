@@ -1,6 +1,6 @@
 # Current planning direction
 
-Updated 2026-09-12. The user authorized the first implementation step. M1-01 now provides a verified isolated Linux ARM64 desktop, native input smoke, read-only viewer, and lifecycle commands. See [README](../README.md) for actual commands and [ROADMAP.md](ROADMAP.md) for the remaining gates. Banking replay and model integration are not implemented.
+Updated 2026-09-12. The user authorized the first implementation step. M1-01 provides a verified isolated Linux ARM64 desktop, native input smoke, read-only viewer, and lifecycle commands. M1-02 now adds the React/TypeScript banking fixture, harness scenarios, and independent oracle, with 13 passing browser tests. See [README](../README.md) for actual commands and [ROADMAP.md](ROADMAP.md) for the remaining gates. Banking replay and model integration are not implemented.
 
 ## Confirmed and open choices
 
@@ -95,4 +95,4 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 4. Define desktop ownership, allowlist enforcement, and safe evidence export.
 5. Once implementation is requested, validate one real discovery and no-model visual replay before adding polish or a second surface.
 
-M1-01 was built and tested locally after the user requested implementation. No commits or pushes were made for this step. Future pushes require an explicit request.
+At the user’s subsequent request, M1-01 was committed and pushed as `c426a49`; M1-02 was then implemented locally. M1-02 remains uncommitted. Future pushes require an explicit request.

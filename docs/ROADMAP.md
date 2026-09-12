@@ -2,7 +2,7 @@
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-Status 2026-09-12: the user authorized M1-01. The basic desktop PoC A has passed on a native calibration pad: screenshot/input agreement, viewing, stop, reset, and restart. The banking fixture and all other gates remain planned. See [desktop evidence](../evidence/poc-m1/desktop/README.md). Changes remain local; pushes require an explicit user request.
+Status 2026-09-12: the user authorized M1-01. The basic desktop PoC A has passed on a native calibration pad: screenshot/input agreement, viewing, stop, reset, and restart. M1-02 is now implemented: three banking views, synthetic records, an independent oracle, and six fixture scenarios pass 13 browser tests. The shared adapter/browser bootstrap and all other gates remain planned. See [desktop evidence](../evidence/poc-m1/desktop/README.md). Changes remain local; pushes require an explicit user request.
 
 ## Objective and order of work
 
@@ -170,12 +170,12 @@ The native desktop gate passed. An initial focus failure and viewer-port issue w
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | M1-02 and subsequent packages; only M1-01 was requested so far | Plans and dependency definitions are ready |
+| Further implementation scope | M1-03 and subsequent packages; M1-01 and M1-02 were requested and completed | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — basic gate passed | Shared adapter, browser fixture integration, and handoff | Fixture and contracts can proceed |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
-| Minimal fixture/reset data | Meaningful replay and error scenarios | Generic desktop smoke check can use a test pad |
+| Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
 | Visual recognition/extraction gate | Stable artifact and honest replay claims | Handoff and policy can proceed |
 | Policy/evidence gate | Controlled real model execution and safe retention | Local deterministic recognition experiments can proceed |
 | Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-The next implementation package is M1-02, the banking fixture and expected-result oracle. The desktop prerequisite is ready; shared adapter/browser bootstrap and recognition gates still need implementation and verification.
+The next implementation package is M1-03: shared desktop adapter and trusted Chromium bootstrap into the banking fixture. Both the native desktop and the fixture/oracle are ready. Recognition, replay, policy, and handoff gates still need implementation and verification.

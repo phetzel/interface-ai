@@ -1,0 +1,22 @@
+{
+  "apps/bank-fixture/.dockerignore": "d54e9e4dc8466223c5a80271503273cfa4e0b6e7df2e7ccee7e571e0b061d6ee",
+  "apps/bank-fixture/Dockerfile": "3fcd0d8a30adfc6f3ef35d2b64504e712eaab4cd557bcd09f12d53a1d0f5f5ce",
+  "apps/bank-fixture/INTER-LICENSE.txt": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345",
+  "apps/bank-fixture/index.html": "6da30e0bea9ebd6759e731820efb103cd27406ffd8fed04969b8aba4e77a16d9",
+  "apps/bank-fixture/package-lock.json": "d56024a6d49483346c074585b06734736977eb89103f4934bf4da7594cb83b50",
+  "apps/bank-fixture/package.json": "3f7ff809023ed3bd8faa900fa35746784418b9ef8020c9dd3b05d1d3d4f3d373",
+  "apps/bank-fixture/playwright.config.ts": "72745dbb0605f1fb1259e7ac1ddc9a69b69872a9ef078b75e6fc4e314187ac3d",
+  "apps/bank-fixture/server/index.mjs": "0ff420a226af96fea95d4f055a9ecdd0047bbbf1eee6e23537838019c5ab387f",
+  "apps/bank-fixture/server/scenarios.mjs": "97a42090d0a9068067328851735a2d5f1af3cb090828143afdb945efca5f6bd8",
+  "apps/bank-fixture/src/App.tsx": "79dcacafcfc95bd1d53aee766f6b37d12f29380a4337604eaddd7ba22e42218c",
+  "apps/bank-fixture/src/data.ts": "771681befda0f2e0d7d4f96eae2a83bfa6cfde2285f23c763bcfa1ae28fb6893",
+  "apps/bank-fixture/src/main.tsx": "096a8ca15cf8a1e43b5485b3e2861154a3fb4d5dd04f98dbb00bd0355fc52a57",
+  "apps/bank-fixture/src/styles.css": "cb6b4b61f21d4f6a8cbcb9338ee98bf24789dc634829ce98998742ec84b3fdac",
+  "apps/bank-fixture/tests/fixture.spec.ts": "b408af84c6a256f12d19fd9befd2fe0588677561bc19b5ca73d7bb5108ab008a",
+  "apps/bank-fixture/tests/oracle.json": "4cae9832c57f6e6dcdf30b05e7176932282913f78f91f921dee3e4ecd245a83f",
+  "apps/bank-fixture/tsconfig.json": "bf01ada3ffc98680f9071a894fe688deb1d0558f6a491645488258b1fa693e7f",
+  "apps/bank-fixture/vite.config.mjs": "cf7beaf097064897c80b21209b81082e8f3e88a22166b643444920db32a4aa89",
+  "compose.yaml": "f654091b4c52f4b9e763bcbbffdc58208035aa11a102846632e89e599edfcbad",
+  "scripts/desktop": "14ce355cb4d013c8b3e6a79d6210aba6b3fd6a25629814140e8c81bf60c789c4",
+  "scripts/fixture": "aec59a6b67e528d8b81f920916bfcbe273fc44717dd863239c1a88383577bb7f"
+}

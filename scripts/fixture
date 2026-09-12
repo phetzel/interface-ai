@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+usage() { echo 'Usage: ./scripts/fixture {up|reset|build|ready|logs|down|preview} [default|delayed|blocked|duplicate|unreadable|translated]'; }
+command_name="${1:-help}"
+scenario="${2:-default}"
+case "$command_name" in
+  help|-h|--help) usage; exit 0 ;;
+  up|reset|build|ready|logs|down|preview) ;;
+  *) usage >&2; exit 2 ;;
+esac
+case "$scenario" in default|delayed|blocked|duplicate|unreadable|translated) ;; *) echo "Unknown fixture scenario: $scenario" >&2; usage >&2; exit 2 ;; esac
+export FIXTURE_SCENARIO="$scenario"
+if [[ "$command_name" == preview ]]; then
+  cd apps/bank-fixture
+  exec npm run preview
+fi
+if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
+  echo 'Docker is unavailable. Start Docker Desktop, then retry.' >&2
+  exit 1
+fi
+case "$command_name" in
+  build) docker compose build fixture ;;
+  up|reset)
+    if ! docker image inspect interface-ai-bank-fixture:local >/dev/null 2>&1; then
+      docker compose build fixture
+    fi
+    docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 60 fixture
+    echo "Fixture ready: http://fixture:4173 inside the desktop network; scenario=$scenario. Reload any open fixture page after reset."
+    ;;
+  ready) docker compose exec -T fixture node -e "fetch('http://127.0.0.1:4173/healthz').then(async r=>{if(!r.ok)process.exit(1);console.log(await r.text())}).catch(()=>process.exit(1))" ;;
+  logs) docker compose logs --tail 50 fixture ;;
+  down) docker compose rm --stop --force fixture ;;
+esac

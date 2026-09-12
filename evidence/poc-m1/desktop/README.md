@@ -34,4 +34,4 @@ From the repository root, run `./scripts/desktop up`, then `./scripts/desktop re
 
 The pad oracle independently records delivered native events for this calibration test. Its state file and fixed coordinates are not an accepted shortcut for banking replay. The desktop has no model credentials or host profile mount. The egress test proves no default IPv4 route and failure of two selected external TCP probes; it does not audit every network protocol. The relay has a normal bridge network for port publishing.
 
-This step does not prove browser bootstrap/sandbox compatibility, local OCR, stable visual locators, general screenshot redaction, application/action policy, or recorded human intervention. Those remain subsequent implementation packages and gates. No commit or push was made for M1-01.
+This step does not prove browser bootstrap/sandbox compatibility, local OCR, stable visual locators, general screenshot redaction, application/action policy, or recorded human intervention. Those remain subsequent implementation packages and gates. This evidence was captured before M1-01 was committed. The user subsequently requested its commit and push (`c426a49`).
