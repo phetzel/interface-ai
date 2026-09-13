@@ -1,20 +1,20 @@
 # Current planning direction
 
-Updated 2026-09-12. M1-01 through M1-05 are implemented. The verified desktop and visual primitives now support a strict manual JSON capability and interpreter, input bindings, typed success/failure results, and the member-not-found branch. Forty-four unit tests, nine real artifact integration cases, and independent validation of four published schemas pass. See [README](../README.md) and [M1-05 evidence](../evidence/poc-m1/replay/README.md). Repeated acceptance, model discovery, policy, and human takeover remain later gates.
+Updated 2026-09-12. **M1-01 through M1-06 are complete** for the fixed Linux ARM64 environment. The strict manual capability passes the full acceptance gate: 47 tests, ten clean-reset baselines, seven scenarios, and seven rejection cases. Four portable schemas and all 41 results across the failed and corrected attempts validate independently. See [README](../README.md) and [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). Model discovery, full policy/evidence enforcement, and human takeover remain later gates.
 
 ## Confirmed and open choices
 
 | Area | Confirmed by the user | Still open |
 | --- | --- | --- |
-| Language | Python engine; TypeScript available for UI | Validate the desktop dependencies in the PoC |
+| Language | Python engine; TypeScript available for UI | Dependencies pass M1 on Linux ARM64; other environments remain untested |
 | UI | React/TypeScript as the initial sample-app direction | Keep operator UI minimal; no polished console yet |
 | Models | OpenAI only, using one provider key; start with GPT-5.6 Sol | Account access and performance on the actual fixture |
-| Automation | Computer use across application surfaces; start with PyAutoGUI and local visual recognition | Environment packaging and measured replay reliability |
-| Target | Three-view synthetic banking app; read-only savings lookup | Visual targeting and validated output extraction |
-| Schema | Pydantic as the source; portable JSON and exported JSON Schema | Exact locator, checkpoint, and outcome definitions |
+| Automation | Computer use across application surfaces; PyAutoGUI and local visual recognition pass M1 | Broader rendering conditions, model discovery, and human ownership |
+| Target | Three-view synthetic banking app; read-only savings lookup passes M1 | Additional policy, dialog, session-expiry, and handoff scenarios |
+| Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and future ownership extensions |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted; the implementation assumptions below still need proof. The desktop gate has passed on native and browser calibration fixtures; local recognition primitives now pass their bounded checks; manual artifact replay passes the integration checks; repeated acceptance, policy, and human handoff remain unverified.
+Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. Model discovery, full policy/evidence enforcement, and human handoff still need proof.
 
 ## Revised language comparison
 
@@ -57,7 +57,7 @@ Recording screenshot coordinates is insufficient. A replay target should describ
 | OS accessibility role/name/path | Structured target identity and text where exposed | Coverage and APIs vary by OS/application |
 | Absolute coordinates | Simple input execution | Useful only after validating the current target; not the durable locator |
 
-**Proposed first replay approach:** visual anchors and local OCR within a constrained desktop environment, with explicit screen preconditions and match thresholds. Keep accessibility targeting as an adapter option. Before committing to this approach, validate that it can locate the chosen controls and extract different synthetic balances without an LLM.
+**Validated M1 replay approach:** visual anchors and local OCR within a constrained desktop environment, with explicit screen preconditions and match thresholds. The repeated gate verifies control location and exact extraction for both synthetic members without an LLM. Keep accessibility targeting as an adapter option; broader rendering conditions need separate tests.
 
 OpenCV provides template matching and Tesseract provides local OCR. These are candidate building blocks, not a claim that robust replay is solved by installing them. [OpenCV template matching](https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html), [Tesseract documentation](https://tesseract-ocr.github.io/tessdoc/)
 
@@ -89,10 +89,10 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 
 ## Next design work
 
-1. Complete M1-06’s repeated acceptance and reproducibility gate using the implemented manual capability.
-2. Define the visual locator and output-extraction contract before expanding the sample app.
-3. Use the implemented banking workflow and failure fixtures to test the locator assumptions.
-4. Define desktop ownership, allowlist enforcement, and safe evidence export.
-5. Once implementation is requested, validate one real discovery and no-model visual replay before adding polish or a second surface.
+1. Define PoC B's application/operation policy, destination enforcement, and safe evidence export.
+2. Define PoC D's same-session human ownership, permitted input capture, and verified resumption.
+3. Extend the fixture only with the exception scenarios needed to test those mechanisms.
+4. Verify OpenAI API access, then validate genuine discovery to a reusable artifact using the proven replay contract and policy gate.
+5. Integrate the scenario matrix and prepare the final reproducible submission before adding polish or another surface.
 
-At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was subsequently committed and pushed as `79bf84e`. M1-04 was then committed and pushed as `1d89ba8`. M1-05 is verified and committed locally at the user's request; it has not been pushed. Future pushes require an explicit request.
+At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was subsequently committed and pushed as `79bf84e`. M1-04 was then committed and pushed as `1d89ba8`. M1-05 (`2ea242a`) and the verified M1-06 implementation are committed and pushed at the user's request. Future commits/pushes require an explicit request.

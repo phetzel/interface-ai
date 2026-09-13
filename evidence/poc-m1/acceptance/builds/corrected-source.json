@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "2ea242a895ee99df1121a7fa462b81678410d23a",
+  "method": "Clean tracked-source export plus explicit M1-06 local source changes; no ignored dependencies; Docker layer cache allowed",
+  "localChanges": [
+    "README.md",
+    "engine/src/interface_ai/replay/interpreter.py",
+    "engine/tests/test_replay.py",
+    "scripts/replay-check",
+    "scripts/checks/m1_runtime.py",
+    "scripts/m1-check"
+  ],
+  "trackedPatchSha256": "3fc069dc69972d6e6aa0c34c123af97aa2afbba18715514eee9b951a06307107"
+}

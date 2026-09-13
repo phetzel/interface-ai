@@ -1,0 +1,149 @@
+{
+  "runId": "20260913T015829Z-bank-4f5d53a5",
+  "sessionId": "d27c5588-ecdb-4729-b748-9aff5c343b13",
+  "kind": "fixed-coordinate-browser-calibration",
+  "adapter": "interface_ai.desktop.Desktop",
+  "status": "passed",
+  "modelCalls": 0,
+  "businessOutputExtracted": false,
+  "display": [
+    1280,
+    800
+  ],
+  "architecture": "aarch64",
+  "python": "3.11.2",
+  "packages": {
+    "PyAutoGUI": "0.9.54",
+    "Pillow": "11.3.0",
+    "python3-xlib": "0.15"
+  },
+  "checks": [
+    {
+      "name": "initial_fixture_pixels_and_display",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "renderer_sandbox_enabled",
+      "status": "passed",
+      "details": {
+        "browserFilterCount": 1,
+        "renderers": [
+          {
+            "pid": 140,
+            "noNewPrivileges": true,
+            "seccompMode": 2,
+            "filterCount": 2,
+            "pidNamespaceDepth": 3,
+            "effectiveCapabilities": "0000000000000000",
+            "disableSandboxFlag": false
+          },
+          {
+            "pid": 149,
+            "noNewPrivileges": true,
+            "seccompMode": 2,
+            "filterCount": 2,
+            "pidNamespaceDepth": 3,
+            "effectiveCapabilities": "0000000000000000",
+            "disableSandboxFlag": false
+          },
+          {
+            "pid": 158,
+            "noNewPrivileges": true,
+            "seccompMode": 2,
+            "filterCount": 2,
+            "pidNamespaceDepth": 3,
+            "effectiveCapabilities": "0000000000000000",
+            "disableSandboxFlag": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "native_click_type_and_selection",
+      "status": "passed",
+      "details": {
+        "changedFieldPixels": 459
+      }
+    },
+    {
+      "name": "native_enter_changes_to_member_view",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "native_click_changes_account_region",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "fixture_ui_returns_to_search",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "selected_external_egress_blocked",
+      "status": "passed",
+      "details": {
+        "noDefaultIPv4Route": true,
+        "blockedTcpProbes": [
+          "1.1.1.1",
+          "8.8.8.8"
+        ],
+        "scope": "Selected IPv4 probes; not a comprehensive network policy audit"
+      }
+    },
+    {
+      "name": "session_preserved",
+      "status": "passed",
+      "details": {
+        "sessionId": "d27c5588-ecdb-4729-b748-9aff5c343b13"
+      }
+    }
+  ],
+  "events": [
+    {
+      "sequence": 1,
+      "action": "click",
+      "status": "completed",
+      "durationMs": 13.611
+    },
+    {
+      "sequence": 2,
+      "action": "type",
+      "status": "completed",
+      "durationMs": 132.993
+    },
+    {
+      "sequence": 3,
+      "action": "hotkey",
+      "status": "completed",
+      "durationMs": 22.958
+    },
+    {
+      "sequence": 4,
+      "action": "type",
+      "status": "completed",
+      "durationMs": 70.748
+    },
+    {
+      "sequence": 5,
+      "action": "press",
+      "status": "completed",
+      "durationMs": 11.663
+    },
+    {
+      "sequence": 6,
+      "action": "click",
+      "status": "completed",
+      "durationMs": 13.147
+    },
+    {
+      "sequence": 7,
+      "action": "click",
+      "status": "completed",
+      "durationMs": 12.799
+    }
+  ],
+  "elapsedSeconds": 1.964
+}

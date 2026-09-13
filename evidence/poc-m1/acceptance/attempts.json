@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "acceptedAttempt": "20260913T015743Z-cf9ae83c",
+  "attempts": [
+    {
+      "directory": "20260913T015032Z-96ec03b2",
+      "status": "failed",
+      "reason": "Baseline 08 malformed OCR identity; stopped before search"
+    },
+    {
+      "directory": "20260913T015743Z-cf9ae83c",
+      "status": "passed",
+      "reason": "Full gate after bounded checkpoint correction"
+    }
+  ]
+}

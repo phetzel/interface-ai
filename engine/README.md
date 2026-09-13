@@ -10,7 +10,7 @@ The image includes the package source on `PYTHONPATH`; use `python -m interface_
 PYTHONPATH=engine/src python3 -m unittest discover -s engine/tests -p test_desktop.py -v
 ```
 
-Inside the running desktop, `./scripts/desktop test` runs 44 desktop, vision, contract, and interpreter tests, including actual local OCR with the pinned model. The native/browser smoke and visual probe commands exercise the real backend separately.
+Inside the running desktop, `./scripts/desktop test` runs 47 desktop, vision, contract, and interpreter tests, including actual local OCR with the pinned model and the transient-identity checkpoint regression. The native/browser smoke and visual probe commands exercise the real backend separately. `./scripts/m1-check` combines them with repeated replay, input/artifact rejection, and isolation checks in the M1 acceptance gate.
 
 ## API
 

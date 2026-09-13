@@ -70,6 +70,14 @@ class Observation:
             if exc.code in ('target_missing', 'ocr_uncertain'):
                 return False
             raise
+        except ReplayError as exc:
+            if exc.code == 'invalid_identity':
+                # A transient OCR format error does not satisfy a checkpoint.
+                # Postcondition polling may observe again within the same deadline;
+                # extraction still rejects this error, with no character coercion.
+                self.runner.emit('checkpoint', checkpoint=name, status='unsatisfied', code=exc.code)
+                return False
+            raise
 
 
 class Interpreter:

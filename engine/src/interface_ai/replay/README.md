@@ -4,6 +4,8 @@ The loader validates the complete capability and anchor bundle before any deskto
 
 `Observation` caches matches and OCR readings only within one screenshot. Parent anchors define relative regions; every click and extraction therefore starts from newly observed context. A final extraction reads and checks one image, preventing fields from different pages from being combined. Input bindings preserve leading zeroes. Only the artifact's named member-not-found alternative can finish without an output; it must include an exact input-bound identity assertion.
 
+M1-06 found an intermittent malformed OCR identity immediately after typing. A malformed reading now leaves the checkpoint unsatisfied, just like a well-formed but incorrect ID. Postcondition polling can observe again within the existing deadline; it never retries input or repairs characters. Preconditions still reject unsatisfied screens, and direct extraction still rejects malformed identity. Three regression tests cover eventual exact matching, persistent-error timeout before search, and strict extraction.
+
 Artifact and input models use [Pydantic strict validation](https://pydantic.dev/docs/validation/latest/concepts/strict_mode/) and forbid extra fields. Actions and result variants use [discriminated unions](https://pydantic.dev/docs/validation/latest/concepts/unions/). [JSON Schema export](https://pydantic.dev/docs/validation/latest/concepts/json_schema/) comes from those models; reference/graph/binding checks remain additional loader semantics.
 
 ```sh
@@ -20,4 +22,4 @@ The [manual capability README](../../../../capabilities/poc/savings-balance/READ
 
 Tests cover malformed contracts and inputs, traversal/tampering, artifact-controlled ordering/output binding, early known-outcome termination, failed preconditions, ambiguous checkpoints, missing-postcondition timeouts, stop, no input retry, wrong identity, wrong output type, and preflight before desktop acquisition. `./scripts/desktop test` also runs all prior desktop and vision tests. The host integration harness compares real replay outputs with its separate oracle and checks that every case used the same artifact hash.
 
-This is one deliberately constrained contract, not a general workflow language or a policy engine. The M1-06 repeated acceptance/evidence gate and later model discovery/human ownership work remain pending.
+This is one deliberately constrained contract, not a general workflow language or a policy engine. The M1-06 repeated acceptance/evidence gate passes; see [acceptance evidence](../../../../evidence/poc-m1/acceptance/README.md). Model discovery, full policy enforcement, and human ownership remain later work.

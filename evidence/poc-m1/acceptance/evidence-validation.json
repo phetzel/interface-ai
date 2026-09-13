@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "schemasChecked": 4,
+  "artifactValid": true,
+  "attemptsRetained": 2,
+  "typedResultsValidated": 41,
+  "metadataOnlyEventsChecked": 2294,
+  "acceptedRunTransientIdentityObservations": 4,
+  "acceptedSourceHashesChecked": 80
+}

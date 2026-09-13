@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "code": "stopped",
+  "step": "focus-member",
+  "expected": [
+    "search-ready"
+  ],
+  "observed": "rejected"
+}

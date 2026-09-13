@@ -1,0 +1,9 @@
+PASS initial_fixture_pixels_and_display
+PASS renderer_sandbox_enabled
+PASS native_click_type_and_selection
+PASS native_enter_changes_to_member_view
+PASS native_click_changes_account_region
+PASS fixture_ui_returns_to_search
+PASS selected_external_egress_blocked
+PASS session_preserved
+Evidence: /artifacts/20260913T015829Z-bank-4f5d53a5

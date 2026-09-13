@@ -2,7 +2,7 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**Implemented: M1-01 through M1-05.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR now locate controls and extract verified synthetic balances. A strict manual JSON capability now drives the interpreter, with typed outputs and a member-not-found branch. Model discovery, the full repeated acceptance gate, and human takeover remain later work. No OpenAI key is needed for these steps.
+**M1 complete: M1-01 through M1-06.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR locate controls and extract verified synthetic balances. A strict manual JSON capability drives the interpreter, with typed outputs and a member-not-found branch. The full acceptance gate passes: 47 tests, ten baseline replays, seven scenarios, and seven rejection cases. Model discovery, full policy/evidence enforcement, and human takeover remain later work. No OpenAI key is needed for M1. [Acceptance evidence](evidence/poc-m1/acceptance/README.md).
 
 ## Run the banking desktop
 
@@ -18,6 +18,22 @@ With Docker Desktop running, from the repository root:
 Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The interpreter loads the [manual capability](capabilities/poc/savings-balance/capability.json), resolves its visual targets, executes through the desktop adapter, and verifies its checkpoints and typed output. The printed evidence directory contains a separate `result.json` plus routine reports/events without typed values or OCR text. The artifact is explicitly manually authored, not model-discovered. [Capability and commands](capabilities/poc/savings-balance/README.md) · [M1-05 evidence](evidence/poc-m1/replay/README.md).
 
 Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop replay --member-id 00456`. Use `00999` for the named member-not-found outcome. `./scripts/desktop reset bank translated` selects the tested +40 px layout variation. Reload the viewer after resets. Run `./scripts/replay-check` for the nine-case reset-based artifact integration suite; it finishes on the blocked scenario, so reset bank afterwards.
+
+## Run M1 acceptance
+
+The host acceptance harness needs Python 3 (tested with 3.9.6); the automation runtime uses the Python 3.11 environment inside Docker. Build both images, then run from the repository root:
+
+```sh
+./scripts/desktop build
+./scripts/fixture build
+./scripts/m1-check
+```
+
+This resets the project’s synthetic desktop, checks shutdown/start/reset and native/browser input, verifies viewer and stop behavior, runs the unit tests, checks isolation, and performs ten alternating-member baseline replays plus seven scenario cases. It also rejects invalid inputs/artifacts, a stale session, and replay after stop. Each replay uses a fresh session and the unchanged manual capability. The host-only oracle checks exact output; it is not supplied to the interpreter.
+
+Every attempt is retained under `tmp/m1-checks/<attempt>/`, including failed checks. Replay reports, metadata-only events, and explicit synthetic results are copied into the attempt. Only the calibration checks persist their known synthetic screenshots; replay screenshots remain in memory. A successful run leaves a fresh bank search screen. A failed gate exits nonzero with its evidence path; investigate it before starting another attempt.
+
+Use `./scripts/replay-check --acceptance` for just the ten baseline and seven scenario replays. That subset ends on the blocked-loading scenario; run `./scripts/desktop reset bank` afterwards. It does not replace the full M1 gate.
 
 ## Preview the banking fixture
 
@@ -51,10 +67,12 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
 | `./scripts/desktop ready` | Check processes, display, expected window focus, and viewer; print session ID, mode, and stop state |
 | `./scripts/desktop smoke` | Run eight bounded checks on a fresh calibration pad; exit nonzero on failure |
 | `./scripts/desktop browser-smoke --member-id 00123` | Run eight input/pixel checks in a fresh default banking desktop; also accepts `00456` |
-| `./scripts/desktop test` | Run 44 desktop, vision, contract, and interpreter tests |
+| `./scripts/desktop test` | Run 47 desktop, vision, contract, and interpreter tests |
 | `./scripts/desktop validate-capability` | Validate the complete manual artifact and all anchor assets before input |
 | `./scripts/desktop replay --member-id 00123` | Execute the manual JSON capability; output success, named business outcome, or structured failure |
 | `./scripts/replay-check` | Run nine artifact integration cases against the host-only oracle |
+| `./scripts/replay-check --acceptance` | Run ten alternating-member clean-reset baselines and seven scenarios |
+| `./scripts/m1-check` | Run the full M1 lifecycle, input, isolation, replay, validation, and evidence gate |
 | `./scripts/desktop vision-probe --member-id 00123` | Exercise visual targeting, identity checks, and OCR; print the result/evidence location |
 | `./scripts/vision-check` | Run eight reset-based baseline, translated, delayed, and rejection cases against the host-only oracle |
 | `./scripts/desktop action --session ID --json ACTION_JSON` | Dispatch one validated primitive through the shared adapter; see the engine README |
@@ -82,7 +100,7 @@ Smoke output is written under `tmp/desktop-artifacts/<run-id>/`: `report.json`, 
 - Live guard checks reject invalid/stale requests and a second controller, interrupt typing, and retain observation access after stop.
 - The desktop has no default IPv4 route, and the tested external TCP destinations are unreachable.
 
-The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. M1-04 verified local recognition; M1-05 now verifies a manually authored artifact driving the interpreter across nine integration cases. There are no model calls. The full repeated acceptance gate, cross-OS portability, and human takeover remain unverified.
+The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. M1-04 verified local recognition; M1-05 added the manual artifact/interpreter; M1-06 passed the full repeated gate. Its first attempt exposed a transient malformed OCR identity. The corrected interpreter waits for an exact reading within the existing postcondition deadline, without retyping or guessing characters; all ten corrected baselines passed. Both attempts are retained. There are no model calls. Cross-OS portability, model discovery, full policy enforcement, and human takeover remain unverified.
 
 ## Environment and boundaries
 
@@ -120,6 +138,6 @@ JSON
 - [Full first milestone](docs/MILESTONE_1.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-Next is M1-06: the repeated acceptance suite and final M1 evidence/reproducibility gate. Full M1 is not complete. M1-01 through M1-04 were pushed at the user's requests (`c426a49`, `37bbd60`, `79bf84e`, `1d89ba8`). M1-05 is committed locally at the user's request and has not been pushed.
+M1 is complete within its documented environment. Next are PoC B (policy and safe evidence) and PoC D (same-session human takeover); model discovery then depends on replay/policy readiness and OpenAI API access. M1-01 through M1-04 were pushed at the user's requests (`c426a49`, `37bbd60`, `79bf84e`, `1d89ba8`). M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. Future pushes require an explicit request.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

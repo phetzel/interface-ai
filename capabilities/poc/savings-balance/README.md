@@ -11,7 +11,7 @@ From the repository root:
 ./scripts/desktop replay --member-id 00123
 ```
 
-Use a fresh `reset bank` for each invocation. `00456` exercises a different member and balance; `00999` returns `member_not_found`. To test the unchanged artifact with translated content, use `reset bank translated` before replay. `./scripts/replay-check` runs the bounded M1-05 integration cases; M1-06's repeated acceptance gate remains pending.
+Use a fresh `reset bank` for each invocation. `00456` exercises a different member and balance; `00999` returns `member_not_found`. To test the unchanged artifact with translated content, use `reset bank translated` before replay. `./scripts/replay-check` runs the nine integration cases; `./scripts/replay-check --acceptance` runs ten baselines plus seven scenarios. The full M1-06 gate passes and is reproducible with `./scripts/m1-check`; see [acceptance evidence](../../../evidence/poc-m1/acceptance/README.md).
 
 The image contains this bundle at `/opt/capabilities/poc/savings-balance/`. `--capability PATH` selects another operator-supplied bundle inside the container. All references are relative to its JSON file, so moving the whole directory preserves it. No member data, fixture oracle, host paths, executable expressions, or model credentials belong in the artifact. The optional `--inputs-json '{"memberId":"00123"}'` invocation uses the same strict input contract. `--session ID` can bind to an explicitly observed session; otherwise the command observes the current session immediately before acquisition.
 

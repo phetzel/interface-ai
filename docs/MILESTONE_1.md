@@ -1,6 +1,6 @@
 # Milestone 1: Isolated desktop and model-free banking replay
 
-Status: M1-01 through M1-05 implemented and verified on 2026-09-12. A strict manually authored JSON capability now drives the desktop/visual interpreter, binds member inputs, returns validated outputs, and handles member not found. Forty-four unit tests and nine artifact integration cases pass; see [M1-05 evidence](../evidence/poc-m1/replay/README.md). M1-06’s repeated acceptance/reproducibility gate remains planned; full M1 is not complete. M1-04 was pushed as `1d89ba8` at the user’s request. M1-05 is committed locally and unpushed, with no model calls.
+Status: **M1-01 through M1-06 complete** for the declared environment on 2026-09-12 Pacific time. The full acceptance gate passed 47 tests, ten alternating-member clean-reset baselines, seven scenario replays, seven zero-action rejection cases, and lifecycle/input/viewer/isolation checks. The first attempt exposed a transient OCR identity error; a bounded checkpoint correction passed the complete rerun with the same artifact and recognition settings. Both attempts and the mapping to every criterion below are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. All replay uses zero model calls.
 
 ## Outcome
 
@@ -16,7 +16,7 @@ This milestone validates the desktop and deterministic replay assumptions. The m
 - Node/npm, system Python, and uv are on PATH. Host Tesseract was not found on PATH; it can be packaged in the desktop image instead.
 - M1-01 built and ran a native ARM64 Debian desktop with PyAutoGUI/Pillow and a native Tk calibration pad. Desktop input, viewing, and lifecycle checks passed. M1-03 now validates the same adapter in sandboxed Chromium against both synthetic members; M1-04 now verifies visual anchors and local OCR on the baseline, translated, delayed, duplicate, unreadable, and blocked cases.
 
-The desktop image now builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. Chromium desktop input now passes its calibration checks. OpenCV/Tesseract primitives now pass the bounded fixture checks; the manual artifact/interpreter now passes nine integration cases, while the full repeated acceptance gate remains later work. The fixture itself builds and runs natively on ARM64; its browser acceptance tests ran in isolated host Chromium. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
+The desktop image builds and runs natively for ARM64, without x86 emulation. Recheck daemon readiness at startup. Chromium desktop input passes its calibration checks. OpenCV/Tesseract primitives and the manual artifact/interpreter pass the full repeated acceptance gate. The fixture itself builds and runs natively on ARM64; its separate browser acceptance tests ran in isolated host Chromium. M1-06 also built both images from clean source exports, allowing Docker layer caching. Docker documents native architecture selection and the possible cost of emulation. [Docker multi-platform builds](https://docs.docker.com/build/building/multi-platform/)
 
 ## Initial environment design
 
@@ -105,7 +105,7 @@ An OCR confidence threshold is a rejection heuristic, not proof of accuracy. Exa
 | M1-03 (done) | Desktop adapter | Pixel/input agreement, trusted app bootstrap, stop checks, native text-entry smoke | M1-01 |
 | M1-04 (done) | Visual primitives | Anchor matching, OCR extraction, bounded visual predicates, ambiguity detection | M1-02 and M1-03 |
 | M1-05 (done) | Manual artifact and interpreter | Validated JSON capability, input bindings, typed outputs, known not-found branch | M1-04; draft types can be written earlier |
-| M1-06 | Acceptance and evidence | Reset-based scenario suite, safe events/crops, measured results, README commands | M1-05 |
+| M1-06 (done) | Acceptance and evidence | Full gate command, ten baselines, seven scenarios, seven rejection cases, reviewed evidence, bounded OCR checkpoint correction | M1-05 |
 
 Within each package, build the smallest working path and add its failure check before proceeding. Keep all input dispatch in one executor so later model actions and ownership enforcement can use the same boundary.
 
@@ -113,7 +113,7 @@ Draft types and fixture UI are independent of Docker availability. The final tar
 
 ## Proposed repository layout
 
-The desktop, vision, contracts, and replay packages, CLI, fixture, infrastructure, helpers, manual capability, and five evidence bundles now exist:
+The desktop, vision, contracts, and replay packages, CLI, fixture, infrastructure, helpers, manual capability, and six evidence bundles now exist:
 
 ```text
 apps/bank-fixture/                 React/TypeScript app and fixture scenarios
@@ -142,7 +142,7 @@ The reset helper may relaunch the trusted fixture entry point and choose a scena
 
 ## Definition of done
 
-All criteria below are required for declaring M1 complete. Suggested counts are engineering gates, not assignment requirements or statistical reliability claims.
+All criteria below passed in the corrected M1-06 acceptance run; see the [criterion-to-evidence table](../evidence/poc-m1/acceptance/README.md). Counts are engineering gates, not assignment requirements or statistical reliability claims. `./scripts/m1-check` reproduces the full gate.
 
 1. **Environment:** a fresh start opens the fixture in the isolated desktop; the viewer shows the same session; readiness, reset, shutdown, and repeated start work.
 2. **Input:** screenshot/input coordinates agree; a native text-entry smoke and the browser fixture use the same low-level adapter; a stop request prevents subsequent actions.

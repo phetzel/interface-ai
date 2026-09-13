@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "code": "invalid_identity",
+  "step": "enter-member",
+  "expected": [
+    "input-entered"
+  ],
+  "observed": "rejected"
+}

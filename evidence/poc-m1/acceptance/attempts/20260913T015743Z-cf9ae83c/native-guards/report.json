@@ -1,0 +1,42 @@
+{
+  "kind": "real-desktop-guard-checks",
+  "status": "passed",
+  "modelCalls": 0,
+  "sessionId": "a081090b-ed5d-4b9a-a9e9-f4a8e62e877a",
+  "previousSessionId": "d57742b8-ae99-45e4-a3bc-f3d1543a09d5",
+  "checks": [
+    {
+      "name": "invalid_and_previous_session_cli_requests_do_not_mutate_pad",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "second_process_rejected_while_controller_holds_lock",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "stop_interrupts_real_typing",
+      "status": "passed",
+      "details": {
+        "charactersDelivered": 4,
+        "requestedCount": 256
+      }
+    },
+    {
+      "name": "no_further_input_after_stop",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "in_memory_screenshot_available_after_stop",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "name": "lock_released_but_stop_persists_for_next_controller",
+      "status": "passed",
+      "details": {}
+    }
+  ]
+}

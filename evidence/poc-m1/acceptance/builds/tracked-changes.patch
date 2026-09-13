@@ -1,0 +1,226 @@
+diff --git a/README.md b/README.md
+index fd65a8f..07954b0 100644
+--- a/README.md
++++ b/README.md
+@@ -19,6 +19,22 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
+ 
+ Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop replay --member-id 00456`. Use `00999` for the named member-not-found outcome. `./scripts/desktop reset bank translated` selects the tested +40 px layout variation. Reload the viewer after resets. Run `./scripts/replay-check` for the nine-case reset-based artifact integration suite; it finishes on the blocked scenario, so reset bank afterwards.
+ 
++## Run M1 acceptance
++
++The host acceptance harness needs Python 3 (tested with 3.9.6); the automation runtime uses the Python 3.11 environment inside Docker. Build both images, then run from the repository root:
++
++```sh
++./scripts/desktop build
++./scripts/fixture build
++./scripts/m1-check
++```
++
++This resets the project’s synthetic desktop, checks shutdown/start/reset and native/browser input, verifies viewer and stop behavior, runs the unit tests, checks isolation, and performs ten alternating-member baseline replays plus seven scenario cases. It also rejects invalid inputs/artifacts, a stale session, and replay after stop. Each replay uses a fresh session and the unchanged manual capability. The host-only oracle checks exact output; it is not supplied to the interpreter.
++
++Every attempt is retained under `tmp/m1-checks/<attempt>/`, including failed checks. Replay reports, metadata-only events, and explicit synthetic results are copied into the attempt. Only the calibration checks persist their known synthetic screenshots; replay screenshots remain in memory. A successful run leaves a fresh bank search screen. A failed gate exits nonzero with its evidence path; investigate it before starting another attempt.
++
++Use `./scripts/replay-check --acceptance` for just the ten baseline and seven scenario replays. That subset ends on the blocked-loading scenario; run `./scripts/desktop reset bank` afterwards. It does not replace the full M1 gate.
++
+ ## Preview the banking fixture
+ 
+ ```sh
+@@ -55,6 +71,8 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
+ | `./scripts/desktop validate-capability` | Validate the complete manual artifact and all anchor assets before input |
+ | `./scripts/desktop replay --member-id 00123` | Execute the manual JSON capability; output success, named business outcome, or structured failure |
+ | `./scripts/replay-check` | Run nine artifact integration cases against the host-only oracle |
++| `./scripts/replay-check --acceptance` | Run ten alternating-member clean-reset baselines and seven scenarios |
++| `./scripts/m1-check` | Run the full M1 lifecycle, input, isolation, replay, validation, and evidence gate |
+ | `./scripts/desktop vision-probe --member-id 00123` | Exercise visual targeting, identity checks, and OCR; print the result/evidence location |
+ | `./scripts/vision-check` | Run eight reset-based baseline, translated, delayed, and rejection cases against the host-only oracle |
+ | `./scripts/desktop action --session ID --json ACTION_JSON` | Dispatch one validated primitive through the shared adapter; see the engine README |
+diff --git a/engine/src/interface_ai/replay/interpreter.py b/engine/src/interface_ai/replay/interpreter.py
+index 98b8475..48bed4b 100644
+--- a/engine/src/interface_ai/replay/interpreter.py
++++ b/engine/src/interface_ai/replay/interpreter.py
+@@ -70,6 +70,14 @@ class Observation:
+             if exc.code in ('target_missing', 'ocr_uncertain'):
+                 return False
+             raise
++        except ReplayError as exc:
++            if exc.code == 'invalid_identity':
++                # A transient OCR format error does not satisfy a checkpoint.
++                # Postcondition polling may observe again within the same deadline;
++                # extraction still rejects this error, with no character coercion.
++                self.runner.emit('checkpoint', checkpoint=name, status='unsatisfied', code=exc.code)
++                return False
++            raise
+ 
+ 
+ class Interpreter:
+diff --git a/engine/tests/test_replay.py b/engine/tests/test_replay.py
+index 3184a6b..4326518 100644
+--- a/engine/tests/test_replay.py
++++ b/engine/tests/test_replay.py
+@@ -13,7 +13,7 @@ from PIL import Image
+ from pydantic import ValidationError
+ from interface_ai.contracts.models import Capability, Failure, MemberInput
+ from interface_ai.desktop import DesktopError
+-from interface_ai.replay.interpreter import Interpreter
++from interface_ai.replay.interpreter import Interpreter, Observation
+ from interface_ai.replay.loader import Bundle, ReplayError, load_bundle, strict_json, validate_inputs
+ from interface_ai.vision import Box
+ 
+@@ -202,3 +202,53 @@ class InterpreterTests(unittest.TestCase):
+             def checkpoint(self,name):return False if name=='member-ready' else super().checkpoint(name)
+         result=self.run_with(desktop,observer=Missing,clock=clock)
+         self.assertEqual(result.code,'checkpoint_timeout');self.assertEqual(len(desktop.actions),4)
++
++    def identity_runner(self, readings, clock=None):
++        class IdentityObservation(FakeObservation):
++            def checkpoint(self, name):
++                if name == 'input-entered':
++                    return Observation.checkpoint(self, name)
++                return super().checkpoint(name)
++            def region(self, specification):return Box(0,0,100,20)
++            def field(self, name):
++                if name == 'entered-id':
++                    return Observation.field(self, name)
++                return super().field(name)
++            def __init__(self, runner, image):
++                super().__init__(runner,image)
++                self.fields={}
++        desktop=FakeDesktop()
++        iterator=iter(readings)
++        ocr=SimpleNamespace(line=lambda *a,**kw:SimpleNamespace(text=next(iterator),confidence=95.0))
++        runner=Interpreter(self.bundle,MemberInput(memberId='00340'),desktop,event_sink=self.events.append,
++                           observer_factory=IdentityObservation,ocr=ocr,**({} if clock is None else {'clock':clock}))
++        return runner,desktop
++
++    def test_transient_malformed_and_wrong_id_wait_for_exact_checkpoint_without_retyping(self):
++        runner,desktop=self.identity_runner(['00340|','00912','00340','00340'])
++        result=runner.run()
++        self.assertEqual(result.status,'success')
++        self.assertEqual([a['type'] for a in desktop.actions],['click','hotkey','type','press','click'])
++        self.assertTrue(any(e.get('code')=='invalid_identity' and e['status']=='unsatisfied' for e in self.events))
++        self.assertNotIn('00340|',json.dumps(self.events))
++
++    def test_persistent_malformed_identity_times_out_before_search(self):
++        now=[0]
++        def clock():
++            now[0]+=.05
++            return now[0]
++        runner,desktop=self.identity_runner(['00340|']*100,clock=clock)
++        result=runner.run()
++        self.assertEqual(result.code,'checkpoint_timeout')
++        self.assertEqual(result.step,'enter-member')
++        self.assertEqual([a['type'] for a in desktop.actions],['click','hotkey','type'])
++        self.assertFalse(hasattr(result,'output'))
++
++    def test_direct_identity_extraction_still_rejects_malformed_reading(self):
++        runner,desktop=self.identity_runner(['00340|'])
++        runner.step=self.bundle.capability.steps[2]
++        runner.step_deadline=runner.clock()+5
++        observation=runner.observer_factory(runner,desktop.screenshot())
++        with self.assertRaises(ReplayError) as error:
++            observation.field('entered-id')
++        self.assertEqual(error.exception.code,'invalid_identity')
+diff --git a/scripts/replay-check b/scripts/replay-check
+index c671ebd..869c8a1 100755
+--- a/scripts/replay-check
++++ b/scripts/replay-check
+@@ -1,14 +1,19 @@
+ #!/usr/bin/env python3
+ """Host-only M1-05 integration checks; no oracle enters the interpreter."""
+ from datetime import datetime, timezone
++import argparse
+ import hashlib
+ import json
+ from pathlib import Path
++import shutil
+ import subprocess
+ import sys
+ import uuid
+ 
+ ROOT = Path(__file__).resolve().parent.parent
++parser = argparse.ArgumentParser(description=__doc__)
++parser.add_argument('--acceptance', action='store_true', help='Run ten alternating clean-reset baselines and seven scenario checks for M1-06')
++args = parser.parse_args()
+ OUTPUT = ROOT/'tmp/replay-checks'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8])
+ OUTPUT.mkdir(parents=True)
+ oracle = json.loads((ROOT/'apps/bank-fixture/tests/oracle.json').read_text())
+@@ -18,8 +23,16 @@ cases = [('baseline-a','default',0,None),('baseline-b','default',1,None),
+          ('translated-b','translated',1,None),('delayed-a','delayed',0,None),
+          ('duplicate-a','duplicate',0,'ambiguous_target'),('unreadable-a','unreadable',0,'ocr_uncertain'),
+          ('blocked-a','blocked',0,'checkpoint_timeout')]
+-summary = {'kind':'M1-05-artifact-integration', 'status':'running', 'capabilitySha256':artifact_hash,
+-           'scope':'One pass per integration case; M1-06 repeated acceptance remains pending', 'cases':[]}
++if args.acceptance:
++    cases = [(f'baseline-{i+1:02d}', 'default', i % 2, None) for i in range(10)] + cases[2:]
++summary = {'kind':'M1-06-repeated-replay' if args.acceptance else 'M1-05-artifact-integration',
++           'status':'running', 'capabilitySha256':artifact_hash,
++           'oracleSha256':hashlib.sha256((ROOT/'apps/bank-fixture/tests/oracle.json').read_bytes()).hexdigest(),
++           'scope':'Ten alternating clean-reset baselines plus seven scenarios' if args.acceptance else 'One pass per integration case',
++           'cases':[]}
++sessions = set()
++event_keys = {'elapsedMs','kind','step','action','status','target','score','candidateCount','box',
++              'sequence','durationMs','code','checkpoint','field','confidence'}
+ 
+ def run(args, **kwargs):
+     return subprocess.run(args, cwd=ROOT, timeout=180, **kwargs)
+@@ -28,6 +41,7 @@ try:
+     for name,scenario,index,expected in cases:
+         item={'case':name,'scenario':scenario,'status':'running'};summary['cases'].append(item)
+         try:
++            assert hashlib.sha256((ROOT/'capabilities/poc/savings-balance/capability.json').read_bytes()).hexdigest()==artifact_hash
+             with (OUTPUT/(name+'-startup.log')).open('w') as log:
+                 run(['./scripts/desktop','reset','bank',scenario],stdout=log,stderr=log,check=True)
+             member_id=oracle['missing']['memberId'] if index is None else oracle['successes'][index]['memberId']
+@@ -36,25 +50,42 @@ try:
+             response_json=json.loads(response.stdout)
+             relative=Path(response_json['evidence']).relative_to('/artifacts')
+             directory=ROOT/'tmp/desktop-artifacts'/relative
++            retained=OUTPUT/'cases'/name
++            retained.mkdir(parents=True)
++            for filename in ['report.json','result.json','events.jsonl']:
++                shutil.copy2(directory/filename, retained/filename)
+             report=json.loads((directory/'report.json').read_text())
+             result=json.loads((directory/'result.json').read_text())
++            events=[json.loads(line) for line in (directory/'events.jsonl').read_text().splitlines()]
++            assert all(set(event)<=event_keys for event in events)
++            assert not any(p.suffix.lower() in ('.png','.jpg','.jpeg') for p in directory.iterdir())
++            assert report['sessionId'] not in sessions
++            sessions.add(report['sessionId'])
+             assert report['capabilitySha256']==artifact_hash
+             assert report['modelCalls']==0
+-            item.update(evidence=str(directory.relative_to(ROOT)),observedStatus=result['status'],
++            assert report['provenance']=='manually-authored-poc'
++            item.update(evidence=str(retained.relative_to(OUTPUT)),rawEvidence=str(directory.relative_to(ROOT)),
++                        sessionId=report['sessionId'],observedStatus=result['status'],
+                         code=result.get('code'),outcome=result.get('outcome'),failedStep=result.get('step'),
+-                        actionsCompleted=report['actionsCompleted'],elapsedSeconds=report['elapsedSeconds'])
++                        actionsCompleted=report['actionsCompleted'],elapsedSeconds=report['elapsedSeconds'],
++                        sanitizedEvents=len(events),screenshotsPersisted=0)
+             if expected is None:
+                 assert response.returncode==0 and result['status']=='success'
+                 wanted=oracle['successes'][index]
+                 assert result['output']=={key:wanted[key] for key in ['memberId','memberName','accountType','currency','amountMinor']}
++                assert report['actionsCompleted']==5
+                 item['exactOracleMatch']=True
+             elif expected=='member_not_found':
+                 assert response.returncode==0 and result=={'status':'business_outcome','outcome':expected}
+                 assert report['actionsCompleted']==4
++                assert not any(e['step'] in ('open-savings','read-balance') for e in events)
+                 item['noAccountClickOrExtraction']=True
+             else:
+                 assert response.returncode==1 and result['status']=='failure' and result['code']==expected
+                 assert 'output' not in result and report['actionsCompleted']==(5 if scenario=='unreadable' else 4)
++                expected_step={'duplicate':'open-savings','unreadable':'read-balance','blocked':'search-member'}[scenario]
++                assert result['step']==expected_step and result['expected']
++                assert events[-1]['status']=='failed' and events[-1]['code']==expected
+                 item['noResultOrSubsequentAction']=True
+             item['status']='passed'
+         except Exception as exc:
+@@ -62,6 +93,7 @@ try:
+         finally:
+             print(item['status'].upper()+' '+name,flush=True)
+             (OUTPUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
++    summary['uniqueSessions']=len(sessions)
+     summary['status']='passed' if all(c['status']=='passed' for c in summary['cases']) else 'failed'
+ finally:
+     (OUTPUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')

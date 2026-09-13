@@ -1,0 +1,2 @@
+# Preserve blank-line context markers in this exact build-provenance patch.
+evidence/poc-m1/acceptance/builds/tracked-changes.patch -whitespace

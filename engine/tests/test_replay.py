@@ -13,7 +13,7 @@ from PIL import Image
 from pydantic import ValidationError
 from interface_ai.contracts.models import Capability, Failure, MemberInput
 from interface_ai.desktop import DesktopError
-from interface_ai.replay.interpreter import Interpreter
+from interface_ai.replay.interpreter import Interpreter, Observation
 from interface_ai.replay.loader import Bundle, ReplayError, load_bundle, strict_json, validate_inputs
 from interface_ai.vision import Box
 
@@ -202,3 +202,53 @@ class InterpreterTests(unittest.TestCase):
             def checkpoint(self,name):return False if name=='member-ready' else super().checkpoint(name)
         result=self.run_with(desktop,observer=Missing,clock=clock)
         self.assertEqual(result.code,'checkpoint_timeout');self.assertEqual(len(desktop.actions),4)
+
+    def identity_runner(self, readings, clock=None):
+        class IdentityObservation(FakeObservation):
+            def checkpoint(self, name):
+                if name == 'input-entered':
+                    return Observation.checkpoint(self, name)
+                return super().checkpoint(name)
+            def region(self, specification):return Box(0,0,100,20)
+            def field(self, name):
+                if name == 'entered-id':
+                    return Observation.field(self, name)
+                return super().field(name)
+            def __init__(self, runner, image):
+                super().__init__(runner,image)
+                self.fields={}
+        desktop=FakeDesktop()
+        iterator=iter(readings)
+        ocr=SimpleNamespace(line=lambda *a,**kw:SimpleNamespace(text=next(iterator),confidence=95.0))
+        runner=Interpreter(self.bundle,MemberInput(memberId='00340'),desktop,event_sink=self.events.append,
+                           observer_factory=IdentityObservation,ocr=ocr,**({} if clock is None else {'clock':clock}))
+        return runner,desktop
+
+    def test_transient_malformed_and_wrong_id_wait_for_exact_checkpoint_without_retyping(self):
+        runner,desktop=self.identity_runner(['00340|','00912','00340','00340'])
+        result=runner.run()
+        self.assertEqual(result.status,'success')
+        self.assertEqual([a['type'] for a in desktop.actions],['click','hotkey','type','press','click'])
+        self.assertTrue(any(e.get('code')=='invalid_identity' and e['status']=='unsatisfied' for e in self.events))
+        self.assertNotIn('00340|',json.dumps(self.events))
+
+    def test_persistent_malformed_identity_times_out_before_search(self):
+        now=[0]
+        def clock():
+            now[0]+=.05
+            return now[0]
+        runner,desktop=self.identity_runner(['00340|']*100,clock=clock)
+        result=runner.run()
+        self.assertEqual(result.code,'checkpoint_timeout')
+        self.assertEqual(result.step,'enter-member')
+        self.assertEqual([a['type'] for a in desktop.actions],['click','hotkey','type'])
+        self.assertFalse(hasattr(result,'output'))
+
+    def test_direct_identity_extraction_still_rejects_malformed_reading(self):
+        runner,desktop=self.identity_runner(['00340|'])
+        runner.step=self.bundle.capability.steps[2]
+        runner.step_deadline=runner.clock()+5
+        observation=runner.observer_factory(runner,desktop.screenshot())
+        with self.assertRaises(ReplayError) as error:
+            observation.field('entered-id')
+        self.assertEqual(error.exception.code,'invalid_identity')

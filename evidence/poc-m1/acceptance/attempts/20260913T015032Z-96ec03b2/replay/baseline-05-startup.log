@@ -1,0 +1,23 @@
+ Container interface-ai-fixture-1  Recreate
+ Container interface-ai-fixture-1  Recreated
+ Container interface-ai-fixture-1  Starting
+ Container interface-ai-fixture-1  Started
+ Container interface-ai-fixture-1  Waiting
+ Container interface-ai-fixture-1  Healthy
+Fixture ready: http://fixture:4173 inside the desktop network; scenario=default. Reload any open fixture page after reset.
+ Container interface-ai-desktop-1  Recreate
+ Container interface-ai-desktop-1  Recreated
+ Container interface-ai-viewer-1  Recreate
+ Container interface-ai-viewer-1  Recreated
+ Container interface-ai-desktop-1  Starting
+ Container interface-ai-desktop-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-viewer-1  Starting
+ Container interface-ai-viewer-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-viewer-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-viewer-1  Healthy
+{"id": "f4c4f984-2cc1-419e-b428-c5cbf5afbd2a", "display": ":99", "width": 1280, "height": 800, "viewer": "read-only", "mode": "bank", "windowId": 2097155, "windowClass": ["chromium (/tmp/interface-ai/chromium-profile)", "Chromium"], "appPid": 21, "sandbox": {"browserFilterCount": 1, "renderers": [{"pid": 140, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 149, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 150, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}]}, "pids": {"display": 9, "window manager": 14, "Chromium": 21, "read-only VNC": 193, "web viewer": 194}, "inputStopped": false}
+Read-only viewer: http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true

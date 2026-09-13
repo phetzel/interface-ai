@@ -1,0 +1,20 @@
+{"id": "d555aff9-9f03-4e04-a6f3-c51af8e50464", "display": ":99", "width": 1280, "height": 800, "viewer": "read-only", "mode": "native", "windowId": 2097221, "windowClass": ["tk", "Tk"], "appPid": 21, "sandbox": null, "pids": {"display": 9, "window manager": 14, "native test pad": 21, "read-only VNC": 36, "web viewer": 37}, "inputStopped": false}
+Read-only viewer: http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true
+ Network interface-ai_viewer  Creating
+ Network interface-ai_viewer  Created
+ Network interface-ai_desktop  Creating
+ Network interface-ai_desktop  Created
+ Container interface-ai-desktop-1  Creating
+ Container interface-ai-desktop-1  Created
+ Container interface-ai-viewer-1  Creating
+ Container interface-ai-viewer-1  Created
+ Container interface-ai-desktop-1  Starting
+ Container interface-ai-desktop-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-viewer-1  Starting
+ Container interface-ai-viewer-1  Started
+ Container interface-ai-viewer-1  Waiting
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-viewer-1  Healthy

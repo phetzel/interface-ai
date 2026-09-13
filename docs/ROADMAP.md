@@ -2,7 +2,7 @@
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-Status 2026-09-12: M1-01 through M1-05 are implemented. The strict manual capability now drives real desktop replay, including both members, translation, delay, named member-not-found, and deliberate failure cases. Forty-four unit tests and nine artifact integration cases pass; see [evidence](../evidence/poc-m1/replay/README.md). PoC C’s full repeated/reproducibility gate still requires M1-06. M1-04 was pushed as `1d89ba8`; M1-05 is committed locally and unpushed.
+Status 2026-09-12: **M1 is complete**, including PoC C's repeated/reproducibility gate. The corrected full run passed 47 tests, ten alternating-member baselines, seven scenarios, and seven rejection cases; both the initial failed attempt and successful rerun are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). PoC A is proven for the tested desktop. PoC B (policy/evidence), PoC D (human takeover), and PoC E (genuine discovery) remain pending. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request.
 
 ## Objective and order of work
 
@@ -170,12 +170,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | M1-06 and subsequent packages; M1-01 through M1-05 were requested and completed | Plans and dependency definitions are ready |
+| Further implementation scope | PoC B/D and subsequent work; M1-01 through M1-06 were requested and completed | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
-| Visual recognition and manual artifact integration — bounded checks passed | Repeated replay acceptance | Handoff and policy can proceed |
+| Visual recognition and repeated manual replay — gate passed | Discovery-generated artifact validation | Handoff and policy can proceed |
 | Policy/evidence gate | Controlled real model execution and safe retention | Local deterministic recognition experiments can proceed |
 | Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-The next implementation package is M1-06: repeated acceptance and final M1 evidence/reproducibility. The desktop, fixture/oracle, visual primitives, and validated manual artifact/interpreter are ready. Repeated artifact replay, policy, and handoff gates still need implementation and verification.
+M1 is complete. Next, define and implement PoC B (policy and safe evidence) and PoC D (same-session human takeover); these can proceed independently using the proven desktop. Genuine discovery requires the completed replay gate, policy readiness, and OpenAI API access. Human takeover must pass before integrated escalation acceptance. These later workstreams have not been implemented by M1-06.

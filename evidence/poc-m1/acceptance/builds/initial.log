@@ -1,0 +1,126 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.14kB done
+#1 DONE 0.0s
+
+#2 [fixture internal] load build definition from Dockerfile
+#2 transferring dockerfile: 712B done
+#2 DONE 0.0s
+
+#3 [desktop internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.33kB done
+#3 DONE 0.0s
+
+#4 [desktop internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#4 DONE 0.7s
+
+#5 [fixture internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#5 DONE 0.7s
+
+#6 [desktop internal] load .dockerignore
+#6 transferring context: 174B done
+#6 DONE 0.0s
+
+#7 [desktop 1/9] FROM docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#7 resolve docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171 done
+#7 DONE 0.0s
+
+#8 [fixture internal] load .dockerignore
+#8 transferring context: 101B done
+#8 DONE 0.0s
+
+#9 [fixture internal] load build context
+#9 transferring context: 80.93kB done
+#9 DONE 0.0s
+
+#10 [desktop internal] load build context
+#10 transferring context: 238.96kB done
+#10 DONE 0.0s
+
+#11 [desktop 2/9] RUN apt-get update && apt-get install -y --no-install-recommends     ca-certificates chromium fonts-dejavu-core tesseract-ocr=5.3.0-2 tesseract-ocr-eng=1:4.1.0-2     novnc openbox scrot websockify x11-utils x11vnc xauth xvfb     python3 python3-dev python3-tk python3-venv     && rm -rf /var/lib/apt/lists/*
+#11 CACHED
+
+#12 [desktop 3/9] COPY infra/desktop/requirements.lock /opt/desktop/requirements.lock
+#12 CACHED
+
+#13 [desktop 4/9] RUN python3 -m venv /opt/venv     && pip install --no-cache-dir --require-hashes -r /opt/desktop/requirements.lock     && useradd --create-home --uid 1000 desktop     && mkdir /artifacts /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix     && chown desktop:desktop /artifacts     && dpkg-query -W > /opt/desktop/system-packages.txt
+#13 CACHED
+
+#14 [desktop 5/9] COPY infra/desktop/*.py /opt/desktop/
+#14 CACHED
+
+#15 [fixture build 1/8] FROM docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#15 resolve docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 0.0s done
+#15 DONE 0.0s
+
+#16 [fixture build 6/8] COPY src ./src
+#16 CACHED
+
+#17 [fixture build 4/8] RUN npm ci --no-audit --no-fund
+#17 CACHED
+
+#18 [fixture build 5/8] COPY index.html tsconfig.json vite.config.mjs ./
+#18 CACHED
+
+#19 [fixture build 3/8] COPY package.json package-lock.json ./
+#19 CACHED
+
+#20 [fixture stage-1 2/5] WORKDIR /app
+#20 CACHED
+
+#21 [fixture stage-1 4/5] COPY server/index.mjs server/scenarios.mjs ./server/
+#21 CACHED
+
+#22 [fixture build 8/8] RUN npm run build
+#22 CACHED
+
+#23 [fixture build 2/8] WORKDIR /build
+#23 CACHED
+
+#24 [fixture build 7/8] COPY server/scenarios.mjs ./server/scenarios.mjs
+#24 CACHED
+
+#25 [fixture stage-1 3/5] COPY --from=build /build/dist ./dist
+#25 CACHED
+
+#26 [fixture stage-1 5/5] COPY INTER-LICENSE.txt ./INTER-LICENSE.txt
+#26 CACHED
+
+#27 [desktop 6/9] COPY engine /opt/engine/
+#27 DONE 0.0s
+
+#28 [desktop 7/9] COPY capabilities /opt/capabilities/
+#28 DONE 0.0s
+
+#29 [fixture] exporting to image
+#29 exporting layers done
+#29 exporting manifest sha256:3d4b1c6b230b0f9492c54c939822c12886828e0149e3d814c083e6c2bd8df630 done
+#29 exporting config sha256:0a33c584ffe2451ffaf9c47c7ea0b31cde616374d2c3b69b8d320f2bc5421d9f done
+#29 exporting attestation manifest sha256:1cd95cae95e8374719f8b29e5cfd1a2f76c920fc4b5e266ba026ff83f45f7cc6 done
+#29 exporting manifest list sha256:a99acea5af2a6ee986c34de8018111b0126cf13e738ced37e3e5b5e1c9c525f1 done
+#29 naming to docker.io/library/interface-ai-bank-fixture:local done
+#29 unpacking to docker.io/library/interface-ai-bank-fixture:local done
+#29 DONE 0.1s
+
+#30 [fixture] resolving provenance for metadata file
+#30 DONE 0.0s
+
+#31 [desktop 8/9] RUN python -m interface_ai.contracts.schema --output-dir /opt/capabilities/schemas
+#31 DONE 0.2s
+
+#32 [desktop 9/9] WORKDIR /home/desktop
+#32 DONE 0.0s
+
+#33 [desktop] exporting to image
+#33 exporting layers 0.0s done
+#33 exporting manifest sha256:b3afcb0783fc7c2fff543df6d0b8bff8057b4ea8225f03378af8ada1436f06e3 done
+#33 exporting config sha256:a58e825ac83bad89eceb29e6ee851720aa3d2e5e6ebd9234b5716b39fe6bbeeb done
+#33 exporting attestation manifest sha256:3863706c569a4634fac1c3b774163ffab23ae5239187615cae850bf001389d1e done
+#33 exporting manifest list sha256:95ba744fbacc2be9c784ed03b1def3db6fb409a4ae9a982f50f90ba87d2ab5d8 done
+#33 naming to docker.io/library/interface-ai-desktop:local done
+#33 unpacking to docker.io/library/interface-ai-desktop:local 0.0s done
+#33 DONE 0.1s
+
+#34 [desktop] resolving provenance for metadata file
+#34 DONE 0.0s
+ interface-ai-desktop:local  Built
+ interface-ai-bank-fixture:local  Built

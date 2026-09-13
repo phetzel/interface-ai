@@ -1,0 +1,4 @@
+{
+  "sourceCommit": "2ea242a895ee99df1121a7fa462b81678410d23a",
+  "method": "git archive of tracked source, excluding local dependencies and ignored files; Docker layer cache allowed"
+}

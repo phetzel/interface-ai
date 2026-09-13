@@ -1,0 +1,22 @@
+[
+  {
+    "case": "baseline-03",
+    "malformedReadings": 1,
+    "result": "success"
+  },
+  {
+    "case": "baseline-05",
+    "malformedReadings": 1,
+    "result": "success"
+  },
+  {
+    "case": "baseline-07",
+    "malformedReadings": 1,
+    "result": "success"
+  },
+  {
+    "case": "translated-a",
+    "malformedReadings": 1,
+    "result": "success"
+  }
+]

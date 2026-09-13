@@ -1,0 +1,7 @@
+{
+  "status": "failure",
+  "code": "invalid_capability",
+  "step": null,
+  "expected": [],
+  "observed": "rejected"
+}
