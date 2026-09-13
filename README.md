@@ -9,11 +9,23 @@ A computer-use automation system in development: model-driven discovery, reusabl
 With Docker Desktop running, from the repository root:
 
 ```sh
-./scripts/desktop build
-./scripts/desktop up bank
-./scripts/desktop validate-capability
-./scripts/desktop replay --member-id 00123
+make build
+make up
+make validate
+make replay MEMBER_ID=00123
 ```
+
+The [Makefile](Makefile) delegates to the existing scripts. Run `make` or `make help` to list targets. Defaults are `MODE=bank`, `SCENARIO=default`, and `MEMBER_ID=00123`; IDs stay strings, preserving leading zeroes. For example:
+
+```sh
+make demo MEMBER_ID=00456 SCENARIO=translated  # Fresh bank session, then replay
+make reset MODE=native                       # Native calibration desktop
+make test                                    # Engine tests; desktop must be running
+make check                                   # Full M1 acceptance; resets the desktop
+make down                                    # Stop services; retain images/evidence
+```
+
+`make replay` uses the current screen; `make demo` always resets to the bank fixture first. `make up` and `make reset` default to bank mode. Targets run sequentially even with `make -j`, because they share one desktop. `make fixture-install`, `make fixture-dev`, and `make fixture-test` support React development on the host with the fixture's Node/Playwright prerequisites.
 
 Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The interpreter loads the [manual capability](capabilities/poc/savings-balance/capability.json), resolves its visual targets, executes through the desktop adapter, and verifies its checkpoints and typed output. The printed evidence directory contains a separate `result.json` plus routine reports/events without typed values or OCR text. The artifact is explicitly manually authored, not model-discovered. [Capability and commands](capabilities/poc/savings-balance/README.md) · [M1-05 evidence](evidence/poc-m1/replay/README.md).
 
