@@ -31,6 +31,30 @@ class X11Backend:
         pixels = self.root.get_image(0, 0, width, height, X.ZPixmap, 0xffffffff)
         return Image.frombytes('RGB', (width, height), pixels.data, 'raw', 'BGRX')
 
+    def application_matches(self, session):
+        from pathlib import Path
+        from Xlib import Xatom
+        try:
+            window = self.display.create_resource_object('window', session['windowId'])
+            if list(window.get_wm_class() or ()) != session['windowClass']:
+                return False
+            prop = window.get_full_property(self.display.intern_atom('_NET_WM_PID'), Xatom.CARDINAL)
+            if prop is None or len(prop.value) != 1:
+                return False
+            pid = int(prop.value[0])
+            if str(Path(f'/proc/{pid}/exe').resolve(strict=True)) != '/usr/lib/chromium/chromium':
+                return False
+            seen = set()
+            while pid not in seen and pid > 1:
+                if pid == session['appPid']:
+                    return True
+                seen.add(pid)
+                status = dict(line.split(':', 1) for line in Path(f'/proc/{pid}/status').read_text().splitlines() if ':' in line)
+                pid = int(status['PPid'])
+        except (OSError, ValueError, KeyError):
+            return False
+        return False
+
     def click(self, x, y):
         self.gui.click(x, y)
 

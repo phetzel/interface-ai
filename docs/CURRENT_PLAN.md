@@ -1,6 +1,6 @@
 # Current planning direction
 
-Updated 2026-09-12. **M1-01 through M1-06 are complete** for the fixed Linux ARM64 environment. The strict manual capability passes the full acceptance gate: 47 tests, ten clean-reset baselines, seven scenarios, and seven rejection cases. Four portable schemas and all 41 results across the failed and corrected attempts validate independently. See [README](../README.md) and [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). Model discovery, full policy/evidence enforcement, and human takeover remain later gates.
+Updated 2026-09-15. **M1 and bounded M2/PoC B are complete** for the fixed Linux ARM64 environment. M2 adds operator-owned input rules, capability admission, application identity checks, network/route separation, and metadata-only safe evidence export. See [M2 specification and research](MILESTONE_2.md) and [acceptance evidence](../evidence/poc-m2/README.md): final source has 63 passing engine tests and 14 fixture tests; the full repeated M1 gate passes with policy enabled. Model discovery and human takeover remain later gates. The original [M1-06 evidence](../evidence/poc-m1/acceptance/README.md) remains historical evidence; M2 acceptance records the changed runtime separately.
 
 ## Confirmed and open choices
 
@@ -10,11 +10,11 @@ Updated 2026-09-12. **M1-01 through M1-06 are complete** for the fixed Linux ARM
 | UI | React/TypeScript as the initial sample-app direction | Keep operator UI minimal; no polished console yet |
 | Models | OpenAI only, using one provider key; start with GPT-5.6 Sol | Account access and performance on the actual fixture |
 | Automation | Computer use across application surfaces; PyAutoGUI and local visual recognition pass M1 | Broader rendering conditions, model discovery, and human ownership |
-| Target | Three-view synthetic banking app; read-only savings lookup passes M1 | Additional policy, dialog, session-expiry, and handoff scenarios |
+| Target | Three-view synthetic banking app; read-only savings lookup passes M1 | Dialog, session-expiry, and handoff scenarios |
 | Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and future ownership extensions |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. Model discovery, full policy/evidence enforcement, and human handoff still need proof.
+Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. M2 proves the declared policy/evidence boundary. Model discovery and human handoff still need proof.
 
 ## Revised language comparison
 
@@ -85,14 +85,14 @@ The human takes control of the same desktop session, not merely the same browser
 
 Only one controller may issue input. Quiesce pending automation, transfer control, record allowed human input metadata and sanitized state changes, and verify an explicit checkpoint before resuming. Input capture needs its own desktop/session mechanism; PyAutoGUI alone does not provide it. Do not retain password keystrokes or raw sensitive values.
 
-Screenshots are observations, not an enforcement boundary. A visual agent cannot establish a strong domain/route allowlist just by reading the address bar. Enforce permitted applications and network destinations outside the model; browser-specific route enforcement may require additional instrumentation. Restrict the initial environment to the fixture application and required system components, and state remaining limits. The exact policy mechanism is a required design decision before implementation.
+Screenshots are observations, not an enforcement boundary. A visual agent cannot establish a strong domain/route allowlist just by reading the address bar. Enforce permitted applications and network destinations outside the model; browser-specific route enforcement may require additional instrumentation. Restrict the initial environment to the fixture application and required system components, and state remaining limits. M2 implements this with application identity checks, an operator-owned operation policy, managed browser restrictions, and a fixed-upstream gateway on separate networks; see its specification for limits.
 
 ## Next design work
 
-1. Define PoC B's application/operation policy, destination enforcement, and safe evidence export.
-2. Define PoC D's same-session human ownership, permitted input capture, and verified resumption.
-3. Extend the fixture only with the exception scenarios needed to test those mechanisms.
-4. Verify OpenAI API access, then validate genuine discovery to a reusable artifact using the proven replay contract and policy gate.
+1. Define PoC D's same-session human ownership, permitted input capture, and verified resumption using the shared policy boundary.
+2. Extend the fixture only with the session-expiry/dialog scenarios needed to test those mechanisms.
+3. Verify OpenAI API access and define allowed outbound model observations; metadata-only evidence export does not authorize raw screenshot transmission.
+4. Validate genuine discovery to a reusable artifact, including explicit artifact promotion into the reviewed policy.
 5. Integrate the scenario matrix and prepare the final reproducible submission before adding polish or another surface.
 
 At the user’s requests, M1-01 and M1-02 were committed and pushed as `c426a49` and `37bbd60`. M1-03 was subsequently committed and pushed as `79bf84e`. M1-04 was then committed and pushed as `1d89ba8`. M1-05 (`2ea242a`) and the verified M1-06 implementation are committed and pushed at the user's request. Future commits/pushes require an explicit request.

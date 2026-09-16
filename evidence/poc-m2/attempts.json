@@ -1,0 +1,19 @@
+{
+  "attempts": [
+    {
+      "id": "20260915T221304Z-2231c138",
+      "status": "failed",
+      "reason": "Gateway startup recreated the fixture with the default scenario"
+    },
+    {
+      "id": "20260915T221535Z-f59cfad5",
+      "status": "passed",
+      "scope": "Full policy gate and M1 regression"
+    }
+  ],
+  "followUp": {
+    "id": "20260915T222829Z-564f3292",
+    "status": "passed",
+    "scope": "Final two-file FIFO hardening; 63 tests, deployed hashes, fresh replay and safe export"
+  }
+}

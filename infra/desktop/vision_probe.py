@@ -43,8 +43,9 @@ def main():
             report['actionsCompleted'] += 1
 
     def export(image, name):
-        assert_known_surface(image, 'bank')
-        image.save(output / name)
+        # M2: unredacted observations remain in memory. This legacy probe does
+        # not have reviewed public-region capture rules.
+        report['screenshots'] = 'suppressed'
 
     try:
         vision = BankVision(event_sink=events.append)

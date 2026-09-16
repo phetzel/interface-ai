@@ -4,11 +4,12 @@ SHELL := /bin/sh
 MODE ?= bank
 SCENARIO ?= default
 MEMBER_ID ?= 00123
-export MODE SCENARIO MEMBER_ID
+RUN ?=
+export MODE SCENARIO MEMBER_ID RUN
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help build up reset ready viewer logs stop down validate replay demo test check replay-check fixture-install fixture-dev fixture-test
+.PHONY: help build up reset ready viewer logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-test
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -53,6 +54,13 @@ test: ## Run the engine tests inside the running desktop
 
 check: ## Run full M1 acceptance; resets the synthetic desktop
 	./scripts/m1-check
+
+policy-check: ## Run M2 policy/evidence acceptance and the full M1 regression
+	./scripts/m2-check
+
+export: ## Export safe replay evidence; requires RUN=<replay-directory-name>
+	@test -n "$$RUN" || { echo 'Usage: make export RUN=<replay-directory-name>' >&2; exit 2; }
+	./scripts/desktop export-evidence --run "$$RUN"
 
 replay-check: ## Run nine integration cases; ends on blocked loading
 	./scripts/replay-check

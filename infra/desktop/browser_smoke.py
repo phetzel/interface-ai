@@ -57,7 +57,7 @@ def main():
         return screen
 
     try:
-        with Desktop(session['id'], event_sink=report['events'].append) as desktop:
+        with Desktop(session['id'], event_sink=report['events'].append, calibration=True) as desktop:
             initial = export(desktop, '01-search.png')
             # A fresh, unshifted search panel has white pixels here; member overview does not.
             if initial.getpixel((120, 350)) != (255, 255, 255):

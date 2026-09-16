@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""M2 policy/evidence gate followed by the full M1 regression. Docker required."""
+from datetime import datetime, timezone
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import uuid
+
+ROOT=Path(__file__).resolve().parent.parent
+OUTPUT=ROOT/'tmp/m2-checks'/(datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'-'+uuid.uuid4().hex[:8])
+OUTPUT.mkdir(parents=True)
+summary={'status':'running','checks':[]}
+
+
+def save():
+    (OUTPUT/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+
+
+def run(name,args,*,script=None,timeout=180):
+    item={'name':name,'status':'running'};summary['checks'].append(item);save()
+    try:
+        with (OUTPUT/(name+'.log')).open('w') as output:
+            response=subprocess.run(args,cwd=ROOT,input=script,text=True,stdout=output,stderr=subprocess.STDOUT,timeout=timeout)
+        assert response.returncode==0, 'Check exited nonzero; inspect its retained log'
+        item['status']='passed'
+        return (OUTPUT/(name+'.log')).read_text()
+    except Exception as error:
+        item.update(status='failed',errorType=type(error).__name__)
+        raise
+    finally:
+        save();print(item['status'].upper()+' '+name,flush=True)
+
+
+try:
+    run('policy-reset',['./scripts/desktop','reset','bank','policy'])
+    text=run('live-policy',['docker','compose','exec','-T','desktop','python','-'],script=(ROOT/'scripts/checks/m2_runtime.py').read_text())
+    report=json.loads(text);assert report['status']=='passed'
+    (OUTPUT/'live-policy.json').write_text(json.dumps(report,indent=2)+'\n')
+    # Include host-observed network membership and probe the origin's literal IP.
+    ids=subprocess.check_output(['docker','compose','--profile','bank','ps','-q'],cwd=ROOT,text=True).splitlines()
+    configs=json.loads(subprocess.check_output(['docker','inspect',*ids],cwd=ROOT,text=True))
+    by_service={c['Config']['Labels']['com.docker.compose.service']:c for c in configs}
+    origin=by_service['fixture']['NetworkSettings']['Networks']
+    desktop=by_service['desktop']['NetworkSettings']['Networks']
+    gateway=by_service['gateway']['NetworkSettings']['Networks']
+    assert not set(origin)&set(desktop) and set(gateway)==set(origin)|set(desktop)
+    address=next(iter(origin.values()))['IPAddress']
+    script='import socket\ntry:\n c=socket.create_connection(('+repr(address)+',4173),timeout=2)\nexcept OSError:\n print("origin_ip_blocked")\nelse:\n c.close();raise AssertionError("Origin bypass reachable")\n'
+    run('origin-ip-bypass',['docker','compose','exec','-T','desktop','python','-'],script=script)
+    (OUTPUT/'networks.json').write_text(json.dumps({key:list(by_service[key]['NetworkSettings']['Networks']) for key in ('fixture','desktop','gateway')},indent=2)+'\n')
+    text=run('m1-regression',['./scripts/m1-check'],timeout=1800)
+    evidence=Path(next(line[len('Evidence: '):] for line in text.splitlines() if line.startswith('Evidence: ')))
+    shutil.copytree(evidence,OUTPUT/'m1-regression')
+    summary['regression']=json.loads((evidence/'summary.json').read_text())['status']
+    assert summary['regression']=='passed'
+    # Exercise the shipped export command on a real replay, then scan every file.
+    response=json.loads(run('export-source-replay',['./scripts/desktop','replay','--member-id','00456']))
+    raw=ROOT/'tmp/desktop-artifacts'/Path(response['evidence']).name
+    name=raw.name
+    exported=json.loads(run('safe-export',['./scripts/desktop','export-evidence','--run',name]))
+    source=ROOT/'tmp/desktop-artifacts'/Path(exported['evidence']).relative_to('/artifacts')
+    assert {p.name for p in source.iterdir()}=={'summary.json','events.jsonl','manifest.json'}
+    for path in source.iterdir():
+        content=path.read_text()
+        assert not any(value in content for value in ('SECRET-SENTINEL-84729','00456','Demo Member B','98.07'))
+    shutil.copytree(source,OUTPUT/'safe-export')
+    summary['safeExportFiles']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in source.iterdir()}
+    run('final-reset',['./scripts/desktop','reset','bank'])
+    summary['status']='passed'
+except Exception as error:
+    summary.update(status='failed',errorType=type(error).__name__)
+finally:
+    save();print('Evidence: '+str(OUTPUT),flush=True)
+sys.exit(0 if summary['status']=='passed' else 1)

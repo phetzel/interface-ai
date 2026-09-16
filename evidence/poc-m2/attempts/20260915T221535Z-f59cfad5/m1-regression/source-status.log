@@ -1,0 +1,26 @@
+ M Makefile
+ M apps/bank-fixture/playwright.config.ts
+ M apps/bank-fixture/server/scenarios.mjs
+ M apps/bank-fixture/src/App.tsx
+ M apps/bank-fixture/src/main.tsx
+ M apps/bank-fixture/src/styles.css
+ M apps/bank-fixture/tests/fixture.spec.ts
+ M compose.yaml
+ M engine/src/interface_ai/cli.py
+ M engine/src/interface_ai/desktop/adapter.py
+ M engine/src/interface_ai/desktop/backend.py
+ M engine/src/interface_ai/replay/command.py
+ M engine/src/interface_ai/replay/interpreter.py
+ M infra/desktop/Dockerfile
+ M infra/desktop/browser_smoke.py
+ M infra/desktop/control.py
+ M infra/desktop/vision_probe.py
+ M scripts/desktop
+ M scripts/fixture
+ M scripts/m1-check
+?? docs/MILESTONE_2.md
+?? engine/src/interface_ai/policy/
+?? engine/tests/test_policy.py
+?? infra/desktop/chromium-policy.json
+?? scripts/checks/m2_runtime.py
+?? scripts/m2-check

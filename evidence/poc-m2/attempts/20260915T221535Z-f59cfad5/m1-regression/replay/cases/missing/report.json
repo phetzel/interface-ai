@@ -1,0 +1,32 @@
+{
+  "runId": "20260915T222100Z-replay-06e8928a",
+  "modelCalls": 0,
+  "actionsCompleted": 4,
+  "phase": "execution",
+  "packages": {
+    "pydantic": "2.12.5",
+    "opencv-python-headless": "4.12.0.88",
+    "numpy": "2.2.6",
+    "Pillow": "11.3.0"
+  },
+  "policy": "bank-read-only-v1",
+  "capability": "savings-balance",
+  "capabilityVersion": "0.1.0",
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "provenance": "manually-authored-poc",
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "sessionId": "3b9b0fab-f9f1-4088-aa33-5b3fd3c72e31",
+  "status": "business_outcome",
+  "elapsedSeconds": 2.047
+}

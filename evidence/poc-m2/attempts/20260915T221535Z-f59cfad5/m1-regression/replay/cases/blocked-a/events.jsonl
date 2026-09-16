@@ -1,0 +1,117 @@
+{"elapsedMs": 49.642, "kind": "step", "step": "focus-member", "action": "click", "status": "started"}
+{"elapsedMs": 146.557, "kind": "target", "step": "focus-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 149.784, "kind": "target", "step": "focus-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 264.062, "kind": "action", "step": "focus-member", "sequence": 1, "action": "click", "status": "completed", "durationMs": 114.018}
+{"elapsedMs": 361.474, "kind": "target", "step": "focus-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 361.828, "kind": "checkpoint", "step": "focus-member", "checkpoint": "search-ready", "status": "satisfied"}
+{"elapsedMs": 361.929, "kind": "step", "step": "focus-member", "action": "click", "status": "completed"}
+{"elapsedMs": 361.958, "kind": "step", "step": "select-input", "action": "hotkey", "status": "started"}
+{"elapsedMs": 461.167, "kind": "target", "step": "select-input", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 585.551, "kind": "action", "step": "select-input", "sequence": 2, "action": "hotkey", "status": "completed", "durationMs": 123.598}
+{"elapsedMs": 677.343, "kind": "target", "step": "select-input", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 677.678, "kind": "checkpoint", "step": "select-input", "checkpoint": "search-ready", "status": "satisfied"}
+{"elapsedMs": 677.69, "kind": "step", "step": "select-input", "action": "hotkey", "status": "completed"}
+{"elapsedMs": 677.697, "kind": "step", "step": "enter-member", "action": "type", "status": "started"}
+{"elapsedMs": 770.421, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 956.3, "kind": "action", "step": "enter-member", "sequence": 3, "action": "type", "status": "completed", "durationMs": 185.01}
+{"elapsedMs": 1056.129, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1058.419, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1270.138, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1272.484, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1481.988, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1484.301, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1865.529, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1867.803, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1920.727, "kind": "reading", "step": "enter-member", "field": "entered-id", "confidence": 96.09, "box": [143, 478, 275, 509]}
+{"elapsedMs": 1921.083, "kind": "checkpoint", "step": "enter-member", "checkpoint": "input-entered", "status": "satisfied"}
+{"elapsedMs": 1921.271, "kind": "step", "step": "enter-member", "action": "type", "status": "completed"}
+{"elapsedMs": 1921.28, "kind": "step", "step": "search-member", "action": "press", "status": "started"}
+{"elapsedMs": 2020.274, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2022.566, "kind": "target", "step": "search-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 2078.242, "kind": "reading", "step": "search-member", "field": "entered-id", "confidence": 96.09, "box": [143, 478, 275, 509]}
+{"elapsedMs": 2183.109, "kind": "action", "step": "search-member", "sequence": 4, "action": "press", "status": "completed", "durationMs": 104.199}
+{"elapsedMs": 2274.357, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2276.341, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2278.751, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2452.558, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2454.905, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2457.635, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2608.667, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2610.647, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2613.014, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2779.852, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2781.78, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2784.179, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2929.326, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2931.15, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2933.482, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3088.464, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3090.414, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3092.881, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3241.588, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3243.571, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3245.956, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3414.51, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3416.34, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3418.671, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3566.908, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3568.916, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3571.31, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3743.37, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3745.415, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3747.75, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3912.581, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3914.495, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 3916.819, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4082.13, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4084.095, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4086.471, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4242.926, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4245.165, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4247.663, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4419.072, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4420.925, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4423.391, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4570.624, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4572.489, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4574.862, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4739.037, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4742.488, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4745.0, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4900.745, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 4902.877, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 4905.323, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5237.291, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5239.329, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 5242.23, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5400.91, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5402.913, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 5405.27, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5564.202, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5566.154, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 5568.487, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5714.224, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5716.316, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 5718.675, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5878.077, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 5879.915, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 5882.279, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6031.52, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6033.473, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6035.944, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6186.714, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6188.568, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6190.925, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6344.426, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6346.387, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6348.713, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6508.058, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6510.004, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6512.45, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6671.472, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6673.31, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6675.664, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6847.997, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6850.068, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 6852.468, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 6999.872, "kind": "step", "step": "search-member", "action": "press", "status": "failed", "code": "checkpoint_timeout"}

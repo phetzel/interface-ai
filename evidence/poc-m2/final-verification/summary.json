@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "fullGate": "20260915T221535Z-f59cfad5",
+  "checks": [
+    "reset",
+    "replay",
+    "runtime",
+    "export",
+    "final-reset",
+    "images"
+  ],
+  "changesSinceFullGate": {
+    "engine/src/interface_ai/policy/evidence.py": {
+      "before": "5d6dc224f741d9cc445ba0e5306f449b93cf0c6a8d0b736d01e7e824fde2a5ac",
+      "after": "107523f921e04f93a6290f1214037d674bdc39d0107ae684b50df1a66c294d5e"
+    },
+    "engine/tests/test_policy.py": {
+      "before": "8329dbf3fd740ef8debb31acd1c5605da0795dcde440f2b8f2fab15b00af65e2",
+      "after": "0c458c1ec31576b017d21c4fa0387b06e18d51da6b9aadfac0e24735b41d1b85"
+    }
+  },
+  "unitTests": 63,
+  "unitExecution": "Final source mounted read-only in the dependency image; final deployed image separately hash-checked",
+  "exactOracleMatch": true,
+  "runtimeFilesChecked": 57
+}

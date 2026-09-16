@@ -23,6 +23,7 @@ RUN python3 -m venv /opt/venv \
     && dpkg-query -W > /opt/desktop/system-packages.txt
 
 COPY infra/desktop/*.py /opt/desktop/
+COPY infra/desktop/chromium-policy.json /etc/chromium/policies/managed/interface-ai.json
 COPY engine /opt/engine/
 COPY capabilities /opt/capabilities/
 RUN python -m interface_ai.contracts.schema --output-dir /opt/capabilities/schemas

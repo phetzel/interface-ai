@@ -9,7 +9,7 @@ case "$command_name" in
   up|reset|build|ready|logs|down|preview) ;;
   *) usage >&2; exit 2 ;;
 esac
-case "$scenario" in default|delayed|blocked|duplicate|unreadable|translated) ;; *) echo "Unknown fixture scenario: $scenario" >&2; usage >&2; exit 2 ;; esac
+case "$scenario" in default|delayed|blocked|duplicate|unreadable|translated|policy) ;; *) echo "Unknown fixture scenario: $scenario" >&2; usage >&2; exit 2 ;; esac
 export FIXTURE_SCENARIO="$scenario"
 if [[ "$command_name" == preview ]]; then
   cd apps/bank-fixture

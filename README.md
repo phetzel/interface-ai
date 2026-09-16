@@ -2,7 +2,9 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**M1 complete: M1-01 through M1-06.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR locate controls and extract verified synthetic balances. A strict manual JSON capability drives the interpreter, with typed outputs and a member-not-found branch. The full acceptance gate passes: 47 tests, ten baseline replays, seven scenarios, and seven rejection cases. Model discovery, full policy/evidence enforcement, and human takeover remain later work. No OpenAI key is needed for M1. [Acceptance evidence](evidence/poc-m1/acceptance/README.md).
+**M2 complete for the declared environment: policy and safe evidence.** Bank input passes an operator-owned read-only policy, and replay admits only the reviewed capability digest. A fixed-upstream gateway separates the desktop from the fixture origin and rejects unapproved HTTP requests; managed Chromium policies restrict navigation. Safe evidence export reconstructs metadata and excludes business results, screenshots, and arbitrary extra files. The [M2 specification and research](docs/MILESTONE_2.md) and [acceptance evidence](evidence/poc-m2/README.md) cover the decisions, failed attempt, full M1 regression, and final hardening checks. Final source passes 63 engine tests; the fixture passes 14 tests. Human takeover and model discovery remain later work. Changes are local and uncommitted.
+
+**M1 complete: M1-01 through M1-06.** An isolated Linux desktop runs either the native calibration pad or the React/TypeScript banking fixture in sandboxed Chromium. Both use the same Python screenshot/input adapter, with session, focus, deadline, exclusive-controller, and stop checks. Local visual anchors and Tesseract OCR locate controls and extract verified synthetic balances. A strict manual JSON capability drives the interpreter, with typed outputs and a member-not-found branch. The original M1 acceptance gate passed 47 tests, ten baseline replays, seven scenarios, and seven rejection cases. M2 adds the bounded policy/evidence boundary; model discovery and human takeover remain later work. No OpenAI key is needed for M1. [Acceptance evidence](evidence/poc-m1/acceptance/README.md).
 
 ## Run the banking desktop
 
@@ -23,6 +25,8 @@ make reset MODE=native                       # Native calibration desktop
 make test                                    # Engine tests; desktop must be running
 make check                                   # Full M1 acceptance; resets the desktop
 make down                                    # Stop services; retain images/evidence
+make policy-check                            # M2 gate plus full M1 regression
+make export RUN=<printed-replay-directory>    # Metadata-only safe export
 ```
 
 `make replay` uses the current screen; `make demo` always resets to the bank fixture first. `make up` and `make reset` default to bank mode. Targets run sequentially even with `make -j`, because they share one desktop. `make fixture-install`, `make fixture-dev`, and `make fixture-test` support React development on the host with the fixture's Node/Playwright prerequisites.
@@ -88,7 +92,8 @@ Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=t
 | `./scripts/desktop vision-probe --member-id 00123` | Exercise visual targeting, identity checks, and OCR; print the result/evidence location |
 | `./scripts/vision-check` | Run eight reset-based baseline, translated, delayed, and rejection cases against the host-only oracle |
 | `./scripts/desktop action --session ID --json ACTION_JSON` | Dispatch one validated primitive through the shared adapter; see the engine README |
-| `./scripts/desktop screenshot` | Save the known synthetic screen to `tmp/desktop-artifacts/desktop.png` |
+| `./scripts/desktop screenshot` | Rejected by the capture policy; raw observations remain in memory |
+| `./scripts/desktop export-evidence --run RUN_ID` | Write reviewed replay metadata under `tmp/desktop-artifacts/exports/`; exclude images and business results |
 | `./scripts/desktop stop-input` | Block subsequent adapter input, including the next character during typing; reset required to run again |
 | `./scripts/desktop reset [native\|bank] [scenario]` | Recreate desktop/viewer with a new session; bank also resets the fixture; preserve exported evidence |
 | `./scripts/desktop down` | Stop and remove all project services, including the optional fixture; keep images and evidence |
@@ -112,15 +117,15 @@ Smoke output is written under `tmp/desktop-artifacts/<run-id>/`: `report.json`, 
 - Live guard checks reject invalid/stale requests and a second controller, interrupt typing, and retain observation access after stop.
 - The desktop has no default IPv4 route, and the tested external TCP destinations are unreachable.
 
-The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. M1-04 verified local recognition; M1-05 added the manual artifact/interpreter; M1-06 passed the full repeated gate. Its first attempt exposed a transient malformed OCR identity. The corrected interpreter waits for an exact reading within the existing postcondition deadline, without retyping or guessing characters; all ten corrected baselines passed. Both attempts are retained. There are no model calls. Cross-OS portability, model discovery, full policy enforcement, and human takeover remain unverified.
+The smoke scripts use fixed calibration coordinates. The native state oracle and browser pixel-change checks verify input plumbing, not reusable visual locators or replay. M1-04 verified local recognition; M1-05 added the manual artifact/interpreter; M1-06 passed the full repeated gate. Its first attempt exposed a transient malformed OCR identity. The corrected interpreter waits for an exact reading within the existing postcondition deadline, without retyping or guessing characters; all ten corrected baselines passed. Both attempts are retained. There are no model calls. Cross-OS portability, authorization for arbitrary applications, model discovery, and human takeover remain unverified.
 
 ## Environment and boundaries
 
 `infra/desktop/` packages Xvfb, Openbox, PyAutoGUI, a native Tk test pad, Chromium, x11vnc, and noVNC. The engine captures X11 pixels directly into memory; it does not create temporary screenshot files. Chromium uses its user-namespace sandbox and a [documented seccomp profile](infra/desktop/SECCOMP.md); startup verifies renderer isolation. Tesseract and its English package are version pinned, and the English model hash is checked before OCR. Python dependencies are version/hash locked; the Debian base image is digest pinned. Debian packages are resolved at build time and their exact versions recorded in `/opt/desktop/system-packages.txt`, so a later clean build can receive updated OS packages.
 
-The non-root desktop joins an internal Compose network. Only `tmp/desktop-artifacts` is mounted; no host home, browser profile, credentials, or Docker socket is exposed. A separate fixed-destination TCP relay publishes the viewer at `127.0.0.1:6080`. It joins an ordinary bridge network for Docker Desktop port publishing and the internal network to reach the desktop. The relay forwards only to `desktop:6080`; the desktop itself has no default route. This arrangement was necessary because a published port on an internal-only network was not reachable on the tested host.
+The non-root desktop joins an internal Compose network. Only `tmp/desktop-artifacts` is mounted; no host home, browser profile, credentials, or Docker socket is exposed. The fixture origin is on a separate internal network. A read-only gateway joins both networks and exposes `http://fixture:4173/` to the desktop, forwarding only permitted paths/methods to that fixed origin. It rejects queries, body-bearing requests, foreign hosts, path encodings, and upstream redirects. A separate fixed-destination TCP relay publishes the viewer at `127.0.0.1:6080`. It joins an ordinary bridge network for Docker Desktop port publishing and the desktop's internal network. The relay forwards only to `desktop:6080`; the desktop itself has no default route.
 
-The viewer is unauthenticated and read-only, intended for synthetic local data. The stop command is cooperative: an already-dispatched short primitive may finish; it is not an ownership/handoff protocol. `down` terminates the environment. The screenshot guard checks known fixture pixels; it is not general redaction or a reliable sensitive-screen detector. Network probes and container restrictions are a bounded PoC, not comprehensive hostile-code containment. General policy and safe export remain later gates.
+The viewer is unauthenticated and read-only, intended for synthetic local data. The stop command is cooperative: an already-dispatched short primitive may finish; it is not an ownership/handoff protocol. `down` terminates the environment. M2 disables ordinary screenshot persistence and excludes images from safe export; it does not claim general screenshot redaction. Explicit native/browser calibration utilities still retain known synthetic captures. Their debug bundles are distinct from shareable exports. The policy assumes the reviewed fixture and trusted runtime code: it does not authorize arbitrary pages or defend against a compromised X11 client, malicious fixture, or host/root access.
 
 ## Troubleshooting
 
@@ -148,8 +153,9 @@ JSON
 - [Current direction](docs/CURRENT_PLAN.md)
 - [Roadmap and dependencies](docs/ROADMAP.md)
 - [Full first milestone](docs/MILESTONE_1.md)
+- [Second milestone and researched decisions](docs/MILESTONE_2.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-M1 is complete within its documented environment. Next are PoC B (policy and safe evidence) and PoC D (same-session human takeover); model discovery then depends on replay/policy readiness and OpenAI API access. M1-01 through M1-04 were pushed at the user's requests (`c426a49`, `37bbd60`, `79bf84e`, `1d89ba8`). M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. Future pushes require an explicit request.
+M1 and bounded M2/PoC B are complete within their documented environment. Next is PoC D (same-session human takeover); model discovery also needs OpenAI API access and a reviewed policy for outbound model observations. M1 and its Makefile shortcuts are committed and pushed through `94dc573`. M2 changes are local; future commits and pushes require an explicit request.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

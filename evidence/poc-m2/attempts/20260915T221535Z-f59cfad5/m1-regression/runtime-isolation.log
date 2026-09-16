@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "architecture": "aarch64",
+  "python": "3.11.2",
+  "runtimeFileHashesChecked": 57,
+  "schemasMatchModels": 4,
+  "resultsValidated": 0,
+  "nonRoot": true,
+  "noOpenAIConfiguration": true,
+  "noModelSDK": true,
+  "modelCalls": 0,
+  "fixtureHealthReachable": true,
+  "noDefaultIPv4Route": true,
+  "tcpProbes": [
+    {
+      "destination": "1.1.1.1",
+      "port": 443,
+      "blocked": true,
+      "reason": "OSError"
+    },
+    {
+      "destination": "8.8.8.8",
+      "port": 443,
+      "blocked": true,
+      "reason": "OSError"
+    },
+    {
+      "destination": "2606:4700:4700::1111",
+      "port": 443,
+      "blocked": true,
+      "reason": "OSError"
+    },
+    {
+      "destination": "api.openai.com",
+      "blocked": true,
+      "reason": "dns_resolution_failed"
+    }
+  ],
+  "packages": {
+    "pillow": "11.3.0",
+    "mouseinfo": "0.1.3",
+    "pydantic": "2.12.5",
+    "pyperclip": "1.11.0",
+    "numpy": "2.2.6",
+    "pytweening": "1.2.0",
+    "opencv-python-headless": "4.12.0.88",
+    "pip": "23.0.1",
+    "annotated-types": "0.8.0",
+    "pyautogui": "0.9.54",
+    "python3-xlib": "0.15",
+    "typing-inspection": "0.4.4",
+    "pyrect": "0.2.0",
+    "setuptools": "66.1.1",
+    "pyscreeze": "1.0.1",
+    "pydantic_core": "2.41.5",
+    "pygetwindow": "0.0.9",
+    "typing_extensions": "4.16.0",
+    "pymsgbox": "2.0.1"
+  },
+  "scope": "Selected IPv4, IPv6 and model endpoint probes; not a comprehensive network policy audit"
+}

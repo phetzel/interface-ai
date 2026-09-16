@@ -1,0 +1,65 @@
+[
+  {
+    "service": "desktop",
+    "user": "desktop",
+    "capabilitiesDropped": [
+      "ALL"
+    ],
+    "privileged": false,
+    "mounts": [
+      "/artifacts"
+    ],
+    "networks": [
+      "interface-ai_desktop"
+    ],
+    "portBindings": {}
+  },
+  {
+    "service": "fixture",
+    "user": "node",
+    "capabilitiesDropped": [
+      "ALL"
+    ],
+    "privileged": false,
+    "mounts": [],
+    "networks": [
+      "interface-ai_fixture"
+    ],
+    "portBindings": {}
+  },
+  {
+    "service": "gateway",
+    "user": "desktop",
+    "capabilitiesDropped": [
+      "ALL"
+    ],
+    "privileged": false,
+    "mounts": [],
+    "networks": [
+      "interface-ai_desktop",
+      "interface-ai_fixture"
+    ],
+    "portBindings": {}
+  },
+  {
+    "service": "viewer",
+    "user": "desktop",
+    "capabilitiesDropped": [
+      "ALL"
+    ],
+    "privileged": false,
+    "mounts": [],
+    "networks": [
+      "interface-ai_desktop",
+      "interface-ai_viewer"
+    ],
+    "portBindings": {
+      "6080/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "6080"
+        }
+      ]
+    }
+  }
+]

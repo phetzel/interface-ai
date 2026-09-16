@@ -10,6 +10,8 @@ import uuid
 from interface_ai.contracts.models import Failure
 from interface_ai.desktop import Desktop
 from interface_ai.desktop.session import read_session
+from interface_ai.policy.bank import admit, POLICY_ID
+from interface_ai.policy.evidence import checked_event, safe_code
 from .interpreter import Interpreter
 from .loader import ReplayError, load_bundle, strict_json, validate_inputs
 
@@ -27,7 +29,7 @@ def replay(args, *, output_root=Path('/artifacts')):
     interpreter = None
 
     def record(event):
-        events.append({'elapsedMs': round((time.monotonic()-started)*1000, 3), **event})
+        events.append(checked_event({'elapsedMs': round((time.monotonic()-started)*1000, 3), **event}))
 
     def action_event(event):
         record({'kind': 'action', 'step': interpreter.step.id if interpreter and interpreter.step else None, **event})
@@ -41,6 +43,8 @@ def replay(args, *, output_root=Path('/artifacts')):
         except (ValueError, RecursionError):
             raise ReplayError('invalid_input', 'Input JSON is invalid') from None
         inputs = validate_inputs(data)
+        admit(bundle)  # A valid schema does not authorize its instructions or metadata.
+        report['policy'] = POLICY_ID
         report.update(capability=bundle.capability.name, capabilityVersion=bundle.capability.capabilityVersion,
                       capabilitySha256=bundle.sha256, provenance=bundle.capability.provenance,
                       environment=bundle.capability.environment.model_dump())
@@ -54,7 +58,7 @@ def replay(args, *, output_root=Path('/artifacts')):
             report['phase'] = 'execution'
             result = interpreter.run()
     except Exception as exc:
-        result = Failure(code=getattr(exc, 'code', 'preflight_failed'))
+        result = Failure(code=safe_code(getattr(exc, 'code', 'preflight_failed')))
     report.update(status=result.status, elapsedSeconds=round(time.monotonic()-started, 3))
     if isinstance(result, Failure):
         report.update(code=result.code, failedStep=result.step)

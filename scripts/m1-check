@@ -110,6 +110,8 @@ def provenance():
             runtime['/opt/'+name]=digest
         elif name.startswith('infra/desktop/') and (name.endswith('.py') or name.endswith('requirements.lock')):
             runtime['/opt/desktop/'+Path(name).name]=digest
+        elif name=='infra/desktop/chromium-policy.json':
+            runtime['/etc/chromium/policies/managed/interface-ai.json']=digest
     manifest_path.write_text(json.dumps({'runtimeFiles':runtime,'results':[]},indent=2)+'\n')
     SUMMARY['capabilitySha256']=frozen['capabilities/poc/savings-balance/capability.json']
     return {'sourceFilesHashed':len(frozen)}
@@ -172,7 +174,7 @@ def isolation():
         observations.append({'service':service,'user':config['Config']['User'],'capabilitiesDropped':host['CapDrop'],
                              'privileged':False,'mounts':[m['Destination'] for m in config['Mounts']],
                              'networks':list(config['NetworkSettings']['Networks']), 'portBindings':host['PortBindings']})
-    assert {o['service'] for o in observations}=={'desktop','fixture','viewer'}
+    assert {o['service'] for o in observations}=={'desktop','fixture','gateway','viewer'}
     (OUTPUT/'container-boundaries.json').write_text(json.dumps(observations,indent=2)+'\n')
     stdout=container_script('runtime-isolation',ROOT/'scripts/checks/m1_runtime.py','--manifest','/artifacts/'+manifest_path.name)
     report=json.loads(stdout)

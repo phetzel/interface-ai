@@ -1,7 +1,7 @@
 """One session-bound, exclusive input path shared by every application surface.
 
-This validates primitive input and expected window focus. It is not application,
-route, or financial-operation policy, nor the later human ownership protocol.
+Bank sessions apply the operator-owned read-only policy at dispatch. Native
+calibration remains a trusted developer utility, not a model execution surface.
 """
 import fcntl
 import math
@@ -54,7 +54,8 @@ def validate(action, width, height):
 
 class Desktop:
     def __init__(self, session_id=None, *, timeout=45, backend=None, session_reader=read_session,
-                 stop_path=STOP, lock_path=LOCK, clock=time.monotonic, event_sink=None):
+                 stop_path=STOP, lock_path=LOCK, clock=time.monotonic, event_sink=None,
+                 calibration=False):
         if type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 120:
             raise DesktopError('invalid_deadline', 'Timeout must be in (0, 120] seconds')
         self._read = session_reader
@@ -69,6 +70,10 @@ class Desktop:
         self.event_sink = event_sink or (lambda event: None)
         self._lock = None
         self._sequence = 0
+        # Only trusted Python calibration code can select this path. There is no
+        # action JSON/CLI/model field for disabling the bank policy.
+        self._calibration = calibration
+        self.policy = None
 
     def __enter__(self):
         self._lock = self.lock_path.open('a')
@@ -83,6 +88,9 @@ class Desktop:
                 from .backend import X11Backend
                 self.backend = X11Backend()
             self._check(observation=True)
+            if self.session['mode'] == 'bank' and not self._calibration:
+                from interface_ai.policy.bank import BankPolicy
+                self.policy = BankPolicy()
             return self
         except BaseException:
             self.__exit__(None, None, None)
@@ -116,6 +124,8 @@ class Desktop:
                 raise DesktopError('stopped', 'Input stopped; reset before another run')
             if self.backend.active_window() != current['windowId']:
                 raise DesktopError('unexpected_focus', 'The bootstrapped application is not focused')
+            if current['mode'] == 'bank' and not self.backend.application_matches(current):
+                raise DesktopError('policy_application_denied', 'Application identity does not match the approved session')
 
     def screenshot(self):
         self._check(observation=True)
@@ -129,12 +139,20 @@ class Desktop:
         self._check()
 
     def execute(self, action):
-        kind = validate(action, self.width, self.height)
+        try:
+            kind = validate(action, self.width, self.height)
+        except DesktopError:
+            if self.policy is not None:
+                self.policy.clear()
+            raise
         self._sequence += 1
         event = {'sequence': self._sequence, 'action': kind, 'status': 'started'}
         started = self.clock()
         try:
             self._check()
+            if self.policy is not None:
+                self.policy.authorize(action, self)
+                self._check()  # Recognition may take time; check again at dispatch.
             if kind in ('click', 'move'):
                 getattr(self.backend, kind)(action['x'], action['y'])
             elif kind == 'type':
@@ -155,10 +173,16 @@ class Desktop:
             elif kind == 'scroll':
                 self.backend.scroll(action['amount'])
             event['status'] = 'completed'
+            if self.policy is not None:
+                self.policy.completed()
         except DesktopError as exc:
+            if self.policy is not None:
+                self.policy.clear()
             event.update(status='rejected', code=exc.code)
             raise
         except Exception as exc:
+            if self.policy is not None:
+                self.policy.clear()
             event.update(status='failed', code='input_failed')
             raise DesktopError('input_failed', 'OS input failed; no automatic retry was attempted') from exc
         finally:

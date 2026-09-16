@@ -1,0 +1,9 @@
+PASS screenshot_dimensions_and_fixture
+PASS same_framebuffer_and_server_view_only
+PASS three_pointer_coordinates_and_pixel_changes
+PASS native_typing_selection_and_enter
+PASS native_scroll
+PASS selected_external_egress_blocked
+PASS cooperative_stop_blocks_dispatch
+PASS session_preserved
+Evidence: /artifacts/20260915T221612Z-8c096b23

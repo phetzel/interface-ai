@@ -1,8 +1,10 @@
 # Roadmap, proof-of-concept gates, and dependencies
 
+Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. Human takeover (PoC D) is the next independent gate; OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 work is local and uncommitted.
+
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-Status 2026-09-12: **M1 is complete**, including PoC C's repeated/reproducibility gate. The corrected full run passed 47 tests, ten alternating-member baselines, seven scenarios, and seven rejection cases; both the initial failed attempt and successful rerun are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). PoC A is proven for the tested desktop. PoC B (policy/evidence), PoC D (human takeover), and PoC E (genuine discovery) remain pending. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request.
+M1 completion record, 2026-09-12: **M1 is complete**, including PoC C's repeated/reproducibility gate. The corrected full run passed 47 tests, ten alternating-member baselines, seven scenarios, and seven rejection cases; both the initial failed attempt and successful rerun are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). PoC A is proven for the tested desktop. PoC B, D, and E were pending at M1 completion; the M2 update above records subsequent progress. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request.
 
 ## Objective and order of work
 
@@ -63,6 +65,8 @@ Prove screenshot capture, click, type, keyboard navigation, scrolling, and live 
 **If it fails:** change desktop packaging or input backend. Do not build around mismatched coordinates or quietly replace the desktop runtime with DOM automation.
 
 ### PoC B: Can we enforce policy and export safe evidence?
+
+Implementation: [M2](MILESTONE_2.md), including policy checks at input dispatch, reviewed-artifact admission, an isolated fixture gateway, Chromium restrictions, and an exporter that suppresses images and business values. The initial export is metadata-only; general redaction and arbitrary-application authorization are not claimed.
 
 Prototype a narrow execution gate with allowed applications, permitted operations, and network destinations. Enforce what can be enforced outside the model. For a browser-hosted fixture, determine whether the chosen environment needs route-specific instrumentation; network/domain restriction alone is not a route allowlist.
 
@@ -170,12 +174,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | PoC B/D and subsequent work; M1-01 through M1-06 were requested and completed | Plans and dependency definitions are ready |
+| Further implementation scope | PoC D/E and subsequent work; M1 and M2 were requested and completed | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
 | Visual recognition and repeated manual replay — gate passed | Discovery-generated artifact validation | Handoff and policy can proceed |
-| Policy/evidence gate | Controlled real model execution and safe retention | Local deterministic recognition experiments can proceed |
+| Bounded policy/evidence gate — passed in M2 | Controlled model execution still needs reviewed outbound observations | Handoff design can proceed |
 | Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-M1 is complete. Next, define and implement PoC B (policy and safe evidence) and PoC D (same-session human takeover); these can proceed independently using the proven desktop. Genuine discovery requires the completed replay gate, policy readiness, and OpenAI API access. Human takeover must pass before integrated escalation acceptance. These later workstreams have not been implemented by M1-06.
+M1 and bounded M2/PoC B are complete. Next, define and implement PoC D (same-session human takeover) using the proven desktop and policy boundary. Genuine discovery also requires OpenAI API access, reviewed outbound observations, and promotion of the generated artifact. Human takeover must pass before integrated escalation acceptance. Discovery and takeover have not been implemented.

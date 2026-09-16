@@ -1,0 +1,170 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "passed",
+  "startedAt": "2026-09-15T22:15:57.714293+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 88,
+      "elapsedSeconds": 0.151
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "f62eea24-4e2f-47eb-8f4c-8789a07d0e93",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 14.013
+    },
+    {
+      "name": "native-input-viewer-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "f62eea24-4e2f-47eb-8f4c-8789a07d0e93",
+      "elapsedSeconds": 2.986
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "ff251910-c103-4524-8cbe-178c191f0a57",
+      "elapsedSeconds": 12.123
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "06dcae03-737f-45c2-ae54-aa32aaae6186",
+      "elapsedSeconds": 21.359
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 57,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.321
+    },
+    {
+      "name": "unit-tests",
+      "status": "passed",
+      "evidence": "unit-tests.log",
+      "testsPassed": 62,
+      "elapsedSeconds": 2.423
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.246
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "passed",
+      "evidence": "replay/summary.json",
+      "baselinePasses": 10,
+      "scenarioPasses": 7,
+      "baselineSeconds": {
+        "min": 3.486,
+        "median": 3.598,
+        "max": 4.015
+      },
+      "elapsedSeconds": 392.931
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 42.438
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 24,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.608
+    }
+  ],
+  "sourceCommit": "94dc5731803c631e680c49533c2f384930225beb",
+  "uncommittedFiles": [
+    " M Makefile",
+    " M apps/bank-fixture/playwright.config.ts",
+    " M apps/bank-fixture/server/scenarios.mjs",
+    " M apps/bank-fixture/src/App.tsx",
+    " M apps/bank-fixture/src/main.tsx",
+    " M apps/bank-fixture/src/styles.css",
+    " M apps/bank-fixture/tests/fixture.spec.ts",
+    " M compose.yaml",
+    " M engine/src/interface_ai/cli.py",
+    " M engine/src/interface_ai/desktop/adapter.py",
+    " M engine/src/interface_ai/desktop/backend.py",
+    " M engine/src/interface_ai/replay/command.py",
+    " M engine/src/interface_ai/replay/interpreter.py",
+    " M infra/desktop/Dockerfile",
+    " M infra/desktop/browser_smoke.py",
+    " M infra/desktop/control.py",
+    " M infra/desktop/vision_probe.py",
+    " M scripts/desktop",
+    " M scripts/fixture",
+    " M scripts/m1-check",
+    "?? docs/MILESTONE_2.md",
+    "?? engine/src/interface_ai/policy/",
+    "?? engine/tests/test_policy.py",
+    "?? infra/desktop/chromium-policy.json",
+    "?? scripts/checks/m2_runtime.py",
+    "?? scripts/m2-check"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-15T22:24:26.316697+00:00"
+}

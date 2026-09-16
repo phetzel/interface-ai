@@ -1,0 +1,63 @@
+{"elapsedMs": 54.004, "kind": "step", "step": "focus-member", "action": "click", "status": "started"}
+{"elapsedMs": 153.515, "kind": "target", "step": "focus-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 157.552, "kind": "target", "step": "focus-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 276.168, "kind": "action", "step": "focus-member", "sequence": 1, "action": "click", "status": "completed", "durationMs": 118.145}
+{"elapsedMs": 377.984, "kind": "target", "step": "focus-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 378.392, "kind": "checkpoint", "step": "focus-member", "checkpoint": "search-ready", "status": "satisfied"}
+{"elapsedMs": 378.405, "kind": "step", "step": "focus-member", "action": "click", "status": "completed"}
+{"elapsedMs": 378.413, "kind": "step", "step": "select-input", "action": "hotkey", "status": "started"}
+{"elapsedMs": 475.324, "kind": "target", "step": "select-input", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 602.764, "kind": "action", "step": "select-input", "sequence": 2, "action": "hotkey", "status": "completed", "durationMs": 126.725}
+{"elapsedMs": 695.22, "kind": "target", "step": "select-input", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 695.541, "kind": "checkpoint", "step": "select-input", "checkpoint": "search-ready", "status": "satisfied"}
+{"elapsedMs": 695.553, "kind": "step", "step": "select-input", "action": "hotkey", "status": "completed"}
+{"elapsedMs": 695.56, "kind": "step", "step": "enter-member", "action": "type", "status": "started"}
+{"elapsedMs": 786.157, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 962.495, "kind": "action", "step": "enter-member", "sequence": 3, "action": "type", "status": "completed", "durationMs": 175.343}
+{"elapsedMs": 1065.474, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1067.844, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1281.232, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1283.537, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1493.515, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1495.939, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1831.695, "kind": "target", "step": "enter-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1833.975, "kind": "target", "step": "enter-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 1889.724, "kind": "reading", "step": "enter-member", "field": "entered-id", "confidence": 96.09, "box": [143, 478, 275, 509]}
+{"elapsedMs": 1890.129, "kind": "checkpoint", "step": "enter-member", "checkpoint": "input-entered", "status": "satisfied"}
+{"elapsedMs": 1890.381, "kind": "step", "step": "enter-member", "action": "type", "status": "completed"}
+{"elapsedMs": 1890.391, "kind": "step", "step": "search-member", "action": "press", "status": "started"}
+{"elapsedMs": 1994.446, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 1996.965, "kind": "target", "step": "search-member", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [135, 421, 202, 437]}
+{"elapsedMs": 2051.953, "kind": "reading", "step": "search-member", "field": "entered-id", "confidence": 96.09, "box": [143, 478, 275, 509]}
+{"elapsedMs": 2164.398, "kind": "action", "step": "search-member", "sequence": 4, "action": "press", "status": "completed", "durationMs": 111.522}
+{"elapsedMs": 2256.191, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2258.434, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2260.818, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2423.888, "kind": "target", "step": "search-member", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2426.305, "kind": "target", "step": "search-member", "target": "search-heading", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [108, 235, 336, 268]}
+{"elapsedMs": 2428.688, "kind": "target", "step": "search-member", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2582.252, "kind": "target", "step": "search-member", "target": "member-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [101, 235, 378, 268]}
+{"elapsedMs": 2634.663, "kind": "reading", "step": "search-member", "field": "member-id", "confidence": 96.375, "box": [241, 375, 329, 393]}
+{"elapsedMs": 2636.61, "kind": "target", "step": "search-member", "target": "search-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 2636.98, "kind": "checkpoint", "step": "search-member", "checkpoint": "member-ready", "status": "satisfied"}
+{"elapsedMs": 2636.994, "kind": "step", "step": "search-member", "action": "press", "status": "completed"}
+{"elapsedMs": 2637.0, "kind": "step", "step": "open-savings", "action": "click", "status": "started"}
+{"elapsedMs": 2728.09, "kind": "target", "step": "open-savings", "target": "member-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [101, 235, 378, 268]}
+{"elapsedMs": 2782.817, "kind": "reading", "step": "open-savings", "field": "member-id", "confidence": 96.375, "box": [241, 375, 329, 393]}
+{"elapsedMs": 2790.326, "kind": "target", "step": "open-savings", "target": "savings-label", "status": "matched", "score": 0.999998, "candidateCount": 1, "box": [184, 610, 243, 629]}
+{"elapsedMs": 2790.608, "kind": "target", "step": "open-savings", "target": "savings-button", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [1010, 621, 1088, 638]}
+{"elapsedMs": 2918.346, "kind": "action", "step": "open-savings", "sequence": 5, "action": "click", "status": "completed", "durationMs": 127.311}
+{"elapsedMs": 3019.491, "kind": "target", "step": "open-savings", "target": "account-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"elapsedMs": 3181.52, "kind": "target", "step": "open-savings", "target": "account-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [108, 235, 384, 268]}
+{"elapsedMs": 3236.119, "kind": "reading", "step": "open-savings", "field": "account-member-id", "confidence": 95.822, "box": [248, 375, 336, 393]}
+{"elapsedMs": 3293.159, "kind": "reading", "step": "open-savings", "field": "account-type", "confidence": 96.796, "box": [1082, 460, 1151, 484]}
+{"elapsedMs": 3343.417, "kind": "reading", "step": "open-savings", "field": "currency", "confidence": 96.178, "box": [1098, 531, 1151, 556]}
+{"elapsedMs": 3343.753, "kind": "checkpoint", "step": "open-savings", "checkpoint": "account-ready", "status": "satisfied"}
+{"elapsedMs": 3343.892, "kind": "step", "step": "open-savings", "action": "click", "status": "completed"}
+{"elapsedMs": 3343.899, "kind": "step", "step": "read-balance", "action": "extract", "status": "started"}
+{"elapsedMs": 3441.808, "kind": "target", "step": "read-balance", "target": "account-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [108, 235, 384, 268]}
+{"elapsedMs": 3496.414, "kind": "reading", "step": "read-balance", "field": "account-member-id", "confidence": 95.822, "box": [248, 375, 336, 393]}
+{"elapsedMs": 3551.819, "kind": "reading", "step": "read-balance", "field": "account-type", "confidence": 96.796, "box": [1082, 460, 1151, 484]}
+{"elapsedMs": 3605.631, "kind": "reading", "step": "read-balance", "field": "currency", "confidence": 96.178, "box": [1098, 531, 1151, 556]}
+{"elapsedMs": 3664.619, "kind": "reading", "step": "read-balance", "field": "member-name", "confidence": 94.272, "box": [186, 345, 508, 373]}
+{"elapsedMs": 3731.7, "kind": "step", "step": "read-balance", "action": "extract", "status": "failed", "code": "ocr_uncertain"}

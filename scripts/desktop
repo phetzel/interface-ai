@@ -12,7 +12,7 @@ case "$command_name" in
   viewer)
     printf 'Read-only viewer: http://127.0.0.1:%s/vnc.html?autoconnect=true&resize=scale&view_only=true\n' "${DESKTOP_PORT:-6080}"
     exit 0 ;;
-  build|up|ready|smoke|browser-smoke|vision-probe|replay|validate-capability|screenshot|stop-input|reset|down|logs|action|test) ;;
+  build|up|ready|smoke|browser-smoke|vision-probe|replay|validate-capability|export-evidence|screenshot|stop-input|reset|down|logs|action|test) ;;
   *) usage >&2; exit 2 ;;
 esac
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
@@ -28,9 +28,14 @@ case "$command_name" in
     desktop_mode="${1:-${current_mode:-native}}"
     case "$desktop_mode" in native|bank) ;; *) echo 'Mode must be native or bank' >&2; exit 2 ;; esac
     export DESKTOP_APP="$desktop_mode"
-    if [[ "$desktop_mode" == bank ]]; then ./scripts/fixture up "${2:-default}"; fi
     mkdir -p tmp/desktop-artifacts
     if ! docker image inspect interface-ai-desktop:local >/dev/null 2>&1; then docker compose build desktop; fi
+    if [[ "$desktop_mode" == bank ]]; then
+      ./scripts/fixture up "${2:-default}"
+      # The fixture script already selected and health-checked its scenario.
+      # Re-resolving dependencies here would reset its environment to defaults.
+      docker compose --profile bank up --no-deps --no-build --pull never --detach --force-recreate --wait --wait-timeout 60 gateway
+    fi
     if [[ "$command_name" == reset || "$desktop_mode" == bank ]]; then
       docker compose up --no-build --pull never --detach --force-recreate --wait --wait-timeout 120 desktop viewer
     else
@@ -43,7 +48,7 @@ case "$command_name" in
   smoke) docker compose exec -T desktop python /opt/desktop/smoke.py ;;
   browser-smoke) docker compose exec -T desktop python /opt/desktop/browser_smoke.py "$@" ;;
   vision-probe) docker compose exec -T desktop python /opt/desktop/vision_probe.py "$@" ;;
-  replay|validate-capability) docker compose exec -T desktop python -m interface_ai.cli "$command_name" "$@" ;;
+  replay|validate-capability|export-evidence) docker compose exec -T desktop python -m interface_ai.cli "$command_name" "$@" ;;
   action) docker compose exec -T desktop python -m interface_ai.cli action "$@" ;;
   test) docker compose exec -T desktop python -m unittest discover -s /opt/engine/tests -v ;;
   down) docker compose --profile bank down --timeout 10 ;;

@@ -5,7 +5,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-from interface_ai.desktop import Desktop
+from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import STOP, read_session, request_stop
 from bootstrap import assert_known_surface
@@ -37,13 +37,7 @@ def main():
         request_stop()
         print('Input stopped. Reset the desktop to allow a new run.')
     elif command == 'screenshot':
-        session = ready()
-        with Desktop(session['id']) as desktop:
-            screen = desktop.screenshot()
-            assert_known_surface(screen, session['mode'])
-            path = Path('/artifacts/desktop.png')
-            screen.save(path)
-            print(str(path))
+        raise DesktopError('policy_capture_denied', 'Raw screenshot persistence is disabled; use safe evidence export')
     else:
         raise ValueError('Unknown control command')
 

@@ -1,0 +1,39 @@
+{
+  "recordType": "summary-of-development-probes",
+  "date": "2026-09-15",
+  "modelCalls": 0,
+  "probes": [
+    {
+      "name": "headless-managed-browser-inspection",
+      "status": "inconclusive",
+      "observed": "subprocess_timeout",
+      "timeoutSeconds": 15,
+      "cause": "unproven",
+      "rawScreenshotsRetained": false
+    },
+    {
+      "name": "visible-browser-initial-assertion",
+      "status": "failed",
+      "expectedTokens": [
+        "blocked",
+        "administrator"
+      ],
+      "observedTokenChecks": {
+        "blocked": true,
+        "administrator": false
+      },
+      "rawScreenshotsRetained": false
+    },
+    {
+      "name": "visible-browser-corrected-assertion",
+      "status": "passed",
+      "observedTokens": [
+        "blocked",
+        "organization",
+        "allow"
+      ],
+      "rawScreenshotsRetained": false
+    }
+  ],
+  "note": "Human-readable facts from actual development tool outputs, not a generated discovery trace. The repeatable live gate independently exercises navigation enforcement."
+}

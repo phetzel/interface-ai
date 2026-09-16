@@ -1,0 +1,12 @@
+{
+  "stats": {
+    "startTime": "2026-09-15T22:04:49.973Z",
+    "duration": 7716.508,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "source": "apps/bank-fixture/test-results/results.json",
+  "sourceSha256": "2c063e65cdf183016c756c0594b24b2f3762b21f7fca8678bbf710e40a5c728e"
+}

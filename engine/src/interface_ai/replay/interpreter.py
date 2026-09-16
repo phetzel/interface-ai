@@ -156,7 +156,9 @@ class Interpreter:
                 if outcome:
                     return BusinessOutcome(outcome=outcome)
         except Exception as exc:
+            from interface_ai.policy.evidence import safe_code
             code = 'invalid_output' if isinstance(exc, ValidationError) else getattr(exc, 'code', 'execution_failed')
+            code = safe_code(code)
             expected = [self.step.precondition] if code == 'precondition_failed' else [p.checkpoint for p in getattr(self.step, 'postconditions', [])]
             if isinstance(self.step, Extract) and code != 'precondition_failed':
                 expected = ['validated-output']

@@ -1,0 +1,2 @@
+{"elapsedMs": 295.119, "kind": "step", "step": "focus-member", "action": "click", "status": "started"}
+{"elapsedMs": 295.294, "kind": "step", "step": "focus-member", "action": "click", "status": "failed", "code": "stopped"}

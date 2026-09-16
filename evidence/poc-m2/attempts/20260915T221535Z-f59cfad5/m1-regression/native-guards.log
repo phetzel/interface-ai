@@ -1,0 +1,7 @@
+PASS invalid_and_previous_session_cli_requests_do_not_mutate_pad
+PASS second_process_rejected_while_controller_holds_lock
+PASS stop_interrupts_real_typing
+PASS no_further_input_after_stop
+PASS in_memory_screenshot_available_after_stop
+PASS lock_released_but_stop_persists_for_next_controller
+Evidence: /artifacts/20260915T221625Z-guards

@@ -4,9 +4,11 @@
 
 - Do not push this repository unless the user explicitly requests a push. The earlier repository-creation request does not authorize subsequent pushes.
 - Do not bypass this restriction by uploading repository changes through a GitHub API or another tool. Local edits may be prepared within the user's requested scope.
-- M1-01 through M1-06 are complete for the declared Linux ARM64 environment. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. M1-06 adds the full acceptance harness and a bounded transient-OCR checkpoint correction, with 47 tests, ten baseline replays, seven scenarios, and seven rejection cases passing. Both the initial failed attempt and corrected passing attempt are retained in `evidence/poc-m1/acceptance/`. Future commits and pushes require another explicit request. Model integration, full policy/evidence enforcement, and human takeover remain later work.
+- M1-01 through M1-06 are complete for the declared Linux ARM64 environment. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. M1-06 adds the full acceptance harness and a bounded transient-OCR checkpoint correction, with 47 tests, ten baseline replays, seven scenarios, and seven rejection cases passing. Both the initial failed attempt and corrected passing attempt are retained in `evidence/poc-m1/acceptance/`. Future commits and pushes require another explicit request. See the M2 status below for subsequent policy/evidence work; model integration and human takeover remain later work.
 
 ## Current planning constraints
+
+- M2-01 through M2-04 (bounded PoC B) are complete locally as of 2026-09-15. See `docs/MILESTONE_2.md` and `evidence/poc-m2/README.md` for researched tradeoffs, failed/passing full attempts, and the final two-file export-reader hardening. Final source passes 63 engine tests and 14 fixture tests; the full M1 regression passes with policy enabled. The final image's 57 runtime files match source. Changes are uncommitted/unpushed. Next is PoC D human takeover; OpenAI discovery still needs API access, reviewed outbound observations, and artifact promotion. Do not expand scope or commit/push without a user request.
 
 - Use OpenAI only for model access; do not introduce another model-provider key.
 - The user accepted the recommended initial direction: Python automation engine; TypeScript/React is the default for the small sample app when a UI is needed. Keep the operator UI minimal.

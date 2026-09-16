@@ -6,6 +6,7 @@ export const scenarioNames = [
   "duplicate",
   "unreadable",
   "translated",
+  "policy",
 ];
 
 export function scenarioConfig(name) {
@@ -20,5 +21,6 @@ export function scenarioConfig(name) {
     duplicateSavings: name === "duplicate",
     hideBalance: name === "unreadable",
     offsetPx: name === "translated" ? 40 : 0,
+    policyProbe: name === "policy",
   };
 }

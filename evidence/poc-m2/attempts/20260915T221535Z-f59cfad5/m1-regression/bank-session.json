@@ -1,0 +1,54 @@
+{
+  "id": "06dcae03-737f-45c2-ae54-aa32aaae6186",
+  "display": ":99",
+  "width": 1280,
+  "height": 800,
+  "viewer": "read-only",
+  "mode": "bank",
+  "windowId": 2097155,
+  "windowClass": [
+    "chromium (/tmp/interface-ai/chromium-profile)",
+    "Chromium"
+  ],
+  "appPid": 20,
+  "sandbox": {
+    "browserFilterCount": 1,
+    "renderers": [
+      {
+        "pid": 139,
+        "noNewPrivileges": true,
+        "seccompMode": 2,
+        "filterCount": 2,
+        "pidNamespaceDepth": 3,
+        "effectiveCapabilities": "0000000000000000",
+        "disableSandboxFlag": false
+      },
+      {
+        "pid": 148,
+        "noNewPrivileges": true,
+        "seccompMode": 2,
+        "filterCount": 2,
+        "pidNamespaceDepth": 3,
+        "effectiveCapabilities": "0000000000000000",
+        "disableSandboxFlag": false
+      },
+      {
+        "pid": 149,
+        "noNewPrivileges": true,
+        "seccompMode": 2,
+        "filterCount": 2,
+        "pidNamespaceDepth": 3,
+        "effectiveCapabilities": "0000000000000000",
+        "disableSandboxFlag": false
+      }
+    ]
+  },
+  "pids": {
+    "display": 8,
+    "window manager": 13,
+    "Chromium": 20,
+    "read-only VNC": 197,
+    "web viewer": 198
+  },
+  "inputStopped": false
+}

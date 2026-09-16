@@ -1,0 +1,16 @@
+{
+  "runId": "20260915T222344Z-replay-ffbbed6d",
+  "modelCalls": 0,
+  "actionsCompleted": 0,
+  "phase": "preflight",
+  "packages": {
+    "pydantic": "2.12.5",
+    "opencv-python-headless": "4.12.0.88",
+    "numpy": "2.2.6",
+    "Pillow": "11.3.0"
+  },
+  "status": "failure",
+  "elapsedSeconds": 0.007,
+  "code": "invalid_input",
+  "failedStep": null
+}

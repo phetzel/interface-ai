@@ -40,6 +40,15 @@ Routine action events retain only action type, sequence, status, duration, and f
 
 ## Limits
 
-Stop is cooperative: a short primitive already dispatched to the OS may finish. This is not the later atomic human ownership/transfer protocol. Window-ID focus checks catch a changed active window; they do not identify safe buttons, enforce browser routes, or establish financial-operation policy. Screenshot export guards apply only to the controlled synthetic fixture, not arbitrary screens.
+Stop is cooperative: a short primitive already dispatched to the OS may finish. This is not the later atomic human ownership/transfer protocol. Window-ID focus checks alone catch a changed active window. M2 adds the separate operation/application and route boundaries described below. Ordinary raw screenshot persistence is now denied.
 
 The current backend is tested only with one 1280×800, 24-bit, little-endian Linux X11 display. PyAutoGUI emits mouse and keyboard events; Xlib/Pillow capture the same framebuffer in memory. Native and browser smoke tests use fixed calibration coordinates and are explicitly not general visual replay. M1-04 supplies local visual targeting and output extraction.
+## M2 policy boundary
+
+Bank sessions enforce `interface_ai.policy.bank.BankPolicy` in the shared desktop adapter immediately before dispatch. Its targets come from the operator-reviewed bundle, not the calling artifact. It permits a member-field click, a five-digit ID, Ctrl+A, Enter after entry, and the unique Savings button. Off-target clicks, arbitrary typing, scrolling and other shortcuts are denied. Focus, application process/class, session, stop and deadline checks still apply.
+
+The CLI admits only the reviewed artifact digest before desktop acquisition or metadata logging. Low-level interpreter unit tests still exercise generic artifacts; that does not grant those artifacts permission to run through the operator CLI. A future promotion mechanism must explicitly review new artifacts and update the policy.
+
+Keyboard permission belongs to the current acquired `Desktop` object. Separate single-action CLI processes do not share that permission. Native calibration and the fixed browser smoke harness are trusted developer tests; their calibration override is not exposed in action JSON or the CLI.
+
+Routine replay events pass a closed vocabulary before persistence. `export-evidence --run RUN_ID` reconstructs a small metadata export, excluding raw screenshots, business results, arbitrary source metadata, and additional files. Ordinary screenshot persistence is denied. See [M2 design and limits](../docs/MILESTONE_2.md).

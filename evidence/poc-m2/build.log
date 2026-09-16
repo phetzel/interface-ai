@@ -1,0 +1,172 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.06kB done
+#1 DONE 0.0s
+
+#2 [fixture internal] load build definition from Dockerfile
+#2 transferring dockerfile: 712B done
+#2 DONE 0.0s
+
+#3 [desktop internal] load build definition from Dockerfile
+#3 transferring dockerfile: 1.42kB done
+#3 DONE 0.0s
+
+#4 [fixture internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#4 ...
+
+#5 [desktop internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#5 DONE 62.1s
+
+#4 [fixture internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#4 ...
+
+#6 [desktop internal] load .dockerignore
+#6 transferring context: 174B done
+#6 DONE 0.0s
+
+#7 [desktop internal] load build context
+#7 DONE 0.0s
+
+#8 [desktop  1/10] FROM docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#8 resolve docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#8 ...
+
+#4 [fixture internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#4 DONE 62.4s
+
+#9 [fixture internal] load .dockerignore
+#9 transferring context: 101B done
+#9 DONE 0.0s
+
+#10 [fixture internal] load build context
+#10 transferring context: 81.86kB done
+#10 DONE 0.0s
+
+#11 [fixture build 1/8] FROM docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#11 resolve docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#11 ...
+
+#8 [desktop  1/10] FROM docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#8 resolve docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171 62.0s done
+#8 DONE 62.0s
+
+#7 [desktop internal] load build context
+#7 transferring context: 25.97kB done
+#7 DONE 0.0s
+
+#12 [desktop  2/10] RUN apt-get update && apt-get install -y --no-install-recommends     ca-certificates chromium fonts-dejavu-core tesseract-ocr=5.3.0-2 tesseract-ocr-eng=1:4.1.0-2     novnc openbox scrot websockify x11-utils x11vnc xauth xvfb     python3 python3-dev python3-tk python3-venv     && rm -rf /var/lib/apt/lists/*
+#12 CACHED
+
+#13 [desktop  3/10] COPY infra/desktop/requirements.lock /opt/desktop/requirements.lock
+#13 CACHED
+
+#14 [desktop  4/10] RUN python3 -m venv /opt/venv     && pip install --no-cache-dir --require-hashes -r /opt/desktop/requirements.lock     && useradd --create-home --uid 1000 desktop     && mkdir /artifacts /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix     && chown desktop:desktop /artifacts     && dpkg-query -W > /opt/desktop/system-packages.txt
+#14 CACHED
+
+#15 [desktop  5/10] COPY infra/desktop/*.py /opt/desktop/
+#15 DONE 0.0s
+
+#16 [desktop  6/10] COPY infra/desktop/chromium-policy.json /etc/chromium/policies/managed/interface-ai.json
+#16 DONE 0.0s
+
+#17 [desktop  7/10] COPY engine /opt/engine/
+#17 DONE 0.0s
+
+#18 [desktop  8/10] COPY capabilities /opt/capabilities/
+#18 DONE 0.0s
+
+#19 [desktop  9/10] RUN python -m interface_ai.contracts.schema --output-dir /opt/capabilities/schemas
+#19 DONE 0.2s
+
+#11 [fixture build 1/8] FROM docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#11 resolve docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 62.0s done
+#11 DONE 62.0s
+
+#20 [desktop 10/10] WORKDIR /home/desktop
+#20 DONE 0.0s
+
+#21 [fixture build 2/8] WORKDIR /build
+#21 CACHED
+
+#22 [fixture build 4/8] RUN npm ci --no-audit --no-fund
+#22 CACHED
+
+#23 [fixture build 3/8] COPY package.json package-lock.json ./
+#23 CACHED
+
+#24 [fixture build 5/8] COPY index.html tsconfig.json vite.config.mjs ./
+#24 CACHED
+
+#25 [fixture build 6/8] COPY src ./src
+#25 DONE 0.1s
+
+#26 [fixture build 7/8] COPY server/scenarios.mjs ./server/scenarios.mjs
+#26 DONE 0.0s
+
+#27 [desktop] exporting to image
+#27 exporting layers 0.1s done
+#27 exporting manifest sha256:fdf2122d60db3c360ce455803825cd20e313d1c6d7c62cea7c0fea217991a95e 0.0s done
+#27 exporting config sha256:439c766739ae5958ed4f32c3849bcdcaeec9932ac067eb0855ed7be4bfc957a9 done
+#27 exporting attestation manifest sha256:a7e1f1e7fe9dcdfc2423dd8a7cc3bc5236ead238ba3ef98c927e885d3ba0a3df 0.0s done
+#27 exporting manifest list sha256:50b042bffebbe6b5f8fa27b0e4b232ec0dadeb8b5a8fc2e94e579b87cde1113b done
+#27 naming to docker.io/library/interface-ai-desktop:local done
+#27 unpacking to docker.io/library/interface-ai-desktop:local 0.0s done
+#27 DONE 0.2s
+
+#28 [desktop] resolving provenance for metadata file
+#28 DONE 0.0s
+
+#29 [fixture build 8/8] RUN npm run build
+#29 0.165 
+#29 0.165 > @interface-ai/bank-fixture@0.1.0 build
+#29 0.165 > npm run typecheck && vite build
+#29 0.165 
+#29 0.204 
+#29 0.204 > @interface-ai/bank-fixture@0.1.0 typecheck
+#29 0.204 > tsc --noEmit
+#29 0.204 
+#29 0.458 vite v8.3.0 building client environment for production...
+#29 0.464 transforming...
+#29 0.496 ✓ 21 modules transformed.
+#29 0.520 rendering chunks...
+#29 0.538 computing gzip size...
+#29 0.541 dist/index.html                                      0.50 kB │ gzip:  0.31 kB
+#29 0.541 dist/assets/inter-latin-400-normal-C38fXH4l.woff2   23.66 kB
+#29 0.541 dist/assets/inter-latin-500-normal-Cerq10X2.woff2   24.27 kB
+#29 0.541 dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2   24.35 kB
+#29 0.541 dist/assets/inter-latin-600-normal-LgqL8muc.woff2   24.45 kB
+#29 0.541 dist/assets/inter-latin-400-normal-CyCys3Eg.woff    30.69 kB
+#29 0.541 dist/assets/inter-latin-600-normal-CiBQ2DWP.woff    31.26 kB
+#29 0.541 dist/assets/inter-latin-500-normal-BL9OpVg8.woff    31.28 kB
+#29 0.541 dist/assets/inter-latin-700-normal-BLAVimhd.woff    31.32 kB
+#29 0.541 dist/assets/index-C-kt9Usc.css                       9.39 kB │ gzip:  2.70 kB
+#29 0.541 dist/assets/index-DZ4nwrDx.js                      230.16 kB │ gzip: 71.78 kB
+#29 0.541 
+#29 0.541 ✓ built in 82ms
+#29 DONE 0.6s
+
+#30 [fixture stage-1 2/5] WORKDIR /app
+#30 CACHED
+
+#31 [fixture stage-1 3/5] COPY --from=build /build/dist ./dist
+#31 DONE 0.0s
+
+#32 [fixture stage-1 4/5] COPY server/index.mjs server/scenarios.mjs ./server/
+#32 DONE 0.0s
+
+#33 [fixture stage-1 5/5] COPY INTER-LICENSE.txt ./INTER-LICENSE.txt
+#33 DONE 0.0s
+
+#34 [fixture] exporting to image
+#34 exporting layers 0.0s done
+#34 exporting manifest sha256:7ae4845c10de6f29e9bc8d7bfbd99125f6149f25896fa4af0003e372fcfd08d6 done
+#34 exporting config sha256:a3ec0868471caba949991df76bca12c3a2ebc05666edd6c1ea892c7ea25cd52e done
+#34 exporting attestation manifest sha256:7c78fbba3989a7bf4edc04c568279abb6e0445e8f7ab370b4f43db02aab7b743 0.0s done
+#34 exporting manifest list sha256:79477346265c593dad780a53a3fbbc1d6f07f5d56f68df0c6a9c0f343b1ea77a done
+#34 naming to docker.io/library/interface-ai-bank-fixture:local done
+#34 unpacking to docker.io/library/interface-ai-bank-fixture:local 0.0s done
+#34 DONE 0.1s
+
+#35 [fixture] resolving provenance for metadata file
+#35 DONE 0.0s
+ interface-ai-desktop:local  Built
+ interface-ai-bank-fixture:local  Built

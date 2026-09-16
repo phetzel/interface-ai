@@ -30,7 +30,7 @@ From the repository root:
 
 `up` builds if the local image is missing and starts a fresh fixture. After source changes, run `./scripts/fixture build` and then `./scripts/fixture reset`. `logs` shows recent server output. The root README contains the temporary Docker client workaround if the public-image credential helper stalls.
 
-The container serves `http://fixture:4173` to the desktop's internal Compose network. It is non-root, uses a read-only root filesystem, has no mounts or published ports, and has no default IPv4 route. Its final image contains only the Node runtime, static assets, and the small read-only server; tests/oracle, TypeScript source, and npm dependencies are absent.
+The origin serves the fixture on its private internal network; M2 exposes `http://fixture:4173` to the desktop through the policy gateway. It is non-root, uses a read-only root filesystem, has no mounts or published ports, and has no default IPv4 route. Its final image contains only the Node runtime, static assets, and the small read-only server; tests/oracle, TypeScript source, and npm dependencies are absent.
 
 The Compose `bank` profile keeps the fixture optional for the native desktop calibration test. `./scripts/desktop down` shuts down all project services, including this optional fixture. `./scripts/fixture down` stops only the fixture. Reset recreates the service and selects the scenario; reload an open page to receive that configuration and clear UI state.
 
@@ -79,3 +79,8 @@ The harness uses DOM assertions and may inspect fixture configuration. These are
 [Reviewed evidence](../../evidence/poc-m1/fixture/README.md) includes actual test results, lifecycle checks, and synthetic screenshots. Raw Playwright output remains under ignored `test-results/`. No statistical reliability claim or full-M1 completion is implied.
 
 Tooling references: [Vite setup requirements](https://vite.dev/guide/) and [Playwright web-server configuration](https://playwright.dev/docs/test-webserver).
+## M2 policy scenario and network boundary
+
+`./scripts/desktop reset bank policy` starts the normal search view with an additional synthetic transfer control, an untrusted instruction to ignore restrictions, and a private-note sentinel. The button only changes local React state; no real transaction or backend mutation exists. The host fixture test proves the button works, while M2's desktop acceptance proves the ordinary input policy refuses to click it. This scenario is launch-controlled like the other fixtures.
+
+The fixture origin now lives on a separate internal Compose network. The desktop reaches it through the fixed-upstream policy gateway at `http://fixture:4173/`; it cannot directly address the origin. The host preview and Playwright servers remain fixture-development tools, separate from runtime policy enforcement.

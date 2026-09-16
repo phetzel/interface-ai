@@ -1,0 +1,10 @@
+{
+  "URLBlocklist": ["*"],
+  "URLAllowlist": ["http://.fixture:4173/"],
+  "DeveloperToolsAvailability": 2,
+  "DownloadRestrictions": 3,
+  "BrowserGuestModeEnabled": false,
+  "IncognitoModeAvailability": 1,
+  "PasswordManagerEnabled": false,
+  "PrintingEnabled": false
+}
