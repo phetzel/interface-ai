@@ -1,0 +1,88 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "running",
+  "startedAt": "2026-09-17T20:17:25.171479+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 97,
+      "elapsedSeconds": 0.173
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "c296657a-1aa6-4ae3-9aab-c1dc2a33bbc2",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 13.781
+    },
+    {
+      "name": "native-input-viewer-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "c296657a-1aa6-4ae3-9aab-c1dc2a33bbc2",
+      "elapsedSeconds": 2.797
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "f568c874-3d4e-4197-9300-6c9f9965f809",
+      "elapsedSeconds": 12.07
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "cabd25e1-7315-4945-b174-f8a26b1bc8f9",
+      "elapsedSeconds": 21.071
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 63,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.296
+    },
+    {
+      "name": "unit-tests",
+      "status": "passed",
+      "evidence": "unit-tests.log",
+      "testsPassed": 85,
+      "elapsedSeconds": 4.795
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.232
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "running"
+    }
+  ],
+  "sourceCommit": "ec2b56e308c09d70ed9854dca99c2c47c13541c1",
+  "uncommittedFiles": [
+    " M AGENTS.md",
+    " M README.md",
+    " M docs/MILESTONE_3.md",
+    " M engine/src/interface_ai/handoff/controller.py",
+    " M engine/src/interface_ai/handoff/operator.html",
+    " M engine/src/interface_ai/handoff/server.py",
+    " M engine/tests/test_handoff.py",
+    " M scripts/checks/m3_operator_ui.mjs",
+    " M scripts/m3-check",
+    "?? docs/manual-acceptance.html",
+    "?? evidence/pre-audit-2026-09-17/",
+    "?? scripts/checks/m3_operator_stop.mjs"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17"
+}

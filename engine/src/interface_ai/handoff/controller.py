@@ -23,6 +23,8 @@ class Controller:
         self.mutex = threading.RLock()
         self.phase = 'idle'
         self.reason = None
+        self.current_step = None
+        self.last_checkpoint = None
         self.directory = None
         self.output_root = output_root
         self.inputs = None
@@ -37,13 +39,25 @@ class Controller:
         self.worker = None
 
     def record(self, kind, **details):
-        # All callers pass closed constants / adapter-validated metadata. Never
-        # pass request bodies, coordinates, text, key names, pixels or OCR here.
+        # All callers pass closed constants / validated metadata. Interpreter
+        # geometry describes recognized regions, never human input coordinates.
+        # Never pass request bodies, text, key names, pixels or OCR values here.
         event = dict(kind=kind, elapsedMs=round((time.monotonic()-self.started)*1000), **details)
         self.audit.append(event)
         if self.directory:
             with (self.directory / 'audit.jsonl').open('a') as stream:
                 stream.write(json.dumps(event) + '\n')
+
+    def interpreter_event(self, event):
+        # Use the same closed event vocabulary as CLI replay. Keep it nested so
+        # interpreter completion cannot be counted as an OS input action.
+        event = checked_event(event)
+        with self.mutex:
+            if event.get('step') is not None:
+                self.current_step = event['step']
+            if event.get('kind') == 'checkpoint' and event.get('status') == 'satisfied':
+                self.last_checkpoint = event['checkpoint']
+            self.record('interpreter', event=event)
 
     def snapshot(self):
         with self.mutex:
@@ -53,6 +67,7 @@ class Controller:
             state = self.ownership.read()
             return dict(session=self.session['id'], epoch=state['epoch'], owner=state['owner'],
                         phase=self.phase, reason=self.reason, sequence=self.human_sequence,
+                        step=self.current_step, lastCheckpoint=self.last_checkpoint,
                         resumable=self.resume_at is not None, modelCalls=0)
 
     def verify(self, lease):
@@ -113,7 +128,8 @@ class Controller:
                 with self.mutex:
                     self.record('automation', **checked_event(event))
             with Desktop(self.session['id'], epoch=epoch, event_sink=action_event) as desktop:
-                runner = Interpreter(self.bundle, self.inputs, desktop, pause_check=self.detect_expiry)
+                runner = Interpreter(self.bundle, self.inputs, desktop, pause_check=self.detect_expiry,
+                                     event_sink=self.interpreter_event)
                 result = runner.run(start_at=start_at)
             with self.mutex:
                 if self.phase != 'running':
@@ -186,7 +202,7 @@ class Controller:
             if self.phase != 'human' or self.resume_at is None:
                 raise DesktopError('invalid_transition', 'No verified continuation is available; reset required')
             with Desktop(self.session['id'], role='human', epoch=state['epoch'], timeout=10) as desktop:
-                runner = Interpreter(self.bundle, self.inputs, desktop)
+                runner = Interpreter(self.bundle, self.inputs, desktop, event_sink=self.interpreter_event)
                 runner.step = runner.cap.steps[self.resume_at]
                 runner.step_deadline = time.monotonic() + 5
                 try:
@@ -194,6 +210,8 @@ class Controller:
                     runner.guard()
                 except (DesktopError, VisionError):
                     valid = False
+                runner.emit('checkpoint', checkpoint='member-ready',
+                            status='satisfied' if valid else 'unsatisfied')
                 if not valid:
                     self.record('lifecycle', status='rejected', code='resume_rejected')
                     raise DesktopError('resume_rejected', 'Return to the original member overview before resuming')

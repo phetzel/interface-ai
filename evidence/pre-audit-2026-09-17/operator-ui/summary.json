@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "provenance": "automated-operator-ui-test",
+  "viewport": [
+    1000,
+    1200
+  ],
+  "scaledDesktopClicks": true,
+  "prematureResumeRejected": true,
+  "stepAndReasonVisible": true,
+  "completed": true,
+  "pageErrors": 0,
+  "modelCalls": 0
+}

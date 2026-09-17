@@ -1,0 +1,17 @@
+test_http_stop_interrupts_hotkey_and_releases_modifier (test_handoff.ControllerTests.test_http_stop_interrupts_hotkey_and_releases_modifier) ... FAIL
+
+======================================================================
+FAIL: test_http_stop_interrupts_hotkey_and_releases_modifier (test_handoff.ControllerTests.test_http_stop_interrupts_hotkey_and_releases_modifier)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/engine/tests/test_handoff.py", line 317, in test_http_stop_interrupts_hotkey_and_releases_modifier
+    self.http_input_stop({'type':'hotkey','keys':['ctrl','a']}, [('down','ctrl'),('up','ctrl')])
+  File "/opt/engine/tests/test_handoff.py", line 293, in http_input_stop
+    self.assertTrue(stopped.wait(1), 'HTTP Stop was not signaled while input held mutex')
+AssertionError: False is not true : HTTP Stop was not signaled while input held mutex
+
+----------------------------------------------------------------------
+Ran 1 test in 1.033s
+
+FAILED (failures=1)
+EXPECTED BASELINE FAILURE: the new regression detects the audited defect.

@@ -1,6 +1,18 @@
 # M3 — Same-session human takeover
 
-Status: implementation and automated validation complete for the declared environment. Final source passes 80 engine tests, 15 fixture tests, both live simulated-operator cases and runtime source verification. A real-person demonstration remains pending. See [acceptance evidence](../evidence/poc-m3/README.md). M2 was committed and pushed as `3726347` at the user's request. M3 changes remain local until separately requested.
+Status: local pre-audit repair on top of the pushed M3 baseline `ec2b56e`. The repair passes 85 engine tests, both live simulated-operator cases and panel takeover/Stop checks. See [current validation](../evidence/pre-audit-2026-09-17/README.md) for the full regression status and source manifest; [original M3 evidence](../evidence/poc-m3/README.md) remains historical. A real-person demonstration is still pending. Work through the [manual M1–M3 checklist](manual-acceptance.html) to record that pass. These new changes remain uncommitted and unpushed.
+
+## Pre-audit repair, 17 September 2026
+
+An independent audit reproduced a Stop defect in the committed baseline: `Server.service_actions()` waited for the controller mutex on the request-accepting thread while human input held that mutex. The `/stop` handler could therefore be delayed before it had a chance to set the stop flag. The direct-adapter and external-CLI Stop checks did not exercise that HTTP contention.
+
+The local repair uses a nonblocking maintenance lock attempt. A separate timer thread could also avoid blocking acceptance, but would introduce another worker and synchronization lifecycle; retrying maintenance at the next server poll is sufficient for this bounded prototype. Python documents that [`service_actions()` executes in the serving loop](https://docs.python.org/3.11/library/socketserver.html#socketserver.BaseServer.service_actions). Status observations also acquire the mutex nonblockingly and return `503 {"code":"busy"}` during input, so polling does not hold request slots waiting on that lock. The panel retries observations and keeps Stop available; input requests are never automatically retried.
+
+Expiry maintenance retries after the active action releases the mutex, even if the browser is closed. Human actions already have a ten-second adapter deadline, checked between primitives/characters; this is not a promise to forcibly interrupt a blocked OS call. Stop is signaled independently of the controller mutex, subsequent input checks reject it, and held-key cleanup still drains normally.
+
+Handoff now records `kind: interpreter` entries with a nested event validated by the same closed metadata rules as CLI replay. These include reviewed step/target/checkpoint identifiers, confidence and recognition-region boxes, never OCR values, typed text, raw keys or human input coordinates. Input action totals remain separate. The panel displays the current/last observed step, last verified checkpoint, and reason; the last verified checkpoint is historical context, not a claim about the present screen. Resume verification also records satisfied/unsatisfied checkpoint metadata.
+
+See [pre-audit validation](../evidence/pre-audit-2026-09-17/README.md). The checklist now tests panel Stop separately from CLI Stop and inspects an ordinary failed handoff run. It uses a new local-storage version so earlier checklist marks do not silently carry into this revised pass. CLI/coordinator unification, expanded failure routing, artifact promotion and genuine discovery remain subsequent work.
 
 ## Scope and acceptance
 

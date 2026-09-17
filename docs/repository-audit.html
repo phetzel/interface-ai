@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Interface AI · Repository review & interview preparation</title>
+  <style>
+    :root { color-scheme: light; --ink:#193c42; --muted:#566e73; --line:#d5e0df; --paper:#fff; --bg:#f1f5f3; --green:#385c88; --red:#a13836; --amber:#825b13; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--bg); font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:#315d8d; text-underline-offset:3px; } button,input,select,textarea { font:inherit; }
+    button,select,input,textarea { border:1px solid #aebfbd; border-radius:7px; background:white; color:var(--ink); }
+    button { padding:8px 13px; cursor:pointer; } button:hover { background:#e6efeb; } button:disabled { cursor:not-allowed; opacity:.55; }
+    :focus-visible { outline:3px solid #269888; outline-offset:3px; }
+    input,select { padding:8px 10px; min-width:0; } textarea { width:100%; padding:10px; resize:vertical; min-height:80px; }
+    h1,h2,h3,p { margin-top:0; } h1 { font-size:clamp(30px,4vw,48px); line-height:1.12; letter-spacing:-1.5px; margin-bottom:18px; }
+    h2 { font-size:24px; letter-spacing:-.5px; margin-bottom:8px; } h3 { font-size:17px; }
+    .shell { max-width:1390px; margin:auto; padding:40px 32px 70px; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:2px; font-size:12px; font-weight:750; }
+    .hero { display:grid; grid-template-columns:1.35fr 1fr; gap:40px; margin-bottom:28px; }
+    .hero p { max-width:710px; color:var(--muted); } .scope { border-left:3px solid var(--green); padding:14px 20px; background:#e6efea; align-self:start; border-radius:0 9px 9px 0; }
+    .scope strong { display:block; margin-bottom:5px; } .scope p { font-size:14px; margin:0; }
+    .meta { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; background:white; padding:20px; border:1px solid var(--line); border-radius:12px; }
+    label.field { display:flex; flex-direction:column; gap:5px; font-weight:600; font-size:13px; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:18px 0 30px; }
+    .primary { background:var(--green); color:white; border-color:var(--green); } .primary:hover { background:#114e3e; }
+    .toolbar .storage { margin-left:auto; color:var(--muted); font-size:12px; }
+    .layout { display:grid; grid-template-columns:235px minmax(0,1fr); gap:34px; align-items:start; }
+    aside.rail { position:sticky; top:20px; }
+    .meter { background:white; padding:19px; border:1px solid var(--line); border-radius:12px; }
+    #overall { font-size:14px; font-weight:700; display:block; margin-bottom:12px; }
+    #count { font-size:31px; font-weight:750; line-height:1.1; } .muted { color:var(--muted); }
+    progress { appearance:none; width:100%; height:7px; border:none; margin:14px 0 8px; border-radius:5px; overflow:hidden; }
+    progress::-webkit-progress-bar { background:#e5ece8; } progress::-webkit-progress-value { background:var(--green); }
+    progress::-moz-progress-bar { background:var(--green); }
+    #counts { font-size:12px; margin:0 0 12px; } .meter button { width:100%; }
+    nav { display:grid; gap:4px; margin-top:18px; } nav a { padding:7px 8px; text-decoration:none; font-size:13px; } nav a:hover { background:#e4ede7; border-radius:6px; }
+    nav small { float:right; color:var(--muted); }
+    .filters { margin:18px 0; } .filters label { display:block; font-size:12px; margin-bottom:5px; } .filters select { width:100%; }
+    .legend { font-size:12px; color:var(--muted); } .legend p { margin-bottom:10px; }
+    .group { margin-bottom:40px; scroll-margin-top:20px; } .group-intro { color:var(--muted); margin-bottom:18px; max-width:800px; }
+    .card { border:1px solid var(--line); border-left:4px solid #a7bab1; background:white; border-radius:10px; margin:12px 0; overflow:hidden; scroll-margin-top:18px; }
+    .card[data-status=passed] { border-left-color:var(--green); } .card[data-status=failed] { border-left-color:var(--red); } .card[data-status=blocked] { border-left-color:var(--amber); }
+    summary { display:flex; gap:12px; align-items:center; cursor:pointer; padding:17px 18px; list-style:none; }
+    summary::-webkit-details-marker { display:none; } summary::after { content:'+'; margin-left:auto; color:var(--muted); font-size:24px; flex:none; }
+    details[open]>summary::after { content:'−'; } .number { font:12px ui-monospace,monospace; color:var(--muted); }
+    .step-title { font-weight:650; } .tag { flex:none; font-size:10px; font-weight:750; text-transform:uppercase; letter-spacing:.7px; padding:3px 7px; border-radius:4px; background:#edf1f1; color:#4d666d; }
+    .tag.kind-manual { color:#14624e; background:#e8f3eb; } .status-chip { font-size:11px; flex:none; color:var(--muted); }
+    .card[data-status=passed] .status-chip { color:var(--green); } .card[data-status=failed] .status-chip { color:var(--red); }
+    .body { padding:0 22px 20px 46px; } .body p { margin-bottom:12px; } .body ol,.body ul { padding-left:22px; margin:10px 0 16px; } li { margin:5px 0; }
+    code { font:13px ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    .command { background:#172f35; color:#e7f2ed; border-radius:8px; position:relative; padding:17px 88px 17px 16px; margin:12px 0; }
+    pre { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; } .command button { position:absolute; top:10px; right:10px; font-size:11px; background:#26474a; color:white; border-color:#527376; }
+    .command .command-hint { display:block; color:#b7d3cc; font-size:11px; margin-top:8px; }
+    .expected { border-radius:7px; background:#eff6f1; padding:14px 16px; margin:16px 0; }
+    .expected strong { font-size:12px; color:var(--green); text-transform:uppercase; letter-spacing:.7px; }
+    .expected ul { margin-bottom:0; } .note { border-left:2px solid #bea775; padding-left:12px; color:#70551e; font-size:13px; }
+    .capture { background:#f6f7f7; padding:12px; border-radius:6px; margin:12px 0; } .capture input { width:100%; margin-top:5px; font:13px ui-monospace,monospace; }
+    .result { display:flex; gap:10px; align-items:center; margin:18px 0 10px; } .result label { font-size:13px; font-weight:650; }
+    .notes-label { display:block; font-size:12px; color:var(--muted); margin:10px 0 5px; } .links { display:flex; flex-wrap:wrap; gap:13px; font-size:13px; margin:13px 0; }
+    .finish { border:1px solid var(--line); background:white; border-radius:12px; padding:24px; } .attest { display:flex; gap:12px; align-items:start; margin:15px 0; } .attest input { margin-top:6px; }
+    #review { font-size:14px; } #message { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#172f35; color:white; padding:11px 20px; border-radius:8px; max-width:90%; z-index:10; box-shadow:0 4px 20px #0002; }
+    #message:empty { display:none; } .print-value { display:none; } footer { color:var(--muted); font-size:12px; margin-top:25px; }
+    @media (max-width:900px) { .hero { grid-template-columns:1fr; gap:8px; } .layout { grid-template-columns:1fr; } aside.rail { position:static; } nav { grid-template-columns:1fr 1fr; } .meter { display:flex; flex-wrap:wrap; gap:10px; align-items:center; } .meter progress { flex-basis:100%; } #counts { margin:0; } .meter button { width:auto; margin-left:auto; } .legend { display:none; } }
+    @media (max-width:560px) { .shell { padding:24px 14px 50px; } .meta { grid-template-columns:1fr; } .toolbar .storage { margin-left:0; width:100%; } summary { padding:14px 12px; gap:8px; flex-wrap:wrap; } .step-title { flex:1; min-width:180px; } .body { padding:0 16px 18px; } .status-chip { margin-left:22px; } .result { flex-wrap:wrap; } .command { padding-right:16px; padding-top:48px; } h1 { letter-spacing:-1px; } }
+    @media print { body { background:white; color:black; font-size:10pt; } .shell { padding:0; max-width:none; } .layout { display:block; } .hero { display:block; } .scope { padding:10px; } .toolbar,.rail,.command button,.result select,.result button,.finish button,#message { display:none!important; } .card[hidden] { display:block!important; } .card { break-inside:avoid; } .group { break-before:auto; } summary::after { display:none; } .command { color:black; background:#eee; padding:10px; } .body { padding:0 18px 15px; } .print-value { display:inline; white-space:pre-wrap; overflow-wrap:anywhere; } textarea { display:none; } .notes-print { display:block; } a { color:black; } .meta { grid-template-columns:1fr 1fr 1fr; } footer { font-size:9pt; } }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div><p class="eyebrow">Interface AI / Repository review</p><h1>Know the code.<br>Explain the decisions.</h1><p>Work from the architecture down to individual functions. Read, trace a concrete example, explain it aloud, and record what you would improve. Use this alongside the behavioral audit; your learning notes and progress are saved separately.</p></div>
+    <div class="scope"><strong>Prepared: ec2b56e + local pre-audit fixes · September 17, 2026</strong><p>An interview preparation and maintainability review of the current repository. Mark a topic understood only when you can explain the code and its limits. Use the companion manual audit to verify runtime behavior.</p></div>
+  </header>
+  <div class="meta">
+    <label class="field">Reviewer<input id="reviewer" autocomplete="off" maxlength="120" placeholder="Your name"></label>
+    <label class="field">Revision reviewed<input id="revision" maxlength="120" placeholder="Paste git describe --always --dirty"></label>
+    <label class="field">Review date<input id="date" type="date"></label>
+  </div>
+  <div class="toolbar">
+    <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New review</button>
+    <span id="storage" class="storage" role="status">Checking local storage…</span>
+  </div>
+  <div class="layout">
+    <aside class="rail">
+      <div class="meter"><span id="overall" aria-live="polite">Not started</span><div><span id="count">0</span><span id="total" class="muted"></span></div><progress id="progress" value="0" max="1" aria-label="Topics understood"></progress><p id="counts" class="muted"></p><button id="next">Next unresolved topic ↓</button></div>
+      <nav id="nav" aria-label="Checklist sections"></nav>
+      <div class="filters"><label for="filter">Show topics</label><select id="filter"><option value="all">Everything</option><option value="unresolved">Not yet understood</option><option value="issues">Needs work or blocked</option></select></div>
+      <div class="legend"><p><b>Code</b> — read the files and trace behavior.</p><p><b>Design / review</b> — assess boundaries, tradeoffs and clarity.</p><p><b>Rehearsal</b> — explain the decision in your own words.</p><p><b>Needs work</b> is a useful finding. Write the unclear point, its file/function, a proposed change and how you would validate it. Deferred topics remain incomplete.</p></div>
+    </aside>
+    <main id="main">
+      <div id="groups"></div>
+      <section class="finish" id="finish"><h2>Close out this repository review</h2><p id="review">No topics have been reviewed.</p><label class="attest"><input type="checkbox" id="attest"><span>I can explain the reviewed topics in my own words, trace the main execution paths, and describe their limitations. I have recorded unclear code and follow-up improvements honestly.</span></label><button class="primary" id="export-bottom">Export report · JSON</button><p class="muted">This is your repository understanding and maintainability assessment. Exporting does not run tests, change code, complete the manual takeover gate or establish assignment readiness.</p></section>
+      <footer>No commands run from this page. Your notes are browser-local and not automatically redacted. Keep secrets out of them and export your report to preserve it. Open the companion <a href="manual-acceptance.html">M1–M3 behavioral checklist</a> for the manual app audit.</footer>
+    </main>
+  </div>
+</div>
+<div id="message" role="status" aria-live="polite"></div>
+<noscript><p>This interactive checklist requires JavaScript. Enable it to see the steps and record results; no external scripts are used.</p></noscript>
+<script>
+'use strict';
+const GROUPS = [
+  {
+    "id": "orientation",
+    "title": "01 / Tell the story and map the repo",
+    "intro": "Start with the problem, current scope and a map you can redraw. Open the linked files in VS Code with Cmd+P; the links also let you inspect them in a browser.",
+    "steps": [
+      {
+        "id": "story",
+        "title": "Give a truthful 90-second project explanation",
+        "kind": "rehearsal",
+        "actions": [
+          "Describe the intended discovery → reusable capability → deterministic replay → human intervention flow.",
+          "Separate implemented M1–M3 behavior from genuine model discovery, promotion and final submission work. Write your own short pitch."
+        ],
+        "expected": [
+          "Your pitch names the supported synthetic Linux desktop, the manually authored artifact and zero model calls during replay.",
+          "You can explain why proving replay and ownership came before model integration."
+        ],
+        "prompts": [
+          "What can this system demonstrate today, and what is the most important missing requirement?"
+        ],
+        "links": [
+          [
+            "README.md",
+            "../README.md"
+          ],
+          [
+            "docs/ROADMAP.md",
+            "../docs/ROADMAP.md"
+          ],
+          [
+            "docs/CURRENT_PLAN.md",
+            "../docs/CURRENT_PLAN.md"
+          ]
+        ]
+      },
+      {
+        "id": "map",
+        "title": "Draw the boundaries between the main folders",
+        "kind": "design",
+        "actions": [
+          "Map engine/, infra/, apps/, capabilities/, scripts/, docs/, evidence/ and ignored tmp/.",
+          "Identify which code is the banking product under test, which operates its desktop, and which is trusted acceptance tooling."
+        ],
+        "expected": [
+          "You can locate each responsibility without a global search.",
+          "Your diagram distinguishes the host, isolated desktop, fixture origin, gateway and operator/viewer ports."
+        ],
+        "prompts": [
+          "Where does the application stop and the automation system begin?"
+        ],
+        "links": [
+          [
+            "README.md",
+            "../README.md"
+          ],
+          [
+            "compose.yaml",
+            "../compose.yaml"
+          ],
+          [
+            "engine/README.md",
+            "../engine/README.md"
+          ],
+          [
+            "apps/bank-fixture/README.md",
+            "../apps/bank-fixture/README.md"
+          ]
+        ],
+        "commands": [
+          "pwd\ngit describe --always --dirty\ngit status --short\nrg --files engine/src infra scripts capabilities apps/bank-fixture/src docs"
+        ]
+      },
+      {
+        "id": "entrypoints",
+        "title": "Trace the public ways to start work",
+        "kind": "code",
+        "actions": [
+          "Follow make replay through the shell wrapper to the Python CLI and replay command.",
+          "Follow Start lookup in the panel through /start to the controller. Mark where these paths diverge today."
+        ],
+        "expected": [
+          "You can identify the environment/reset side effects of make demo, handoff-demo, test and policy-check.",
+          "You can explain that CLI replay currently bypasses the handoff coordinator and why this needs integration."
+        ],
+        "prompts": [
+          "Why does a CLI replay on expiry differ from a run started in the operator panel?"
+        ],
+        "links": [
+          [
+            "Makefile",
+            "../Makefile"
+          ],
+          [
+            "scripts/desktop",
+            "../scripts/desktop"
+          ],
+          [
+            "scripts/fixture",
+            "../scripts/fixture"
+          ],
+          [
+            "engine/src/interface_ai/cli.py",
+            "../engine/src/interface_ai/cli.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/server.py",
+            "../engine/src/interface_ai/handoff/server.py"
+          ]
+        ],
+        "commands": [
+          "make help"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "contracts",
+    "title": "02 / Understand the capability and data contracts",
+    "intro": "Read the artifact alongside the models. Explain which errors are rejected before any desktop input.",
+    "steps": [
+      {
+        "id": "types",
+        "title": "Explain identity, money and result types",
+        "kind": "code",
+        "actions": [
+          "Trace MemberInput, SavingsOutput, Success, BusinessOutcome and Failure.",
+          "Explain strict strings for leading-zero IDs, integer minor units, forbidden extra fields and the distinction between missing data and execution failure."
+        ],
+        "expected": [
+          "You can predict the result for 00123, numeric 123, missing 00999 and unreadable balance text.",
+          "You know which constraints are specific to this banking example."
+        ],
+        "prompts": [
+          "Why is member_not_found an outcome while ocr_uncertain is a failure?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/contracts/models.py",
+            "../engine/src/interface_ai/contracts/models.py"
+          ],
+          [
+            "capabilities/schemas/input-v1.schema.json",
+            "../capabilities/schemas/input-v1.schema.json"
+          ],
+          [
+            "capabilities/schemas/result-v1.schema.json",
+            "../capabilities/schemas/result-v1.schema.json"
+          ],
+          [
+            "engine/tests/test_replay.py",
+            "../engine/tests/test_replay.py"
+          ]
+        ]
+      },
+      {
+        "id": "artifact",
+        "title": "Annotate one complete capability",
+        "kind": "code",
+        "actions": [
+          "Follow one click step from its precondition to its target, relative region, anchor asset and postconditions.",
+          "Then follow read-balance through field bindings, OCR parsers and typed output. Identify the parameter used for the second member."
+        ],
+        "expected": [
+          "You can distinguish targets, fields, checkpoints, steps, assets, schema version and capability version.",
+          "You can identify manual provenance and explain which parts are reusable within the supported display."
+        ],
+        "prompts": [
+          "Which parts of this JSON describe intent, appearance, parameter binding and evidence of success?"
+        ],
+        "links": [
+          [
+            "capabilities/poc/savings-balance/capability.json",
+            "../capabilities/poc/savings-balance/capability.json"
+          ],
+          [
+            "capabilities/poc/savings-balance/README.md",
+            "../capabilities/poc/savings-balance/README.md"
+          ],
+          [
+            "capabilities/poc/savings-balance/anchor-provenance.json",
+            "../capabilities/poc/savings-balance/anchor-provenance.json"
+          ],
+          [
+            "engine/src/interface_ai/contracts/models.py",
+            "../engine/src/interface_ai/contracts/models.py"
+          ]
+        ]
+      },
+      {
+        "id": "admission",
+        "title": "Separate validation, integrity and authorization",
+        "kind": "code",
+        "actions": [
+          "Trace strict JSON parsing, semantic references, asset confinement and digests.",
+          "Locate the independent approved capability digest. Explain what changes when JSON whitespace, an anchor or a step identifier changes."
+        ],
+        "expected": [
+          "You can explain why a schema-valid artifact can still be unauthorized.",
+          "You know how the four JSON Schemas are produced and what protects against stale published schemas."
+        ],
+        "prompts": [
+          "Why should an artifact never be allowed to approve its own permissions?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/replay/loader.py",
+            "../engine/src/interface_ai/replay/loader.py"
+          ],
+          [
+            "engine/src/interface_ai/contracts/models.py",
+            "../engine/src/interface_ai/contracts/models.py"
+          ],
+          [
+            "engine/src/interface_ai/policy/bank.py",
+            "../engine/src/interface_ai/policy/bank.py"
+          ],
+          [
+            "engine/src/interface_ai/contracts/schema.py",
+            "../engine/src/interface_ai/contracts/schema.py"
+          ],
+          [
+            "engine/tests/test_replay.py",
+            "../engine/tests/test_replay.py"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "execution",
+    "title": "03 / Follow execution down to real input",
+    "intro": "Walk an actual request through the functions. Write a small call chain and name the checks at each boundary.",
+    "steps": [
+      {
+        "id": "lifecycle",
+        "title": "Trace startup, readiness and reset",
+        "kind": "code",
+        "actions": [
+          "Follow X11/app startup, focus/window identification, readiness and session creation.",
+          "Explain what reset replaces, what remains under tmp/desktop-artifacts, and why a stale session cannot issue input."
+        ],
+        "expected": [
+          "You can locate the fixed display/locale assumptions and explain a readiness failure.",
+          "You distinguish a fresh desktop session from an ownership change inside the same session."
+        ],
+        "prompts": [
+          "What must be true before the first click is safe to dispatch?"
+        ],
+        "links": [
+          [
+            "compose.yaml",
+            "../compose.yaml"
+          ],
+          [
+            "infra/desktop/Dockerfile",
+            "../infra/desktop/Dockerfile"
+          ],
+          [
+            "infra/desktop/start.py",
+            "../infra/desktop/start.py"
+          ],
+          [
+            "infra/desktop/bootstrap.py",
+            "../infra/desktop/bootstrap.py"
+          ],
+          [
+            "infra/desktop/control.py",
+            "../infra/desktop/control.py"
+          ],
+          [
+            "engine/src/interface_ai/desktop/session.py",
+            "../engine/src/interface_ai/desktop/session.py"
+          ]
+        ]
+      },
+      {
+        "id": "adapter",
+        "title": "Explain the guarded input adapter",
+        "kind": "code",
+        "actions": [
+          "Follow Desktop.__enter__, _check, execute and cleanup. Trace one type operation character by character.",
+          "Locate session, focus, display, stop, deadline and policy checks; explain why cleanup can release a held key after Stop."
+        ],
+        "expected": [
+          "You can say exactly where OS input happens and what is checked immediately beforehand.",
+          "You can explain that an in-flight OS primitive may finish; later input must be rejected."
+        ],
+        "prompts": [
+          "What happens if Stop arrives between Ctrl-down and A-down?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/desktop/adapter.py",
+            "../engine/src/interface_ai/desktop/adapter.py"
+          ],
+          [
+            "engine/src/interface_ai/desktop/backend.py",
+            "../engine/src/interface_ai/desktop/backend.py"
+          ],
+          [
+            "engine/tests/test_desktop.py",
+            "../engine/tests/test_desktop.py"
+          ]
+        ]
+      },
+      {
+        "id": "ownership",
+        "title": "Distinguish input locking from ownership epochs",
+        "kind": "design",
+        "actions": [
+          "Draw automation → quiescing → human → automation, plus stopped.",
+          "Explain the controller mutex, input.lock and ownership.lock separately. Trace a stale action across takeover and resume."
+        ],
+        "expected": [
+          "You can explain why a lock alone would allow an old queued action to become valid later.",
+          "You understand the drain barrier, compare-and-swap transition and same-session invariant."
+        ],
+        "prompts": [
+          "How do we reject a delayed model action even if automation owns the desktop again?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/desktop/ownership.py",
+            "../engine/src/interface_ai/desktop/ownership.py"
+          ],
+          [
+            "engine/src/interface_ai/desktop/adapter.py",
+            "../engine/src/interface_ai/desktop/adapter.py"
+          ],
+          [
+            "engine/tests/test_handoff.py",
+            "../engine/tests/test_handoff.py"
+          ]
+        ]
+      },
+      {
+        "id": "interpreter",
+        "title": "Trace one full replay and its failure path",
+        "kind": "code",
+        "actions": [
+          "Start at preflight, then follow a step through observation, precondition, guarded input and postcondition polling.",
+          "Trace extraction, exact identity verification, a business outcome and a timeout. Locate result.json, report.json and events.jsonl writing."
+        ],
+        "expected": [
+          "You can explain bounded observation retries versus repeating an input action.",
+          "You can show where replay completes without a model and how failure context is produced."
+        ],
+        "prompts": [
+          "Why is waiting for a checkpoint safer than blindly retyping after a timeout?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/replay/command.py",
+            "../engine/src/interface_ai/replay/command.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/README.md",
+            "../engine/src/interface_ai/replay/README.md"
+          ],
+          [
+            "engine/tests/test_replay.py",
+            "../engine/tests/test_replay.py"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vision",
+    "title": "04 / Understand what the pixels can prove",
+    "intro": "Be precise about the tested rendering conditions and how uncertainty becomes a stop.",
+    "steps": [
+      {
+        "id": "anchors",
+        "title": "Explain visual targeting and ambiguity",
+        "kind": "code",
+        "actions": [
+          "Trace template matching, thresholding, uniqueness and anchor-relative regions.",
+          "Explain the +40 px translation case and the duplicate Savings failure. Distinguish a recognition-region box from an input coordinate."
+        ],
+        "expected": [
+          "You can explain why a modest translation can work while arbitrary scale/theme changes are unsupported.",
+          "You can point to the rule that rejects multiple plausible targets."
+        ],
+        "prompts": [
+          "Why is selecting the highest-scoring duplicate target insufficient?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/vision/primitives.py",
+            "../engine/src/interface_ai/vision/primitives.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ],
+          [
+            "engine/tests/test_vision.py",
+            "../engine/tests/test_vision.py"
+          ],
+          [
+            "capabilities/poc/savings-balance/capability.json",
+            "../capabilities/poc/savings-balance/capability.json"
+          ]
+        ]
+      },
+      {
+        "id": "ocr",
+        "title": "Explain OCR normalization and exact extraction",
+        "kind": "code",
+        "actions": [
+          "Trace the pinned OCR data, preprocessing, subprocess timeout and confidence threshold.",
+          "Follow USD parsing into integer cents and member-ID identity checks. Explain the bounded handling of a transient malformed reading."
+        ],
+        "expected": [
+          "You can distinguish uncertainty, invalid parsing and a mismatched identity.",
+          "You can explain why the engine never guesses a balance or coerces an uncertain member ID."
+        ],
+        "prompts": [
+          "How do we avoid returning a correct-looking balance for the wrong person?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/vision/ocr.py",
+            "../engine/src/interface_ai/vision/ocr.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ],
+          [
+            "engine/tests/test_vision.py",
+            "../engine/tests/test_vision.py"
+          ]
+        ]
+      },
+      {
+        "id": "calibration",
+        "title": "Separate calibration tools from production replay",
+        "kind": "code",
+        "actions": [
+          "Find the fixed-coordinate/native calibration path and the earlier bank vision helper. Compare them with the artifact interpreter used by replay.",
+          "Trace imports/call sites before labeling older helpers redundant. Record any confusing names or unclear ownership."
+        ],
+        "expected": [
+          "You can explain which checks prove input plumbing, which prove visual recognition, and which prove reusable replay.",
+          "You can justify a calibration screenshot exception without claiming routine screenshots are exported."
+        ],
+        "prompts": [
+          "Which code would you show to prove that replay is not using browser DOM selectors?"
+        ],
+        "links": [
+          [
+            "infra/desktop/smoke.py",
+            "../infra/desktop/smoke.py"
+          ],
+          [
+            "infra/desktop/browser_smoke.py",
+            "../infra/desktop/browser_smoke.py"
+          ],
+          [
+            "infra/desktop/vision_probe.py",
+            "../infra/desktop/vision_probe.py"
+          ],
+          [
+            "engine/src/interface_ai/vision/bank.py",
+            "../engine/src/interface_ai/vision/bank.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ]
+        ],
+        "commands": [
+          "rg -n \"BankVision|wait_for_heading|Interpreter|browser_smoke\" engine infra scripts"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "policy",
+    "title": "05 / Explain the trust and data boundaries",
+    "intro": "Treat policy as executable constraints. State both what is enforced and the assumptions that make those checks meaningful.",
+    "steps": [
+      {
+        "id": "network",
+        "title": "Draw the network path and allowed application surface",
+        "kind": "design",
+        "actions": [
+          "Draw desktop → fixed gateway → fixture origin and the separate viewer relay.",
+          "Locate method/path/origin restrictions, browser navigation policies, container privileges and the loopback published ports."
+        ],
+        "expected": [
+          "You can explain why reading the address bar is not a network enforcement mechanism.",
+          "You know which checks block direct-origin access and which browser routes are supported."
+        ],
+        "prompts": [
+          "Why do we need both browser policy and a network gateway?"
+        ],
+        "links": [
+          [
+            "compose.yaml",
+            "../compose.yaml"
+          ],
+          [
+            "engine/src/interface_ai/policy/gateway.py",
+            "../engine/src/interface_ai/policy/gateway.py"
+          ],
+          [
+            "infra/desktop/chromium-policy.json",
+            "../infra/desktop/chromium-policy.json"
+          ],
+          [
+            "infra/desktop/viewer_relay.py",
+            "../infra/desktop/viewer_relay.py"
+          ],
+          [
+            "scripts/checks/m2_runtime.py",
+            "../scripts/checks/m2_runtime.py"
+          ]
+        ]
+      },
+      {
+        "id": "operations",
+        "title": "Trace authorization of a proposed click or key",
+        "kind": "code",
+        "actions": [
+          "Follow the reviewed search and Savings operations through the policy state.",
+          "Explain the different authority granted to an explicit human operator and why action JSON cannot choose that role."
+        ],
+        "expected": [
+          "You can show where Transfer funds and Ctrl+L are denied before automation input.",
+          "You can state the trusted synthetic-app assumption; pixel matching is not general authorization for arbitrary websites."
+        ],
+        "prompts": [
+          "What prevents page text from telling the agent to ignore the policy?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/policy/bank.py",
+            "../engine/src/interface_ai/policy/bank.py"
+          ],
+          [
+            "engine/src/interface_ai/desktop/adapter.py",
+            "../engine/src/interface_ai/desktop/adapter.py"
+          ],
+          [
+            "engine/tests/test_policy.py",
+            "../engine/tests/test_policy.py"
+          ]
+        ]
+      },
+      {
+        "id": "evidence",
+        "title": "Classify every type of retained data",
+        "kind": "code",
+        "actions": [
+          "Distinguish live pixels, private local business results, sanitized routine events, explicit synthetic test captures and safe export.",
+          "Trace reconstruction of the three exported files. Review allowlisted fields, size checks, symlink/FIFO handling and exclusions."
+        ],
+        "expected": [
+          "You can identify where member values are permitted locally and why they are excluded from safe export.",
+          "You can explain why copying a directory or recursively redacting arbitrary JSON would weaken the boundary."
+        ],
+        "prompts": [
+          "Is a handoff audit, a checklist self-report or an acceptance screenshot automatically an M2 safe export?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/policy/evidence.py",
+            "../engine/src/interface_ai/policy/evidence.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/command.py",
+            "../engine/src/interface_ai/replay/command.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "engine/tests/test_policy.py",
+            "../engine/tests/test_policy.py"
+          ],
+          [
+            ".gitignore",
+            "../.gitignore"
+          ]
+        ]
+      },
+      {
+        "id": "gateway-auth",
+        "title": "Review the local operator HTTP boundary",
+        "kind": "code",
+        "actions": [
+          "Trace Host/Origin/token checks, content type/body limits, duplicate-key rejection, no-cache headers and sequence numbers.",
+          "Explain the trusted single-user host assumption and the distinction between view-only noVNC and the controlled input panel."
+        ],
+        "expected": [
+          "You can explain why requests are not automatically retried after uncertain input.",
+          "You can name the limitations: this is not multi-user authentication, arbitrary network exposure or general remote-desktop authorization."
+        ],
+        "prompts": [
+          "Why does a server-enforced view-only viewer matter if the page already says view_only=true?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/server.py",
+            "../engine/src/interface_ai/handoff/server.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/operator.html",
+            "../engine/src/interface_ai/handoff/operator.html"
+          ],
+          [
+            "engine/tests/test_handoff.py",
+            "../engine/tests/test_handoff.py"
+          ],
+          [
+            "docs/MILESTONE_3.md",
+            "../docs/MILESTONE_3.md"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "handoff",
+    "title": "06 / Walk through human takeover and the Stop repair",
+    "intro": "Use the latest code and pre-audit evidence. Describe the sequence of events rather than memorizing a list of safeguards.",
+    "steps": [
+      {
+        "id": "controller",
+        "title": "Trace the coordinator state machine",
+        "kind": "code",
+        "actions": [
+          "Follow start, expiry detection, immediate revocation, takeover, manual input, verification and launch of the continuation.",
+          "Locate the 15-minute lease, request sequence/cap and per-action deadline. Explain ordinary terminal failure versus the known intervention boundary."
+        ],
+        "expected": [
+          "You can predict which controls are enabled in idle, running, awaiting_human, human, failure and stopped.",
+          "You can explain why arbitrary interruption and post-failure takeover are limited today."
+        ],
+        "prompts": [
+          "What exactly changes when the expiry screen is detected before the human clicks Take control?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/server.py",
+            "../engine/src/interface_ai/handoff/server.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/operator.html",
+            "../engine/src/interface_ai/handoff/operator.html"
+          ]
+        ]
+      },
+      {
+        "id": "resume",
+        "title": "Prove the continuation is safe and limited",
+        "kind": "code",
+        "actions": [
+          "Map resume_at=4 to the named open-savings step and member-ready checkpoint.",
+          "Trace wrong-screen and wrong-member rejection, then valid return. Explain why previously completed search inputs are not repeated."
+        ],
+        "expected": [
+          "You can explain what evidence is required for resumption and what happens when that evidence is missing.",
+          "You can name the hard-coded coupling that a future promotion manifest must replace."
+        ],
+        "prompts": [
+          "How would you support a new artifact without assuming its fifth step is always the correct continuation?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "capabilities/poc/savings-balance/capability.json",
+            "../capabilities/poc/savings-balance/capability.json"
+          ],
+          [
+            "scripts/m3-check",
+            "../scripts/m3-check"
+          ]
+        ]
+      },
+      {
+        "id": "stop-bug",
+        "title": "Explain the concurrency bug and its regression",
+        "kind": "rehearsal",
+        "actions": [
+          "Draw the old deadlock-like wait: human action holds mutex; maintenance waits on it in the accepting thread; /stop cannot start.",
+          "Explain nonblocking maintenance and busy status responses, then trace the early Stop flag and normal input cleanup. Read the test that fails under the baseline behavior."
+        ],
+        "expected": [
+          "You can explain why ThreadingHTTPServer did not prevent the problem and why make stop did not catch it.",
+          "You can distinguish deterministic HTTP/fake-backend ordering evidence from the actual panel/OS test and observed timing."
+        ],
+        "prompts": [
+          "What does the regression assert before it releases the simulated input?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/server.py",
+            "../engine/src/interface_ai/handoff/server.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "engine/tests/test_handoff.py",
+            "../engine/tests/test_handoff.py"
+          ],
+          [
+            "scripts/checks/m3_operator_stop.mjs",
+            "../scripts/checks/m3_operator_stop.mjs"
+          ],
+          [
+            "evidence/pre-audit-2026-09-17/README.md",
+            "../evidence/pre-audit-2026-09-17/README.md"
+          ]
+        ]
+      },
+      {
+        "id": "diagnostics",
+        "title": "Follow the new diagnostic events end to end",
+        "kind": "code",
+        "actions": [
+          "Trace interpreter_event through validation, nested audit entries and the panel fields.",
+          "Explain current/last step, last verified checkpoint and reason. Find what remains missing from richer failure-state diagnostics."
+        ],
+        "expected": [
+          "You can explain why recognition events do not inflate automation action counts.",
+          "You can state that a last verified checkpoint is historical and cannot prove the current screen is safe."
+        ],
+        "prompts": [
+          "Which evidence would you use to debug a failed run without persisting unrestricted screenshots?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "engine/src/interface_ai/policy/evidence.py",
+            "../engine/src/interface_ai/policy/evidence.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/operator.html",
+            "../engine/src/interface_ai/handoff/operator.html"
+          ],
+          [
+            "evidence/pre-audit-2026-09-17/README.md",
+            "../evidence/pre-audit-2026-09-17/README.md"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tests",
+    "title": "07 / Understand the fixture and the proof",
+    "intro": "A test result is useful only if you can explain the behavior it covers and what was simulated.",
+    "steps": [
+      {
+        "id": "fixture",
+        "title": "Review the React fixture as a small state machine",
+        "kind": "code",
+        "actions": [
+          "Trace search, member overview, account view, missing member and reset. Review expiry/restoration and the fixed synthetic data.",
+          "Explain launch-time scenario configuration and why reset/oracle controls are not exposed as shortcuts to the automation engine."
+        ],
+        "expected": [
+          "You can explain how delayed, blocked, translated, duplicate, unreadable, policy and expired scenarios are generated.",
+          "You can identify fixture complexity worth simplifying without changing the observations tests depend on."
+        ],
+        "prompts": [
+          "Why is the fixture intentionally controllable, and how do we prevent that from becoming a cheat path?"
+        ],
+        "links": [
+          [
+            "apps/bank-fixture/src/App.tsx",
+            "../apps/bank-fixture/src/App.tsx"
+          ],
+          [
+            "apps/bank-fixture/src/data.ts",
+            "../apps/bank-fixture/src/data.ts"
+          ],
+          [
+            "apps/bank-fixture/server/scenarios.mjs",
+            "../apps/bank-fixture/server/scenarios.mjs"
+          ],
+          [
+            "apps/bank-fixture/server/index.mjs",
+            "../apps/bank-fixture/server/index.mjs"
+          ],
+          [
+            "apps/bank-fixture/tests/fixture.spec.ts",
+            "../apps/bank-fixture/tests/fixture.spec.ts"
+          ]
+        ]
+      },
+      {
+        "id": "test-layers",
+        "title": "Map test layers to claims",
+        "kind": "code",
+        "actions": [
+          "Classify unit tests, real HTTP tests with simulated input, fixture DOM tests, real OS acceptance and real-person checks.",
+          "Explain the separately authored oracle and the four Linux OCR tests that host-compatible runs can omit."
+        ],
+        "expected": [
+          "You can give one meaningful failure caught at each layer.",
+          "You can distinguish 85 current engine tests from the earlier 80-test baseline and the audit’s 76 host-compatible tests."
+        ],
+        "prompts": [
+          "Why do passing fixture Playwright tests not prove that the computer-use agent succeeded?"
+        ],
+        "links": [
+          [
+            "engine/tests/test_desktop.py",
+            "../engine/tests/test_desktop.py"
+          ],
+          [
+            "engine/tests/test_handoff.py",
+            "../engine/tests/test_handoff.py"
+          ],
+          [
+            "engine/tests/test_replay.py",
+            "../engine/tests/test_replay.py"
+          ],
+          [
+            "engine/tests/test_vision.py",
+            "../engine/tests/test_vision.py"
+          ],
+          [
+            "engine/tests/test_policy.py",
+            "../engine/tests/test_policy.py"
+          ],
+          [
+            "apps/bank-fixture/tests/oracle.json",
+            "../apps/bank-fixture/tests/oracle.json"
+          ]
+        ]
+      },
+      {
+        "id": "acceptance",
+        "title": "Read a complete acceptance record",
+        "kind": "code",
+        "actions": [
+          "Follow the ten baselines, seven scenarios and seven rejection cases. Explain why policy-check already includes M1.",
+          "Inspect source hashes, image/runtime verification, a retained failed or aborted attempt, model-call counts and operator provenance."
+        ],
+        "expected": [
+          "You can reproduce the relevant check without duplicating every suite.",
+          "You can explain the limits of a small acceptance sample and the remaining real-person requirement."
+        ],
+        "prompts": [
+          "What evidence would convince someone that a passing run used the exact code you are showing?"
+        ],
+        "links": [
+          [
+            "scripts/m1-check",
+            "../scripts/m1-check"
+          ],
+          [
+            "scripts/m2-check",
+            "../scripts/m2-check"
+          ],
+          [
+            "scripts/m3-check",
+            "../scripts/m3-check"
+          ],
+          [
+            "evidence/pre-audit-2026-09-17/README.md",
+            "../evidence/pre-audit-2026-09-17/README.md"
+          ],
+          [
+            "docs/manual-acceptance.html",
+            "../docs/manual-acceptance.html"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "maintainability",
+    "title": "08 / Audit whether you enjoy working in the code",
+    "intro": "Write specific findings with a file/function, impact, smallest useful change and a validation plan. Do not count cosmetic preferences as correctness bugs.",
+    "steps": [
+      {
+        "id": "readability",
+        "title": "Review the busiest functions for clarity",
+        "kind": "review",
+        "actions": [
+          "Read the main functions without jumping through every helper. Mark unclear names, implicit state, crowded branches and missing invariants.",
+          "Choose at most three changes that would materially help you explain or safely modify the code. Include what you would leave alone."
+        ],
+        "expected": [
+          "Each finding explains a concrete difficulty and a bounded improvement.",
+          "You can describe how the relevant tests would protect behavior during a refactor."
+        ],
+        "prompts": [
+          "Which function would you simplify first, and what mistake would that simplification help prevent?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "engine/src/interface_ai/desktop/adapter.py",
+            "../engine/src/interface_ai/desktop/adapter.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ],
+          [
+            "apps/bank-fixture/src/App.tsx",
+            "../apps/bank-fixture/src/App.tsx"
+          ]
+        ]
+      },
+      {
+        "id": "coupling",
+        "title": "Inventory the intentional hard-coded coupling",
+        "kind": "design",
+        "actions": [
+          "List the fixed business shapes, provenance, approved digest, safe identifier vocabulary, display environment and continuation index.",
+          "Separate deliberate scope constraints from changes genuinely needed for the first discovered artifact. Sketch a small operator-reviewed promotion manifest."
+        ],
+        "expected": [
+          "You can say which modules must change for a generated artifact and why a recorder alone is insufficient.",
+          "Your proposal keeps authorization outside the unreviewed artifact and avoids a general workflow framework."
+        ],
+        "prompts": [
+          "Where would you put configuration, and which invariants should stay in executable code?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/contracts/models.py",
+            "../engine/src/interface_ai/contracts/models.py"
+          ],
+          [
+            "engine/src/interface_ai/policy/bank.py",
+            "../engine/src/interface_ai/policy/bank.py"
+          ],
+          [
+            "engine/src/interface_ai/policy/evidence.py",
+            "../engine/src/interface_ai/policy/evidence.py"
+          ],
+          [
+            "engine/src/interface_ai/handoff/controller.py",
+            "../engine/src/interface_ai/handoff/controller.py"
+          ],
+          [
+            "docs/ROADMAP.md",
+            "../docs/ROADMAP.md"
+          ]
+        ]
+      },
+      {
+        "id": "operator-code",
+        "title": "Review the minimal operator UI and HTTP contract",
+        "kind": "review",
+        "actions": [
+          "Follow event handlers, busy state, polling, image scaling, text clearing and error messages.",
+          "Assess whether the inline JavaScript remains understandable; record what would justify extracting modules or adding React later."
+        ],
+        "expected": [
+          "You can explain the current choice of a small standalone panel despite your React experience.",
+          "You can identify the API fields and actions a refactor must preserve."
+        ],
+        "prompts": [
+          "When would a UI framework reduce complexity here, and what would it add today?"
+        ],
+        "links": [
+          [
+            "engine/src/interface_ai/handoff/operator.html",
+            "../engine/src/interface_ai/handoff/operator.html"
+          ],
+          [
+            "engine/src/interface_ai/handoff/server.py",
+            "../engine/src/interface_ai/handoff/server.py"
+          ],
+          [
+            "scripts/checks/m3_operator_ui.mjs",
+            "../scripts/checks/m3_operator_ui.mjs"
+          ],
+          [
+            "scripts/checks/m3_operator_stop.mjs",
+            "../scripts/checks/m3_operator_stop.mjs"
+          ]
+        ]
+      },
+      {
+        "id": "dev-experience",
+        "title": "Check setup, dependencies and repository hygiene",
+        "kind": "review",
+        "actions": [
+          "Walk a fresh developer through supported Node/Python versions, Docker, installation, build, reset, logs and tests.",
+          "Review generated schemas versus source, ignored runtime files, evidence retention and dependency pinning. Check git status before suggesting cleanup."
+        ],
+        "expected": [
+          "You know which commands act on the host versus inside Docker and where to find a failed-run log.",
+          "You can propose small setup/documentation improvements and preserve the user’s explicit commit/push boundary."
+        ],
+        "prompts": [
+          "What would a new contributor find confusing in their first ten minutes?"
+        ],
+        "links": [
+          [
+            "Makefile",
+            "../Makefile"
+          ],
+          [
+            "engine/pyproject.toml",
+            "../engine/pyproject.toml"
+          ],
+          [
+            "infra/desktop/requirements.lock",
+            "../infra/desktop/requirements.lock"
+          ],
+          [
+            "apps/bank-fixture/package.json",
+            "../apps/bank-fixture/package.json"
+          ],
+          [
+            ".gitignore",
+            "../.gitignore"
+          ],
+          [
+            "README.md",
+            "../README.md"
+          ],
+          [
+            "AGENTS.md",
+            "../AGENTS.md"
+          ]
+        ],
+        "commands": [
+          "git status --short\nmake help"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rehearsal",
+    "title": "09 / Practice explanation and choose the next change",
+    "intro": "Close the source files briefly and explain the design in your own words. Return to the code wherever your explanation becomes vague.",
+    "steps": [
+      {
+        "id": "missing-flow",
+        "title": "Explain the next milestone without overstating it",
+        "kind": "design",
+        "actions": [
+          "Describe the smallest real OpenAI discovery run, allowed outbound observations, ownership-bound actions and bounded execution.",
+          "Trace candidate recording → explicit review/promotion → second-member replay without model access. Separate observed actions from manually supplied exception rules."
+        ],
+        "expected": [
+          "You can name the genuine discovery evidence that is still missing and the API/policy prerequisites.",
+          "You can explain why a genuine model run and reviewed generated artifact are essential for the assignment."
+        ],
+        "prompts": [
+          "How will you prove the artifact came from discovery rather than a hidden hand-written path?"
+        ],
+        "links": [
+          [
+            "docs/ROADMAP.md",
+            "../docs/ROADMAP.md"
+          ],
+          [
+            "docs/CURRENT_PLAN.md",
+            "../docs/CURRENT_PLAN.md"
+          ],
+          [
+            "docs/MILESTONE_3.md",
+            "../docs/MILESTONE_3.md"
+          ]
+        ]
+      },
+      {
+        "id": "change-exercise",
+        "title": "Plan one small change across the right layers",
+        "kind": "rehearsal",
+        "actions": [
+          "Choose a hypothetical new benign dialog or a changed layout. Describe the files, policy decisions, contract/version implications and tests you would touch.",
+          "Explain what should fail safely before that change is reviewed. Write the smallest acceptance criterion."
+        ],
+        "expected": [
+          "Your plan avoids bypassing the executor, guessing an output or weakening ambiguity checks.",
+          "You can identify what belongs in the artifact, policy, adapter, fixture and acceptance harness."
+        ],
+        "prompts": [
+          "How would you distinguish a supported variation from UI drift requiring review?"
+        ],
+        "links": [
+          [
+            "apps/bank-fixture/server/scenarios.mjs",
+            "../apps/bank-fixture/server/scenarios.mjs"
+          ],
+          [
+            "engine/src/interface_ai/contracts/models.py",
+            "../engine/src/interface_ai/contracts/models.py"
+          ],
+          [
+            "engine/src/interface_ai/replay/interpreter.py",
+            "../engine/src/interface_ai/replay/interpreter.py"
+          ],
+          [
+            "engine/src/interface_ai/policy/evidence.py",
+            "../engine/src/interface_ai/policy/evidence.py"
+          ],
+          [
+            "docs/ROADMAP.md",
+            "../docs/ROADMAP.md"
+          ]
+        ]
+      },
+      {
+        "id": "rehearse",
+        "title": "Give a five-minute code walkthrough and record your next actions",
+        "kind": "rehearsal",
+        "actions": [
+          "Explain the architecture, trace one lookup, describe one failure and the Stop fix, then state the current limitations. Use at most five source files.",
+          "Answer your weakest Explain aloud prompts without reading a script. Record up to three prioritized cleanup or learning tasks with file locations and validation plans."
+        ],
+        "expected": [
+          "You can navigate directly to the relevant code and explain the important state transitions and tradeoffs.",
+          "Unclear areas remain marked Needs work or Blocked with notes. Your completed review is an honest self-assessment, not assignment sign-off."
+        ],
+        "prompts": [
+          "Which design decision are you most comfortable defending, and which would you revisit after genuine discovery?"
+        ],
+        "links": [
+          [
+            "README.md",
+            "../README.md"
+          ],
+          [
+            "docs/manual-acceptance.html",
+            "../docs/manual-acceptance.html"
+          ],
+          [
+            "docs/ROADMAP.md",
+            "../docs/ROADMAP.md"
+          ]
+        ]
+      }
+    ]
+  }
+];
+const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-repository-review-v1';
+const VALID=['not-run','passed','failed','blocked','skipped'];
+const LABELS={'not-run':'Not reviewed',passed:'Understood',failed:'Needs work',blocked:'Blocked',skipped:'Deferred'};
+const $=id=>document.getElementById(id);
+const blank=()=>({version:1,startedAt:new Date().toISOString(),reviewer:'',revision:'',date:new Date().toLocaleDateString('en-CA'),attested:false,steps:{}});
+let state=blank(),storageOK=true,toastTimer;
+function notify(message){$('message').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('message').textContent='',5000);}
+function normalize(raw){const clean=blank();if(!raw||raw.version!==1)return clean;for(const k of ['reviewer','revision','date','startedAt'])if(typeof raw[k]==='string')clean[k]=raw[k].slice(0,120);clean.attested=raw.attested===true;for(const step of STEPS){const old=raw.steps?.[step.id];if(old)clean.steps[step.id]={status:VALID.includes(old.status)?old.status:'not-run',notes:typeof old.notes==='string'?old.notes.slice(0,4000):'',updatedAt:typeof old.updatedAt==='string'?old.updatedAt.slice(0,40):null};}return clean;}
+try {const raw=localStorage.getItem(KEY);if(raw)state=normalize(JSON.parse(raw));}catch{storageOK=false;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch{storageOK=false;}$('storage').textContent=storageOK?'Progress saved in this browser':'Local storage unavailable — export to keep your work';}
+function result(id){return state.steps[id]||{status:'not-run',notes:'',updatedAt:null};}
+function updateStep(id,change){state.steps[id]={...result(id),...change,updatedAt:new Date().toISOString()};save();update();}
+function element(tag,attrs={},text){const node=document.createElement(tag);for(const [key,value] of Object.entries(attrs)){if(key==='class')node.className=value;else node.setAttribute(key,value);}if(text!==undefined)node.textContent=text;return node;}
+function list(items,ordered=false){const node=element(ordered?'ol':'ul');items.forEach(s=>node.append(element('li',{},s)));return node;}
+function materialize(command){return {text:command,ready:true};}
+async function copy(text){try{if(!navigator.clipboard)throw Error();await navigator.clipboard.writeText(text);}catch{const area=element('textarea');area.value=text;area.style.position='fixed';area.style.top='-9999px';document.body.append(area);area.select();const ok=document.execCommand('copy');area.remove();if(!ok){notify('Select and copy the command text manually.');return;}}notify('Command copied. Run it yourself in the repository terminal.');}
+function render(){
+  $('groups').replaceChildren();$('nav').replaceChildren();let index=0;
+  for(const group of GROUPS){
+    const section=element('section',{class:'group',id:group.id});section.append(element('h2',{},group.title),element('p',{class:'group-intro'},group.intro));
+    const nav=element('a',{href:'#'+group.id},group.title);nav.append(element('small',{id:'group-count-'+group.id}));$('nav').append(nav);
+    for(const step of group.steps){index++;const card=element('article',{class:'card',id:'check-'+step.id,'data-status':result(step.id).status});
+      const details=element('details');if(index===1)details.open=true;
+      const summary=element('summary');summary.append(element('span',{class:'number'},String(index).padStart(2,'0')),element('span',{class:'step-title'},step.title),element('span',{class:'tag kind-'+step.kind},step.kind),element('span',{class:'status-chip',id:'chip-'+step.id}));details.append(summary);
+      const body=element('div',{class:'body'});if(step.actions)body.append(element('h3',{},'Read and trace'),list(step.actions,true));
+      for(const raw of step.commands||[]){const wrap=element('div',{class:'command'}),pre=element('pre'),code=element('code');code.dataset.command=raw;pre.append(code);const button=element('button',{type:'button','aria-label':'Copy command for '+step.title},'Copy');button.addEventListener('click',()=>{const output=materialize(raw);if(output.ready)copy(output.text);});wrap.append(pre,button);if(raw.includes('{{'))wrap.append(element('span',{class:'command-hint'},'Fill the saved run/session field for this check first.'));body.append(wrap);}
+      if(step.prompts)body.append(element('h3',{},'Explain aloud'),list(step.prompts));
+      if(step.links){const links=element('div',{class:'links'});step.links.forEach(([title,url])=>links.append(element('a',{href:url,target:'_blank',rel:'noopener noreferrer'},title+' ↗')));body.append(links);}
+      const expected=element('div',{class:'expected'});expected.append(element('strong',{},'Ready when'),list(step.expected));body.append(expected);
+      if(step.note)body.append(element('p',{class:'note'},step.note));
+      const row=element('div',{class:'result'});const select=element('select',{id:'status-'+step.id,'aria-label':'Result for '+step.title});for(const v of VALID)select.append(element('option',{value:v},LABELS[v]));select.value=result(step.id).status;select.addEventListener('change',()=>updateStep(step.id,{status:select.value}));const passed=element('button',{type:'button'},'I can explain this');passed.addEventListener('click',()=>{select.value='passed';updateStep(step.id,{status:'passed'});});row.append(element('label',{for:select.id},'Your understanding'),select,passed,element('span',{class:'print-value',id:'print-status-'+step.id}));body.append(row);
+      const notes=element('textarea',{id:'notes-'+step.id,maxlength:'4000',rows:'3',placeholder:'Explain it in your own words. Note the file/function, unclear point, proposed change, priority and validation plan. Do not include secrets.'});notes.value=result(step.id).notes;notes.addEventListener('input',()=>updateStep(step.id,{notes:notes.value}));body.append(element('label',{class:'notes-label',for:notes.id},'Your explanation / findings / next action'),notes,element('div',{class:'print-value notes-print',id:'print-notes-'+step.id}));details.append(body);card.append(details);section.append(card);
+    }$('groups').append(section);
+  }
+  for(const id of ['reviewer','revision','date'])$(id).value=state[id];$('attest').checked=state.attested;refreshCommands();update();
+}
+function refreshCommands(){document.querySelectorAll('[data-command]').forEach(code=>{const output=materialize(code.dataset.command);code.textContent=output.text;code.closest('.command').querySelector('button').disabled=!output.ready;});}
+function overall(){if(STEPS.some(s=>['failed','blocked'].includes(result(s.id).status)))return 'needs-review';if(STEPS.every(s=>result(s.id).status==='passed')&&state.attested&&state.reviewer.trim()&&state.revision.trim()&&state.date)return 'passed';return 'incomplete';}
+function update(){
+  const counts=Object.fromEntries(VALID.map(k=>[k,STEPS.filter(s=>result(s.id).status===k).length]));
+  $('count').textContent=counts.passed;$('total').textContent=' / '+STEPS.length+' understood';$('progress').max=STEPS.length;$('progress').value=counts.passed;
+  $('counts').textContent=(counts.failed+counts.blocked)+' need attention · '+(counts['not-run']+counts.skipped)+' unverified';
+  const verdict=overall();$('overall').textContent=verdict==='passed'?'Review complete':verdict==='needs-review'?'Issues need review':counts.passed===STEPS.length?'Add reviewer details & attest':'Repository review in progress';
+  for(const group of GROUPS)$('group-count-'+group.id).textContent=group.steps.filter(s=>result(s.id).status==='passed').length+'/'+group.steps.length;
+  const filter=$('filter').value;
+  for(const step of STEPS){const r=result(step.id),card=$('check-'+step.id);card.dataset.status=r.status;$('chip-'+step.id).textContent=LABELS[r.status];$('print-status-'+step.id).textContent=LABELS[r.status];$('print-notes-'+step.id).textContent=r.notes||'No notes recorded.';card.hidden=filter==='unresolved'?r.status==='passed':filter==='issues'?!['failed','blocked'].includes(r.status):false;}
+  const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
+  $('review').textContent=counts.passed+' of '+STEPS.length+' topics understood. '+counts.failed+' need work, '+counts.blocked+' blocked, '+counts.skipped+' deferred, '+counts['not-run']+' not reviewed.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
+}
+function report(){return {format:'interface-ai-repository-review-v1',baseline:'ec2b56e + local pre-audit fixes (2026-09-17)',checklistRevision:'2026-09-17-repository-v1',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
+function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-repository-review-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
+for(const id of ['reviewer','revision','date'])$(id).addEventListener('input',()=>{state[id]=$(id).value;save();update();});
+$('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
+$('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;
+$('expand').onclick=()=>document.querySelectorAll('details').forEach(d=>d.open=true);$('collapse').onclick=()=>document.querySelectorAll('details').forEach(d=>d.open=false);
+$('next').onclick=()=>{const step=STEPS.find(s=>result(s.id).status!=='passed');if(!step){$('finish').scrollIntoView();$('attest').focus();return;}$('filter').value='all';update();const card=$('check-'+step.id);card.querySelector('details').open=true;card.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});card.querySelector('summary').focus({preventScroll:true});};
+$('new').onclick=()=>{if(!confirm('Start a new repository review? Export first to preserve your notes. The separate manual audit is unaffected.'))return;state=blank();$('filter').value='all';save();render();notify('New repository review started; the manual audit and app state are unchanged.');};
+let printedOpen=[];window.addEventListener('beforeprint',()=>{printedOpen=[...document.querySelectorAll('details')].filter(d=>d.open);document.querySelectorAll('details').forEach(d=>d.open=true);});window.addEventListener('afterprint',()=>document.querySelectorAll('details').forEach(d=>d.open=printedOpen.includes(d)));$('print').onclick=()=>window.print();
+render();save();
+</script>
+</body>
+</html>

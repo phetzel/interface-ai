@@ -14,6 +14,7 @@ from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.ownership import Ownership
 from interface_ai.handoff.server import Server, HOST, ORIGIN
 from interface_ai.handoff.controller import Controller
+from interface_ai.contracts.models import Failure
 from test_desktop import Backend
 
 
@@ -229,6 +230,153 @@ class ControllerTests(unittest.TestCase):
         lease = self.human()
         self.assertIsNone(self.controller.resume_at)
         with self.assertRaises(DesktopError): self.controller.resume(lease)
+
+    def http_input_stop(self, action, expected_calls, *, poll_count=0):
+        """Real HTTP/controller/adapter; only the OS backend is simulated."""
+        lease = self.human()
+        begun, release, maintenance, stopped = (threading.Event() for _ in range(4))
+        backend = Backend()
+
+        def slow_input():
+            begun.set()
+            if not release.wait(4):
+                raise RuntimeError('Test input was not released')
+        backend.hook = slow_input
+
+        def desktop(session, **kwargs):
+            return Desktop(session, backend=backend,
+                           session_reader=lambda: dict(self.session, mode='native'),
+                           stop_path=self.root/'STOP', lock_path=self.root/'input.lock', **kwargs)
+
+        class ObservedServer(Server):
+            def service_actions(inner):
+                if begun.is_set(): maintenance.set()
+                super().service_actions()
+
+        def signal_stop():
+            (self.root/'STOP').touch()
+            stopped.set()
+
+        with ObservedServer(('127.0.0.1', 0), self.controller) as server:
+            results, errors, workers = {}, [], []
+            def request(label, path, body=None):
+                headers = {'Host':HOST, 'Origin':ORIGIN, 'X-Operator-Token':server.token,
+                           'Content-Type':'application/json'}
+                req = Request('http://127.0.0.1:'+str(server.server_port)+path,
+                              data=json.dumps(body).encode() if body is not None else None, headers=headers)
+                try:
+                    try: response = urlopen(req, timeout=5)
+                    except HTTPError as exc: response = exc
+                    with response: results[label] = (response.status, json.load(response))
+                except Exception as exc:
+                    errors.append(exc)
+
+            def spawn(label, path, body=None):
+                worker = threading.Thread(target=request, args=(label, path, body), daemon=True)
+                workers.append(worker)
+                worker.start()
+
+            serving = threading.Thread(target=server.serve_forever, kwargs={'poll_interval':.01}, daemon=True)
+            with patch('interface_ai.handoff.controller.Desktop', desktop), patch('interface_ai.handoff.server.request_stop', signal_stop):
+                serving.start()
+                try:
+                    spawn('action', '/action', {'lease':lease, 'sequence':0, 'action':action})
+                    self.assertTrue(begun.wait(2))
+                    self.assertTrue(maintenance.wait(2))
+                    # Polls return promptly instead of holding all request slots.
+                    for i in range(poll_count):
+                        spawn('poll'+str(i), '/status')
+                        workers[-1].join(1)
+                        self.assertFalse(workers[-1].is_alive(), 'Status waited behind input')
+                        self.assertEqual(results['poll'+str(i)], (503, {'code':'busy'}))
+                    spawn('stop', '/stop', {'lease':lease})
+                    self.assertTrue(stopped.wait(1), 'HTTP Stop was not signaled while input held mutex')
+                    self.assertFalse(release.is_set())
+                finally:
+                    release.set()
+                    for worker in workers: worker.join(5)
+                    server.shutdown()
+                    serving.join(2)
+            self.assertEqual(errors, [])
+            self.assertFalse(any(worker.is_alive() for worker in workers))
+            self.assertEqual(results['action'], (409, {'code':'stopped'}))
+            self.assertEqual(results['stop'][0], 200)
+            self.assertEqual(results['stop'][1]['phase'], 'stopped')
+        self.assertEqual(backend.calls, expected_calls)
+        self.assertEqual(self.controller.snapshot()['owner'], 'stopped')
+        with self.assertRaises(DesktopError):
+            self.controller.human_action({'type':'click','x':1,'y':1}, lease, 1)
+        with self.assertRaises(DesktopError): self.controller.resume(lease)
+        self.assertEqual(backend.calls, expected_calls)
+
+    def test_http_stop_interrupts_typing_despite_status_polling(self):
+        self.http_input_stop({'type':'type','text':'SECRET-SENTINEL-84729'}, [('type','S')], poll_count=12)
+        self.assertNotIn('SECRET', json.dumps(self.controller.audit))
+
+    def test_http_stop_interrupts_hotkey_and_releases_modifier(self):
+        self.http_input_stop({'type':'hotkey','keys':['ctrl','a']}, [('down','ctrl'),('up','ctrl')])
+
+    def test_http_maintenance_retries_expiry_after_busy_input_without_polling(self):
+        self.human()
+        self.controller.human_deadline = time.monotonic()-1
+        maintenance = threading.Event()
+        class ObservedServer(Server):
+            def service_actions(inner):
+                super().service_actions()
+                maintenance.set()
+        with ObservedServer(('127.0.0.1', 0), self.controller) as server:
+            serving = threading.Thread(target=server.serve_forever, kwargs={'poll_interval':.01}, daemon=True)
+            try:
+                with self.controller.mutex:
+                    serving.start()
+                    self.assertTrue(maintenance.wait(1), 'Accepting loop blocked on maintenance')
+                    self.assertFalse((self.root/'STOP').exists())
+                deadline = time.monotonic()+2
+                while not (self.root/'STOP').exists() and time.monotonic()<deadline: time.sleep(.01)
+                self.assertTrue((self.root/'STOP').exists())
+            finally:
+                server.shutdown()
+                serving.join(2)
+        self.assertEqual(self.controller.phase, 'stopped')
+        self.assertEqual(self.controller.reason, 'handoff_expired')
+
+    def test_handoff_retains_sanitized_interpreter_failure_context(self):
+        self.controller.phase = 'running'
+        events = [
+            {'kind':'step', 'step':'open-savings', 'action':'click', 'status':'started'},
+            {'kind':'checkpoint', 'step':'open-savings', 'checkpoint':'member-ready', 'status':'satisfied'},
+            {'kind':'reading', 'step':'open-savings', 'field':'member-id', 'confidence':98},
+            {'kind':'target', 'step':'open-savings', 'target':'savings-label', 'status':'rejected',
+             'code':'ambiguous_target', 'candidateCount':2},
+            {'kind':'step', 'step':'open-savings', 'action':'click', 'status':'failed', 'code':'ambiguous_target'},
+        ]
+        def interpreter(*args, event_sink, **kwargs):
+            def run(**kwargs):
+                for event in events: event_sink(event)
+                return Failure(code='ambiguous_target', step='open-savings')
+            return SimpleNamespace(run=run)
+        with patch('interface_ai.handoff.controller.Desktop'), patch('interface_ai.handoff.controller.Interpreter', interpreter):
+            self.controller.run(0, 0)
+        state = self.controller.snapshot()
+        self.assertEqual((state['step'],state['reason'],state['lastCheckpoint']),
+                         ('open-savings','ambiguous_target','member-ready'))
+        retained = [json.loads(line) for line in (self.controller.directory/'audit.jsonl').read_text().splitlines()]
+        self.assertEqual([e['event'] for e in retained if e['kind']=='interpreter'], events)
+        summary = json.loads((self.controller.directory/'summary.json').read_text())
+        self.assertEqual(summary['automationActions'], 0)
+        self.assertEqual(summary['humanActions'], 0)
+
+    def test_handoff_diagnostics_reject_unreviewed_identifiers_and_business_values(self):
+        before = list(self.controller.audit)
+        for event in [
+            {'kind':'reading', 'field':'member-id', 'text':'SECRET-SENTINEL-84729'},
+            {'kind':'step', 'step':'SECRET-SENTINEL-84729', 'status':'failed'},
+            {'kind':'reading', 'field':'member-id', 'confidence':float('nan')},
+        ]:
+            with self.assertRaises(DesktopError) as exc: self.controller.interpreter_event(event)
+            self.assertEqual(exc.exception.code, 'evidence_rejected')
+        self.assertEqual(self.controller.audit, before)
+        self.assertIsNone(self.controller.snapshot()['step'])
 
 
 if __name__ == '__main__': unittest.main()

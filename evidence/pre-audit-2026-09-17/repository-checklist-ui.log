@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "topics": 31,
+  "sections": 9,
+  "manualChecklistStorageUnchanged": true,
+  "provenance": "isolated-checklist-ui-test",
+  "checks": [
+    "initially unreviewed",
+    "31 interview prompts",
+    "persistence",
+    "literal user text",
+    "filters",
+    "export and completion gates",
+    "print notes and understood labels",
+    "reset isolation",
+    "responsive layout",
+    "no external requests or page errors"
+  ]
+}

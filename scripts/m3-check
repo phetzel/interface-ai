@@ -40,8 +40,16 @@ class Operator:
         self.headers = {'X-Operator-Token':token, 'Origin':BASE, 'Content-Type':'application/json'}
 
     def status(self):
-        with urllib.request.urlopen(urllib.request.Request(BASE+'/status', headers=self.headers), timeout=10) as response:
-            return json.load(response)
+        deadline = time.monotonic()+10
+        while True:
+            try:
+                with urllib.request.urlopen(urllib.request.Request(BASE+'/status', headers=self.headers), timeout=10) as response:
+                    return json.load(response)
+            except urllib.error.HTTPError as exc:
+                with exc:
+                    if exc.code != 503 or json.load(exc).get('code') != 'busy' or time.monotonic() >= deadline:
+                        raise
+                time.sleep(.05)  # Retry observations only; input is never retried.
 
     @staticmethod
     def lease(state):
@@ -89,6 +97,7 @@ def scenario(member, negative):
     before_dirs = set((ROOT/'tmp/desktop-artifacts').glob('*-handoff-*'))
     operator.post('/start', memberId=member)
     paused = operator.wait('awaiting_human')
+    assert paused['step']=='search-member' and paused['reason']=='intervention_required'
     assert paused['session'] == initial['session'] and paused['resumable']
     assert paused['owner']=='quiescing' and paused['epoch']>initial['epoch']
     old_lease = operator.lease(paused)
@@ -131,6 +140,7 @@ print(json.dumps({'staleAutomationRejected':True,'completedInputs':0}))
     operator.post('/resume')
     assert operator.post('/action',expected=409,lease=human_lease,sequence=operator.status()['sequence'],action={'type':'click','x':600,'y':390})['code']=='ownership_revoked'
     final = operator.wait('success')
+    assert final['step']=='read-balance' and final['lastCheckpoint']=='account-ready'
     assert final['session']==initial['session'] and final['epoch']>human['epoch']
     run_dirs = set((ROOT/'tmp/desktop-artifacts').glob('*-handoff-*'))-before_dirs
     assert len(run_dirs)==1
@@ -143,6 +153,10 @@ print(json.dumps({'staleAutomationRejected':True,'completedInputs':0}))
     for prohibited in ('SECRET-SENTINEL-84729','demo','00456','00123','"text"','"keys"','"x"','"y"'):
         assert prohibited not in audit, 'Sensitive action data in audit'
     events=[json.loads(line) for line in audit.splitlines()]
+    trace=[e['event'] for e in events if e['kind']=='interpreter']
+    assert {'step','target','checkpoint','reading'} <= {e['kind'] for e in trace}
+    assert any(e.get('code')=='intervention_required' for e in trace)
+    assert any(e.get('checkpoint')=='member-ready' and e['status']=='unsatisfied' for e in trace)
     human_sequences=[e['sequence'] for e in events if e['kind']=='human']
     assert human_sequences==list(range(1,len(human_sequences)+1))
     handoff=next(i for i,e in enumerate(events) if e['kind']=='lifecycle' and e['status']=='human')
@@ -153,6 +167,7 @@ print(json.dumps({'staleAutomationRejected':True,'completedInputs':0}))
     for name in ('audit.jsonl','summary.json'): shutil.copyfile(directory/name,safe/name)
     summary['cases'].append({'case':label,'status':'passed','sameSession':True,'exactOracleMatch':True,
                              'noRepeatedAutomationInput':True,'noAutomationDuringHuman':True,
+                             'sanitizedInterpreterTrace':True,'operatorStepContext':True,
                              'sensitiveValuesAbsent':True,'wrongScreenAndMemberRejected':negative})
     print(label+': passed',flush=True)
 

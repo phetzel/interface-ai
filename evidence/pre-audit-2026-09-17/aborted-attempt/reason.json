@@ -1,0 +1,8 @@
+{
+  "status": "aborted",
+  "reason": "Test-only screenshot-load wait changed after the source manifest froze. No runtime file changed; restart required for an immutable acceptance record.",
+  "changedFile": "scripts/checks/m3_operator_stop.mjs",
+  "policyAttempt": "tmp/m2-checks/20260917T201702Z-50bf1248",
+  "m1Attempt": "tmp/m1-checks/20260917T201725Z-b24aa5c7",
+  "partialResultsAreNotAcceptance": true
+}

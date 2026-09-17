@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "provenance": "automated-operator-ui-test",
+  "realHumanWitnessed": false,
+  "stepVisible": true,
+  "reasonVisible": true,
+  "terminalFailureDoesNotOfferResume": true,
+  "failure": {
+    "status": "failure",
+    "code": "checkpoint_timeout",
+    "step": "search-member",
+    "expected": [
+      "member-ready",
+      "member-not-found"
+    ],
+    "observed": "checkpoint_not_satisfied"
+  },
+  "traceHasNoBusinessText": true,
+  "pageErrors": 0,
+  "modelCalls": 0
+}

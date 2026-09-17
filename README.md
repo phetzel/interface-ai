@@ -2,7 +2,7 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**M3 implemented locally: same-session human takeover.** The operator panel transfers input through ownership epochs and a drain barrier, records only action metadata, and resumes from a visually verified original-member checkpoint. Final source passes 80 engine tests, 15 fixture tests and both live simulated-operator cases. The scaled panel test and prior M2/M1 regression pass; [evidence](evidence/poc-m3/README.md) distinguishes the final focused ownership checks from that full regression. A real-person demonstration remains pending. See the [M3 specification](docs/MILESTONE_3.md).
+**M3: same-session human takeover, with local pre-audit repairs.** The baseline was pushed as `ec2b56e`. The September 17 repair fixes HTTP Stop responsiveness during human input, retains sanitized interpreter diagnostics, and exposes step/checkpoint context in the operator panel. The updated source passes 85 engine tests, both live simulated-operator cases, and the panel takeover/Stop checks; see the [current validation record](evidence/pre-audit-2026-09-17/README.md) for full regression status and source provenance. The unchanged fixture previously passed all 15 browser tests. A real-person demonstration remains pending. Start with the [manual checklist](docs/manual-acceptance.html); the [M3 specification](docs/MILESTONE_3.md) explains the boundaries.
 
 **M2 complete for the declared environment: policy and safe evidence.** Bank input passes an operator-owned read-only policy, and replay admits only the reviewed capability digest. A fixed-upstream gateway separates the desktop from the fixture origin and rejects unapproved HTTP requests; managed Chromium policies restrict navigation. Safe evidence export reconstructs metadata and excludes business results, screenshots, and arbitrary extra files. The [M2 specification and research](docs/MILESTONE_2.md) and [acceptance evidence](evidence/poc-m2/README.md) cover the decisions, failed attempt, full M1 regression, and final hardening checks. Final source passes 63 engine tests; the fixture passes 14 tests. M3 now adds the human takeover mechanism; model discovery remains later work. M2 was committed and pushed as `3726347` at the user’s request.
 
@@ -36,6 +36,20 @@ make export RUN=<printed-replay-directory>    # Metadata-only safe export
 Open the [read-only desktop viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). Chromium opens the internal fixture at `http://fixture:4173/` with a fresh disposable profile. The interpreter loads the [manual capability](capabilities/poc/savings-balance/capability.json), resolves its visual targets, executes through the desktop adapter, and verifies its checkpoints and typed output. The printed evidence directory contains a separate `result.json` plus routine reports/events without typed values or OCR text. The artifact is explicitly manually authored, not model-discovered. [Capability and commands](capabilities/poc/savings-balance/README.md) · [M1-05 evidence](evidence/poc-m1/replay/README.md).
 
 Repeat with `./scripts/desktop reset bank`, then `./scripts/desktop replay --member-id 00456`. Use `00999` for the named member-not-found outcome. `./scripts/desktop reset bank translated` selects the tested +40 px layout variation. Reload the viewer after resets. Run `./scripts/replay-check` for the nine-case reset-based artifact integration suite; it finishes on the blocked scenario, so reset bank afterwards.
+
+## Manual acceptance pass
+
+Open [the interactive M1–M3 checklist](docs/manual-acceptance.html) in your browser. On this Mac, run `open docs/manual-acceptance.html` from the repository root. It is a standalone HTML file with no server or external dependencies.
+
+The September 17 revision has 35 checks, including panel Stop during pending input, a separate CLI Stop check, and failure diagnostics. It starts a fresh set of browser-local results; previous checklist data is not deleted or carried over. Record `git describe --always --dirty`, including local modifications, and consult the [pre-audit validation/source manifest](evidence/pre-audit-2026-09-17/README.md).
+
+Follow it from top to bottom: fixture UI, native/browser desktop input, replay scenarios, policy/export checks, real human takeover, reset/stop behavior, then the automated backstops. It includes commands, exact expected results, per-step status and notes, browser-local saving, print support and a downloadable JSON report. No commands execute from the checklist, and no results are premarked passed. Creating the checklist does not satisfy the manual gate; your own observations and attestation do.
+
+## Repository walkthrough and interview preparation
+
+Open [the repository audit checklist](docs/repository-audit.html), or run `open docs/repository-audit.html`. Its 31 topics follow architecture, contracts, execution, recognition, policy, human takeover, testing, maintainability and interview rehearsal. Each links the relevant source files, gives a tracing exercise and an “explain aloud” question, and asks you to record unclear code and concrete improvements.
+
+This review saves its own notes and understanding statuses independently of the manual app audit. Both pages support JSON export and printing. Neither review changes code or establishes that the unfinished discovery requirement has been met.
 
 ## Same-session operator panel
 
@@ -164,6 +178,6 @@ JSON
 - [Second milestone and researched decisions](docs/MILESTONE_2.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-M1 and bounded M2/PoC B are complete; M3 implements same-session takeover and verified continuation. A real-person demonstration remains pending. Next is OpenAI discovery, which needs API access and a reviewed policy for outbound model observations. M1 and its Makefile shortcuts are committed and pushed through `94dc573`. M2 was committed and pushed as `3726347`; M3 changes remain local until separately requested.
+M1 and bounded M2/PoC B are complete; M3 implements same-session takeover and verified continuation. A real-person demonstration remains pending. Next is OpenAI discovery, which needs API access and a reviewed policy for outbound model observations. M1 and its Makefile shortcuts are committed and pushed through `94dc573`. M2 was committed and pushed as `3726347`; M3 was committed and pushed as `ec2b56e`; subsequent changes remain local until requested.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.

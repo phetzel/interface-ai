@@ -1,0 +1,21 @@
+{
+  "status": "running",
+  "checks": [
+    {
+      "name": "policy-reset",
+      "status": "passed"
+    },
+    {
+      "name": "live-policy",
+      "status": "passed"
+    },
+    {
+      "name": "origin-ip-bypass",
+      "status": "passed"
+    },
+    {
+      "name": "m1-regression",
+      "status": "running"
+    }
+  ]
+}

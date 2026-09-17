@@ -51,7 +51,17 @@ class Handler(BaseHTTPRequestHandler):
                 html = Path(__file__).with_name('operator.html').read_text().replace('__TOKEN__', self.server.token)
                 self.reply(200, html.encode(), 'text/html; charset=utf-8')
             elif self.path == '/status':
-                self.reply(200, self.server.controller.snapshot())
+                # Polling must not occupy request slots waiting behind input.
+                # Leave capacity for /stop, which signals before taking mutex.
+                controller = self.server.controller
+                if not controller.mutex.acquire(blocking=False):
+                    self.reply(503, {'code': 'busy'})
+                    return
+                try:
+                    state = controller.snapshot()
+                finally:
+                    controller.mutex.release()
+                self.reply(200, state)
             elif self.path == '/frame':
                 # Observation only. Independent connection; never take input.lock
                 # from an active run, save pixels, or send them to any model.
@@ -135,9 +145,15 @@ class Server(ThreadingHTTPServer):
             self.slots.release()
 
     def service_actions(self):
-        # Expiry still revokes input when the operator closes the page.
-        with self.controller.mutex:
+        # This runs on the accepting thread, not a request worker. Never wait
+        # behind input here: doing so prevents even /stop from being accepted.
+        # Retry expiry on the next poll after bounded input releases the mutex.
+        if not self.controller.mutex.acquire(blocking=False):
+            return
+        try:
             self.controller.expire()
+        finally:
+            self.controller.mutex.release()
 
 
 if __name__ == '__main__':

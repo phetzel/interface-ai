@@ -1,0 +1,10 @@
+{
+  "reason": "Wait for the first live frame after reload before the Stop UI screenshot. The final Stop UI rerun verifies this test-only change; the runtime and handoff API harness are identical.",
+  "files": [
+    {
+      "file": "scripts/checks/m3_operator_stop.mjs",
+      "operatorApiHash": "3c38c5d273293cc5b8cf483634a8057c7fa6d09c983cf95a061e7a630fe319fc",
+      "currentHash": "15b2ea41a66d800fdac8ee3dc73a94804d29c8bf1d1b204fcca11f81e072fcdc"
+    }
+  ]
+}

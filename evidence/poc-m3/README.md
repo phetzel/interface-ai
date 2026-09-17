@@ -2,6 +2,8 @@
 
 The implementation uses actual OS input in the existing isolated Linux ARM64 desktop. **The operator in these checks is an automated test, not a person. No model response or model call is represented by this evidence.** A real-person demonstration remains pending.
 
+The September 17 audit subsequently found an HTTP Stop accept-loop defect that these historical checks did not cover. Use the [pre-audit repair validation](../pre-audit-2026-09-17/README.md) for the current local revision; this original record remains unchanged below.
+
 ## Final verification
 
 [Final operator-API acceptance](final-operator-api/summary.json) passes for both members; its [engine log](final-operator-api/unit-tests.log) passes all **80 tests**. [Runtime verification](final-runtime.json) matches all **63 runtime files** to the final source, validates four exported schemas, and confirms the declared model-free/network properties. [Final image IDs](final-images.jsonl) identify the rebuilt images.

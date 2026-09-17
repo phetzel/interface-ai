@@ -1,0 +1,20 @@
+{
+  "checks": 35,
+  "sections": 9,
+  "result": "passed",
+  "tested": [
+    "initially unmarked",
+    "progress and notes persistence",
+    "safe literal user text",
+    "status filters",
+    "next unresolved",
+    "run/session command validation and synchronization",
+    "JSON export and attestation gates",
+    "print notes and expand restoration",
+    "confirmed reset",
+    "expand/collapse",
+    "desktop and mobile layout",
+    "blocked-storage fallback",
+    "no page errors or external requests"
+  ]
+}

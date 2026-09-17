@@ -9,7 +9,7 @@
 <div class="controls"><label>Member <input id="member" value="00123" maxlength="5" size="6"></label>
 <button id="start" class="primary" disabled>Start lookup</button><button id="takeover" disabled>Take control</button>
 <button id="resume" disabled>Verify &amp; resume</button><button id="stop" class="danger" disabled>Stop</button></div>
-<p id="guidance">Loading desktop state…</p><p id="message" role="status"></p>
+<p id="guidance">Loading desktop state…</p><p id="diagnostic" class="hint"></p><p id="message" role="status"></p>
 <div class="controls"><label>Text to send <input id="text" type="password" autocomplete="off" maxlength="256" placeholder="Synthetic data only"></label>
 <button id="send" disabled>Send text</button><button data-key="enter" disabled>Enter</button><button data-key="tab" disabled>Tab</button><button data-key="backspace" disabled>Backspace</button><button id="select" disabled>Select all</button></div>
 <img id="screen" alt="Live isolated desktop. Click to interact when you own control." draggable="false">
@@ -17,9 +17,10 @@
 </main><script nonce="__TOKEN__">
 const token='__TOKEN__', $=id=>document.getElementById(id); let state=null,busy=false,frameURL=null;
 const headers={'X-Operator-Token':token};
-async function read(path){const r=await fetch(path,{headers,cache:'no-store'});if(!r.ok)throw Error('Desktop unavailable');return r;}
+async function read(path){const r=await fetch(path,{headers,cache:'no-store'});if(!r.ok){const body=await r.json().catch(()=>({}));const error=Error('Desktop unavailable');error.busy=r.status===503&&body.code==='busy';throw error;}return r;}
 function render(){if(!state)return; $('state').textContent=state.phase.replaceAll('_',' ')+' · '+state.owner;
  $('session').textContent='Session '+state.session;
+ $('diagnostic').textContent=[state.step?'Step: '+state.step:null,state.lastCheckpoint?'Last verified checkpoint: '+state.lastCheckpoint:null,state.reason?'Reason: '+state.reason:null].filter(Boolean).join(' · ');
  const human=state.phase==='human'&&!busy;
  $('start').disabled=busy||state.phase!=='idle';$('member').disabled=state.phase!=='idle';
  $('takeover').disabled=busy||!['running','awaiting_human'].includes(state.phase);
@@ -41,6 +42,6 @@ $('send').onclick=()=>{const text=$('text').value;$('text').value='';if(text)act
 document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>action({type:'press',key:b.dataset.key}));
 $('select').onclick=()=>action({type:'hotkey',keys:['ctrl','a']});
 $('screen').onclick=e=>{if(!state||state.phase!=='human'||busy)return;const rect=e.target.getBoundingClientRect();const border=3;action({type:'click',x:Math.max(0,Math.min(1279,Math.floor((e.clientX-rect.left-border)/(rect.width-2*border)*1280))),y:Math.max(0,Math.min(799,Math.floor((e.clientY-rect.top-border)/(rect.height-2*border)*800)))});};
-async function refresh(){try{if(!busy){state=await(await read('/status')).json();render();}const blob=await(await read('/frame')).blob();const previous=frameURL;frameURL=URL.createObjectURL(blob);$('screen').src=frameURL;if(previous)URL.revokeObjectURL(previous);}catch(e){$('message').textContent=e.message;}finally{setTimeout(refresh,800);}}
+async function refresh(){try{if(!busy){state=await(await read('/status')).json();render();}const blob=await(await read('/frame')).blob();const previous=frameURL;frameURL=URL.createObjectURL(blob);$('screen').src=frameURL;if(previous)URL.revokeObjectURL(previous);}catch(e){if(!e.busy)$('message').textContent=e.message;}finally{setTimeout(refresh,800);}}
 refresh();
 </script></body></html>

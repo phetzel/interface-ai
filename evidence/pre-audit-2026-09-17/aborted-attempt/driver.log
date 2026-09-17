@@ -1,0 +1,5 @@
+./scripts/m2-check
+PASSED policy-reset
+PASSED live-policy
+PASSED origin-ip-bypass
+make: *** [policy-check] Terminated: 15

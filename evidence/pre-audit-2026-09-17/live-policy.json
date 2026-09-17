@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "gateway_permits_fixture_resources",
+      "status": "passed"
+    },
+    {
+      "name": "gateway_rejects_forbidden_requests",
+      "status": "passed",
+      "denied": 5
+    },
+    {
+      "name": "origin_name_is_not_on_desktop_network",
+      "status": "passed"
+    },
+    {
+      "name": "desktop_has_no_default_ipv4_route",
+      "status": "passed"
+    },
+    {
+      "name": "visible_risky_control_and_page_instruction_rejected",
+      "status": "passed",
+      "denied": 4,
+      "inputActionsCompleted": 0
+    },
+    {
+      "name": "unexpected_application_rejected",
+      "status": "passed",
+      "inputActionsCompleted": 0
+    },
+    {
+      "name": "synthetic_risky_control_is_functional_in_calibration",
+      "status": "passed"
+    },
+    {
+      "name": "raw_capture_suppressed_before_persistence",
+      "status": "passed"
+    },
+    {
+      "name": "chromium_external_navigation_blocked",
+      "status": "passed"
+    },
+    {
+      "name": "chromium_file_navigation_blocked",
+      "status": "passed"
+    }
+  ],
+  "modelCalls": 0,
+  "screenshotsPersisted": 0
+}
