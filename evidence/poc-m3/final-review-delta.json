@@ -1,0 +1,21 @@
+{
+  "scope": "Final ownership/audit review after full M2/M1 gate",
+  "changes": {
+    "engine/src/interface_ai/desktop/ownership.py": {
+      "before": "d52b3277a8241aead27f888a0650fa8c56c08ba95c2361b307d00cce6170c10d",
+      "after": "b816a2a8862e70223322dc0e85e3e0b4b46cbabdac3052e33fd52ce9a1f50111"
+    },
+    "engine/src/interface_ai/handoff/controller.py": {
+      "before": "85a559156897f0f70ad04e0231b055748d1b2cc644cb8df92cacbfd09176b4fb",
+      "after": "f59c020fffe1bfd70e47d85a1be5153e8294845d14dbb63e154ace2b8593bafa"
+    },
+    "engine/tests/test_handoff.py": {
+      "before": "3f8d3b70ba60461c90132d8b6c7b7b21a15667ade1c0d2563d81348c6a97c741",
+      "after": "9393d4e25071ccce6d939bd46da04a3d2ed268db547952bb1c2965d9b1b1853d"
+    },
+    "scripts/m3-check": {
+      "before": "e23500db7883fcd99d0cd4b43a083018dd7ec4fb074718464461a0c87d26e874",
+      "after": "a60669892ec0c52d5674cae89c3224f92991c8f8d2c5c73767d576fe43204904"
+    }
+  }
+}

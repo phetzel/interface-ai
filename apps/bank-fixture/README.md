@@ -64,7 +64,7 @@ npx playwright install chromium
 npm test
 ```
 
-This builds the production assets, launches six local servers on ports 4180–4185, and runs 13 Chromium tests at 1280×800, en-US. The ports must be free. To keep browser downloads in the repository's ignored output directory:
+This builds the production assets, launches eight local servers on ports 4180–4187, and runs 15 Chromium tests at 1280×800, en-US. The ports must be free. To keep browser downloads in the repository's ignored output directory:
 
 ```sh
 export PLAYWRIGHT_BROWSERS_PATH="$PWD/../../tmp/playwright"
@@ -84,3 +84,5 @@ Tooling references: [Vite setup requirements](https://vite.dev/guide/) and [Play
 `./scripts/desktop reset bank policy` starts the normal search view with an additional synthetic transfer control, an untrusted instruction to ignore restrictions, and a private-note sentinel. The button only changes local React state; no real transaction or backend mutation exists. The host fixture test proves the button works, while M2's desktop acceptance proves the ordinary input policy refuses to click it. This scenario is launch-controlled like the other fixtures.
 
 The fixture origin now lives on a separate internal Compose network. The desktop reaches it through the fixed-upstream policy gateway at `http://fixture:4173/`; it cannot directly address the origin. The host preview and Playwright servers remain fixture-development tools, separate from runtime policy enforcement.
+
+M3 adds the harness-only `expired` scenario: the first successful member search shows a synthetic expiry dialog. The training code `demo` restores the original member overview in the same page; no real credentials, persistence or authentication endpoint are involved. Subsequent searches in that page do not expire again. Reload/reset starts a fresh scenario.

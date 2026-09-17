@@ -20,7 +20,7 @@ try {
     ![250, 1800].includes(value.searchDelayMs) ||
     typeof value.offsetPx !== "number" ||
     ![0, 40].includes(value.offsetPx) ||
-    ["blockSearch", "duplicateSavings", "hideBalance", "policyProbe"].some(
+    ["blockSearch", "duplicateSavings", "hideBalance", "policyProbe", "expireSession"].some(
       (key) => typeof value[key] !== "boolean",
     )
   ) {

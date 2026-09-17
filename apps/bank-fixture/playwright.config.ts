@@ -8,6 +8,7 @@ const scenarios = [
   "unreadable",
   "translated",
   "policy",
+  "expired",
 ];
 export default defineConfig({
   testDir: "./tests",

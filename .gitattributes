@@ -2,3 +2,6 @@
 evidence/poc-m1/acceptance/builds/tracked-changes.patch -whitespace
 # Preserve the exact captured M2 build log, including Docker progress whitespace.
 evidence/poc-m2/build.log -whitespace
+# Preserve exact M3 development diagnostics, including test-runner whitespace.
+evidence/poc-m3/development/initial-unit-fixture-failure.log -whitespace
+evidence/poc-m3/development/missing-browser-cache.log -whitespace

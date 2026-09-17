@@ -1,0 +1,8 @@
+PASSED policy-reset
+PASSED live-policy
+PASSED origin-ip-bypass
+PASSED m1-regression
+PASSED export-source-replay
+PASSED safe-export
+PASSED final-reset
+Evidence: /Users/phillip/interview/interface-ai/tmp/m2-checks/20260916T013703Z-47faee86

@@ -1,0 +1,26 @@
+{"kind": "lifecycle", "elapsedMs": 0, "status": "started"}
+{"kind": "automation", "elapsedMs": 249, "sequence": 1, "action": "click", "status": "completed", "durationMs": 105.752}
+{"kind": "automation", "elapsedMs": 539, "sequence": 2, "action": "hotkey", "status": "completed", "durationMs": 112.423}
+{"kind": "automation", "elapsedMs": 914, "sequence": 3, "action": "type", "status": "completed", "durationMs": 184.595}
+{"kind": "automation", "elapsedMs": 1905, "sequence": 4, "action": "press", "status": "completed", "durationMs": 101.372}
+{"kind": "lifecycle", "elapsedMs": 2351, "status": "awaiting_human"}
+{"kind": "lifecycle", "elapsedMs": 2376, "status": "human", "epoch": 2}
+{"kind": "lifecycle", "elapsedMs": 2470, "status": "rejected", "code": "resume_rejected"}
+{"kind": "human", "elapsedMs": 2838, "sequence": 1, "action": "click", "status": "completed", "durationMs": 13.185}
+{"kind": "human", "elapsedMs": 3208, "sequence": 2, "action": "type", "status": "completed", "durationMs": 361.851}
+{"kind": "human", "elapsedMs": 3253, "sequence": 3, "action": "hotkey", "status": "completed", "durationMs": 25.661}
+{"kind": "human", "elapsedMs": 3324, "sequence": 4, "action": "type", "status": "completed", "durationMs": 61.061}
+{"kind": "human", "elapsedMs": 3355, "sequence": 5, "action": "click", "status": "completed", "durationMs": 16.369}
+{"kind": "human", "elapsedMs": 3788, "sequence": 6, "action": "click", "status": "completed", "durationMs": 12.281}
+{"kind": "lifecycle", "elapsedMs": 3885, "status": "rejected", "code": "resume_rejected"}
+{"kind": "human", "elapsedMs": 3905, "sequence": 7, "action": "click", "status": "completed", "durationMs": 13.022}
+{"kind": "human", "elapsedMs": 3991, "sequence": 8, "action": "type", "status": "completed", "durationMs": 80.097}
+{"kind": "human", "elapsedMs": 4009, "sequence": 9, "action": "press", "status": "completed", "durationMs": 11.293}
+{"kind": "lifecycle", "elapsedMs": 4593, "status": "rejected", "code": "resume_rejected"}
+{"kind": "human", "elapsedMs": 4615, "sequence": 10, "action": "click", "status": "completed", "durationMs": 13.992}
+{"kind": "human", "elapsedMs": 4635, "sequence": 11, "action": "click", "status": "completed", "durationMs": 12.611}
+{"kind": "human", "elapsedMs": 4719, "sequence": 12, "action": "type", "status": "completed", "durationMs": 76.781}
+{"kind": "human", "elapsedMs": 4738, "sequence": 13, "action": "press", "status": "completed", "durationMs": 11.899}
+{"kind": "lifecycle", "elapsedMs": 5460, "status": "resumed"}
+{"kind": "automation", "elapsedMs": 5719, "sequence": 1, "action": "click", "status": "completed", "durationMs": 107.953}
+{"kind": "lifecycle", "elapsedMs": 6447, "status": "success"}

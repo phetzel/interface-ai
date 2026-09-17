@@ -91,6 +91,7 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:${DESKTOP_PORT:-6080}:6080"
+      - "127.0.0.1:6081:6081"
     networks: [desktop, viewer]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]

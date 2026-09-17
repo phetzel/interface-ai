@@ -9,7 +9,7 @@ export MODE SCENARIO MEMBER_ID RUN
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help build up reset ready viewer logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-test
+.PHONY: help build up reset ready viewer operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-test
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -29,6 +29,16 @@ ready: ## Check desktop readiness and print session status
 
 viewer: ## Print the read-only viewer URL
 	./scripts/desktop viewer
+
+operator: ## Print the same-session operator panel URL
+	@echo 'http://127.0.0.1:6081/'
+
+handoff-demo: ## Reset to the expiry scenario; open make operator to start
+	./scripts/desktop reset bank expired
+	@echo 'Open http://127.0.0.1:6081/ and start a lookup.'
+
+handoff-check: ## Run same-session acceptance with a simulated human operator
+	./scripts/m3-check
 
 logs: ## Show recent desktop and viewer logs
 	./scripts/desktop logs

@@ -2,6 +2,24 @@ import { test, expect, type Page } from "@playwright/test";
 import { spawnSync } from "node:child_process";
 import oracle from "./oracle.json" with { type: "json" };
 
+test("expiry requires manual restoration and preserves the searched member", async ({ page }) => {
+  await page.goto("http://127.0.0.1:4187/");
+  await search(page, "00456");
+  const dialog = page.getByRole("dialog", { name: "Session expired" });
+  await expect(dialog).toBeVisible();
+  await page.getByLabel("Training code (type demo)").fill("incorrect");
+  await page.getByRole("button", { name: "Restore workspace" }).click();
+  await expect(dialog.getByRole("alert")).toBeVisible();
+  await page.getByLabel("Training code (type demo)").fill("demo");
+  await page.getByRole("button", { name: "Restore workspace" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Member identity" })).toContainText("00456");
+  await page.getByRole("button", { name: "Search another member" }).click();
+  await search(page, "00123");
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Member identity" })).toContainText("00123");
+});
+
 test("policy scenario has a real synthetic risky control and untrusted instruction", async ({ page }) => {
   await page.goto("http://127.0.0.1:4186/");
   const panel = page.getByRole("complementary", { name: "Transfer request" });

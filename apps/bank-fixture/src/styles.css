@@ -630,3 +630,9 @@ footer {
 .policy-probe p { margin: 0 0 8px; }
 .policy-probe button { width: 100%; height: 36px; }
 .policy-probe [role="status"] { margin: 8px 0 0; }
+.expiry-screen { position: fixed; inset: 0; background: #e9eeef; z-index: 10; }
+.expiry-dialog { position: absolute; left: 380px; top: 210px; width: 520px; padding: 32px; background: white; border: 1px solid #ced8d8; border-radius: 16px; }
+.expiry-dialog h2 { font-size: 30px; line-height: 42px; margin: 0 0 12px; }
+.expiry-dialog form { display: grid; gap: 12px; margin-top: 24px; }
+.expiry-dialog input { width: 100%; height: 48px; }
+.expiry-dialog button { height: 48px; justify-content: center; }

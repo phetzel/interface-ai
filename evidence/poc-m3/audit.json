@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "sourceHashesMatched": 95,
+  "runtimeHashesMatched": 63,
+  "jsonDocumentsValidatedBeforeThisAudit": 23,
+  "missingLocalMarkdownLinks": 0,
+  "privateSentinelAbsentFromArchive": true,
+  "gitDiffWhitespaceCheck": "passed",
+  "scope": "Archive, source manifests and local documentation links. Real-person demonstration remains pending."
+}

@@ -48,7 +48,7 @@ def main():
     if (WIDTH, HEIGHT) != (1280, 800):
         raise ValueError('This calibration pad currently requires a 1280x800 display')
     RUNTIME.mkdir(exist_ok=True)
-    for name in ('session.json', 'pad.json', 'STOP'):
+    for name in ('session.json', 'pad.json', 'STOP', 'ownership.json', 'ownership.next'):
         (RUNTIME / name).unlink(missing_ok=True)
     # Xvfb can leave these behind across a container restart after an abrupt exit.
     Path('/tmp/.X99-lock').unlink(missing_ok=True)
@@ -92,6 +92,8 @@ def main():
                         'width': WIDTH, 'height': HEIGHT, 'viewer': 'read-only',
                         'mode': mode, **application, 'appPid': app.pid, 'sandbox': sandbox,
                         'pids': {name: process.pid for name, process in children}})
+    launch('operator gateway', [sys.executable, '-m', 'interface_ai.handoff.server'])
+    wait_for('operator gateway', lambda: port_ready(6081))
     print(f'Desktop ready: {mode}, 1280x800; read-only viewer on port 6080', flush=True)
     while not stopping:
         for name, process in children:

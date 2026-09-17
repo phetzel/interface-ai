@@ -1,6 +1,6 @@
 # Roadmap, proof-of-concept gates, and dependencies
 
-Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. Human takeover (PoC D) is the next independent gate; OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 work is local and uncommitted.
+Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. M3 now implements PoC D with live simulated-operator checks; its [specification](MILESTONE_3.md) distinguishes automated validation from the real-person demonstration. OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 was committed and pushed as `3726347`.
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
@@ -174,12 +174,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
-| Further implementation scope | PoC D/E and subsequent work; M1 and M2 were requested and completed | Plans and dependency definitions are ready |
+| Further implementation scope | M3 was requested and implemented; PoC E and integration remain | Plans and dependency definitions are ready |
 | Local desktop runtime/viewer — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
 | OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
 | Visual recognition and repeated manual replay — gate passed | Discovery-generated artifact validation | Handoff and policy can proceed |
 | Bounded policy/evidence gate — passed in M2 | Controlled model execution still needs reviewed outbound observations | Handoff design can proceed |
-| Same-session handoff gate | Integrated escalation acceptance | Core discovery/replay can proceed |
+| Same-session handoff mechanism — M3 implemented; real-person demonstration pending | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-M1 and bounded M2/PoC B are complete. Next, define and implement PoC D (same-session human takeover) using the proven desktop and policy boundary. Genuine discovery also requires OpenAI API access, reviewed outbound observations, and promotion of the generated artifact. Human takeover must pass before integrated escalation acceptance. Discovery and takeover have not been implemented.
+M1 and bounded M2/PoC B are complete; M3 implements the same-session handoff mechanism and its automated checks. A real-person demonstration remains an explicit submission requirement. Next is genuine discovery: verify OpenAI API access, review outbound observations, bind pending model actions to ownership epochs, and promote a genuinely generated artifact. Discovery has not been implemented.

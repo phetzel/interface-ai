@@ -55,7 +55,7 @@ def validate(action, width, height):
 class Desktop:
     def __init__(self, session_id=None, *, timeout=45, backend=None, session_reader=read_session,
                  stop_path=STOP, lock_path=LOCK, clock=time.monotonic, event_sink=None,
-                 calibration=False):
+                 calibration=False, role='automation', epoch=None):
         if type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 120:
             raise DesktopError('invalid_deadline', 'Timeout must be in (0, 120] seconds')
         self._read = session_reader
@@ -66,6 +66,12 @@ class Desktop:
         self.width, self.height = self.session['width'], self.session['height']
         self.backend = backend
         self.stop_path, self.lock_path = Path(stop_path), Path(lock_path)
+        from .ownership import Ownership
+        if role not in ('automation', 'human'):
+            raise DesktopError('invalid_action', 'Unsupported input owner')
+        self.ownership = Ownership(self.lock_path.parent, self.id)
+        self.role = role
+        self.epoch = self.ownership.read()['epoch'] if epoch is None else epoch
         self.clock, self.deadline = clock, clock() + timeout
         self.event_sink = event_sink or (lambda event: None)
         self._lock = None
@@ -88,7 +94,7 @@ class Desktop:
                 from .backend import X11Backend
                 self.backend = X11Backend()
             self._check(observation=True)
-            if self.session['mode'] == 'bank' and not self._calibration:
+            if self.session['mode'] == 'bank' and not self._calibration and self.role == 'automation':
                 from interface_ai.policy.bank import BankPolicy
                 self.policy = BankPolicy()
             return self
@@ -120,6 +126,7 @@ class Desktop:
         if self.backend.size() != (self.width, self.height):
             raise DesktopError('display_changed', 'Desktop dimensions changed')
         if not observation:
+            self.ownership.check(self.role, self.epoch)
             if self.stop_path.exists():
                 raise DesktopError('stopped', 'Input stopped; reset before another run')
             if self.backend.active_window() != current['windowId']:

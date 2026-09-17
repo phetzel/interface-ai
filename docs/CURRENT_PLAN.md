@@ -1,6 +1,6 @@
 # Current planning direction
 
-Updated 2026-09-15. **M1 and bounded M2/PoC B are complete** for the fixed Linux ARM64 environment. M2 adds operator-owned input rules, capability admission, application identity checks, network/route separation, and metadata-only safe evidence export. See [M2 specification and research](MILESTONE_2.md) and [acceptance evidence](../evidence/poc-m2/README.md): final source has 63 passing engine tests and 14 fixture tests; the full repeated M1 gate passes with policy enabled. Model discovery and human takeover remain later gates. The original [M1-06 evidence](../evidence/poc-m1/acceptance/README.md) remains historical evidence; M2 acceptance records the changed runtime separately.
+Updated 2026-09-15. **M1 and bounded M2/PoC B are complete** for the fixed Linux ARM64 environment. M2 adds operator-owned input rules, capability admission, application identity checks, network/route separation, and metadata-only safe evidence export. See [M2 specification and research](MILESTONE_2.md) and [acceptance evidence](../evidence/poc-m2/README.md): final source has 63 passing engine tests and 14 fixture tests; the full repeated M1 gate passes with policy enabled. M3 implements same-session takeover with an operator panel and a reviewed continuation; 80 engine tests, 15 fixture tests and live simulated-operator checks pass, with the prior full regression and pending real-person demonstration tracked separately in [M3](MILESTONE_3.md). OpenAI discovery remains pending. The original [M1-06 evidence](../evidence/poc-m1/acceptance/README.md) remains historical evidence; M2 acceptance records the changed runtime separately.
 
 ## Confirmed and open choices
 
@@ -9,12 +9,12 @@ Updated 2026-09-15. **M1 and bounded M2/PoC B are complete** for the fixed Linux
 | Language | Python engine; TypeScript available for UI | Dependencies pass M1 on Linux ARM64; other environments remain untested |
 | UI | React/TypeScript as the initial sample-app direction | Keep operator UI minimal; no polished console yet |
 | Models | OpenAI only, using one provider key; start with GPT-5.6 Sol | Account access and performance on the actual fixture |
-| Automation | Computer use across application surfaces; PyAutoGUI and local visual recognition pass M1 | Broader rendering conditions, model discovery, and human ownership |
-| Target | Three-view synthetic banking app; read-only savings lookup passes M1 | Dialog, session-expiry, and handoff scenarios |
-| Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and future ownership extensions |
+| Automation | Computer use across application surfaces; PyAutoGUI and local visual recognition pass M1 | Broader rendering conditions and model discovery |
+| Target | Three-view synthetic banking app; read-only savings lookup passes M1 | M3 expiry is implemented; generic dialogs remain later integration work |
+| Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and broader recovery contracts |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. M2 proves the declared policy/evidence boundary. Model discovery and human handoff still need proof.
+Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. M2 proves the declared policy/evidence boundary. M3 now provides the handoff mechanism; model discovery and a witnessed real-person handoff remain separate evidence requirements.
 
 ## Revised language comparison
 
@@ -42,7 +42,7 @@ Separate the model-facing computer interface from its OS-specific implementation
 
 The first banking-style application can still run in a browser window. The difference is that the runtime operates the desktop view of that application through the same primitives it could use for a native app. This demonstrates a reusable control mechanism; it does not establish support for every OS, app, or workflow.
 
-The tested environment is a non-root Linux ARM64 Docker desktop with one 1280×800 X11 display, fixed scale, and synthetic data. Screenshot/input agreement, read-only viewing, and sandboxed Chromium are verified. Interactive human control and event capture remain separate gates. The automation operates the isolated desktop rather than the host desktop.
+The tested environment is a non-root Linux ARM64 Docker desktop with one 1280×800 X11 display, fixed scale, and synthetic data. Screenshot/input agreement, read-only viewing, and sandboxed Chromium are verified. M3 adds interactive human ownership and metadata-only event capture through the same adapter. The automation operates the isolated desktop rather than the host desktop.
 
 Playwright can remain useful for testing the sample app or an optional browser adapter later. It is no longer the primary automation abstraction.
 
@@ -89,8 +89,8 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 
 ## Next design work
 
-1. Define PoC D's same-session human ownership, permitted input capture, and verified resumption using the shared policy boundary.
-2. Extend the fixture only with the session-expiry/dialog scenarios needed to test those mechanisms.
+1. Witness a real-person takeover using `make handoff-demo`; automated M3 validation is complete.
+2. Keep recovery scoped to the declared expiry checkpoint; defer generic workflow recovery.
 3. Verify OpenAI API access and define allowed outbound model observations; metadata-only evidence export does not authorize raw screenshot transmission.
 4. Validate genuine discovery to a reusable artifact, including explicit artifact promotion into the reviewed policy.
 5. Integrate the scenario matrix and prepare the final reproducible submission before adding polish or another surface.

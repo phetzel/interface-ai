@@ -1,0 +1,6 @@
+{
+  "initialUnitRun": "73 tests; 3 HTTP test errors because the test double lacked a context-manager mutex. Corrected to real RLock; subsequent 78-test suite passed.",
+  "initialFixtureRun": "15 launch failures due to missing default Playwright browser. Reused existing pinned repo browser; all 15 passed.",
+  "firstLiveProbe": "Recognized expiry, rejected premature resume, restored with simulated operator OS input, resumed successfully in unchanged session.",
+  "realHumanWitnessed": false
+}

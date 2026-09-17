@@ -1,0 +1,14 @@
+{"kind": "lifecycle", "elapsedMs": 0, "status": "started"}
+{"kind": "automation", "elapsedMs": 229, "sequence": 1, "action": "click", "status": "completed", "durationMs": 98.579}
+{"kind": "automation", "elapsedMs": 515, "sequence": 2, "action": "hotkey", "status": "completed", "durationMs": 108.656}
+{"kind": "automation", "elapsedMs": 840, "sequence": 3, "action": "type", "status": "completed", "durationMs": 152.359}
+{"kind": "automation", "elapsedMs": 2022, "sequence": 4, "action": "press", "status": "completed", "durationMs": 109.909}
+{"kind": "lifecycle", "elapsedMs": 2539, "status": "awaiting_human"}
+{"kind": "lifecycle", "elapsedMs": 2582, "status": "human", "epoch": 2}
+{"kind": "lifecycle", "elapsedMs": 2697, "status": "rejected", "code": "resume_rejected"}
+{"kind": "human", "elapsedMs": 3142, "sequence": 1, "action": "click", "status": "completed", "durationMs": 14.266}
+{"kind": "human", "elapsedMs": 3212, "sequence": 1, "action": "type", "status": "completed", "durationMs": 62.304}
+{"kind": "human", "elapsedMs": 3233, "sequence": 1, "action": "click", "status": "completed", "durationMs": 13.249}
+{"kind": "lifecycle", "elapsedMs": 4031, "status": "resumed"}
+{"kind": "automation", "elapsedMs": 4502, "sequence": 1, "action": "click", "status": "completed", "durationMs": 182.383}
+{"kind": "lifecycle", "elapsedMs": 5893, "status": "success"}

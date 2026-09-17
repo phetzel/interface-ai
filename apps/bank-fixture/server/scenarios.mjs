@@ -7,6 +7,7 @@ export const scenarioNames = [
   "unreadable",
   "translated",
   "policy",
+  "expired",
 ];
 
 export function scenarioConfig(name) {
@@ -22,5 +23,6 @@ export function scenarioConfig(name) {
     hideBalance: name === "unreadable",
     offsetPx: name === "translated" ? 40 : 0,
     policyProbe: name === "policy",
+    expireSession: name === "expired",
   };
 }

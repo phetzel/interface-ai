@@ -82,13 +82,14 @@ class Observation:
 
 class Interpreter:
     def __init__(self, bundle, inputs, desktop, *, event_sink=None, capture_sink=None,
-                 observer_factory=Observation, ocr=None, clock=time.monotonic):
+                 observer_factory=Observation, ocr=None, clock=time.monotonic, pause_check=None):
         self.bundle, self.cap, self.inputs, self.desktop = bundle, bundle.capability, inputs, desktop
         self.event_sink = event_sink or (lambda event: None)
         self.capture_sink = capture_sink or (lambda name, image: None)
         self.clock, self.observer_factory = clock, observer_factory
         self.ocr = ocr or OCR(expected_data_hash=self.cap.environment.ocrModelSha256,
                               minimum_confidence=self.cap.environment.minimumConfidence)
+        self.pause_check = pause_check
         self.step = None
         self.step_deadline = self.clock()
 
@@ -110,6 +111,8 @@ class Interpreter:
     def wait_after_action(self):
         while True:
             observation = self.observe()
+            if self.pause_check:
+                self.pause_check(self, observation)
             matches = [post for post in self.step.postconditions if observation.checkpoint(post.checkpoint)]
             self.guard()  # Reject observations that completed after stop/deadline.
             if len(matches) > 1:
@@ -121,9 +124,9 @@ class Interpreter:
                 return post.outcome
             time.sleep(min(.05, max(0, self.step_deadline-self.clock())))
 
-    def run(self):
+    def run(self, *, start_at=0):
         try:
-            for step in self.cap.steps:
+            for step in self.cap.steps[start_at:]:
                 self.step = step
                 self.step_deadline = self.clock() + step.timeoutSeconds
                 self.emit('step', action=step.action, status='started')
