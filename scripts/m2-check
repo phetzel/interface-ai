@@ -10,6 +10,8 @@ import subprocess
 import sys
 import uuid
 
+from lib.builds import retain_builds, verify_running
+
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = (
     ROOT
@@ -51,7 +53,9 @@ def run(name, args, *, script=None, timeout=180):
 
 
 try:
+    retain_builds(OUTPUT)
     run('policy-reset', ['./scripts/desktop', 'reset', 'bank', 'policy'])
+    verify_running(OUTPUT)
     text = run(
         'live-policy',
         ['docker', 'compose', 'exec', '-T', 'desktop', 'python', '-'],

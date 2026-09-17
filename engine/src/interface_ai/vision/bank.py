@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 
 from PIL import Image
-from .primitives import Box, VisionError, find_matches, unique_match
+from .primitives import Box, VisionError, unique_match
 from .ocr import OCR, parse_usd
 
 ANCHORS = Path(__file__).with_name('anchors')

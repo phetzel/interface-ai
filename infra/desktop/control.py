@@ -4,12 +4,10 @@ import json
 import os
 import sys
 import urllib.request
-from pathlib import Path
 
-from interface_ai.desktop import Desktop, DesktopError
+from interface_ai.desktop import DesktopError
 from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import STOP, read_session, request_stop
-from bootstrap import assert_known_surface
 
 
 def ready():

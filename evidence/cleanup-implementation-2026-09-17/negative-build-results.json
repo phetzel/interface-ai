@@ -1,0 +1,30 @@
+{
+  "editedEngine": {
+    "status": "rejected",
+    "reason": "desktop image is stale: engine/src/interface_ai/replay/loader.py; run make build"
+  },
+  "editedFixture": {
+    "status": "rejected",
+    "reason": "fixture image is stale: src/App.tsx; run make build"
+  },
+  "untrackedFixture": {
+    "status": "rejected",
+    "reason": "fixture image is stale: src/UntrackedProbe.ts; run make build"
+  },
+  "staleSchema": {
+    "status": "rejected",
+    "reason": "Published schemas differ from models: input-v1",
+    "fileUnchanged": true
+  },
+  "changedCompiledAsset": {
+    "status": "rejected",
+    "asset": "/app/dist/assets/index-D_AKO1UL.js"
+  },
+  "restoredSource": {
+    "status": "passed",
+    "imageIds": {
+      "desktop": "sha256:9dd0ed13cb2c4e7f390927b04ddbc3eb67d6af21839544d5a60e3d6fe04ed916",
+      "fixture": "sha256:31ce5ad18026a7609e19e13938e47ae0294bec520e31684944c40782a71a09d5"
+    }
+  }
+}

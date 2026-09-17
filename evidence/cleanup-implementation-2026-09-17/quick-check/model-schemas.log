@@ -1,0 +1,1051 @@
+{
+  "capability-v1": {
+    "$defs": {
+      "Anchor": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "anchor",
+            "title": "Kind",
+            "type": "string"
+          },
+          "asset": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Asset",
+            "type": "string"
+          },
+          "region": {
+            "$ref": "#/$defs/Region"
+          },
+          "threshold": {
+            "maximum": 1,
+            "minimum": 0.9,
+            "title": "Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "asset",
+          "region",
+          "threshold"
+        ],
+        "title": "Anchor",
+        "type": "object"
+      },
+      "Asset": {
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "pattern": "^anchors/[a-z0-9-]+\\.png$",
+            "title": "File",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "sha256"
+        ],
+        "title": "Asset",
+        "type": "object"
+      },
+      "Checkpoint": {
+        "additionalProperties": false,
+        "properties": {
+          "targets": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9-]{0,47}$",
+              "type": "string"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Targets",
+            "type": "array"
+          },
+          "assertions": {
+            "items": {
+              "discriminator": {
+                "mapping": {
+                  "input_equals": "#/$defs/InputAssertion",
+                  "text_equals": "#/$defs/TextAssertion"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/InputAssertion"
+                },
+                {
+                  "$ref": "#/$defs/TextAssertion"
+                }
+              ]
+            },
+            "maxItems": 8,
+            "title": "Assertions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "targets"
+        ],
+        "title": "Checkpoint",
+        "type": "object"
+      },
+      "Click": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "precondition": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Precondition",
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Timeoutseconds",
+            "type": "number"
+          },
+          "postconditions": {
+            "items": {
+              "$ref": "#/$defs/Postcondition"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Postconditions",
+            "type": "array"
+          },
+          "action": {
+            "const": "click",
+            "title": "Action",
+            "type": "string"
+          },
+          "target": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "precondition",
+          "timeoutSeconds",
+          "postconditions",
+          "action",
+          "target"
+        ],
+        "title": "Click",
+        "type": "object"
+      },
+      "Environment": {
+        "additionalProperties": false,
+        "properties": {
+          "platform": {
+            "const": "linux-x11",
+            "title": "Platform",
+            "type": "string"
+          },
+          "width": {
+            "const": 1280,
+            "title": "Width",
+            "type": "integer"
+          },
+          "height": {
+            "const": 800,
+            "title": "Height",
+            "type": "integer"
+          },
+          "locale": {
+            "const": "en-US",
+            "title": "Locale",
+            "type": "string"
+          },
+          "scale": {
+            "const": 1,
+            "title": "Scale",
+            "type": "integer"
+          },
+          "ocrModelSha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Ocrmodelsha256",
+            "type": "string"
+          },
+          "minimumConfidence": {
+            "maximum": 100,
+            "minimum": 80,
+            "title": "Minimumconfidence",
+            "type": "number"
+          },
+          "ocrScale": {
+            "const": 3,
+            "title": "Ocrscale",
+            "type": "integer"
+          },
+          "ocrPSM": {
+            "const": 7,
+            "title": "Ocrpsm",
+            "type": "integer"
+          },
+          "totalTimeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 60,
+            "title": "Totaltimeoutseconds",
+            "type": "number"
+          }
+        },
+        "required": [
+          "platform",
+          "width",
+          "height",
+          "locale",
+          "scale",
+          "ocrModelSha256",
+          "minimumConfidence",
+          "ocrScale",
+          "ocrPSM",
+          "totalTimeoutSeconds"
+        ],
+        "title": "Environment",
+        "type": "object"
+      },
+      "Extract": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "precondition": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Precondition",
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Timeoutseconds",
+            "type": "number"
+          },
+          "action": {
+            "const": "extract",
+            "title": "Action",
+            "type": "string"
+          },
+          "fields": {
+            "$ref": "#/$defs/OutputBindings"
+          }
+        },
+        "required": [
+          "id",
+          "precondition",
+          "timeoutSeconds",
+          "action",
+          "fields"
+        ],
+        "title": "Extract",
+        "type": "object"
+      },
+      "Hotkey": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "precondition": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Precondition",
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Timeoutseconds",
+            "type": "number"
+          },
+          "postconditions": {
+            "items": {
+              "$ref": "#/$defs/Postcondition"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Postconditions",
+            "type": "array"
+          },
+          "action": {
+            "const": "hotkey",
+            "title": "Action",
+            "type": "string"
+          },
+          "keys": {
+            "items": {
+              "enum": [
+                "ctrl",
+                "a"
+              ],
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "precondition",
+          "timeoutSeconds",
+          "postconditions",
+          "action",
+          "keys"
+        ],
+        "title": "Hotkey",
+        "type": "object"
+      },
+      "InputAssertion": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "input_equals",
+            "title": "Kind",
+            "type": "string"
+          },
+          "field": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Field",
+            "type": "string"
+          },
+          "input": {
+            "const": "memberId",
+            "title": "Input",
+            "type": "string"
+          },
+          "prefix": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Prefix",
+            "type": "string"
+          },
+          "suffix": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Suffix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "field",
+          "input"
+        ],
+        "title": "InputAssertion",
+        "type": "object"
+      },
+      "OutputBindings": {
+        "additionalProperties": false,
+        "properties": {
+          "memberId": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Memberid",
+            "type": "string"
+          },
+          "memberName": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Membername",
+            "type": "string"
+          },
+          "accountType": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Accounttype",
+            "type": "string"
+          },
+          "currency": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "amountMinor": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Amountminor",
+            "type": "string"
+          }
+        },
+        "required": [
+          "memberId",
+          "memberName",
+          "accountType",
+          "currency",
+          "amountMinor"
+        ],
+        "title": "OutputBindings",
+        "type": "object"
+      },
+      "Point": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "relative",
+            "title": "Kind",
+            "type": "string"
+          },
+          "region": {
+            "$ref": "#/$defs/Region"
+          }
+        },
+        "required": [
+          "kind",
+          "region"
+        ],
+        "title": "Point",
+        "type": "object"
+      },
+      "Postcondition": {
+        "additionalProperties": false,
+        "properties": {
+          "checkpoint": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Checkpoint",
+            "type": "string"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "const": "member_not_found",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Outcome"
+          }
+        },
+        "required": [
+          "checkpoint"
+        ],
+        "title": "Postcondition",
+        "type": "object"
+      },
+      "Press": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "precondition": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Precondition",
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Timeoutseconds",
+            "type": "number"
+          },
+          "postconditions": {
+            "items": {
+              "$ref": "#/$defs/Postcondition"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Postconditions",
+            "type": "array"
+          },
+          "action": {
+            "const": "press",
+            "title": "Action",
+            "type": "string"
+          },
+          "key": {
+            "const": "enter",
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "precondition",
+          "timeoutSeconds",
+          "postconditions",
+          "action",
+          "key"
+        ],
+        "title": "Press",
+        "type": "object"
+      },
+      "ReadingField": {
+        "additionalProperties": false,
+        "properties": {
+          "region": {
+            "$ref": "#/$defs/Region"
+          },
+          "parser": {
+            "enum": [
+              "text",
+              "member_id",
+              "usd_minor"
+            ],
+            "title": "Parser",
+            "type": "string"
+          }
+        },
+        "required": [
+          "region",
+          "parser"
+        ],
+        "title": "ReadingField",
+        "type": "object"
+      },
+      "Region": {
+        "additionalProperties": false,
+        "properties": {
+          "relativeTo": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,47}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Relativeto"
+          },
+          "box": {
+            "items": {
+              "maximum": 1600,
+              "minimum": -1600,
+              "type": "integer"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Box",
+            "type": "array"
+          },
+          "clipToDisplay": {
+            "default": false,
+            "title": "Cliptodisplay",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "box"
+        ],
+        "title": "Region",
+        "type": "object"
+      },
+      "TextAssertion": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "text_equals",
+            "title": "Kind",
+            "type": "string"
+          },
+          "field": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Field",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "field",
+          "text"
+        ],
+        "title": "TextAssertion",
+        "type": "object"
+      },
+      "Type": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "precondition": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "title": "Precondition",
+            "type": "string"
+          },
+          "timeoutSeconds": {
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Timeoutseconds",
+            "type": "number"
+          },
+          "postconditions": {
+            "items": {
+              "$ref": "#/$defs/Postcondition"
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Postconditions",
+            "type": "array"
+          },
+          "action": {
+            "const": "type",
+            "title": "Action",
+            "type": "string"
+          },
+          "input": {
+            "const": "memberId",
+            "title": "Input",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "precondition",
+          "timeoutSeconds",
+          "postconditions",
+          "action",
+          "input"
+        ],
+        "title": "Type",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schemaVersion": {
+        "const": "1.0",
+        "title": "Schemaversion",
+        "type": "string"
+      },
+      "name": {
+        "pattern": "^[a-z][a-z0-9-]{0,47}$",
+        "title": "Name",
+        "type": "string"
+      },
+      "capabilityVersion": {
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+        "title": "Capabilityversion",
+        "type": "string"
+      },
+      "provenance": {
+        "const": "manually-authored-poc",
+        "title": "Provenance",
+        "type": "string"
+      },
+      "description": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Description",
+        "type": "string"
+      },
+      "inputSchema": {
+        "additionalProperties": true,
+        "const": {
+          "additionalProperties": false,
+          "properties": {
+            "memberId": {
+              "pattern": "^[0-9]{5}$",
+              "title": "Memberid",
+              "type": "string"
+            }
+          },
+          "required": [
+            "memberId"
+          ],
+          "title": "MemberInput",
+          "type": "object"
+        },
+        "title": "Inputschema",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "const": {
+          "additionalProperties": false,
+          "properties": {
+            "memberId": {
+              "pattern": "^[0-9]{5}$",
+              "title": "Memberid",
+              "type": "string"
+            },
+            "memberName": {
+              "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+              "title": "Membername",
+              "type": "string"
+            },
+            "accountType": {
+              "const": "Savings",
+              "title": "Accounttype",
+              "type": "string"
+            },
+            "currency": {
+              "const": "USD",
+              "title": "Currency",
+              "type": "string"
+            },
+            "amountMinor": {
+              "maximum": 99999999999999,
+              "minimum": 0,
+              "title": "Amountminor",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "memberId",
+            "memberName",
+            "accountType",
+            "currency",
+            "amountMinor"
+          ],
+          "title": "SavingsOutput",
+          "type": "object"
+        },
+        "title": "Outputschema",
+        "type": "object"
+      },
+      "environment": {
+        "$ref": "#/$defs/Environment"
+      },
+      "assets": {
+        "maxProperties": 16,
+        "minProperties": 1,
+        "patternProperties": {
+          "^[a-z][a-z0-9-]{0,47}$": {
+            "$ref": "#/$defs/Asset"
+          }
+        },
+        "title": "Assets",
+        "type": "object"
+      },
+      "targets": {
+        "maxProperties": 24,
+        "minProperties": 1,
+        "patternProperties": {
+          "^[a-z][a-z0-9-]{0,47}$": {
+            "discriminator": {
+              "mapping": {
+                "anchor": "#/$defs/Anchor",
+                "relative": "#/$defs/Point"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/Anchor"
+              },
+              {
+                "$ref": "#/$defs/Point"
+              }
+            ]
+          }
+        },
+        "title": "Targets",
+        "type": "object"
+      },
+      "fields": {
+        "maxProperties": 24,
+        "minProperties": 1,
+        "patternProperties": {
+          "^[a-z][a-z0-9-]{0,47}$": {
+            "$ref": "#/$defs/ReadingField"
+          }
+        },
+        "title": "Fields",
+        "type": "object"
+      },
+      "checkpoints": {
+        "maxProperties": 16,
+        "minProperties": 1,
+        "patternProperties": {
+          "^[a-z][a-z0-9-]{0,47}$": {
+            "$ref": "#/$defs/Checkpoint"
+          }
+        },
+        "title": "Checkpoints",
+        "type": "object"
+      },
+      "steps": {
+        "items": {
+          "discriminator": {
+            "mapping": {
+              "click": "#/$defs/Click",
+              "extract": "#/$defs/Extract",
+              "hotkey": "#/$defs/Hotkey",
+              "press": "#/$defs/Press",
+              "type": "#/$defs/Type"
+            },
+            "propertyName": "action"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Click"
+            },
+            {
+              "$ref": "#/$defs/Type"
+            },
+            {
+              "$ref": "#/$defs/Press"
+            },
+            {
+              "$ref": "#/$defs/Hotkey"
+            },
+            {
+              "$ref": "#/$defs/Extract"
+            }
+          ]
+        },
+        "maxItems": 16,
+        "minItems": 2,
+        "title": "Steps",
+        "type": "array"
+      }
+    },
+    "required": [
+      "schemaVersion",
+      "name",
+      "capabilityVersion",
+      "provenance",
+      "description",
+      "inputSchema",
+      "outputSchema",
+      "environment",
+      "assets",
+      "targets",
+      "fields",
+      "checkpoints",
+      "steps"
+    ],
+    "title": "Capability",
+    "type": "object"
+  },
+  "input-v1": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      }
+    },
+    "required": [
+      "memberId"
+    ],
+    "title": "MemberInput",
+    "type": "object"
+  },
+  "output-v1": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      },
+      "memberName": {
+        "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+        "title": "Membername",
+        "type": "string"
+      },
+      "accountType": {
+        "const": "Savings",
+        "title": "Accounttype",
+        "type": "string"
+      },
+      "currency": {
+        "const": "USD",
+        "title": "Currency",
+        "type": "string"
+      },
+      "amountMinor": {
+        "maximum": 99999999999999,
+        "minimum": 0,
+        "title": "Amountminor",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "memberId",
+      "memberName",
+      "accountType",
+      "currency",
+      "amountMinor"
+    ],
+    "title": "SavingsOutput",
+    "type": "object"
+  },
+  "result-v1": {
+    "$defs": {
+      "BusinessOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "business_outcome",
+            "default": "business_outcome",
+            "title": "Status",
+            "type": "string"
+          },
+          "outcome": {
+            "const": "member_not_found",
+            "title": "Outcome",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome"
+        ],
+        "title": "BusinessOutcome",
+        "type": "object"
+      },
+      "Failure": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "failure",
+            "default": "failure",
+            "title": "Status",
+            "type": "string"
+          },
+          "code": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "title": "Code",
+            "type": "string"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,47}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Step"
+          },
+          "expected": {
+            "items": {
+              "pattern": "^[a-z][a-z0-9-]{0,47}$",
+              "type": "string"
+            },
+            "maxItems": 2,
+            "title": "Expected",
+            "type": "array"
+          },
+          "observed": {
+            "default": "rejected",
+            "enum": [
+              "unavailable",
+              "checkpoint_not_satisfied",
+              "rejected"
+            ],
+            "title": "Observed",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "Failure",
+        "type": "object"
+      },
+      "SavingsOutput": {
+        "additionalProperties": false,
+        "properties": {
+          "memberId": {
+            "pattern": "^[0-9]{5}$",
+            "title": "Memberid",
+            "type": "string"
+          },
+          "memberName": {
+            "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+            "title": "Membername",
+            "type": "string"
+          },
+          "accountType": {
+            "const": "Savings",
+            "title": "Accounttype",
+            "type": "string"
+          },
+          "currency": {
+            "const": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "amountMinor": {
+            "maximum": 99999999999999,
+            "minimum": 0,
+            "title": "Amountminor",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "memberId",
+          "memberName",
+          "accountType",
+          "currency",
+          "amountMinor"
+        ],
+        "title": "SavingsOutput",
+        "type": "object"
+      },
+      "Success": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "const": "success",
+            "default": "success",
+            "title": "Status",
+            "type": "string"
+          },
+          "output": {
+            "$ref": "#/$defs/SavingsOutput"
+          }
+        },
+        "required": [
+          "output"
+        ],
+        "title": "Success",
+        "type": "object"
+      }
+    },
+    "discriminator": {
+      "mapping": {
+        "business_outcome": "#/$defs/BusinessOutcome",
+        "failure": "#/$defs/Failure",
+        "success": "#/$defs/Success"
+      },
+      "propertyName": "status"
+    },
+    "oneOf": [
+      {
+        "$ref": "#/$defs/Success"
+      },
+      {
+        "$ref": "#/$defs/BusinessOutcome"
+      },
+      {
+        "$ref": "#/$defs/Failure"
+      }
+    ]
+  }
+}

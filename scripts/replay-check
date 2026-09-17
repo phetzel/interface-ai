@@ -11,6 +11,8 @@ import subprocess
 import sys
 import uuid
 
+from lib.builds import retain_builds, verify_running
+
 ROOT = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
@@ -79,6 +81,7 @@ def run(args, **kwargs):
 
 
 try:
+    retain_builds(OUTPUT)
     for name, scenario, index, expected in cases:
         item = {'case': name, 'scenario': scenario, 'status': 'running'}
         summary['cases'].append(item)
@@ -96,6 +99,7 @@ try:
                     stderr=log,
                     check=True,
                 )
+            verify_running(OUTPUT)
             member_id = (
                 oracle['missing']['memberId']
                 if index is None

@@ -1,6 +1,8 @@
 # Current planning direction
 
-Updated 2026-09-15. **M1 and bounded M2/PoC B are complete** for the fixed Linux ARM64 environment. M2 adds operator-owned input rules, capability admission, application identity checks, network/route separation, and metadata-only safe evidence export. See [M2 specification and research](MILESTONE_2.md) and [acceptance evidence](../evidence/poc-m2/README.md): final source has 63 passing engine tests and 14 fixture tests; the full repeated M1 gate passes with policy enabled. M3 implements same-session takeover with an operator panel and a reviewed continuation; 80 engine tests, 15 fixture tests and live simulated-operator checks pass, with the prior full regression and pending real-person demonstration tracked separately in [M3](MILESTONE_3.md). OpenAI discovery remains pending. The original [M1-06 evidence](../evidence/poc-m1/acceptance/README.md) remains historical evidence; M2 acceptance records the changed runtime separately.
+Updated 2026-09-17. **M1, bounded M2 and the M3 takeover mechanism are implemented** in the fixed Linux ARM64 environment. The current cleanup addresses the audit's A1–A6 repairs, build provenance, quality checks, readability and documentation. The [root README](../README.md) and [evidence index](../evidence/README.md) are authoritative for current validation; milestone counts below/elsewhere describe their dated source revisions.
+
+**Next:** integrate CLI/panel lifecycle and explicit recognition/checkpoint interfaces alongside real OpenAI discovery, a recorder and an operator-reviewed promotion manifest. Prove a genuinely discovered capability replays for the second member with zero model calls. The real-person handoff demonstration, final report and complete demo packaging remain pending. Cleanup is not evidence of completed discovery.
 
 ## Confirmed and open choices
 

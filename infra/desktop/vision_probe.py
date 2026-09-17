@@ -20,7 +20,6 @@ from interface_ai.vision.bank import (
     validate_member_id,
     wait_for_heading,
 )
-from bootstrap import assert_known_surface
 from common import write_json
 from control import ready
 

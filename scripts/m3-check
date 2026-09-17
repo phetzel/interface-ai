@@ -6,17 +6,17 @@ OS actions go through the operator HTTP API; evidence labels that provenance.
 """
 
 from datetime import datetime, timezone
-import hashlib
 import json
 from pathlib import Path
 import re
 import shutil
-import subprocess
-import sys
 import time
 import urllib.error
 import urllib.request
 import uuid
+
+from lib.acceptance import source_hashes, command as run_command
+from lib.builds import retain_builds, verify_running
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'http://127.0.0.1:6081'
@@ -36,10 +36,7 @@ summary = {
 
 
 def command(name, args, *, stdin=None, expected=0):
-    result = subprocess.run(
-        args, input=stdin, cwd=ROOT, capture_output=True, text=True, timeout=240
-    )
-    (OUTPUT / (name + '.log')).write_text(result.stdout + result.stderr)
+    result = run_command(args, script=stdin, directory=OUTPUT, name=name, timeout=240)
     assert result.returncode == expected, name
     return result.stdout
 
@@ -115,24 +112,13 @@ class Operator:
 
 
 def sources():
-    names = subprocess.check_output(
-        ['git', 'ls-files', '--cached', '--others', '--exclude-standard'], cwd=ROOT, text=True
-    ).splitlines()
-    return {
-        name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-        for name in names
-        if (
-            name.startswith(('engine/', 'infra/', 'scripts/', 'apps/', 'capabilities/'))
-            or name == 'compose.yaml'
-        )
-        and (ROOT / name).is_file()
-        and not name.endswith(('.md', '.LICENSE'))
-    }
+    return source_hashes()
 
 
 def scenario(member, negative):
     label = 'member-a-adversarial' if negative else 'member-b'
     command(label + '-reset', ['./scripts/desktop', 'reset', 'bank', 'expired'])
+    verify_running(OUTPUT)
     operator = Operator()
     initial = operator.status()
     before_dirs = set((ROOT / 'tmp/desktop-artifacts').glob('*-handoff-*'))
@@ -141,7 +127,6 @@ def scenario(member, negative):
     assert paused['step'] == 'search-member' and paused['reason'] == 'intervention_required'
     assert paused['session'] == initial['session'] and paused['resumable']
     assert paused['owner'] == 'quiescing' and paused['epoch'] > initial['epoch']
-    old_lease = operator.lease(paused)
     assert operator.post('/resume', expected=409)['code'] == 'invalid_transition'
     human = operator.post('/takeover')
     assert human['owner'] == 'human' and human['session'] == initial['session']
@@ -285,6 +270,7 @@ print(json.dumps({'staleAutomationRejected':True,'completedInputs':0}))
 
 
 try:
+    retain_builds(OUTPUT)
     frozen = sources()
     (OUTPUT / 'source-sha256.json').write_text(json.dumps(frozen, indent=2) + '\n')
     command(

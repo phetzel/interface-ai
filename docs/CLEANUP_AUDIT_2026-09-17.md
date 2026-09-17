@@ -2,6 +2,8 @@
 
 September 17, 2026 · `a63a143` plus the local React refactor
 
+**Implementation follow-up:** A1–A6 are addressed by the subsequent repository cleanup; see the [resolution and validation record](../evidence/cleanup-implementation-2026-09-17/README.md). The findings and reproductions below describe the original audited baseline and are preserved as history. A7–A9 remain the discovery/integration milestone; A10 remains conditional distribution work.
+
 The repository has sensible subsystem boundaries and meaningful defensive tests. It needs a focused cleanup pass, particularly around artifact loading, run lifecycle, evidence, test provenance and documentation. A framework rewrite would add work without resolving those problems. The largest remaining product requirement is still genuine discovery → reviewed artifact → model-free replay.
 
 This audit covers the Python engine, contracts, recognition, replay, policy, handoff/API/operator UI, Docker/bootstrap/networking, launchers, acceptance harnesses, React fixture, documentation and evidence organization. The existing local React changes are included. No implementation files were changed by this audit, and nothing was committed or pushed. Findings below distinguish reproduced defects, source-confirmed gaps and maintainability recommendations.

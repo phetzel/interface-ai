@@ -24,7 +24,7 @@ with Desktop(session_id="previously-observed-session-id", timeout=45) as desktop
     desktop.press("enter")
 ```
 
-Coordinates in this example illustrate the primitive API, not a reusable banking workflow. Read the current session using `./scripts/desktop ready`. A reset invalidates the previous session ID. A future replay runner must resolve coordinates from declared visual targets and validate its observed result.
+Coordinates in this example illustrate the primitive API, not a reusable banking workflow. Read the current session using `./scripts/desktop ready`. A reset invalidates the previous session ID. The replay interpreter resolves coordinates from declared visual targets and validates its observed result.
 
 All input uses the same `execute()` implementation, with convenience methods for `click`, `move`, `type_text`, `press`, `hotkey`, and `scroll`. Actions reject unsupported fields, out-of-display/non-integer coordinates, unsupported keys, non-printable/non-ASCII or overlong text, and excessive scroll amounts before OS input. Supported text is deliberately limited to printable ASCII in this first adapter.
 

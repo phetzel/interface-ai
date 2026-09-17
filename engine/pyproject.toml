@@ -17,3 +17,5 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "interface_ai.vision" = ["anchors/*.png", "anchors/*.json"]
+
+"interface_ai.handoff" = ["operator.html", "operator.css", "operator.js"]

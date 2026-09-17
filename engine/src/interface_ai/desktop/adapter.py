@@ -4,12 +4,15 @@ Bank sessions apply the operator-owned read-only policy at dispatch. Native
 calibration remains a trusted developer utility, not a model execution surface.
 """
 
+from __future__ import annotations
+
 import fcntl
 import math
 import time
 from pathlib import Path
 
 from .session import LOCK, STOP, read_session
+from .types import DesktopBackend
 
 
 class DesktopError(RuntimeError):
@@ -94,7 +97,7 @@ class Desktop:
         session_id=None,
         *,
         timeout=45,
-        backend=None,
+        backend: DesktopBackend | None = None,
         session_reader=read_session,
         stop_path=STOP,
         lock_path=LOCK,

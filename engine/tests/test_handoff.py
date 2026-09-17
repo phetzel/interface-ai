@@ -1,6 +1,7 @@
 """Ownership races use real flock files; HTTP tests never emit OS input."""
 
 import json
+import hashlib
 from pathlib import Path
 import tempfile
 import threading
@@ -15,7 +16,7 @@ from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.ownership import Ownership
 from interface_ai.handoff.server import Server, HOST, ORIGIN
 from interface_ai.handoff.controller import Controller
-from interface_ai.contracts.models import Failure
+from interface_ai.contracts.models import Failure, BusinessOutcome
 from test_desktop import Backend
 
 
@@ -219,6 +220,120 @@ class ControllerTests(unittest.TestCase):
         state = self.controller.snapshot()
         return {key: state[key] for key in ('session', 'epoch')}
 
+    def terminal(self, phase, code=None):
+        directory = self.controller.directory
+        summary = json.loads((directory / 'summary.json').read_text())
+        encoded = (directory / 'result.json').read_bytes()
+        result = json.loads(encoded)
+        self.assertEqual(summary['status'], phase)
+        self.assertEqual(summary['reason'], code)
+        self.assertEqual(summary['resultSha256'], hashlib.sha256(encoded).hexdigest())
+        self.assertEqual(summary['auditEvents'], len(self.controller.audit))
+        self.assertEqual(summary['sessionId'], self.session['id'])
+        self.assertEqual(summary['resultStatus'], result['status'])
+        return summary
+
+    def test_stop_finalizes_once_and_late_worker_cannot_replace_it(self):
+        self.controller.phase = 'running'
+        self.controller.current_step = 'search-member'
+        self.controller.last_checkpoint = 'input-entered'
+        begun, release = threading.Event(), threading.Event()
+
+        def late_result(**kwargs):
+            begun.set()
+            self.assertTrue(release.wait(2))
+            self.controller.record('automation', status='completed')
+            return BusinessOutcome(outcome='member_not_found')
+
+        with (
+            patch('interface_ai.handoff.controller.Desktop'),
+            patch('interface_ai.handoff.controller.Interpreter') as runner,
+        ):
+            runner.return_value.run.side_effect = late_result
+            worker = threading.Thread(target=self.controller.run, args=(0, 0))
+            worker.start()
+            self.assertTrue(begun.wait(2))
+            self.controller.stop()
+            epoch = self.controller.ownership.read()['epoch']
+            self.controller.stop()
+            release.set()
+            worker.join(2)
+            self.assertFalse(worker.is_alive())
+        summary = self.terminal('stopped', 'stopped')
+        self.assertEqual(summary['step'], 'search-member')
+        self.assertEqual(summary['lastCheckpoint'], 'input-entered')
+        self.assertEqual(summary['automationActions'], 1)
+        self.assertEqual(self.controller.ownership.read()['epoch'], epoch)
+        self.assertEqual(sum(e.get('status') == 'stopped' for e in self.controller.audit), 1)
+
+    def test_worker_exception_and_terminal_storage_failure_fail_closed(self):
+        self.controller.phase = 'running'
+        with patch('interface_ai.handoff.controller.Desktop', side_effect=RuntimeError('SECRET')):
+            self.controller.run(0, 0)
+        self.terminal('stopped', 'execution_failed')
+        self.assertNotIn('SECRET', (self.controller.directory / 'summary.json').read_text())
+        # Separate run: a full disk cannot restore ownership or recurse logging.
+        self.controller.result = None
+        self.controller.phase = 'running'
+        with patch('interface_ai.handoff.controller.write_terminal', side_effect=OSError('SECRET')):
+            self.controller.finalize(BusinessOutcome(outcome='member_not_found'))
+        self.assertTrue((self.root / 'STOP').exists())
+        self.assertEqual(self.controller.snapshot()['evidenceStatus'], 'failed')
+        self.assertEqual(self.controller.ownership.read()['owner'], 'stopped')
+        self.assertIsNone(self.controller.resume_at)
+
+    def test_successful_business_outcome_is_not_rewritten_by_later_stop(self):
+        self.controller.finalize(BusinessOutcome(outcome='member_not_found'))
+        self.terminal('business_outcome')
+        self.controller.stop()
+        self.terminal('business_outcome')
+        self.assertEqual(self.controller.phase, 'stopped')
+
+    def test_http_member_validation_is_client_error_without_worker_or_input(self):
+        self.controller.phase = 'idle'
+        self.controller.launch.reset_mock()
+        with Server(('127.0.0.1', 0), self.controller) as server:
+            serving = threading.Thread(target=server.serve_forever, daemon=True)
+            serving.start()
+            try:
+                headers = {
+                    'Host': HOST,
+                    'Origin': ORIGIN,
+                    'X-Operator-Token': server.token,
+                    'Content-Type': 'application/json',
+                }
+                cases = [
+                    ({'lease': self.lease, 'memberId': value}, 400, 'invalid_input')
+                    for value in ['123', 123, 'SECRET-SENTINEL']
+                ]
+                cases += [
+                    (
+                        {'lease': self.lease, 'memberId': '00123', 'extra': True},
+                        400,
+                        'invalid_action',
+                    ),
+                    (
+                        {'lease': dict(self.lease, epoch=99), 'memberId': '00123'},
+                        409,
+                        'ownership_revoked',
+                    ),
+                ]
+                for body, status, code in cases:
+                    req = Request(
+                        'http://127.0.0.1:' + str(server.server_port) + '/start',
+                        data=json.dumps(body).encode(),
+                        headers=headers,
+                    )
+                    with self.assertRaises(HTTPError) as error:
+                        urlopen(req, timeout=2)
+                    with error.exception as response:
+                        self.assertEqual(response.status, status)
+                        self.assertEqual(json.load(response), {'code': code})
+            finally:
+                server.shutdown()
+                serving.join(2)
+        self.controller.launch.assert_not_called()
+
     def test_premature_resume_never_launches_worker(self):
         with self.assertRaises(DesktopError):
             self.controller.resume(self.lease)
@@ -288,6 +403,7 @@ class ControllerTests(unittest.TestCase):
         self.controller.expire()
         self.assertEqual(self.controller.phase, 'stopped')
         self.assertEqual(self.controller.reason, 'handoff_expired')
+        self.terminal('stopped', 'handoff_expired')
         self.assertTrue((self.root / 'STOP').exists())
         with self.assertRaises(DesktopError):
             self.controller.human_action({'type': 'click', 'x': 1, 'y': 2}, lease, 0)
@@ -397,6 +513,7 @@ class ControllerTests(unittest.TestCase):
             self.assertEqual(results['stop'][0], 200)
             self.assertEqual(results['stop'][1]['phase'], 'stopped')
         self.assertEqual(backend.calls, expected_calls)
+        self.terminal('stopped', 'stopped')
         self.assertEqual(self.controller.snapshot()['owner'], 'stopped')
         with self.assertRaises(DesktopError):
             self.controller.human_action({'type': 'click', 'x': 1, 'y': 1}, lease, 1)
@@ -443,6 +560,7 @@ class ControllerTests(unittest.TestCase):
                 serving.join(2)
         self.assertEqual(self.controller.phase, 'stopped')
         self.assertEqual(self.controller.reason, 'handoff_expired')
+        self.terminal('stopped', 'handoff_expired')
 
     def test_handoff_retains_sanitized_interpreter_failure_context(self):
         self.controller.phase = 'running'

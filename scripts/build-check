@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Reject stale desktop/fixture images without starting a desktop."""
+
+import json
+from lib.builds import verify_builds
+
+if __name__ == '__main__':
+    try:
+        print(json.dumps({'status': 'passed', 'images': verify_builds()}, indent=2))
+    except Exception as exc:
+        raise SystemExit('Build check failed: ' + str(exc)) from None

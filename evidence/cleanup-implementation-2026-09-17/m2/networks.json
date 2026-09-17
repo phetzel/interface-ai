@@ -1,0 +1,12 @@
+{
+  "fixture": [
+    "interface-ai_fixture"
+  ],
+  "desktop": [
+    "interface-ai_desktop"
+  ],
+  "gateway": [
+    "interface-ai_desktop",
+    "interface-ai_fixture"
+  ]
+}

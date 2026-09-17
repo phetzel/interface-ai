@@ -1,47 +1,58 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Interface AI · Operator</title>
-<style>
-*{box-sizing:border-box}body{margin:0;padding:24px;background:#f1f5f5;color:#172c31;font:15px system-ui,sans-serif}main{max-width:1280px;margin:auto}h1{font-size:24px;margin:0}header,.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}header{justify-content:space-between}button,input{font:inherit;padding:10px 14px;border:1px solid #96acad;border-radius:6px}button{background:#fff;cursor:pointer}button:disabled{opacity:.4;cursor:default}.primary{background:#155a60;color:white}#state{font-weight:600}#message{min-height:24px;color:#824116}#screen{display:block;width:100%;aspect-ratio:8/5;background:#d8e0e0;border:1px solid #96acad;border-radius:8px}#screen.human{cursor:crosshair;border:3px solid #13796b}.hint{color:#4b6267}input[type=password]{width:250px}#session{font:12px monospace}.danger{color:#9a2929}
-</style></head><body><main>
-<header><h1>Interface AI <span class="hint">/ Operator</span></h1><span id="state">Connecting…</span></header>
-<p id="session"></p>
-<div class="controls"><label>Member <input id="member" value="00123" maxlength="5" size="6"></label>
-<button id="start" class="primary" disabled>Start lookup</button><button id="takeover" disabled>Take control</button>
-<button id="resume" disabled>Verify &amp; resume</button><button id="stop" class="danger" disabled>Stop</button></div>
-<p id="guidance">Loading desktop state…</p><p id="diagnostic" class="hint"></p><p id="message" role="status"></p>
-<div class="controls"><label>Text to send <input id="text" type="password" autocomplete="off" maxlength="256" placeholder="Synthetic data only"></label>
-<button id="send" disabled>Send text</button><button data-key="enter" disabled>Enter</button><button data-key="tab" disabled>Tab</button><button data-key="backspace" disabled>Backspace</button><button id="select" disabled>Select all</button></div>
-<img id="screen" alt="Live isolated desktop. Click to interact when you own control." draggable="false">
-<p class="hint">Click the desktop to focus a field or button, then send text with the controls above. Human action types are recorded; text, keys and screenshots are not saved. This panel controls the same desktop as the read-only viewer.</p>
-</main><script nonce="__TOKEN__">
-const token='__TOKEN__', $=id=>document.getElementById(id); let state=null,busy=false,frameURL=null;
-const headers={'X-Operator-Token':token};
-async function read(path){const r=await fetch(path,{headers,cache:'no-store'});if(!r.ok){const body=await r.json().catch(()=>({}));const error=Error('Desktop unavailable');error.busy=r.status===503&&body.code==='busy';throw error;}return r;}
-function render(){if(!state)return; $('state').textContent=state.phase.replaceAll('_',' ')+' · '+state.owner;
- $('session').textContent='Session '+state.session;
- $('diagnostic').textContent=[state.step?'Step: '+state.step:null,state.lastCheckpoint?'Last verified checkpoint: '+state.lastCheckpoint:null,state.reason?'Reason: '+state.reason:null].filter(Boolean).join(' · ');
- const human=state.phase==='human'&&!busy;
- $('start').disabled=busy||state.phase!=='idle';$('member').disabled=state.phase!=='idle';
- $('takeover').disabled=busy||!['running','awaiting_human'].includes(state.phase);
- $('resume').disabled=!human||!state.resumable; $('stop').disabled=state.phase==='stopped';
- for(const id of ['send','select','text'])$(id).disabled=!human;
- document.querySelectorAll('[data-key]').forEach(b=>b.disabled=!human);
- $('screen').classList.toggle('human',human);
- const messages={idle:'Start a lookup on a fresh search screen.',running:'Automation owns input. You can request control or stop.',awaiting_human:'Session expired. Take control, restore the workspace with the synthetic code demo, then verify and resume.',quiescing:'Waiting for automation input to drain…',human:state.resumable?'You own control. Restore the workspace, return to the original member overview, then verify and resume.':'You own control. This interruption has no verified continuation; inspect, then reset the desktop.',success:'Lookup complete. The savings balance is visible below.',failure:'Run stopped: '+(state.reason||'verification failed')+'. Reset the desktop before retrying.',business_outcome:'Member not found. Reset the desktop before another run.',stopped:'Input stopped. Reset the desktop to continue.'};
- $('guidance').textContent=messages[state.phase]||state.phase;
-}
-async function command(path,extra={}){if((busy&&path!=='/stop')||!state)return;busy=true;render();$('message').textContent='';
- const lease={session:state.session,epoch:state.epoch};
- try{const r=await fetch(path,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({lease,...extra})});const body=await r.json();if(!r.ok)throw Error(body.code==='resume_rejected'?'Resume rejected: return to the original member overview.':body.code);state=body;}
- catch(e){$('message').textContent=e.message+' — input was not retried.';}
- finally{busy=false;try{state=await(await read('/status')).json();}catch{}render();}}
-const action=a=>command('/action',{sequence:state.sequence,action:a});
-$('start').onclick=()=>command('/start',{memberId:$('member').value});$('takeover').onclick=()=>command('/takeover');$('resume').onclick=()=>command('/resume');$('stop').onclick=()=>command('/stop');
-$('send').onclick=()=>{const text=$('text').value;$('text').value='';if(text)action({type:'type',text});};
-document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>action({type:'press',key:b.dataset.key}));
-$('select').onclick=()=>action({type:'hotkey',keys:['ctrl','a']});
-$('screen').onclick=e=>{if(!state||state.phase!=='human'||busy)return;const rect=e.target.getBoundingClientRect();const border=3;action({type:'click',x:Math.max(0,Math.min(1279,Math.floor((e.clientX-rect.left-border)/(rect.width-2*border)*1280))),y:Math.max(0,Math.min(799,Math.floor((e.clientY-rect.top-border)/(rect.height-2*border)*800)))});};
-async function refresh(){try{if(!busy){state=await(await read('/status')).json();render();}const blob=await(await read('/frame')).blob();const previous=frameURL;frameURL=URL.createObjectURL(blob);$('screen').src=frameURL;if(previous)URL.revokeObjectURL(previous);}catch(e){if(!e.busy)$('message').textContent=e.message;}finally{setTimeout(refresh,800);}}
-refresh();
-</script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interface AI · Operator</title>
+    <style>
+      /*__STYLES__*/
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Interface AI <span class="hint">/ Operator</span></h1>
+        <span id="state">Connecting…</span>
+      </header>
+      <p id="session"></p>
+      <div class="controls">
+        <label>Member <input id="member" value="00123" maxlength="5" size="6" /></label>
+        <button id="start" class="primary" disabled>Start lookup</button
+        ><button id="takeover" disabled>Take control</button>
+        <button id="resume" disabled>Verify &amp; resume</button
+        ><button id="stop" class="danger" disabled>Stop</button>
+      </div>
+      <p id="guidance">Loading desktop state…</p>
+      <p id="diagnostic" class="hint"></p>
+      <p id="message" role="status"></p>
+      <div class="controls">
+        <label
+          >Text to send
+          <input
+            id="text"
+            type="password"
+            autocomplete="off"
+            maxlength="256"
+            placeholder="Synthetic data only"
+        /></label>
+        <button id="send" disabled>Send text</button><button data-key="enter" disabled>Enter</button
+        ><button data-key="tab" disabled>Tab</button
+        ><button data-key="backspace" disabled>Backspace</button
+        ><button id="select" disabled>Select all</button>
+      </div>
+      <img
+        id="screen"
+        alt="Live isolated desktop. Click to interact when you own control."
+        draggable="false"
+      />
+      <p class="hint">
+        Click the desktop to focus a field or button, then send text with the controls above. Human
+        action types are recorded; text, keys and screenshots are not saved. This panel controls the
+        same desktop as the read-only viewer.
+      </p>
+    </main>
+    <script nonce="__TOKEN__">
+      /*__SCRIPT__*/
+    </script>
+  </body>
+</html>

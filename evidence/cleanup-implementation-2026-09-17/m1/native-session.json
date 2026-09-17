@@ -1,0 +1,23 @@
+{
+  "id": "078d533c-61be-45c6-8a57-fbc2bd7cb34b",
+  "display": ":99",
+  "width": 1280,
+  "height": 800,
+  "viewer": "read-only",
+  "mode": "native",
+  "windowId": 2097221,
+  "windowClass": [
+    "tk",
+    "Tk"
+  ],
+  "appPid": 21,
+  "sandbox": null,
+  "pids": {
+    "display": 9,
+    "window manager": 14,
+    "native test pad": 21,
+    "read-only VNC": 36,
+    "web viewer": 37
+  },
+  "inputStopped": false
+}

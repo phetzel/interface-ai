@@ -1,0 +1,16 @@
+[
+  {
+    "id": "sha256:9dd0ed13cb2c4e7f390927b04ddbc3eb67d6af21839544d5a60e3d6fe04ed916",
+    "tags": [
+      "interface-ai-desktop:local"
+    ],
+    "architecture": "arm64"
+  },
+  {
+    "id": "sha256:31ce5ad18026a7609e19e13938e47ae0294bec520e31684944c40782a71a09d5",
+    "tags": [
+      "interface-ai-bank-fixture:local"
+    ],
+    "architecture": "arm64"
+  }
+]

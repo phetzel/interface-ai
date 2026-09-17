@@ -11,7 +11,7 @@ from interface_ai.desktop import DesktopError
 from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import request_stop
 from interface_ai.policy.evidence import safe_code
-from interface_ai.replay.loader import strict_json
+from interface_ai.replay.loader import ReplayError, strict_json
 from .controller import Controller
 
 HOST = '127.0.0.1:6081'
@@ -61,11 +61,18 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             if self.path == '/':
-                html = (
-                    Path(__file__)
-                    .with_name('operator.html')
-                    .read_text()
-                    .replace('__TOKEN__', self.server.token)
+                assets = Path(__file__).parent
+                html = (assets / 'operator.html').read_text()
+                html = html.replace('/*__STYLES__*/', (assets / 'operator.css').read_text())
+                # Serve one document: no new public asset routes or token URLs.
+                script = (
+                    "const token='"
+                    + self.server.token
+                    + "';\n"
+                    + (assets / 'operator.js').read_text()
+                )
+                html = html.replace('/*__SCRIPT__*/', script).replace(
+                    '__TOKEN__', self.server.token
                 )
                 self.reply(200, html.encode(), 'text/html; charset=utf-8')
             elif self.path == '/status':
@@ -143,6 +150,11 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(200, controller.snapshot())
         except DesktopError as exc:
             self.reply(409, {'code': safe_code(exc.code)})
+        except ReplayError as exc:
+            if exc.code == 'invalid_input':
+                self.reply(400, {'code': 'invalid_input'})
+            else:
+                self.reply(503, {'code': 'execution_failed'})
         except (ValueError, KeyError, TypeError, RecursionError):
             self.reply(400, {'code': 'invalid_action'})
         except Exception:

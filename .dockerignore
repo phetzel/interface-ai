@@ -9,3 +9,6 @@
 **/.venv/
 !capabilities/
 !capabilities/**
+
+!.dockerignore
+**/.ruff_cache/

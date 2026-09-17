@@ -2,11 +2,10 @@
 
 import json
 import math
-import os
 from pathlib import Path
-import stat
 
 from interface_ai.desktop.adapter import DesktopError
+from interface_ai.files import read_regular
 from interface_ai.replay.loader import strict_json
 from .bank import APPROVED_SHA256, POLICY_ID
 
@@ -120,18 +119,8 @@ def _read(path, maximum):
     if any(p.is_symlink() for p in (path, *path.parents)):
         reject()
     try:
-        # A FIFO must not block before fstat can reject it. Validate the actual
-        # descriptor rather than relying on a race-prone pre-open type check.
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-        with os.fdopen(fd, 'rb') as stream:
-            info = os.fstat(stream.fileno())
-            if not stat.S_ISREG(info.st_mode) or info.st_size > maximum:
-                reject()
-            data = stream.read(maximum + 1)
-            if len(data) > maximum:
-                reject()
-            return data
-    except OSError:
+        return read_regular(path, maximum)
+    except (OSError, ValueError):
         reject()
 
 

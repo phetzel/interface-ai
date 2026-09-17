@@ -1,0 +1,81 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 24px;
+  background: #f1f5f5;
+  color: #172c31;
+  font:
+    15px system-ui,
+    sans-serif;
+}
+main {
+  max-width: 1280px;
+  margin: auto;
+}
+h1 {
+  font-size: 24px;
+  margin: 0;
+}
+header,
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+header {
+  justify-content: space-between;
+}
+button,
+input {
+  font: inherit;
+  padding: 10px 14px;
+  border: 1px solid #96acad;
+  border-radius: 6px;
+}
+button {
+  background: #fff;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.primary {
+  background: #155a60;
+  color: white;
+}
+#state {
+  font-weight: 600;
+}
+#message {
+  min-height: 24px;
+  color: #824116;
+}
+#screen {
+  display: block;
+  width: 100%;
+  aspect-ratio: 8/5;
+  background: #d8e0e0;
+  border: 1px solid #96acad;
+  border-radius: 8px;
+}
+#screen.human {
+  cursor: crosshair;
+  border: 3px solid #13796b;
+}
+.hint {
+  color: #4b6267;
+}
+input[type='password'] {
+  width: 250px;
+}
+#session {
+  font: 12px monospace;
+}
+.danger {
+  color: #9a2929;
+}

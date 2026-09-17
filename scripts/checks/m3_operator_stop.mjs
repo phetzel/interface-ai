@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { chromium } from '../../apps/bank-fixture/node_modules/playwright/index.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { operatorControls } from './operator_helpers.mjs';
 
 const output = resolve(process.argv[2] || 'tmp/m3-operator-stop');
 await mkdir(output, { recursive: true });
@@ -10,14 +11,8 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1000, height: 1200 } });
 const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
-const poll = async (check) => {
-  for (let i = 0; i < 200; i++) {
-    if (await check()) return;
-    await page.waitForTimeout(100);
-  }
-  throw Error('Operator UI checkpoint deadline');
-};
-const phase = (text) => poll(async () => (await page.locator('#state').innerText()).includes(text));
+const { poll, phase, clickDesktop } = operatorControls(page);
+
 try {
   await page.goto('http://127.0.0.1:6081/');
   await phase('idle');
@@ -26,14 +21,7 @@ try {
   await phase('awaiting human');
   await page.locator('#takeover').click();
   await phase('human · human');
-  const screen = page.locator('#screen');
-  await screen.scrollIntoViewIfNeeded();
-  const box = await screen.boundingBox();
-  await page.mouse.click(
-    box.x + 3 + (600 / 1280) * (box.width - 6),
-    box.y + 3 + (390 / 800) * (box.height - 6),
-  );
-  await poll(() => page.locator('#send').isEnabled());
+  await clickDesktop(600, 390);
   await page.locator('#text').fill('x'.repeat(256));
   const inputRequest = page.waitForRequest(
     (r) => r.url().endsWith('/action') && r.method() === 'POST',

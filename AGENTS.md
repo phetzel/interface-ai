@@ -1,37 +1,30 @@
-# Repository instructions
+# Repository working rules
 
-## User authorization
+## Authorization and scope
 
-- Do not push this repository unless the user explicitly requests a push. The earlier repository-creation request does not authorize subsequent pushes.
-- Do not bypass this restriction by uploading repository changes through a GitHub API or another tool. Local edits may be prepared within the user's requested scope.
-- M1-01 through M1-06 are complete for the declared Linux ARM64 environment. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. M1-06 adds the full acceptance harness and a bounded transient-OCR checkpoint correction, with 47 tests, ten baseline replays, seven scenarios, and seven rejection cases passing. Both the initial failed attempt and corrected passing attempt are retained in `evidence/poc-m1/acceptance/`. Future commits and pushes require another explicit request. See the M2 status below for subsequent policy/evidence work; model integration remains later work; see M3 below for human takeover.
+- Commit/push only when the user explicitly requests it. Never bypass this with an upload/API. Local edits may proceed within the requested scope.
+- Keep the repository private during preparation. Do not include the assignment PDF, credentials, real customer data or raw unreviewed captures.
+- Python owns automation; TypeScript/React owns the synthetic banking fixture. Use OpenAI only for future discovery, with one provider key. Keep the operator UI minimal.
+- Use computer input/observations across surfaces. The runtime must not use fixture DOM, hidden state, host acceptance oracles or browser automation as execution shortcuts.
+- Docker on Linux ARM64, one 1280×800 X11 display, fixed fonts/scale and en-US/USD is the supported environment. Other environments and standalone wheel distribution remain unproven.
 
-## Current planning constraints
+## Invariants to preserve
 
-- M2-01 through M2-04 (bounded PoC B) are complete locally as of 2026-09-15. See `docs/MILESTONE_2.md` and `evidence/poc-m2/README.md` for researched tradeoffs, failed/passing full attempts, and the final two-file export-reader hardening. Final source passes 63 engine tests and 14 fixture tests; the full M1 regression passes with policy enabled. The final image's 57 runtime files match source. M2 was committed and pushed as `3726347`. M3/PoC D implementation is covered below; OpenAI discovery still needs API access, reviewed outbound observations, and artifact promotion. Do not expand scope or commit/push without a user request.
+- One guarded OS adapter: exact session, focus/application, display, deadline, Stop and input-lock checks. Keep exact string IDs, integer minor-unit amounts, distinct result variants, ambiguity rejection and bounded observation waits. Never retry uncertain input.
+- Artifact loading must use bounded regular-file snapshots and decode the same bytes whose digest was checked. A capability cannot authorize itself; preserve independent policy admission.
+- Ownership uses epochs and an input-lock quiescence barrier. Future model actions retain the epoch observed before the model call. JSON cannot select the trusted human role.
+- noVNC stays server-enforced view-only. Human input uses the loopback operator panel and the same adapter. Keep Host/Origin/token/CSP boundaries and Stop available during pending input.
+- Resume is only the reviewed `search-member` → `open-savings` boundary, after visual verification of the original member. Arbitrary interruption requires reset.
+- Routine evidence contains closed metadata, never input text, keys, raw OCR or screenshots. Explicit business results remain separate. Storage failure must stop input; terminal worker results cannot overwrite Stop.
+- Manual capability, simulated operator, real-person observation and genuine model discovery are different claims. Never prefill human checklist results or relabel automated evidence.
+- Preserve historical evidence, failures, captured patches and source manifests unchanged. Format active source only.
 
-- Use OpenAI only for model access; do not introduce another model-provider key.
-- The user accepted the recommended initial direction: Python automation engine; TypeScript/React is the default for the small sample app when a UI is needed. Keep the operator UI minimal.
-- Prefer computer use across application surfaces rather than a browser-only automation core.
-- Start with a small banking-style sample application and synthetic data.
-- Initial choices are OpenAI GPT-5.6 Sol with structured computer actions, PyAutoGUI for desktop input, OpenCV/Tesseract for local visual replay, and Pydantic with portable JSON/JSON Schema. M1 validates the desktop and manual replay stack within its fixed environment; the model choice and discovery pipeline still require their roadmap PoCs.
-- Start with one isolated desktop environment and one display. Precise VM/container packaging must pass the environment PoC before it is treated as settled.
-- See `docs/CURRENT_PLAN.md` for the active planning direction. `docs/DECISIONS.md` retains the initial comparison for reference.
-- See `docs/ROADMAP.md` for proof-of-concept gates and dependencies. A planning discussion does not authorize starting those builds.
+## Working and verification
 
-## M3 continuation constraints
+Start with [README](README.md), [current plan](docs/CURRENT_PLAN.md), [evidence index](evidence/README.md) and the [cleanup audit](docs/CLEANUP_AUDIT_2026-09-17.md). The milestone documents preserve design/history; the README and latest evidence record describe current behavior.
 
-- At the committed M3 baseline `ec2b56e`, 80 engine tests, 15 fixture tests, both live handoff cases and 63 runtime hashes passed. The subsequent pre-audit repair and current validation are described below. Full M2/M1 regression passed before the final focused ownership fixes; source deltas and follow-up evidence are retained in `evidence/poc-m3/`. A real-person demonstration remains pending.
-- M3 implements same-session human input through a loopback operator panel on fixed port 6081. noVNC remains server-enforced view-only. See `docs/MILESTONE_3.md`. Do not make VNC writable or bypass the desktop ownership adapter.
-- Ownership uses epochs plus a quiescence barrier. Future model actions must retain the epoch observed before the model call. The human gateway alone selects the trusted human role; model/action JSON must not expose that override.
-- Resume is scoped to the reviewed `search-member` → `open-savings` boundary and validates the original member visually. Arbitrary mid-step interruption requires reset. Do not add blind retries or claim automatic general recovery.
-- Automated takeover tests simulate a human and a delayed action; they are not real-person or OpenAI evidence. Keep that provenance explicit. M3 was committed and pushed as `ec2b56e` at the user's request on 2026-09-16. Further commits/pushes require another request.
-- `docs/manual-acceptance.html` provides the user-requested M1–M3 manual checklist. Its saved statuses and exports are reviewer self-reports; creating or testing the checklist does not complete the real-person acceptance gate.
-
-- The user authorized the recommended pre-audit repair on 2026-09-17, then explicitly requested its commit/push: `a63a143` is on `origin/main`. These changes fix the HTTP accept-loop Stop bug and status-poll contention, add five regressions (85 engine tests total), retain sanitized interpreter events, and expose panel step/checkpoint/reason context. See `evidence/pre-audit-2026-09-17/README.md` for validation of that source revision and its exact source manifest. The manual checklist has 35 checks and a separate v2 storage key; no real-person results are prefilled. CLI/coordinator integration, discovery and promotion remain later work.
-- Pre-audit validation now passes the full M2/M1 gate, both live handoff cases, panel Stop during pending input, visible failure diagnostics, 63 runtime hashes/four schemas, and 97 final executable-source hashes. An intentionally aborted attempt caused by a test-only source change is retained separately. The user also requested `docs/repository-audit.html`: 31 code-understanding, maintainability and interview-review topics, with notes/progress isolated from the manual app audit. Both checklists were tested in isolated browser profiles; the actual human audits remain pending.
-
-## React fixture refactor
-
-- After pushing `a63a143`, the user requested React components and cleanup suggestions. The subsequent refactor remains local/uncommitted. `App.tsx` composes the UI; `useMemberWorkspace.ts` owns lookup/navigation and restoration; `scenario.ts` validates launch config; `components/` owns rendering and local recovery/probe state. See the fixture README for a code map.
-- Refactor validation passes host/Docker builds, 15 fixture browser tests, 31 exact before/after screenshot and DOM comparisons, nine real-desktop replay cases and both simulated-operator handoff cases. See `evidence/frontend-refactor-2026-09-17/README.md` and its source manifest. The prior pre-audit source manifest describes the prior commit. No engine/policy/capability changes or human audit completion are implied. Further commit/push requires another explicit request.
+- `make quality` checks pinned formatting and Python correctness rules; `make format` formats active source.
+- After image input changes, `make build`; `make build-check` rejects stale images and verifies shipped bytes, including compiled fixture assets.
+- `make quick-check` runs formatting/lint, host harness tests, Linux engine tests, schema drift checks and fixture typechecking without a live desktop.
+- For fixture changes run `make fixture-test`. For execution/policy/ownership/harness changes run the affected live gates (`make policy-check`, `make handoff-check`) and panel checks. Keep one live desktop suite at a time; do not edit executable source while a gate freezes its source manifest.
+- Both HTML checklists are standalone, independent reviewer self-reports. Update their source links/instructions when behavior changes; do not confuse testing the pages with completing either human audit.

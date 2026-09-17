@@ -1,4 +1,8 @@
 import copy
+import hashlib
+import os
+import subprocess
+import sys
 import json
 from pathlib import Path
 import shutil
@@ -11,7 +15,7 @@ from unittest.mock import patch
 
 from PIL import Image
 from pydantic import ValidationError
-from interface_ai.contracts.models import Capability, Failure, MemberInput
+from interface_ai.contracts.models import Capability, MemberInput
 from interface_ai.desktop import DesktopError
 from interface_ai.replay.interpreter import Interpreter, Observation
 from interface_ai.replay.loader import (
@@ -111,6 +115,76 @@ class ContractTests(unittest.TestCase):
             asset.symlink_to(outside)
             with self.assertRaises(ReplayError):
                 load_bundle(target / 'capability.json')
+
+    def test_capability_and_asset_fifos_reject_without_blocking_or_desktop(self):
+        child = """
+import sys
+from types import SimpleNamespace
+from unittest.mock import patch
+from interface_ai.replay.command import replay
+with patch('interface_ai.replay.command.Desktop') as desktop:
+    args = SimpleNamespace(capability=sys.argv[1], member_id='00123', inputs_json=None, session=None)
+    assert replay(args, output_root=__import__('pathlib').Path(sys.argv[2])) == 1
+    desktop.assert_not_called()
+"""
+        for name in ['capability.json', 'anchors/search-heading.png']:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                target = root / 'bundle'
+                shutil.copytree(BUNDLE_PATH.parent, target)
+                (target / name).unlink()
+                os.mkfifo(target / name)
+                result = subprocess.run(
+                    [sys.executable, '-c', child, str(target / 'capability.json'), str(root)],
+                    capture_output=True,
+                    text=True,
+                    timeout=3,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                report = json.loads(next(root.glob('*-replay-*/report.json')).read_text())
+                self.assertEqual(report['actionsCompleted'], 0)
+                self.assertEqual(
+                    report['code'],
+                    'invalid_capability' if name == 'capability.json' else 'invalid_asset',
+                )
+
+    def test_image_decoder_uses_verified_snapshot_even_after_path_replacement(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'bundle'
+            shutil.copytree(BUNDLE_PATH.parent, target)
+            asset = target / 'anchors/search-heading.png'
+            original_bytes = asset.read_bytes()
+            expected = Image.open(asset).convert('RGB').tobytes()
+            original_open = Image.open
+
+            def replace_then_decode(snapshot):
+                if snapshot.getvalue() == original_bytes:
+                    Image.new('RGB', (20, 20), 'red').save(asset)
+                return original_open(snapshot)
+
+            with patch('interface_ai.replay.loader.Image.open', side_effect=replace_then_decode):
+                bundle = load_bundle(target / 'capability.json')
+            self.assertEqual(bundle.templates['search-heading'].tobytes(), expected)
+
+    def test_oversized_artifacts_and_digest_valid_malformed_png_reject(self):
+        for name, size in [('capability.json', 262145), ('anchors/search-heading.png', 131073)]:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory) / 'bundle'
+                shutil.copytree(BUNDLE_PATH.parent, target)
+                (target / name).write_bytes(b'x' * size)
+                with self.assertRaises(ReplayError):
+                    load_bundle(target / 'capability.json')
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'bundle'
+            shutil.copytree(BUNDLE_PATH.parent, target)
+            (target / 'anchors/search-heading.png').write_bytes(b'not a PNG')
+            self.raw['assets']['search-heading']['sha256'] = hashlib.sha256(
+                b'not a PNG'
+            ).hexdigest()
+            (target / 'capability.json').write_text(json.dumps(self.raw))
+            with self.assertRaises(ReplayError) as error:
+                load_bundle(target / 'capability.json')
+            self.assertEqual(error.exception.code, 'invalid_asset')
 
     def test_preflight_rejects_before_desktop_acquisition(self):
         from interface_ai.replay.command import replay

@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "provenance": "automated-operator-ui-test",
+  "realHumanWitnessed": false,
+  "panelStopDuringPendingInput": true,
+  "inputRejectedAsStopped": true,
+  "stopResponseMs": 42,
+  "sameSession": true,
+  "stoppedAfterReload": true,
+  "controlsDisabled": true,
+  "pageErrors": 0,
+  "modelCalls": 0
+}

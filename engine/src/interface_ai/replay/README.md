@@ -16,10 +16,10 @@ python -m interface_ai.contracts.schema
 python -m interface_ai.contracts.schema --output-dir /artifacts/schemas
 ```
 
-The Docker build regenerates its schema files automatically. To update repository exports, run the schema command in the image and write each named entry to `capabilities/schemas/<name>.schema.json`. Keep the Pydantic dependency pinned when regenerating.
+The Docker build copies reviewed schema exports; `make quick-check` fails on drift from the runtime models without rewriting them. To update repository exports, run the schema command in the image and write each named entry to `capabilities/schemas/<name>.schema.json`. Keep the Pydantic dependency pinned when regenerating.
 
 The [manual capability README](../../../../capabilities/poc/savings-balance/README.md) describes the JSON, commands, exact output variants, and supported bounds. The operator command stores sanitized metadata/events and a separate explicit result. It deliberately does not persist screenshots. `capture_sink` is an in-process integration hook only; the artifact cannot configure code or export paths.
 
 Tests cover malformed contracts and inputs, traversal/tampering, artifact-controlled ordering/output binding, early known-outcome termination, failed preconditions, ambiguous checkpoints, missing-postcondition timeouts, stop, no input retry, wrong identity, wrong output type, and preflight before desktop acquisition. `./scripts/desktop test` also runs all prior desktop and vision tests. The host integration harness compares real replay outputs with its separate oracle and checks that every case used the same artifact hash.
 
-This is one deliberately constrained contract, not a general workflow language or a policy engine. The M1-06 repeated acceptance/evidence gate passes; see [acceptance evidence](../../../../evidence/poc-m1/acceptance/README.md). Model discovery, full policy enforcement, and human ownership remain later work.
+This is one deliberately constrained contract, not a general workflow language or a policy engine. The M1-06 repeated acceptance/evidence gate passes; see [acceptance evidence](../../../../evidence/poc-m1/acceptance/README.md). M2 now enforces the bounded banking policy and M3 supplies same-session human ownership through the separate panel coordinator. Unifying CLI/panel lifecycle and genuine model discovery remain next work. [Current evidence](../../../../evidence/README.md).

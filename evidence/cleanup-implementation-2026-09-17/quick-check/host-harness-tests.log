@@ -1,0 +1,9 @@
+test_new_untracked_source_changes_build_fingerprint (test_checks.CheckTests) ... ok
+test_schema_drift_fails_without_rewriting_published_files (test_checks.CheckTests) ... ok
+test_stale_image_rejected_even_with_unchanged_image_id (test_checks.CheckTests) ... ok
+test_timed_out_command_retains_partial_output (test_checks.CheckTests) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.107s
+
+OK

@@ -1,0 +1,194 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "passed",
+  "startedAt": "2026-09-17T22:42:50.391892+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 125,
+      "elapsedSeconds": 0.485
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "078d533c-61be-45c6-8a57-fbc2bd7cb34b",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 13.837
+    },
+    {
+      "name": "native-input-viewer-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "078d533c-61be-45c6-8a57-fbc2bd7cb34b",
+      "elapsedSeconds": 2.785
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "ff99f387-5a26-45cc-9769-8f4820e8b4a6",
+      "elapsedSeconds": 12.01
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "2a099901-d833-4f4e-b2ac-6d949338a5e1",
+      "elapsedSeconds": 21.104
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 69,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.379
+    },
+    {
+      "name": "unit-tests",
+      "status": "passed",
+      "evidence": "unit-tests.log",
+      "testsPassed": 92,
+      "elapsedSeconds": 5.832
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.247
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "passed",
+      "evidence": "replay/summary.json",
+      "baselinePasses": 10,
+      "scenarioPasses": 7,
+      "baselineSeconds": {
+        "min": 3.369,
+        "median": 3.558,
+        "max": 3.732
+      },
+      "elapsedSeconds": 383.96
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 41.058
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 24,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.113
+    }
+  ],
+  "sourceCommit": "f4f8e9904e518ae475ab9f95626f68d7708f6564",
+  "uncommittedFiles": [
+    " M .dockerignore",
+    " M .gitignore",
+    " M AGENTS.md",
+    " M Makefile",
+    " M README.md",
+    " M apps/bank-fixture/Dockerfile",
+    " M apps/bank-fixture/package.json",
+    " M capabilities/poc/savings-balance/README.md",
+    " M docs/CURRENT_PLAN.md",
+    " M docs/MILESTONE_3.md",
+    " M engine/README.md",
+    " M engine/pyproject.toml",
+    " M engine/src/interface_ai/desktop/adapter.py",
+    " M engine/src/interface_ai/handoff/controller.py",
+    " M engine/src/interface_ai/handoff/operator.html",
+    " M engine/src/interface_ai/handoff/server.py",
+    " M engine/src/interface_ai/policy/evidence.py",
+    " M engine/src/interface_ai/replay/README.md",
+    " M engine/src/interface_ai/replay/loader.py",
+    " M engine/src/interface_ai/vision/README.md",
+    " M engine/src/interface_ai/vision/bank.py",
+    " M engine/tests/test_handoff.py",
+    " M engine/tests/test_replay.py",
+    " M engine/tests/test_vision.py",
+    " M infra/desktop/Dockerfile",
+    " M infra/desktop/control.py",
+    " M infra/desktop/vision_probe.py",
+    " M scripts/checks/m3_operator_stop.mjs",
+    " M scripts/checks/m3_operator_ui.mjs",
+    " M scripts/m1-check",
+    " M scripts/m2-check",
+    " M scripts/m3-check",
+    " M scripts/replay-check",
+    " M scripts/vision-check",
+    "?? .github/",
+    "?? apps/bank-fixture/server/build-manifest.mjs",
+    "?? docs/DEVELOPMENT.md",
+    "?? engine/src/interface_ai/desktop/types.py",
+    "?? engine/src/interface_ai/files.py",
+    "?? engine/src/interface_ai/handoff/README.md",
+    "?? engine/src/interface_ai/handoff/evidence.py",
+    "?? engine/src/interface_ai/handoff/operator.css",
+    "?? engine/src/interface_ai/handoff/operator.js",
+    "?? infra/desktop/build_manifest.py",
+    "?? scripts/build-check",
+    "?? scripts/checks/operator_helpers.mjs",
+    "?? scripts/lib/",
+    "?? scripts/quality",
+    "?? scripts/quick-check",
+    "?? scripts/tests/"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-17T22:51:11.209253+00:00"
+}

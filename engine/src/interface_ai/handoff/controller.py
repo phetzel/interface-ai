@@ -7,6 +7,7 @@ import threading
 import time
 import uuid
 
+from interface_ai.contracts.models import Failure
 from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.ownership import Ownership
 from interface_ai.desktop.session import LOCK, RUNTIME, STOP, read_session, request_stop
@@ -15,6 +16,7 @@ from interface_ai.policy.evidence import checked_event, safe_code
 from interface_ai.replay.interpreter import Interpreter
 from interface_ai.replay.loader import load_bundle, validate_inputs
 from interface_ai.vision import Box, VisionError
+from .evidence import write_terminal
 
 
 class Controller:
@@ -38,6 +40,8 @@ class Controller:
         self.audit = []
         self.result = None
         self.worker = None
+        self.terminal_phase = None
+        self.evidence_failed = False
 
     def record(self, kind, **details):
         # All callers pass closed constants / validated metadata. Interpreter
@@ -47,18 +51,32 @@ class Controller:
             kind=kind, elapsedMs=round((time.monotonic() - self.started) * 1000), **details
         )
         self.audit.append(event)
-        if self.directory:
-            with (self.directory / 'audit.jsonl').open('a') as stream:
-                stream.write(json.dumps(event) + '\n')
+        try:
+            if self.directory:
+                with (self.directory / 'audit.jsonl').open('a') as stream:
+                    stream.write(json.dumps(event) + '\n')
+            if self.result is not None:
+                # A primitive already dispatched when Stop arrives can finish.
+                # Keep its final count without changing the terminal outcome.
+                self.persist_terminal()
+        except OSError:
+            self.evidence_failure()
+            raise DesktopError(
+                'execution_failed', 'Run evidence unavailable; reset required'
+            ) from None
 
     def interpreter_event(self, event):
         # Use the same closed event vocabulary as CLI replay. Keep it nested so
         # interpreter completion cannot be counted as an OS input action.
         event = checked_event(event)
         with self.mutex:
-            if event.get('step') is not None:
+            if self.result is None and event.get('step') is not None:
                 self.current_step = event['step']
-            if event.get('kind') == 'checkpoint' and event.get('status') == 'satisfied':
+            if (
+                self.result is None
+                and event.get('kind') == 'checkpoint'
+                and event.get('status') == 'satisfied'
+            ):
                 self.last_checkpoint = event['checkpoint']
             self.record('interpreter', event=event)
 
@@ -79,6 +97,7 @@ class Controller:
                 lastCheckpoint=self.last_checkpoint,
                 resumable=self.resume_at is not None,
                 modelCalls=0,
+                evidenceStatus='failed' if self.evidence_failed else 'available',
             )
 
     def verify(self, lease):
@@ -102,12 +121,82 @@ class Controller:
         ):
             self.stop('handoff_expired')
 
-    def stop(self, reason='stopped'):
+    def persist_terminal(self):
+        if self.directory is None or self.result is None:
+            return
+        try:
+            session_unchanged = read_session()['id'] == self.session['id']
+        except DesktopError:
+            session_unchanged = False
+        write_terminal(
+            self.directory,
+            self.result,
+            {
+                'format': 'handoff-v2',
+                'status': self.terminal_phase,
+                'resultStatus': self.result.status,
+                'reason': getattr(self.result, 'code', None),
+                'step': self.current_step,
+                'lastCheckpoint': self.last_checkpoint,
+                'modelCalls': 0,
+                'sessionId': self.session['id'],
+                'sessionUnchanged': session_unchanged,
+                'capabilitySha256': self.bundle.sha256,
+                'auditEvents': len(self.audit),
+                'humanActions': sum(
+                    e['kind'] == 'human' and e.get('status') == 'completed' for e in self.audit
+                ),
+                'automationActions': sum(
+                    e['kind'] == 'automation' and e.get('status') == 'completed' for e in self.audit
+                ),
+            },
+        )
+
+    def evidence_failure(self):
+        # Never recursively try to log a storage error. Fail closed in memory,
+        # signal input first, and expose the missing-evidence state to the panel.
         request_stop()
         state = self.ownership.read()
-        self.ownership.change('stopped', expected=state)
-        self.phase, self.reason = 'stopped', reason
-        self.record('lifecycle', status='stopped', code=reason)
+        if state['owner'] != 'stopped':
+            self.ownership.change('stopped', expected=state)
+        self.phase, self.reason = 'stopped', 'execution_failed'
+        self.resume_at = None
+        self.evidence_failed = True
+        self.result = Failure(code='execution_failed', step=self.current_step)
+        self.terminal_phase = 'stopped'
+
+    def finalize(self, result, *, phase=None):
+        # Called under mutex. The first terminal outcome wins; no late worker
+        # success can replace Stop. The summary can refresh only event counts.
+        if self.result is not None:
+            return
+        self.result = result
+        self.phase = self.terminal_phase = phase or result.status
+        self.reason = getattr(result, 'code', None)
+        self.resume_at = None
+        try:
+            self.record(
+                'lifecycle', status=self.phase, **({'code': self.reason} if self.reason else {})
+            )
+        except DesktopError:
+            if not self.evidence_failed:
+                raise
+
+    def stop(self, reason='stopped'):
+        request_stop()
+        with self.mutex:
+            state = self.ownership.read()
+            if state['owner'] != 'stopped':
+                self.ownership.change('stopped', expected=state)
+            if self.phase == 'stopped':
+                return
+            reason = safe_code(reason)
+            self.finalize(Failure(code=reason, step=self.current_step), phase='stopped')
+            # Stop after completion disables input but preserves that run's result.
+            self.phase = 'stopped'
+            if not self.evidence_failed:
+                self.reason = reason
+            self.resume_at = None
 
     def start(self, member_id, lease):
         with self.mutex:
@@ -169,6 +258,9 @@ class Controller:
             with self.mutex:
                 if self.phase != 'running':
                     return  # A manual takeover/stop superseded this worker.
+                if STOP.exists():
+                    self.stop()
+                    return
                 if (
                     result.status == 'failure'
                     and result.code == 'intervention_required'
@@ -188,32 +280,7 @@ class Controller:
                     self.phase, self.reason = 'awaiting_human', 'intervention_required'
                     self.record('lifecycle', status='awaiting_human')
                     return
-                self.result = result
-                self.phase = result.status
-                self.reason = getattr(result, 'code', None)
-                (self.directory / 'result.json').write_text(result.model_dump_json(indent=2) + '\n')
-                self.record('lifecycle', status=self.phase)
-                (self.directory / 'summary.json').write_text(
-                    json.dumps(
-                        {
-                            'format': 'handoff-v1',
-                            'status': self.phase,
-                            'modelCalls': 0,
-                            'sessionUnchanged': read_session()['id'] == self.session['id'],
-                            'capabilitySha256': self.bundle.sha256,
-                            'humanActions': sum(
-                                e['kind'] == 'human' and e['status'] == 'completed'
-                                for e in self.audit
-                            ),
-                            'automationActions': sum(
-                                e['kind'] == 'automation' and e['status'] == 'completed'
-                                for e in self.audit
-                            ),
-                        },
-                        indent=2,
-                    )
-                    + '\n'
-                )
+                self.finalize(result)
         except Exception as exc:
             with self.mutex:
                 self.stop(safe_code(getattr(exc, 'code', 'execution_failed')))

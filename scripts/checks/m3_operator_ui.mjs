@@ -2,36 +2,25 @@
 import { chromium } from '../../apps/bank-fixture/node_modules/playwright/index.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { operatorControls } from './operator_helpers.mjs';
 const output = resolve(process.argv[2] || 'tmp/m3-operator-ui');
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1000, height: 1200 } });
 const errors = [];
 page.on('pageerror', (error) => errors.push(error.message));
-const poll = async (check) => {
-  for (let i = 0; i < 150; i++) {
-    if (await check()) return;
-    await page.waitForTimeout(100);
-  }
-  throw Error('UI checkpoint deadline');
-};
-const state = (text) => poll(async () => (await page.locator('#state').innerText()).includes(text));
-const ready = () => poll(() => page.locator('#send').isEnabled());
-const clickDesktop = async (x, y) => {
-  await ready();
-  const screen = page.locator('#screen');
-  await screen.scrollIntoViewIfNeeded();
-  const box = await screen.boundingBox();
-  await page.mouse.click(
-    box.x + 3 + (x / 1280) * (box.width - 6),
-    box.y + 3 + (y / 800) * (box.height - 6),
-  );
-  await page.waitForTimeout(150);
-  await ready();
-};
+const { poll, phase: state, ready, clickDesktop } = operatorControls(page);
+
 try {
   await page.goto('http://127.0.0.1:6081/');
   await state('idle');
+  await page.locator('#member').fill('123');
+  await page.locator('#start').click();
+  await poll(async () =>
+    (await page.locator('#message').innerText()).includes('exactly five digits'),
+  );
+  await state('idle');
+  await page.locator('#member').fill('00123');
   await page.getByRole('button', { name: 'Start lookup', exact: true }).click();
   await state('awaiting human');
   if (
@@ -63,6 +52,7 @@ try {
         provenance: 'automated-operator-ui-test',
         viewport: [1000, 1200],
         scaledDesktopClicks: true,
+        invalidMemberExplained: true,
         prematureResumeRejected: true,
         stepAndReasonVisible: true,
         completed: true,

@@ -1,6 +1,6 @@
 # M3 — Same-session human takeover
 
-Status: local pre-audit repair on top of the pushed M3 baseline `ec2b56e`. The repair passes 85 engine tests, both live simulated-operator cases and panel takeover/Stop checks. See [current validation](../evidence/pre-audit-2026-09-17/README.md) for the full regression status and source manifest; [original M3 evidence](../evidence/poc-m3/README.md) remains historical. A real-person demonstration is still pending. Work through the [manual M1–M3 checklist](manual-acceptance.html) to record that pass. These new changes remain uncommitted and unpushed.
+Status: the M3 baseline (`ec2b56e`) and pre-audit Stop/diagnostic repair (`a63a143`) are committed and pushed. The September 17 repository cleanup adds terminal evidence, input error classification, readable panel assets and verified build provenance. Consult the [current evidence index](../evidence/README.md) for current counts and limitations. This document preserves the milestone's design/history; a real-person demonstration remains pending.
 
 ## Pre-audit repair, 17 September 2026
 

@@ -27,5 +27,21 @@
     "prettier": "3.9.6",
     "typescript": "7.0.2",
     "vite": "8.3.0"
+  },
+  "interfaceAiBuild": {
+    "files": [
+      "package.json",
+      "package-lock.json",
+      "Dockerfile",
+      ".dockerignore",
+      "index.html",
+      "tsconfig.json",
+      "vite.config.mjs",
+      "INTER-LICENSE.txt"
+    ],
+    "trees": [
+      "src",
+      "server"
+    ]
   }
 }

@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+"""Pinned formatting and basic correctness lint; historical evidence is excluded."""
+
+import argparse
+import subprocess
+from lib.acceptance import ROOT
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--write', action='store_true')
+args = parser.parse_args()
+ruff = ['uvx', '--from', 'ruff==0.12.12', 'ruff']
+python_paths = ['engine', 'infra/desktop', 'scripts']
+commands = [
+    ruff + ['format', *([] if args.write else ['--check']), *python_paths],
+    ruff + ['check', *python_paths],
+]
+prettier = ROOT / 'apps/bank-fixture/node_modules/.bin/prettier'
+commands.append(
+    [
+        str(prettier),
+        '--write' if args.write else '--check',
+        'apps/bank-fixture/src/**/*.{ts,tsx,css}',
+        'apps/bank-fixture/server/*.mjs',
+        'apps/bank-fixture/tests/*.ts',
+        'apps/bank-fixture/*.mjs',
+        'scripts/checks/*.mjs',
+        'engine/src/interface_ai/handoff/operator.*',
+    ]
+)
+for command in commands:
+    subprocess.run(command, cwd=ROOT, check=True, timeout=120)

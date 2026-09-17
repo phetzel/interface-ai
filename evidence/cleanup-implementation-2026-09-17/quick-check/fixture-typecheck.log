@@ -1,0 +1,4 @@
+
+> @interface-ai/bank-fixture@0.1.0 typecheck
+> tsc --noEmit
+
