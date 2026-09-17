@@ -3,6 +3,7 @@
 Changing to quiescing revokes admission immediately. Human ownership is granted
 only after the old Desktop context releases input.lock (including key cleanup).
 """
+
 from contextlib import contextmanager
 import fcntl
 import json
@@ -23,6 +24,7 @@ class Ownership:
 
     def _read(self):
         from .adapter import DesktopError
+
         if not self.path.exists():
             return {'session': self.session_id, 'owner': 'automation', 'epoch': 0}
         state = json.loads(self.path.read_text())
@@ -36,12 +38,16 @@ class Ownership:
 
     def check(self, role, epoch):
         from .adapter import DesktopError
+
         state = self.read()
         if state['owner'] != role or state['epoch'] != epoch:
-            raise DesktopError('ownership_revoked', 'Input ownership changed; discard pending actions')
+            raise DesktopError(
+                'ownership_revoked', 'Input ownership changed; discard pending actions'
+            )
 
     def change(self, owner, *, expected):
         from .adapter import DesktopError
+
         if owner not in ('automation', 'quiescing', 'human', 'stopped'):
             raise ValueError('Invalid owner')
         with self.locked():
@@ -56,9 +62,14 @@ class Ownership:
 
     def takeover(self, input_lock, *, expected, timeout=5):
         from .adapter import DesktopError
+
         if expected['owner'] not in ('automation', 'quiescing'):
             raise DesktopError('ownership_revoked', 'There is no automation handoff to drain')
-        pending = self.change('quiescing', expected=expected) if expected['owner'] == 'automation' else expected
+        pending = (
+            self.change('quiescing', expected=expected)
+            if expected['owner'] == 'automation'
+            else expected
+        )
         deadline = time.monotonic() + timeout
         with Path(input_lock).open('a') as lock:
             while True:
@@ -68,6 +79,8 @@ class Ownership:
                 except BlockingIOError:
                     if time.monotonic() >= deadline:
                         # Stay quiescing: never grant control while input is live.
-                        raise DesktopError('quiesce_timeout', 'Input has not drained; reset required') from None
-                    time.sleep(.02)
+                        raise DesktopError(
+                            'quiesce_timeout', 'Input has not drained; reset required'
+                        ) from None
+                    time.sleep(0.02)
             return self.change('human', expected=pending)

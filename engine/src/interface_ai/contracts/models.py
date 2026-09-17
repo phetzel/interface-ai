@@ -81,7 +81,7 @@ class Anchor(StrictModel):
     kind: Literal['anchor']
     asset: Name
     region: Region
-    threshold: Annotated[float, Field(ge=.9, le=1, allow_inf_nan=False)]
+    threshold: Annotated[float, Field(ge=0.9, le=1, allow_inf_nan=False)]
 
 
 class Point(StrictModel):
@@ -193,19 +193,31 @@ class Capability(StrictModel):
 
     @model_validator(mode='after')
     def references(self):
-        if self.inputSchema != MemberInput.model_json_schema() or self.outputSchema != SavingsOutput.model_json_schema():
+        if (
+            self.inputSchema != MemberInput.model_json_schema()
+            or self.outputSchema != SavingsOutput.model_json_schema()
+        ):
             raise ValueError('This schema version requires the published input/output definitions')
+
         def region_valid(region):
             if region.relativeTo is not None:
-                if region.relativeTo not in self.targets or not isinstance(self.targets[region.relativeTo], Anchor):
+                if region.relativeTo not in self.targets or not isinstance(
+                    self.targets[region.relativeTo], Anchor
+                ):
                     raise ValueError('Relative regions must reference a declared anchor')
-            elif not (0 <= region.box[0] < region.box[2] <= 1280 and 0 <= region.box[1] < region.box[3] <= 800):
+            elif not (
+                0 <= region.box[0] < region.box[2] <= 1280
+                and 0 <= region.box[1] < region.box[3] <= 800
+            ):
                 raise ValueError('Root search regions must fit the supported display')
+
         for name, target in self.targets.items():
             region_valid(target.region)
             if isinstance(target, Anchor) and target.asset not in self.assets:
                 raise ValueError('Unknown anchor asset')
-            if isinstance(target, Point) and (target.region.relativeTo is None or target.region.clipToDisplay):
+            if isinstance(target, Point) and (
+                target.region.relativeTo is None or target.region.clipToDisplay
+            ):
                 raise ValueError('Click regions must be relative, without clipping')
             seen = {name}
             parent = target.region.relativeTo
@@ -226,11 +238,17 @@ class Capability(StrictModel):
                     raise ValueError('Unknown assertion field')
                 if isinstance(assertion, InputAssertion):
                     parser = self.fields[assertion.field].parser
-                    if parser not in ('member_id', 'text') or (parser == 'member_id' and (assertion.prefix or assertion.suffix)):
-                        raise ValueError('Input checks require an exact ID or a declared text context')
+                    if parser not in ('member_id', 'text') or (
+                        parser == 'member_id' and (assertion.prefix or assertion.suffix)
+                    ):
+                        raise ValueError(
+                            'Input checks require an exact ID or a declared text context'
+                        )
         if len({step.id for step in self.steps}) != len(self.steps):
             raise ValueError('Step identifiers must be unique')
-        if not isinstance(self.steps[-1], Extract) or any(isinstance(s, Extract) for s in self.steps[:-1]):
+        if not isinstance(self.steps[-1], Extract) or any(
+            isinstance(s, Extract) for s in self.steps[:-1]
+        ):
             raise ValueError('Exactly one final extraction is required')
         for step in self.steps:
             if step.precondition not in self.checkpoints:
@@ -243,11 +261,20 @@ class Capability(StrictModel):
                 for post in step.postconditions:
                     if post.checkpoint not in self.checkpoints:
                         raise ValueError('Unknown postcondition')
-                    if post.outcome and not any(isinstance(a, InputAssertion) for a in self.checkpoints[post.checkpoint].assertions):
+                    if post.outcome and not any(
+                        isinstance(a, InputAssertion)
+                        for a in self.checkpoints[post.checkpoint].assertions
+                    ):
                         raise ValueError('Business outcomes must verify the requested identity')
             else:
                 for key, name in step.fields.model_dump().items():
-                    expected = 'usd_minor' if key == 'amountMinor' else 'member_id' if key == 'memberId' else 'text'
+                    expected = (
+                        'usd_minor'
+                        if key == 'amountMinor'
+                        else 'member_id'
+                        if key == 'memberId'
+                        else 'text'
+                    )
                     if name not in self.fields or self.fields[name].parser != expected:
                         raise ValueError('Invalid output field binding')
         return self

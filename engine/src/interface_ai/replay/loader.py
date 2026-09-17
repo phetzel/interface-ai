@@ -29,8 +29,10 @@ def strict_json(data):
                 raise ValueError('Duplicate JSON key')
             result[key] = value
         return result
+
     def invalid_constant(_):
         raise ValueError('Non-finite JSON number')
+
     return json.loads(data, object_pairs_hook=pairs, parse_constant=invalid_constant)
 
 
@@ -42,7 +44,9 @@ def load_bundle(path):
         raw = path.read_bytes()
         capability = Capability.model_validate(strict_json(raw))
     except (OSError, ValueError, RecursionError):
-        raise ReplayError('invalid_capability', 'Capability JSON or semantic validation failed') from None
+        raise ReplayError(
+            'invalid_capability', 'Capability JSON or semantic validation failed'
+        ) from None
     templates = {}
     for name, asset in capability.assets.items():
         try:
@@ -52,11 +56,15 @@ def load_bundle(path):
             if hashlib.sha256(asset_path.read_bytes()).hexdigest() != asset.sha256:
                 raise ValueError('Asset digest mismatch')
             with Image.open(asset_path) as image:
-                if image.format != 'PNG' or not (3 <= image.width <= 512 and 3 <= image.height <= 256):
+                if image.format != 'PNG' or not (
+                    3 <= image.width <= 512 and 3 <= image.height <= 256
+                ):
                     raise ValueError('Unsupported anchor image')
                 templates[name] = image.convert('RGB')
         except (OSError, ValueError):
-            raise ReplayError('invalid_asset', 'An anchor is missing, altered, or outside the bundle') from None
+            raise ReplayError(
+                'invalid_asset', 'An anchor is missing, altered, or outside the bundle'
+            ) from None
     return Bundle(capability, hashlib.sha256(raw).hexdigest(), templates)
 
 
@@ -64,4 +72,6 @@ def validate_inputs(data):
     try:
         return MemberInput.model_validate(data)
     except ValidationError:
-        raise ReplayError('invalid_input', 'Input must match the declared member-ID contract') from None
+        raise ReplayError(
+            'invalid_input', 'Input must match the declared member-ID contract'
+        ) from None

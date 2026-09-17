@@ -28,8 +28,11 @@ def assert_calibration_screen(screen):
     # Safe only in this dedicated, synthetic calibration environment.
     if screen.size != (WIDTH, HEIGHT):
         raise AssertionError(f'Screenshot size mismatch: {screen.size}')
-    for point, rgb in [((10, 10), (15, 23, 42)), ((10, 110), (241, 245, 249)),
-                       ((1270, 790), (241, 245, 249))]:
+    for point, rgb in [
+        ((10, 10), (15, 23, 42)),
+        ((10, 110), (241, 245, 249)),
+        ((1270, 790), (241, 245, 249)),
+    ]:
         if screen.getpixel(point)[:3] != rgb:
             raise AssertionError('Screen is not the known calibration pad; capture suppressed')
 
@@ -90,7 +93,7 @@ def verify_vnc():
             data = receive(connection, width * height * 4)
             if x <= 90 < x + width and y <= 180 < y + height:
                 offset = ((180 - y) * width + 90 - x) * 4
-                if data[offset:offset + 3] != bytes((235, 99, 37)):
+                if data[offset : offset + 3] != bytes((235, 99, 37)):
                     raise AssertionError('VNC does not show the same blue calibration target')
                 sampled = True
         if not sampled:
@@ -118,8 +121,11 @@ def verify_network():
         else:
             connection.close()
             raise AssertionError(f'Unexpected external connection to {address}:443')
-    return {'noDefaultIPv4Route': True, 'blockedTcpProbes': checked,
-            'scope': 'Selected IPv4 probes; not a comprehensive network policy audit'}
+    return {
+        'noDefaultIPv4Route': True,
+        'blockedTcpProbes': checked,
+        'scope': 'Selected IPv4 probes; not a comprehensive network policy audit',
+    }
 
 
 def main():
@@ -139,15 +145,26 @@ def run(gui, session):
     run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     output = Path('/artifacts') / run_id
     output.mkdir()
-    report = {'runId': run_id, 'sessionId': session['id'], 'status': 'running',
-              'kind': 'native-desktop-calibration', 'adapter': 'interface_ai.desktop.Desktop', 'modelCalls': 0,
-              'architecture': platform.machine(), 'display': [WIDTH, HEIGHT], 'checks': [],
-              'python': platform.python_version(),
-              'packages': {name: importlib.metadata.version(name)
-                           for name in ('PyAutoGUI', 'Pillow', 'PyScreeze', 'python3-xlib')},
-              'chromium': subprocess.check_output(['chromium', '--version'], text=True).strip(),
-              'systemPackagesSha256': hashlib.sha256(
-                  Path('/opt/desktop/system-packages.txt').read_bytes()).hexdigest()}
+    report = {
+        'runId': run_id,
+        'sessionId': session['id'],
+        'status': 'running',
+        'kind': 'native-desktop-calibration',
+        'adapter': 'interface_ai.desktop.Desktop',
+        'modelCalls': 0,
+        'architecture': platform.machine(),
+        'display': [WIDTH, HEIGHT],
+        'checks': [],
+        'python': platform.python_version(),
+        'packages': {
+            name: importlib.metadata.version(name)
+            for name in ('PyAutoGUI', 'Pillow', 'PyScreeze', 'python3-xlib')
+        },
+        'chromium': subprocess.check_output(['chromium', '--version'], text=True).strip(),
+        'systemPackagesSha256': hashlib.sha256(
+            Path('/opt/desktop/system-packages.txt').read_bytes()
+        ).hexdigest(),
+    }
 
     def record(name, details=None):
         event = {'check': name, 'status': 'passed', 'details': details or {}}
@@ -169,8 +186,11 @@ def run(gui, session):
             actual = read_json(STATE)['clicks'][-1]
             if actual != {'target': number, 'x': x, 'y': 190}:
                 raise AssertionError(f'Input coordinates did not match the native event: {actual}')
-            wait_for('green target', lambda: gui.screenshot().getpixel((x + 5, 195))[:3]
-                     == (22, 163, 74), 3)
+            wait_for(
+                'green target',
+                lambda: gui.screenshot().getpixel((x + 5, 195))[:3] == (22, 163, 74),
+                3,
+            )
         record('three_pointer_coordinates_and_pixel_changes')
         gui.click(180, 405)
         gui.type_text('synthetic-input')

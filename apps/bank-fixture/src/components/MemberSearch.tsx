@@ -1,5 +1,5 @@
-import type { SearchState } from "../useMemberWorkspace";
-import { Arrow } from "./Arrow";
+import type { SearchState } from '../useMemberWorkspace';
+import { Arrow } from './Arrow';
 
 export function MemberSearch({
   state,
@@ -14,7 +14,7 @@ export function MemberSearch({
   onSearch: () => void;
   onReset: () => void;
 }) {
-  const loading = state.status === "loading";
+  const loading = state.status === 'loading';
   return (
     <div className="search-layout">
       <section className="panel search-panel" aria-labelledby="search-title">
@@ -46,16 +46,16 @@ export function MemberSearch({
               value={input}
               disabled={loading}
               onChange={(event) => onInputChange(event.target.value)}
-              aria-describedby={`member-hint${state.status === "invalid" ? " input-error" : ""}`}
-              aria-invalid={state.status === "invalid"}
+              aria-describedby={`member-hint${state.status === 'invalid' ? ' input-error' : ''}`}
+              aria-invalid={state.status === 'invalid'}
               placeholder="Enter member ID"
             />
             <button className="primary" type="submit" disabled={loading}>
-              {loading ? "Searching…" : "Search"}
+              {loading ? 'Searching…' : 'Search'}
               {!loading && <Arrow />}
             </button>
           </div>
-          {state.status === "invalid" && (
+          {state.status === 'invalid' && (
             <p className="error" id="input-error" role="alert">
               Enter a member ID with exactly five digits.
             </p>
@@ -68,12 +68,11 @@ export function MemberSearch({
               </button>
             </div>
           )}
-          {state.status === "not-found" && (
+          {state.status === 'not-found' && (
             <div className="notice" role="status">
               <strong>Member not found</strong>
               <p>
-                No member matches ID <b>{state.query}</b>. Check the ID and
-                search again.
+                No member matches ID <b>{state.query}</b>. Check the ID and search again.
               </p>
             </div>
           )}
@@ -90,14 +89,12 @@ export function MemberSearch({
           The right member.
         </h2>
         <p>
-          Use the member’s full ID to locate their record. You can then review
-          their checking and savings accounts.
+          Use the member’s full ID to locate their record. You can then review their checking and
+          savings accounts.
         </p>
         <div className="help-rule" />
         <span className="quiet-label">TRAINING ENVIRONMENT</span>
-        <p className="small">
-          All members and balances in this workspace are fictional.
-        </p>
+        <p className="small">All members and balances in this workspace are fictional.</p>
       </aside>
     </div>
   );

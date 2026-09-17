@@ -1,12 +1,12 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent } from 'react';
 
 export function SessionExpiredDialog({ onRestore }: { onRestore: () => void }) {
-  const [recovery, setRecovery] = useState("");
+  const [recovery, setRecovery] = useState('');
   const [recoveryError, setRecoveryError] = useState(false);
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (recovery !== "demo") {
+    if (recovery !== 'demo') {
       setRecoveryError(true);
       return;
     }
@@ -38,9 +38,7 @@ export function SessionExpiredDialog({ onRestore }: { onRestore: () => void }) {
           <button className="primary" type="submit">
             Restore workspace
           </button>
-          {recoveryError && (
-            <p role="alert">Use the synthetic training code.</p>
-          )}
+          {recoveryError && <p role="alert">Use the synthetic training code.</p>}
         </form>
         <p className="small">Training only. Do not enter a real password.</p>
       </section>

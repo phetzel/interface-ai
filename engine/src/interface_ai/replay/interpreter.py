@@ -1,10 +1,18 @@
 """Execute the artifact's finite sequence; no bank-specific workflow calls."""
+
 import re
 import time
 from pydantic import ValidationError
 
-from interface_ai.contracts.models import (Anchor, BusinessOutcome, Extract, Failure,
-                                          InputAssertion, SavingsOutput, Success)
+from interface_ai.contracts.models import (
+    Anchor,
+    BusinessOutcome,
+    Extract,
+    Failure,
+    InputAssertion,
+    SavingsOutput,
+    Success,
+)
 from interface_ai.vision import Box, OCR, VisionError, parse_usd, unique_match
 from .loader import ReplayError
 
@@ -18,9 +26,19 @@ class Observation:
         box = specification.box
         if specification.relativeTo is not None:
             parent = self.target(specification.relativeTo)
-            box = [parent.left+box[0], parent.top+box[1], parent.left+box[2], parent.top+box[3]]
+            box = [
+                parent.left + box[0],
+                parent.top + box[1],
+                parent.left + box[2],
+                parent.top + box[3],
+            ]
         if specification.clipToDisplay:
-            box = [max(0, box[0]), max(0, box[1]), min(self.image.width, box[2]), min(self.image.height, box[3])]
+            box = [
+                max(0, box[0]),
+                max(0, box[1]),
+                min(self.image.width, box[2]),
+                min(self.image.height, box[3]),
+            ]
         return Box(*box).checked(self.image.size)
 
     def target(self, name):
@@ -30,12 +48,26 @@ class Observation:
             region = self.region(target.region)
             if isinstance(target, Anchor):
                 try:
-                    match = unique_match(self.image, self.runner.bundle.templates[target.asset], region, threshold=target.threshold)
+                    match = unique_match(
+                        self.image,
+                        self.runner.bundle.templates[target.asset],
+                        region,
+                        threshold=target.threshold,
+                    )
                 except VisionError as exc:
-                    self.runner.emit('target', target=name, status='rejected', code=exc.code, **exc.details)
+                    self.runner.emit(
+                        'target', target=name, status='rejected', code=exc.code, **exc.details
+                    )
                     raise
                 region = match.box
-                self.runner.emit('target', target=name, status='matched', score=round(match.score, 6), candidateCount=1, box=list(region.tuple()))
+                self.runner.emit(
+                    'target',
+                    target=name,
+                    status='matched',
+                    score=round(match.score, 6),
+                    candidateCount=1,
+                    box=list(region.tuple()),
+                )
             self.targets[name] = region
         return self.targets[name]
 
@@ -52,7 +84,12 @@ class Observation:
                 value = parse_usd(value)
             elif spec.parser == 'member_id' and not re.fullmatch('[0-9]{5}', value):
                 raise ReplayError('invalid_identity', 'Visible identity is not an exact member ID')
-            self.runner.emit('reading', field=name, confidence=round(reading.confidence, 3), box=list(region.tuple()))
+            self.runner.emit(
+                'reading',
+                field=name,
+                confidence=round(reading.confidence, 3),
+                box=list(region.tuple()),
+            )
             self.fields[name] = value
         return self.fields[name]
 
@@ -62,7 +99,11 @@ class Observation:
             for target in checkpoint.targets:
                 self.target(target)
             for assertion in checkpoint.assertions:
-                expected = assertion.prefix+self.runner.inputs.memberId+assertion.suffix if isinstance(assertion, InputAssertion) else assertion.text
+                expected = (
+                    assertion.prefix + self.runner.inputs.memberId + assertion.suffix
+                    if isinstance(assertion, InputAssertion)
+                    else assertion.text
+                )
                 if self.field(assertion.field) != expected:
                     return False
             return True
@@ -81,14 +122,32 @@ class Observation:
 
 
 class Interpreter:
-    def __init__(self, bundle, inputs, desktop, *, event_sink=None, capture_sink=None,
-                 observer_factory=Observation, ocr=None, clock=time.monotonic, pause_check=None):
-        self.bundle, self.cap, self.inputs, self.desktop = bundle, bundle.capability, inputs, desktop
+    def __init__(
+        self,
+        bundle,
+        inputs,
+        desktop,
+        *,
+        event_sink=None,
+        capture_sink=None,
+        observer_factory=Observation,
+        ocr=None,
+        clock=time.monotonic,
+        pause_check=None,
+    ):
+        self.bundle, self.cap, self.inputs, self.desktop = (
+            bundle,
+            bundle.capability,
+            inputs,
+            desktop,
+        )
         self.event_sink = event_sink or (lambda event: None)
         self.capture_sink = capture_sink or (lambda name, image: None)
         self.clock, self.observer_factory = clock, observer_factory
-        self.ocr = ocr or OCR(expected_data_hash=self.cap.environment.ocrModelSha256,
-                              minimum_confidence=self.cap.environment.minimumConfidence)
+        self.ocr = ocr or OCR(
+            expected_data_hash=self.cap.environment.ocrModelSha256,
+            minimum_confidence=self.cap.environment.minimumConfidence,
+        )
         self.pause_check = pause_check
         self.step = None
         self.step_deadline = self.clock()
@@ -105,7 +164,9 @@ class Interpreter:
         self.guard()
         image = self.desktop.screenshot()
         if image.size != (self.cap.environment.width, self.cap.environment.height):
-            raise ReplayError('unsupported_environment', 'Screenshot dimensions do not match the artifact')
+            raise ReplayError(
+                'unsupported_environment', 'Screenshot dimensions do not match the artifact'
+            )
         return self.observer_factory(self, image)
 
     def wait_after_action(self):
@@ -113,16 +174,20 @@ class Interpreter:
             observation = self.observe()
             if self.pause_check:
                 self.pause_check(self, observation)
-            matches = [post for post in self.step.postconditions if observation.checkpoint(post.checkpoint)]
+            matches = [
+                post for post in self.step.postconditions if observation.checkpoint(post.checkpoint)
+            ]
             self.guard()  # Reject observations that completed after stop/deadline.
             if len(matches) > 1:
-                raise ReplayError('ambiguous_checkpoint', 'Multiple postconditions matched the same screenshot')
+                raise ReplayError(
+                    'ambiguous_checkpoint', 'Multiple postconditions matched the same screenshot'
+                )
             if matches:
                 post = matches[0]
                 self.emit('checkpoint', checkpoint=post.checkpoint, status='satisfied')
-                self.capture_sink(self.step.id+'-after', observation.image)
+                self.capture_sink(self.step.id + '-after', observation.image)
                 return post.outcome
-            time.sleep(min(.05, max(0, self.step_deadline-self.clock())))
+            time.sleep(min(0.05, max(0, self.step_deadline - self.clock())))
 
     def run(self, *, start_at=0):
         try:
@@ -132,15 +197,22 @@ class Interpreter:
                 self.emit('step', action=step.action, status='started')
                 observation = self.observe()
                 if not observation.checkpoint(step.precondition):
-                    raise ReplayError('precondition_failed', 'Required screen checkpoint is not satisfied')
+                    raise ReplayError(
+                        'precondition_failed', 'Required screen checkpoint is not satisfied'
+                    )
                 self.guard()
                 if isinstance(step, Extract):
-                    values = {key: observation.field(field) for key, field in step.fields.model_dump().items()}
+                    values = {
+                        key: observation.field(field)
+                        for key, field in step.fields.model_dump().items()
+                    }
                     output = SavingsOutput.model_validate(values)
                     if output.memberId != self.inputs.memberId:
-                        raise ReplayError('identity_mismatch', 'Output identity does not match the invocation')
+                        raise ReplayError(
+                            'identity_mismatch', 'Output identity does not match the invocation'
+                        )
                     self.guard()
-                    self.capture_sink(step.id+'-final', observation.image)
+                    self.capture_sink(step.id + '-final', observation.image)
                     self.emit('step', action=step.action, status='completed')
                     return Success(output=output)
                 if step.action == 'click':
@@ -160,12 +232,29 @@ class Interpreter:
                     return BusinessOutcome(outcome=outcome)
         except Exception as exc:
             from interface_ai.policy.evidence import safe_code
-            code = 'invalid_output' if isinstance(exc, ValidationError) else getattr(exc, 'code', 'execution_failed')
+
+            code = (
+                'invalid_output'
+                if isinstance(exc, ValidationError)
+                else getattr(exc, 'code', 'execution_failed')
+            )
             code = safe_code(code)
-            expected = [self.step.precondition] if code == 'precondition_failed' else [p.checkpoint for p in getattr(self.step, 'postconditions', [])]
+            expected = (
+                [self.step.precondition]
+                if code == 'precondition_failed'
+                else [p.checkpoint for p in getattr(self.step, 'postconditions', [])]
+            )
             if isinstance(self.step, Extract) and code != 'precondition_failed':
                 expected = ['validated-output']
-            self.emit('step', action=self.step.action if self.step else None, status='failed', code=code)
-            return Failure(code=code, step=self.step.id if self.step else None, expected=expected,
-                           observed='checkpoint_not_satisfied' if code in ('precondition_failed', 'checkpoint_timeout') else 'rejected')
+            self.emit(
+                'step', action=self.step.action if self.step else None, status='failed', code=code
+            )
+            return Failure(
+                code=code,
+                step=self.step.id if self.step else None,
+                expected=expected,
+                observed='checkpoint_not_satisfied'
+                if code in ('precondition_failed', 'checkpoint_timeout')
+                else 'rejected',
+            )
         return Failure(code='missing_completion')

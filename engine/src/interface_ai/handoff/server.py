@@ -1,4 +1,5 @@
 """Loopback-published operator gateway. No request logging or screen persistence."""
+
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 import json
@@ -33,14 +34,26 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'none'; script-src 'nonce-" + self.server.token + "'; style-src 'unsafe-inline'; img-src blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+        self.send_header(
+            'Content-Security-Policy',
+            "default-src 'none'; script-src 'nonce-"
+            + self.server.token
+            + "'; style-src 'unsafe-inline'; img-src blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+        )
         self.end_headers()
         self.wfile.write(data)
 
     def allowed(self, *, token=True):
-        return (self.headers.get_all('Host') == [HOST]
-                and self.headers.get('Sec-Fetch-Site', 'same-origin') in ('same-origin', 'none')
-                and (not token or secrets.compare_digest(self.headers.get('X-Operator-Token', ''), self.server.token)))
+        return (
+            self.headers.get_all('Host') == [HOST]
+            and self.headers.get('Sec-Fetch-Site', 'same-origin') in ('same-origin', 'none')
+            and (
+                not token
+                or secrets.compare_digest(
+                    self.headers.get('X-Operator-Token', ''), self.server.token
+                )
+            )
+        )
 
     def do_GET(self):
         if not self.allowed(token=self.path != '/'):
@@ -48,7 +61,12 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             if self.path == '/':
-                html = Path(__file__).with_name('operator.html').read_text().replace('__TOKEN__', self.server.token)
+                html = (
+                    Path(__file__)
+                    .with_name('operator.html')
+                    .read_text()
+                    .replace('__TOKEN__', self.server.token)
+                )
                 self.reply(200, html.encode(), 'text/html; charset=utf-8')
             elif self.path == '/status':
                 # Polling must not occupy request slots waiting behind input.
@@ -79,10 +97,13 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(503, {'code': 'session_unavailable'})
 
     def do_POST(self):
-        if (not self.allowed() or self.headers.get_all('Origin') != [ORIGIN]
-                or self.headers.get('Content-Type') != 'application/json'
-                or self.headers.get('Transfer-Encoding') is not None
-                or len(self.headers.get_all('Content-Length', [])) != 1):
+        if (
+            not self.allowed()
+            or self.headers.get_all('Origin') != [ORIGIN]
+            or self.headers.get('Content-Type') != 'application/json'
+            or self.headers.get('Transfer-Encoding') is not None
+            or len(self.headers.get_all('Content-Length', [])) != 1
+        ):
             self.reply(403, {'code': 'request_denied'})
             return
         try:
@@ -90,9 +111,18 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < size <= 4096:
                 raise ValueError()
             data = strict_json(self.rfile.read(size))
-            fields = {'/start': {'lease', 'memberId'}, '/takeover': {'lease'},
-                      '/action': {'lease', 'sequence', 'action'}, '/resume': {'lease'}, '/stop': {'lease'}}
-            if not isinstance(data, dict) or self.path not in fields or set(data) != fields[self.path]:
+            fields = {
+                '/start': {'lease', 'memberId'},
+                '/takeover': {'lease'},
+                '/action': {'lease', 'sequence', 'action'},
+                '/resume': {'lease'},
+                '/stop': {'lease'},
+            }
+            if (
+                not isinstance(data, dict)
+                or self.path not in fields
+                or set(data) != fields[self.path]
+            ):
                 raise ValueError()
             controller = self.server.controller
             if self.path == '/start':
@@ -158,4 +188,4 @@ class Server(ThreadingHTTPServer):
 
 if __name__ == '__main__':
     with Server(('0.0.0.0', 6081), Controller()) as server:
-        server.serve_forever(poll_interval=.5)
+        server.serve_forever(poll_interval=0.5)

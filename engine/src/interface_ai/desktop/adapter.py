@@ -3,6 +3,7 @@
 Bank sessions apply the operator-owned read-only policy at dispatch. Native
 calibration remains a trusted developer utility, not a model execution surface.
 """
+
 import fcntl
 import math
 import time
@@ -17,16 +18,40 @@ class DesktopError(RuntimeError):
         super().__init__(message)
 
 
-KEYS = frozenset(('enter', 'tab', 'backspace', 'delete', 'home', 'end', 'left', 'right',
-                  'up', 'down', 'esc', 'space', 'ctrl', 'shift', 'alt',
-                  *'abcdefghijklmnopqrstuvwxyz0123456789'))
-FIELDS = {'click': {'x', 'y'}, 'move': {'x', 'y'}, 'type': {'text'},
-          'press': {'key'}, 'hotkey': {'keys'}, 'scroll': {'amount'}}
+KEYS = frozenset(
+    (
+        'enter',
+        'tab',
+        'backspace',
+        'delete',
+        'home',
+        'end',
+        'left',
+        'right',
+        'up',
+        'down',
+        'esc',
+        'space',
+        'ctrl',
+        'shift',
+        'alt',
+        *'abcdefghijklmnopqrstuvwxyz0123456789',
+    )
+)
+FIELDS = {
+    'click': {'x', 'y'},
+    'move': {'x', 'y'},
+    'type': {'text'},
+    'press': {'key'},
+    'hotkey': {'keys'},
+    'scroll': {'amount'},
+}
 
 
 def validate(action, width, height):
     def invalid(message):
         raise DesktopError('invalid_action', message)
+
     if not isinstance(action, dict) or not isinstance(action.get('type'), str):
         invalid('Action must be an object with a supported type')
     kind = action['type']
@@ -39,24 +64,51 @@ def validate(action, width, height):
             invalid('Coordinates are outside the desktop')
     if kind == 'type':
         value = action['text']
-        if not isinstance(value, str) or not 1 <= len(value) <= 256 or any(not 32 <= ord(c) <= 126 for c in value):
+        if (
+            not isinstance(value, str)
+            or not 1 <= len(value) <= 256
+            or any(not 32 <= ord(c) <= 126 for c in value)
+        ):
             invalid('Text must contain 1–256 printable ASCII characters')
     if kind == 'press' and (not isinstance(action['key'], str) or action['key'] not in KEYS):
         invalid('Unsupported key')
     if kind == 'hotkey':
         keys = action['keys']
-        if not isinstance(keys, list) or not 2 <= len(keys) <= 4 or any(not isinstance(k, str) or k not in KEYS for k in keys) or len(set(keys)) != len(keys):
+        if (
+            not isinstance(keys, list)
+            or not 2 <= len(keys) <= 4
+            or any(not isinstance(k, str) or k not in KEYS for k in keys)
+            or len(set(keys)) != len(keys)
+        ):
             invalid('Hotkey needs 2–4 distinct supported keys')
-    if kind == 'scroll' and (type(action['amount']) is not int or not 0 < abs(action['amount']) <= 20):
+    if kind == 'scroll' and (
+        type(action['amount']) is not int or not 0 < abs(action['amount']) <= 20
+    ):
         invalid('Scroll amount must be a nonzero integer between -20 and 20')
     return kind
 
 
 class Desktop:
-    def __init__(self, session_id=None, *, timeout=45, backend=None, session_reader=read_session,
-                 stop_path=STOP, lock_path=LOCK, clock=time.monotonic, event_sink=None,
-                 calibration=False, role='automation', epoch=None):
-        if type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 120:
+    def __init__(
+        self,
+        session_id=None,
+        *,
+        timeout=45,
+        backend=None,
+        session_reader=read_session,
+        stop_path=STOP,
+        lock_path=LOCK,
+        clock=time.monotonic,
+        event_sink=None,
+        calibration=False,
+        role='automation',
+        epoch=None,
+    ):
+        if (
+            type(timeout) not in (int, float)
+            or not math.isfinite(timeout)
+            or not 0 < timeout <= 120
+        ):
             raise DesktopError('invalid_deadline', 'Timeout must be in (0, 120] seconds')
         self._read = session_reader
         self.session = self._read()
@@ -67,6 +119,7 @@ class Desktop:
         self.backend = backend
         self.stop_path, self.lock_path = Path(stop_path), Path(lock_path)
         from .ownership import Ownership
+
         if role not in ('automation', 'human'):
             raise DesktopError('invalid_action', 'Unsupported input owner')
         self.ownership = Ownership(self.lock_path.parent, self.id)
@@ -88,14 +141,22 @@ class Desktop:
         except BlockingIOError:
             self._lock.close()
             self._lock = None
-            raise DesktopError('busy', 'Another controller owns this desktop input session') from None
+            raise DesktopError(
+                'busy', 'Another controller owns this desktop input session'
+            ) from None
         try:
             if self.backend is None:
                 from .backend import X11Backend
+
                 self.backend = X11Backend()
             self._check(observation=True)
-            if self.session['mode'] == 'bank' and not self._calibration and self.role == 'automation':
+            if (
+                self.session['mode'] == 'bank'
+                and not self._calibration
+                and self.role == 'automation'
+            ):
                 from interface_ai.policy.bank import BankPolicy
+
                 self.policy = BankPolicy()
             return self
         except BaseException:
@@ -130,9 +191,14 @@ class Desktop:
             if self.stop_path.exists():
                 raise DesktopError('stopped', 'Input stopped; reset before another run')
             if self.backend.active_window() != current['windowId']:
-                raise DesktopError('unexpected_focus', 'The bootstrapped application is not focused')
+                raise DesktopError(
+                    'unexpected_focus', 'The bootstrapped application is not focused'
+                )
             if current['mode'] == 'bank' and not self.backend.application_matches(current):
-                raise DesktopError('policy_application_denied', 'Application identity does not match the approved session')
+                raise DesktopError(
+                    'policy_application_denied',
+                    'Application identity does not match the approved session',
+                )
 
     def screenshot(self):
         self._check(observation=True)
@@ -170,7 +236,7 @@ class Desktop:
             elif kind in ('press', 'hotkey'):
                 held = []
                 try:
-                    for key in ([action['key']] if kind == 'press' else action['keys']):
+                    for key in [action['key']] if kind == 'press' else action['keys']:
                         self._check()
                         held.append(key)
                         self.backend.key_down(key)
@@ -191,21 +257,38 @@ class Desktop:
             if self.policy is not None:
                 self.policy.clear()
             event.update(status='failed', code='input_failed')
-            raise DesktopError('input_failed', 'OS input failed; no automatic retry was attempted') from exc
+            raise DesktopError(
+                'input_failed', 'OS input failed; no automatic retry was attempted'
+            ) from exc
         finally:
             event['durationMs'] = round((self.clock() - started) * 1000, 3)
             # Never record typed text or raw key sequences in routine events.
             self.event_sink(event)
 
-    def click(self, x, y): self.execute({'type': 'click', 'x': x, 'y': y})
-    def move(self, x, y): self.execute({'type': 'move', 'x': x, 'y': y})
-    def type_text(self, text): self.execute({'type': 'type', 'text': text})
-    def press(self, key): self.execute({'type': 'press', 'key': key})
-    def hotkey(self, *keys): self.execute({'type': 'hotkey', 'keys': list(keys)})
-    def scroll(self, amount): self.execute({'type': 'scroll', 'amount': amount})
+    def click(self, x, y):
+        self.execute({'type': 'click', 'x': x, 'y': y})
+
+    def move(self, x, y):
+        self.execute({'type': 'move', 'x': x, 'y': y})
+
+    def type_text(self, text):
+        self.execute({'type': 'type', 'text': text})
+
+    def press(self, key):
+        self.execute({'type': 'press', 'key': key})
+
+    def hotkey(self, *keys):
+        self.execute({'type': 'hotkey', 'keys': list(keys)})
+
+    def scroll(self, amount):
+        self.execute({'type': 'scroll', 'amount': amount})
 
     def wait(self, description, predicate, timeout=5):
-        if type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 120:
+        if (
+            type(timeout) not in (int, float)
+            or not math.isfinite(timeout)
+            or not 0 < timeout <= 120
+        ):
             raise DesktopError('invalid_deadline', 'Wait timeout must be in (0, 120] seconds')
         deadline = min(self.deadline, self.clock() + timeout)
         while self.clock() < deadline:
@@ -217,4 +300,6 @@ class Desktop:
             if value:
                 return value
             time.sleep(0.05)
-        raise DesktopError('checkpoint_timeout', f'{description} did not complete within its deadline')
+        raise DesktopError(
+            'checkpoint_timeout', f'{description} did not complete within its deadline'
+        )

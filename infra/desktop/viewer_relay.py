@@ -14,7 +14,9 @@ import threading
 class Handler(socketserver.BaseRequestHandler):
     def handle(self):
         try:
-            with socket.create_connection(('desktop', self.server.server_address[1]), timeout=5) as upstream:
+            with socket.create_connection(
+                ('desktop', self.server.server_address[1]), timeout=5
+            ) as upstream:
                 upstream.settimeout(10)
                 self.request.settimeout(10)
                 with selectors.DefaultSelector() as selector:
@@ -36,7 +38,10 @@ class Server(socketserver.ThreadingTCPServer):
 
 
 if __name__ == '__main__':
-    with Server(('0.0.0.0', 6080), Handler) as server, Server(('0.0.0.0', 6081), Handler) as operator:
+    with (
+        Server(('0.0.0.0', 6080), Handler) as server,
+        Server(('0.0.0.0', 6081), Handler) as operator,
+    ):
         threading.Thread(target=operator.serve_forever, daemon=True).start()
         print('Viewer relay: fixed upstream desktop:6080', flush=True)
         server.serve_forever()

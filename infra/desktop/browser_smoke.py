@@ -3,6 +3,7 @@
 This verifies input/observation plumbing. It does not locate visual anchors, read
 balances, return business results, or constitute a reusable capability replay.
 """
+
 import argparse
 import importlib.metadata
 import json
@@ -39,11 +40,24 @@ def main():
     run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-bank-' + uuid.uuid4().hex[:8]
     output = Path('/artifacts') / run_id
     output.mkdir()
-    report = {'runId': run_id, 'sessionId': session['id'], 'kind': 'fixed-coordinate-browser-calibration',
-              'adapter': 'interface_ai.desktop.Desktop', 'status': 'running', 'modelCalls': 0,
-              'businessOutputExtracted': False, 'display': [1280, 800], 'architecture': platform.machine(),
-              'python': platform.python_version(), 'packages': {name: importlib.metadata.version(name)
-              for name in ('PyAutoGUI', 'Pillow', 'python3-xlib')}, 'checks': [], 'events': []}
+    report = {
+        'runId': run_id,
+        'sessionId': session['id'],
+        'kind': 'fixed-coordinate-browser-calibration',
+        'adapter': 'interface_ai.desktop.Desktop',
+        'status': 'running',
+        'modelCalls': 0,
+        'businessOutputExtracted': False,
+        'display': [1280, 800],
+        'architecture': platform.machine(),
+        'python': platform.python_version(),
+        'packages': {
+            name: importlib.metadata.version(name)
+            for name in ('PyAutoGUI', 'Pillow', 'python3-xlib')
+        },
+        'checks': [],
+        'events': [],
+    }
     started = time.monotonic()
 
     def record(name, details=None):
@@ -57,7 +71,9 @@ def main():
         return screen
 
     try:
-        with Desktop(session['id'], event_sink=report['events'].append, calibration=True) as desktop:
+        with Desktop(
+            session['id'], event_sink=report['events'].append, calibration=True
+        ) as desktop:
             initial = export(desktop, '01-search.png')
             # A fresh, unshifted search panel has white pixels here; member overview does not.
             if initial.getpixel((120, 350)) != (255, 255, 255):
@@ -77,16 +93,28 @@ def main():
                 raise AssertionError('No substantial text-field pixel change after input')
             record('native_click_type_and_selection', {'changedFieldPixels': count})
             desktop.press('enter')
-            desktop.wait('member overview paint', lambda: desktop.screenshot().getpixel((120, 350)) == (237, 242, 237), timeout=6)
+            desktop.wait(
+                'member overview paint',
+                lambda: desktop.screenshot().getpixel((120, 350)) == (237, 242, 237),
+                timeout=6,
+            )
             member = export(desktop, '03-member.png')
             record('native_enter_changes_to_member_view')
             desktop.click(1065, 630)
-            desktop.wait('account view paint', lambda: changed_pixels(member, desktop.screenshot(), (125, 480, 810, 640)) > 1500, timeout=5)
+            desktop.wait(
+                'account view paint',
+                lambda: changed_pixels(member, desktop.screenshot(), (125, 480, 810, 640)) > 1500,
+                timeout=5,
+            )
             export(desktop, '04-account.png')
             record('native_click_changes_account_region')
             # Return through the visible fixture breadcrumb, using desktop input.
             desktop.click(161, 175)
-            desktop.wait('search view paint', lambda: desktop.screenshot().getpixel((120, 350)) == (255, 255, 255), timeout=5)
+            desktop.wait(
+                'search view paint',
+                lambda: desktop.screenshot().getpixel((120, 350)) == (255, 255, 255),
+                timeout=5,
+            )
             export(desktop, '05-reset-search.png')
             record('fixture_ui_returns_to_search')
             record('selected_external_egress_blocked', verify_network())
@@ -94,7 +122,11 @@ def main():
             report['status'] = 'passed'
     except Exception as exc:
         report['status'] = 'failed'
-        report['error'] = {'type': type(exc).__name__, 'code': getattr(exc, 'code', 'smoke_failed'), 'message': str(exc)}
+        report['error'] = {
+            'type': type(exc).__name__,
+            'code': getattr(exc, 'code', 'smoke_failed'),
+            'message': str(exc),
+        }
         raise
     finally:
         report['elapsedSeconds'] = round(time.monotonic() - started, 3)

@@ -1,4 +1,5 @@
 """Health and reviewed synthetic capture, shared by native and bank sessions."""
+
 import json
 import os
 import sys
@@ -37,7 +38,10 @@ def main():
         request_stop()
         print('Input stopped. Reset the desktop to allow a new run.')
     elif command == 'screenshot':
-        raise DesktopError('policy_capture_denied', 'Raw screenshot persistence is disabled; use safe evidence export')
+        raise DesktopError(
+            'policy_capture_denied',
+            'Raw screenshot persistence is disabled; use safe evidence export',
+        )
     else:
         raise ValueError('Unknown control command')
 

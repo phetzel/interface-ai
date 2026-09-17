@@ -1,15 +1,15 @@
-import { useEffect, useRef, type CSSProperties } from "react";
-import { AccountDetails } from "./components/AccountDetails";
-import { AccountList } from "./components/AccountList";
-import { Arrow } from "./components/Arrow";
-import { MemberIdentity } from "./components/MemberIdentity";
-import { MemberSearch } from "./components/MemberSearch";
-import { PolicyProbe } from "./components/PolicyProbe";
-import { SessionExpiredDialog } from "./components/SessionExpiredDialog";
-import { WorkspaceHeading } from "./components/WorkspaceHeading";
-import { WorkspaceFooter, WorkspaceHeader } from "./components/WorkspaceLayout";
-import type { Scenario } from "./scenario";
-import { useMemberWorkspace } from "./useMemberWorkspace";
+import { useEffect, useRef, type CSSProperties } from 'react';
+import { AccountDetails } from './components/AccountDetails';
+import { AccountList } from './components/AccountList';
+import { Arrow } from './components/Arrow';
+import { MemberIdentity } from './components/MemberIdentity';
+import { MemberSearch } from './components/MemberSearch';
+import { PolicyProbe } from './components/PolicyProbe';
+import { SessionExpiredDialog } from './components/SessionExpiredDialog';
+import { WorkspaceHeading } from './components/WorkspaceHeading';
+import { WorkspaceFooter, WorkspaceHeader } from './components/WorkspaceLayout';
+import type { Scenario } from './scenario';
+import { useMemberWorkspace } from './useMemberWorkspace';
 
 export function App({ scenario }: { scenario: Scenario }) {
   const workspace = useMemberWorkspace(scenario);
@@ -27,7 +27,7 @@ export function App({ scenario }: { scenario: Scenario }) {
   }, [view.kind]);
 
   const shift = {
-    "--content-offset": `${scenario.offsetPx}px`,
+    '--content-offset': `${scenario.offsetPx}px`,
   } as CSSProperties;
 
   return (
@@ -40,7 +40,7 @@ export function App({ scenario }: { scenario: Scenario }) {
           onSearch={workspace.reset}
           onAccounts={workspace.showAccounts}
         />
-        {view.kind === "search" ? (
+        {view.kind === 'search' ? (
           <MemberSearch
             state={view}
             input={workspace.input}
@@ -51,24 +51,18 @@ export function App({ scenario }: { scenario: Scenario }) {
         ) : (
           <>
             <MemberIdentity member={view.member} />
-            {view.kind === "member" ? (
+            {view.kind === 'member' ? (
               <AccountList
                 accounts={view.member.accounts}
                 duplicateSavings={scenario.duplicateSavings}
                 onSelect={workspace.openAccount}
               />
             ) : (
-              <AccountDetails
-                account={view.account}
-                hideBalance={scenario.hideBalance}
-              />
+              <AccountDetails account={view.account} hideBalance={scenario.hideBalance} />
             )}
             <div className="bottom-actions">
-              {view.kind === "account" && (
-                <button
-                  className="text-button"
-                  onClick={workspace.showAccounts}
-                >
+              {view.kind === 'account' && (
+                <button className="text-button" onClick={workspace.showAccounts}>
                   <Arrow back /> Back to accounts
                 </button>
               )}
@@ -80,9 +74,7 @@ export function App({ scenario }: { scenario: Scenario }) {
         )}
         <WorkspaceFooter />
       </main>
-      {workspace.expired && (
-        <SessionExpiredDialog onRestore={workspace.restoreSession} />
-      )}
+      {workspace.expired && <SessionExpiredDialog onRestore={workspace.restoreSession} />}
       {scenario.policyProbe && <PolicyProbe />}
     </div>
   );

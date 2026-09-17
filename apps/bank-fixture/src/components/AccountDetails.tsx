@@ -1,4 +1,4 @@
-import { displayAmount, type Account } from "../data";
+import { displayAmount, type Account } from '../data';
 
 export function AccountDetails({
   account,

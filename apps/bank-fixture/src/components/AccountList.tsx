@@ -1,5 +1,5 @@
-import type { Account } from "../data";
-import { Arrow } from "./Arrow";
+import type { Account } from '../data';
+import { Arrow } from './Arrow';
 
 export function AccountList({
   accounts,
@@ -19,17 +19,12 @@ export function AccountList({
       <div className="account-list">
         {accounts
           .flatMap((item) =>
-            duplicateSavings && item.type === "Savings"
-              ? [item, { ...item }]
-              : [item],
+            duplicateSavings && item.type === 'Savings' ? [item, { ...item }] : [item],
           )
           .map((item, index) => (
             <div className="account-row" key={`${item.type}-${index}`}>
-              <span
-                className={`account-icon ${item.type.toLowerCase()}`}
-                aria-hidden="true"
-              >
-                {item.type === "Savings" ? "↗" : "⇄"}
+              <span className={`account-icon ${item.type.toLowerCase()}`} aria-hidden="true">
+                {item.type === 'Savings' ? '↗' : '⇄'}
               </span>
               <div className="account-name">
                 <h3>{item.type}</h3>
@@ -46,9 +41,7 @@ export function AccountList({
             </div>
           ))}
       </div>
-      <div className="panel-foot">
-        Select an account to view its balance and details.
-      </div>
+      <div className="panel-foot">Select an account to view its balance and details.</div>
     </section>
   );
 }

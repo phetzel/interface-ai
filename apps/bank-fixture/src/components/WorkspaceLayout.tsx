@@ -34,7 +34,7 @@ export function WorkspaceFooter() {
       <span>
         <span className="footer-mark" aria-hidden="true">
           ✳
-        </span>{" "}
+        </span>{' '}
         Northstar member services
       </span>
       <span>Demo workspace · Synthetic records only</span>

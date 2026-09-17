@@ -3,6 +3,7 @@
 No request URL, headers, body, response body, or raw exception is logged. The
 origin sits on a network that the desktop cannot join through this service.
 """
+
 from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import re
@@ -17,23 +18,32 @@ def allowed_request(method, path, headers):
     # Raw origin-form only: no normalization that turns an unapproved path into
     # an approved one, no query/body/upgrade channel, no duplicate Host ambiguity.
     hosts = headers.get_all('Host', [])
-    return (method in ('GET', 'HEAD')
-            and (path in ROUTES or ASSET.fullmatch(path) is not None)
-            and (hosts == ['fixture:4173'] or (hosts == ['127.0.0.1:4173'] and path == '/healthz'))
-            and not any(headers.get_all(key) for key in ('Content-Length', 'Transfer-Encoding', 'Upgrade', 'Expect')))
+    return (
+        method in ('GET', 'HEAD')
+        and (path in ROUTES or ASSET.fullmatch(path) is not None)
+        and (hosts == ['fixture:4173'] or (hosts == ['127.0.0.1:4173'] and path == '/healthz'))
+        and not any(
+            headers.get_all(key)
+            for key in ('Content-Length', 'Transfer-Encoding', 'Upgrade', 'Expect')
+        )
+    )
 
 
 def upstream_response(method, path):
     connection = HTTPConnection('fixture-origin', 4173, timeout=3)
     try:
-        connection.request(method, path, headers={'Host': 'fixture-origin:4173', 'Connection': 'close'})
+        connection.request(
+            method, path, headers={'Host': 'fixture-origin:4173', 'Connection': 'close'}
+        )
         response = connection.getresponse()
         if response.status != 200:  # Never follow or forward redirects.
             return None
         body = response.read(MAX_BODY + 1)
         if len(body) > MAX_BODY:
             return None
-        headers = {key: response.getheader(key) for key in RESPONSE_HEADERS if response.getheader(key)}
+        headers = {
+            key: response.getheader(key) for key in RESPONSE_HEADERS if response.getheader(key)
+        }
         return headers, body
     finally:
         connection.close()
@@ -85,7 +95,9 @@ class Gateway(BaseHTTPRequestHandler):
         if self.command != 'HEAD':
             self.wfile.write(body)
 
-    do_GET = do_HEAD = do_POST = do_PUT = do_DELETE = do_CONNECT = do_OPTIONS = do_PATCH = do_TRACE = dispatch
+    do_GET = do_HEAD = do_POST = do_PUT = do_DELETE = do_CONNECT = do_OPTIONS = do_PATCH = (
+        do_TRACE
+    ) = dispatch
 
 
 if __name__ == '__main__':

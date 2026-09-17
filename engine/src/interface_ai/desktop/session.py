@@ -1,4 +1,5 @@
 """Session files belong to the isolated desktop, never the host session."""
+
 import json
 import os
 from pathlib import Path

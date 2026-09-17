@@ -11,7 +11,13 @@ import uuid
 import shutil
 from pathlib import Path
 
-from bootstrap import active_application, bank_painted, chromium_command, fixture_ready, sandbox_status
+from bootstrap import (
+    active_application,
+    bank_painted,
+    chromium_command,
+    fixture_ready,
+    sandbox_status,
+)
 
 from common import HEIGHT, RUNTIME, SESSION, STATE, WIDTH, read_json, wait_for, write_json
 
@@ -32,8 +38,12 @@ def launch(name, command):
 
 
 def command_ready(command):
-    return subprocess.run(command, stdout=subprocess.DEVNULL,
-                          stderr=subprocess.DEVNULL, timeout=2).returncode == 0
+    return (
+        subprocess.run(
+            command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=2
+        ).returncode
+        == 0
+    )
 
 
 def port_ready(port):
@@ -55,14 +65,31 @@ def main():
     Path('/tmp/.X11-unix/X99').unlink(missing_ok=True)
     auth = Path(os.environ['XAUTHORITY'])
     auth.touch(mode=0o600)
-    subprocess.run(['xauth', '-f', str(auth), 'add', os.environ['DISPLAY'], '.',
-                    secrets.token_hex(16)], check=True)
-    launch('display', ['Xvfb', os.environ['DISPLAY'], '-screen', '0',
-                       f'{WIDTH}x{HEIGHT}x24', '-nolisten', 'tcp', '-auth', str(auth)])
+    subprocess.run(
+        ['xauth', '-f', str(auth), 'add', os.environ['DISPLAY'], '.', secrets.token_hex(16)],
+        check=True,
+    )
+    launch(
+        'display',
+        [
+            'Xvfb',
+            os.environ['DISPLAY'],
+            '-screen',
+            '0',
+            f'{WIDTH}x{HEIGHT}x24',
+            '-nolisten',
+            'tcp',
+            '-auth',
+            str(auth),
+        ],
+    )
     wait_for('X11 display', lambda: command_ready(['xdpyinfo']))
     launch('window manager', ['openbox'])
-    wait_for('window manager', lambda: b'window id' in subprocess.check_output(
-        ['xprop', '-root', '_NET_SUPPORTING_WM_CHECK']))
+    wait_for(
+        'window manager',
+        lambda: b'window id'
+        in subprocess.check_output(['xprop', '-root', '_NET_SUPPORTING_WM_CHECK']),
+    )
     sandbox = None
     if mode == 'native':
         app = launch('native test pad', [sys.executable, '/opt/desktop/pad.py'])
@@ -81,17 +108,46 @@ def main():
     if mode == 'bank':
         wait_for('painted banking fixture', bank_painted, 15)
         sandbox = wait_for('Chromium renderer sandbox', lambda: sandbox_status(app.pid), 10)
-    launch('read-only VNC', ['x11vnc', '-display', os.environ['DISPLAY'], '-auth', str(auth),
-                           '-localhost', '-rfbport', '5900', '-forever', '-shared',
-                           '-viewonly', '-nopw', '-noxdamage', '-quiet'])
+    launch(
+        'read-only VNC',
+        [
+            'x11vnc',
+            '-display',
+            os.environ['DISPLAY'],
+            '-auth',
+            str(auth),
+            '-localhost',
+            '-rfbport',
+            '5900',
+            '-forever',
+            '-shared',
+            '-viewonly',
+            '-nopw',
+            '-noxdamage',
+            '-quiet',
+        ],
+    )
     wait_for('VNC', lambda: port_ready(5900))
-    launch('web viewer', ['/usr/bin/websockify', '--web=/usr/share/novnc',
-                          '0.0.0.0:6080', '127.0.0.1:5900'])
+    launch(
+        'web viewer',
+        ['/usr/bin/websockify', '--web=/usr/share/novnc', '0.0.0.0:6080', '127.0.0.1:5900'],
+    )
     wait_for('web viewer', lambda: port_ready(6080))
-    write_json(SESSION, {'id': str(uuid.uuid4()), 'display': os.environ['DISPLAY'],
-                        'width': WIDTH, 'height': HEIGHT, 'viewer': 'read-only',
-                        'mode': mode, **application, 'appPid': app.pid, 'sandbox': sandbox,
-                        'pids': {name: process.pid for name, process in children}})
+    write_json(
+        SESSION,
+        {
+            'id': str(uuid.uuid4()),
+            'display': os.environ['DISPLAY'],
+            'width': WIDTH,
+            'height': HEIGHT,
+            'viewer': 'read-only',
+            'mode': mode,
+            **application,
+            'appPid': app.pid,
+            'sandbox': sandbox,
+            'pids': {name: process.pid for name, process in children},
+        },
+    )
     launch('operator gateway', [sys.executable, '-m', 'interface_ai.handoff.server'])
     wait_for('operator gateway', lambda: port_ready(6081))
     print(f'Desktop ready: {mode}, 1280x800; read-only viewer on port 6080', flush=True)

@@ -1,4 +1,5 @@
 """Small operator CLI; input always requires an explicit observed session ID."""
+
 import argparse
 import json
 import sys
@@ -20,9 +21,13 @@ def main():
     action.add_argument('--session', required=True)
     action.add_argument('--json', required=True)
     validate = commands.add_parser('validate-capability')
-    validate.add_argument('--capability', default='/opt/capabilities/poc/savings-balance/capability.json')
+    validate.add_argument(
+        '--capability', default='/opt/capabilities/poc/savings-balance/capability.json'
+    )
     replay = commands.add_parser('replay')
-    replay.add_argument('--capability', default='/opt/capabilities/poc/savings-balance/capability.json')
+    replay.add_argument(
+        '--capability', default='/opt/capabilities/poc/savings-balance/capability.json'
+    )
     replay.add_argument('--session')
     inputs = replay.add_mutually_exclusive_group(required=True)
     inputs.add_argument('--member-id')
@@ -31,6 +36,7 @@ def main():
     try:
         if args.command == 'export-evidence':
             from .policy.evidence import export_bundle
+
             if not re.fullmatch(r'[0-9]{8}T[0-9]{6}Z-replay-[0-9a-f]{8}', args.run):
                 raise DesktopError('evidence_rejected', 'Expected a replay run directory name')
             root = Path('/artifacts')
@@ -43,11 +49,17 @@ def main():
             return 0
         if args.command == 'replay':
             from .replay.command import replay as run
+
             return run(args)
         if args.command == 'validate-capability':
             from .replay.loader import load_bundle
+
             bundle = load_bundle(args.capability)
-            result = {'status': 'valid', 'capability': bundle.capability.name, 'sha256': bundle.sha256}
+            result = {
+                'status': 'valid',
+                'capability': bundle.capability.name,
+                'sha256': bundle.sha256,
+            }
         elif args.command == 'status':
             result = read_session() | {'inputStopped': STOP.exists()}
         elif args.command == 'stop':
@@ -60,8 +72,18 @@ def main():
                 result = {'sessionId': desktop.id, 'events': events}
         print(json.dumps(result))
     except (DesktopError, OSError, ValueError, RuntimeError) as exc:
-        print(json.dumps({'status': 'failed', 'code': getattr(exc, 'code', 'invalid_or_unavailable'),
-                          'message': str(exc) if isinstance(exc, DesktopError) else 'Invalid request or unavailable desktop'}), file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    'status': 'failed',
+                    'code': getattr(exc, 'code', 'invalid_or_unavailable'),
+                    'message': str(exc)
+                    if isinstance(exc, DesktopError)
+                    else 'Invalid request or unavailable desktop',
+                }
+            ),
+            file=sys.stderr,
+        )
         return 1
     return 0
 
