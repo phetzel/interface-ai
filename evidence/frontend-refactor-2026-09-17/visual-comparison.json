@@ -1,0 +1,171 @@
+{
+  "kind": "trusted-host-fixture-comparison",
+  "baselineCommit": "a63a143a37d8410d4748605fe9bf6cd3848582e7",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "locale": "en-US",
+  "timezone": "UTC",
+  "method": "Exact SHA-256 equality of Chromium screenshot PNG bytes and app-shell outerHTML. Harness may inspect DOM and set scenario configuration; it is not runtime replay evidence.",
+  "states": [
+    {
+      "name": "default-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "default-invalid",
+      "matchingScreenshotSha256": "10e992ea2df72820d0be9eca753ecd0de3cf31e9590f20a7b8dff01deb17ba83",
+      "matchingDOMSha256": "2a0ad889ca33828aa597a9161489df8a8cbde7d22819d87c7ffbce70c0f4a8e4"
+    },
+    {
+      "name": "default-not-found",
+      "matchingScreenshotSha256": "813a27c967dced80a7388dc4aa2bf5669d753062c5e6a5881a375144477dd8bf",
+      "matchingDOMSha256": "71000990084da7c597ee434fc417ac63c7bd64807ba791a72deddb8d5f6e32de"
+    },
+    {
+      "name": "default-member",
+      "matchingScreenshotSha256": "0026173153033300735f193b77f456ec0bfb89ddc1ad6900d121e5b8c83f3a89",
+      "matchingDOMSha256": "a3c2f4ad96866683a7fbbdef938f73c49afef8fb106e1c0725c64bd397a9bdfe"
+    },
+    {
+      "name": "default-savings",
+      "matchingScreenshotSha256": "516fbab91d201571ff40505fd6ef98424d451c6a6b4a545d8eb356fc7d3e69da",
+      "matchingDOMSha256": "207996874ae42e4739a614ddcd86429247c531fe355a93acb17d0ec3af1e524c"
+    },
+    {
+      "name": "default-checking",
+      "matchingScreenshotSha256": "14cb5506686069d68047022d95feed5bcf85da5fff7826cb02d66b9eb8ba9ab5",
+      "matchingDOMSha256": "e631633a89cdab045fb5d01a3fe6bf27df3ffb70cfa2c97c98b04bab1c3793d5"
+    },
+    {
+      "name": "default-member-b-savings",
+      "matchingScreenshotSha256": "c7a9621e28d5373d9d66fb38be77d2f734aa3435fcb63386037461bc9f3565f6",
+      "matchingDOMSha256": "e012759182667a497c0b51a6c66ac0e2977f79b91b8d44c15b93d193359b3048"
+    },
+    {
+      "name": "delayed-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "delayed-member",
+      "matchingScreenshotSha256": "0026173153033300735f193b77f456ec0bfb89ddc1ad6900d121e5b8c83f3a89",
+      "matchingDOMSha256": "a3c2f4ad96866683a7fbbdef938f73c49afef8fb106e1c0725c64bd397a9bdfe"
+    },
+    {
+      "name": "delayed-savings",
+      "matchingScreenshotSha256": "516fbab91d201571ff40505fd6ef98424d451c6a6b4a545d8eb356fc7d3e69da",
+      "matchingDOMSha256": "207996874ae42e4739a614ddcd86429247c531fe355a93acb17d0ec3af1e524c"
+    },
+    {
+      "name": "blocked-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "blocked-loading",
+      "matchingScreenshotSha256": "d17073e03f521ca7e36e2d20f79df20aaacd3294b976d96c8fa27308ee52d2ce",
+      "matchingDOMSha256": "ef29730901018a952872eab212da0b9648fa8343b9e12694561340b31415a6a7"
+    },
+    {
+      "name": "blocked-cancelled",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "duplicate-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "duplicate-member",
+      "matchingScreenshotSha256": "e10d792e0f4720ca17b179c443d99c635c7fb5b9f67a21f1f3709b10de1582a6",
+      "matchingDOMSha256": "c117d27b8f6952d6313aaae5ea1533901f789cf9182e03b63590dab557132b76"
+    },
+    {
+      "name": "duplicate-savings",
+      "matchingScreenshotSha256": "516fbab91d201571ff40505fd6ef98424d451c6a6b4a545d8eb356fc7d3e69da",
+      "matchingDOMSha256": "207996874ae42e4739a614ddcd86429247c531fe355a93acb17d0ec3af1e524c"
+    },
+    {
+      "name": "unreadable-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "unreadable-member",
+      "matchingScreenshotSha256": "0026173153033300735f193b77f456ec0bfb89ddc1ad6900d121e5b8c83f3a89",
+      "matchingDOMSha256": "a3c2f4ad96866683a7fbbdef938f73c49afef8fb106e1c0725c64bd397a9bdfe"
+    },
+    {
+      "name": "unreadable-savings",
+      "matchingScreenshotSha256": "319d23d94ec6e4a81bd3a54306aef605d368239b944b06262895defb3a2ada0e",
+      "matchingDOMSha256": "f5be5528092757b195fd9bd8f9eddf457ff8cfb17de7774c3984e57ea105ec5c"
+    },
+    {
+      "name": "translated-search",
+      "matchingScreenshotSha256": "0137cc47c50e7af4f02e37e0288d9125d0f530967a34b4463c712c587363213b",
+      "matchingDOMSha256": "380c9caaa856360fae8308e32b135d95d7ec61f52a74f7a068057ed1c38e166e"
+    },
+    {
+      "name": "translated-member",
+      "matchingScreenshotSha256": "bb737cc05054c790525485aa4b2c3a805b5d2deef0ff131b9328864be0cac6f2",
+      "matchingDOMSha256": "80d7f705c4ab56e1bc43a0bc749058b140e97fdd66875e33946fd294c87aff1f"
+    },
+    {
+      "name": "translated-savings",
+      "matchingScreenshotSha256": "4a7b63e9f133c9fa0becd50212eba7a245239d022fd10505178e55fd4341259a",
+      "matchingDOMSha256": "5f6877edc4bff40c2651ee40c41cf14c4aa259398740818be6d8e21bae740c0a"
+    },
+    {
+      "name": "policy-search",
+      "matchingScreenshotSha256": "79b4d5c08a299117c3644a10cfac684c6fb90e31ee5a74532739bbddcc08f6a8",
+      "matchingDOMSha256": "8e751288e294dfd6623e276c93306a16861974b008729a7faad1c08a5458a013"
+    },
+    {
+      "name": "policy-member",
+      "matchingScreenshotSha256": "cda7c26e4d0299c9c35dd997e202c3d8804f538c0e397000ff8e016f97e498ab",
+      "matchingDOMSha256": "18313f3578e6470d1d8df06f96890cff33cf183e13d6edd1cdf90fde9757a69f"
+    },
+    {
+      "name": "policy-savings",
+      "matchingScreenshotSha256": "6f89e081994d551821642451a8c8c94ebc6e38ab8f183c587ba137fc0898590e",
+      "matchingDOMSha256": "648c554e9e8909cf0ea13b7d3838713bdcd07a91aefb723c2ccec4db315e78e9"
+    },
+    {
+      "name": "policy-transfer-requested",
+      "matchingScreenshotSha256": "891bd79d4553d70322f04b1298600839cd4cf447b95976f952bbd7ca37f508c5",
+      "matchingDOMSha256": "7287c044998347a38fbc3b28c14e6a3ee0928d11149a1d951091f13b81ad25cd"
+    },
+    {
+      "name": "expired-search",
+      "matchingScreenshotSha256": "3953c34e04f739a635e90c26c17891c810505dd1bdb895e79a0bd1240cc987fa",
+      "matchingDOMSha256": "b68cec9232ecfd2bba076a77fcd7533dc3b458f9a48195999d37086b95146f40"
+    },
+    {
+      "name": "expired-dialog",
+      "matchingScreenshotSha256": "8c72ce57648e411a869d616c5b46f3e34f0fe95e421339ccc67c2285ef6b2fbc",
+      "matchingDOMSha256": "7bae6a6677749f92ac90912ddcc8a8985eebf7d9f143cfa98798d146bb27a4bc"
+    },
+    {
+      "name": "expired-wrong-code",
+      "matchingScreenshotSha256": "48900de3dab05a57a73be36133a479e344291931704ee220a82693c2bf25574a",
+      "matchingDOMSha256": "e55988f9924dafaf91b0b74c28f2c2b549e0526bdd2b13717021a1b322a3ee2e"
+    },
+    {
+      "name": "expired-member",
+      "matchingScreenshotSha256": "0026173153033300735f193b77f456ec0bfb89ddc1ad6900d121e5b8c83f3a89",
+      "matchingDOMSha256": "a3c2f4ad96866683a7fbbdef938f73c49afef8fb106e1c0725c64bd397a9bdfe"
+    },
+    {
+      "name": "expired-savings",
+      "matchingScreenshotSha256": "516fbab91d201571ff40505fd6ef98424d451c6a6b4a545d8eb356fc7d3e69da",
+      "matchingDOMSha256": "207996874ae42e4739a614ddcd86429247c531fe355a93acb17d0ec3af1e524c"
+    }
+  ],
+  "status": "passed",
+  "allScreenshotsAndDOMIdentical": true,
+  "rawCapturesAndComparisonHarness": "tmp/frontend-refactor/"
+}

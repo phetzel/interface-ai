@@ -1,0 +1,124 @@
+{
+  "kind": "trusted-host-fixture-tests",
+  "stats": {
+    "startTime": "2026-09-17T20:58:22.248Z",
+    "duration": 6196.863,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "expiry requires manual restoration and preserves the searched member",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "policy scenario has a real synthetic risky control and untrusted instruction",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "savings lookup preserves identity 00123",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "savings lookup preserves identity 00456",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "return navigation and another member never retain the old balance",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "missing member is explicit and a later valid search recovers",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "invalid IDs are rejected without trimming, coercion, or silent padding",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "delayed search shows loading before resolving",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "cancelled delayed search cannot overwrite a fresh search screen",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "blocked search never reaches a result and can be reset",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "duplicate scenario presents two indistinguishable savings targets",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "unreadable output never presents a numerical savings balance",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "translated content moves 40 pixels on both axes and remains usable",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "only launch-time scenario controls apply; oracle and source are not served",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    },
+    {
+      "title": "configuration fetch failure does not silently use the default fixture",
+      "passed": true,
+      "outcomes": [
+        "expected"
+      ]
+    }
+  ],
+  "firstAttempt": {
+    "passed": 14,
+    "failed": 1,
+    "reason": "New state-persistence assertion clicked a lower action covered by the pre-existing policy-probe overlay. Updated the harness to use the visible Member search breadcrumb; application behavior was unchanged.",
+    "retainedLocally": "tmp/frontend-refactor/first-fixture-test/"
+  }
+}

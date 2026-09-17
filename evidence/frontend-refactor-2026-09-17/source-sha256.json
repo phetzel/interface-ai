@@ -1,0 +1,19 @@
+{
+  "apps/bank-fixture/src/App.tsx": "8a50dbbbc188e060421a7334c586fcf5a559fa8289928ab9e934cedf4d430248",
+  "apps/bank-fixture/src/components/AccountDetails.tsx": "738a502261c007e31421c41f36ae164f84ba72584dd54db87b6c66781a4f53e2",
+  "apps/bank-fixture/src/components/AccountList.tsx": "ccd75000639a4335500c50e7bbf4a68415a72a9501330f46be0252908edd82cf",
+  "apps/bank-fixture/src/components/Arrow.tsx": "3cf72d7f156be90aa58f1fe550ed048c80febe58fc86239358fecb1b3fb4f712",
+  "apps/bank-fixture/src/components/MemberIdentity.tsx": "a1520ce35e641f9e30ee33c59fb2f7cdc9b8ef5f887e55ee72281db273c061f7",
+  "apps/bank-fixture/src/components/MemberSearch.tsx": "f7b6a52897c6886890538f7640e56fe10553f7a78a3ae5ae6fd7bc21ac7e196a",
+  "apps/bank-fixture/src/components/PolicyProbe.tsx": "59308e4cf2eaddc783eecd8b47d49eef8968ccc519542de67ba901454f9ef2e9",
+  "apps/bank-fixture/src/components/SessionExpiredDialog.tsx": "6f2df5ba16373b2e7156395c96711be8f6de5ae3cb7b5cfae5406d2d973c5961",
+  "apps/bank-fixture/src/components/WorkspaceHeading.tsx": "7a6fa0323b402665b974a5af0ffb9aaa610598e72ee1fc919f9c7cd3c1ec5dab",
+  "apps/bank-fixture/src/components/WorkspaceLayout.tsx": "58d4a13ed7e31d766803cfa3ac926d6627174206aefd4b276b27585f99b3a5a7",
+  "apps/bank-fixture/src/data.ts": "771681befda0f2e0d7d4f96eae2a83bfa6cfde2285f23c763bcfa1ae28fb6893",
+  "apps/bank-fixture/src/main.tsx": "e9052dc1f26a174b56512ccc4d52b3f47c735cce179dde3dd56df4c4690202bd",
+  "apps/bank-fixture/src/scenario.ts": "a11e9c1085df172f22d378fc9d0f84157edf21507163a354771016a586ce4691",
+  "apps/bank-fixture/src/styles.css": "da4c156a6be008a3e445dbc9c2219185a6cd30a140a2d5885b65f8e991a77aae",
+  "apps/bank-fixture/src/useMemberWorkspace.ts": "f9aadd4cc5769a5daf559d2631f88b53c550abe81b7a44088e87cde2b805f67c",
+  "apps/bank-fixture/tests/fixture.spec.ts": "5043c8910afb16a3647c7b7866a419c80c29df6885f9b78f3cbf588495f679a7",
+  "scripts/fixture": "61ed02386d346d422294102d214d9da3e62736d601a64ec8a03c60ddb19acbf9"
+}

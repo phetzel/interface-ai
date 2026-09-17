@@ -1,0 +1,32 @@
+{
+  "capability_fifo": {
+    "stillBlockedAfterSeconds": 1,
+    "blocked": true,
+    "exitCodeBeforeTermination": null
+  },
+  "asset_fifo": {
+    "stillBlockedAfterSeconds": 1,
+    "blocked": true,
+    "exitCodeBeforeTermination": null
+  },
+  "invalid_member_http": {
+    "status": 503,
+    "body": {
+      "code": "execution_failed"
+    },
+    "workerLaunched": false
+  },
+  "stopped_run_files": {
+    "phase": "stopped",
+    "files": [
+      "audit.jsonl"
+    ],
+    "resultIsNone": true
+  },
+  "published_schemas": {
+    "capability-v1": true,
+    "input-v1": true,
+    "output-v1": true,
+    "result-v1": true
+  }
+}

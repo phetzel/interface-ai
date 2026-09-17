@@ -2,7 +2,7 @@
 
 A computer-use automation system in development: model-driven discovery, reusable capabilities, deterministic replay, policy enforcement, and human takeover of the same live session.
 
-**M3: same-session human takeover, with local pre-audit repairs.** The baseline was pushed as `ec2b56e`. The September 17 repair fixes HTTP Stop responsiveness during human input, retains sanitized interpreter diagnostics, and exposes step/checkpoint context in the operator panel. The updated source passes 85 engine tests, both live simulated-operator cases, and the panel takeover/Stop checks; see the [current validation record](evidence/pre-audit-2026-09-17/README.md) for full regression status and source provenance. The unchanged fixture previously passed all 15 browser tests. A real-person demonstration remains pending. Start with the [manual checklist](docs/manual-acceptance.html); the [M3 specification](docs/MILESTONE_3.md) explains the boundaries.
+**M3: same-session human takeover, with pre-audit repairs pushed as `a63a143`.** The original M3 baseline was `ec2b56e`. The September 17 repair fixes HTTP Stop responsiveness during human input, retains sanitized interpreter diagnostics, and exposes step/checkpoint context in the operator panel. The updated source passes 85 engine tests, both live simulated-operator cases, and the panel takeover/Stop checks; see the [current validation record](evidence/pre-audit-2026-09-17/README.md) for full regression status and source provenance. The subsequent local React component refactor has its own [validation record](evidence/frontend-refactor-2026-09-17/README.md); the earlier source manifest remains historical evidence for the pre-audit commit. A real-person demonstration remains pending. Start with the [manual checklist](docs/manual-acceptance.html); the [M3 specification](docs/MILESTONE_3.md) explains the boundaries.
 
 **M2 complete for the declared environment: policy and safe evidence.** Bank input passes an operator-owned read-only policy, and replay admits only the reviewed capability digest. A fixed-upstream gateway separates the desktop from the fixture origin and rejects unapproved HTTP requests; managed Chromium policies restrict navigation. Safe evidence export reconstructs metadata and excludes business results, screenshots, and arbitrary extra files. The [M2 specification and research](docs/MILESTONE_2.md) and [acceptance evidence](evidence/poc-m2/README.md) cover the decisions, failed attempt, full M1 regression, and final hardening checks. Final source passes 63 engine tests; the fixture passes 14 tests. M3 now adds the human takeover mechanism; model discovery remains later work. M2 was committed and pushed as `3726347` at the user’s request.
 
@@ -49,7 +49,21 @@ Follow it from top to bottom: fixture UI, native/browser desktop input, replay s
 
 Open [the repository audit checklist](docs/repository-audit.html), or run `open docs/repository-audit.html`. Its 31 topics follow architecture, contracts, execution, recognition, policy, human takeover, testing, maintainability and interview rehearsal. Each links the relevant source files, gives a tracing exercise and an “explain aloud” question, and asks you to record unclear code and concrete improvements.
 
+For the React app, follow the [fixture code walkthrough](apps/bank-fixture/README.md#code-walkthrough): `App.tsx` composes the views, `useMemberWorkspace.ts` owns the workflow, and `components/` contains the UI.
+
+The [September 17 repository-wide cleanup audit](docs/CLEANUP_AUDIT_2026-09-17.md) reviews the engine, policy, replay, handoff, infrastructure, tests and docs. It includes reproduced issues, recommended changes, validation criteria and an ordered implementation backlog.
+
 This review saves its own notes and understanding statuses independently of the manual app audit. Both pages support JSON export and printing. Neither review changes code or establishes that the unfinished discovery requirement has been met.
+
+The next useful cleanup candidates are:
+
+| Area | Suggested change | Validation boundary |
+| --- | --- | --- |
+| [Operator panel](engine/src/interface_ai/handoff/operator.html) | Separate its densely packed rendering, request handling and styles into readable files/functions | Preserve token/CSP handling, Stop during pending input, busy polling and ownership controls; rerun the panel checks |
+| [Handoff controller](engine/src/interface_ai/handoff/controller.py) and CLI replay | Route both entry points through one coordinator and separate lifecycle decisions from evidence writing | Keep the existing lock/epoch rules and reviewed resume boundary; test both entry points before expanding recovery |
+| [Reviewed bank policy](engine/src/interface_ai/policy/bank.py), evidence identifiers and resume position | Introduce one small reviewed promotion manifest for generated capabilities | Do this with discovery-to-replay work; approval must remain outside unreviewed model output |
+
+These are follow-up recommendations. The current frontend refactor adds no dependencies and preserves the existing UI and execution contracts.
 
 ## Same-session operator panel
 
@@ -178,6 +192,6 @@ JSON
 - [Second milestone and researched decisions](docs/MILESTONE_2.md)
 - [Initial options comparison](docs/DECISIONS.md)
 
-M1 and bounded M2/PoC B are complete; M3 implements same-session takeover and verified continuation. A real-person demonstration remains pending. Next is OpenAI discovery, which needs API access and a reviewed policy for outbound model observations. M1 and its Makefile shortcuts are committed and pushed through `94dc573`. M2 was committed and pushed as `3726347`; M3 was committed and pushed as `ec2b56e`; subsequent changes remain local until requested.
+M1 and bounded M2/PoC B are complete; M3 implements same-session takeover and verified continuation. A real-person demonstration remains pending. Next is OpenAI discovery, which needs API access and a reviewed policy for outbound model observations. M1 and its Makefile shortcuts are committed and pushed through `94dc573`. M2 was committed and pushed as `3726347`; M3 was committed and pushed as `ec2b56e`, and the pre-audit repairs as `a63a143`. The subsequent React component refactor remains local until requested.
 
 The final assignment also needs genuine discovery/replay evidence, a reusable capability, exceptional runs, human intervention, and `REPORT.md` using the assignment's required headings. The repository is private during preparation; public submission and any push require an explicit user request. The assignment PDF, credentials, and live customer data are not included.
