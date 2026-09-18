@@ -71,8 +71,9 @@
 <div class="shell">
   <header class="hero">
     <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue. This revised checklist starts a separate pass and does not reuse earlier acceptance marks.</p></div>
-    <div class="scope"><strong>Prepared: a63a143 + local React refactor · September 17, 2026</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
+    <div class="scope"><strong>Prepared: 3f11b9d + checklist updates · September 17, 2026</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
   </header>
+<p class="muted">Cleanup revision: this checklist uses a new progress key. Earlier review data remains stored separately and is not carried forward as a pass. No human results are prefilled.</p>
   <div class="meta">
     <label class="field">Reviewer<input id="reviewer" autocomplete="off" maxlength="120" placeholder="Your name"></label>
     <label class="field">Revision actually tested<input id="revision" maxlength="120" placeholder="Paste git describe --always --dirty"></label>
@@ -101,70 +102,716 @@
 <script>
 'use strict';
 const GROUPS = [
-  { id:'prepare', title:'01 / Prepare the workspace', intro:'Use a terminal in the repository root for every command below. Finish one scenario before starting the next; there is only one shared desktop.', steps:[
-    {id:'setup',title:'Record the environment and starting revision',kind:'command',actions:['Start Docker Desktop. Use Node 22.12–22.x for the fixture tools; the engine runs in Docker. No OpenAI key is needed.','Close old operator/fixture tabs and any previous fixture test servers. Keep this checklist open. Record the revision above and environment versions in notes.'],commands:['cd /Users/phillip/interview/interface-ai\ngit describe --always --dirty\ngit status --short\ndocker version\ndocker compose version\nnode --version\nmake help'],expected:['Record the actual revision, including -dirty for local changes. This pass expects a63a143 plus the local React component refactor, or a later revision containing them. Docker reports a running server.','Make lists replay, policy-check, handoff-demo, handoff-check, and export. Ports 4173, 4180–4187, 6080 and 6081 are available for their respective services.'],links:[['Repository guide','../README.md'],['Pre-audit validation and source manifest','../evidence/pre-audit-2026-09-17/README.md']]},
-    {id:'build',title:'Build and start from a fresh desktop',kind:'command',commands:['make build','make reset MODE=bank SCENARIO=default\nmake ready'],expected:['Both Docker images build; desktop, fixture, gateway and viewer become healthy.','Readiness reports mode bank, dimensions 1280 × 800, a session UUID, and inputStopped: false. Record that UUID in notes.'],note:'If the build stalls at public image metadata, use the README’s documented Docker credential-helper workaround. Record the setup issue; do not change runtime restrictions to get through the pass.',links:[['Build troubleshooting','../README.md#troubleshooting']]}
-  ]},
-  {id:'fixture',title:'02 / Check the banking UI by hand',intro:'This host preview lets you exercise the React fixture directly. It is a separate surface from the isolated desktop and does not demonstrate computer-use replay.',steps:[
-    {id:'fixture-start',title:'Launch the host fixture preview',kind:'command',commands:['make fixture-install\nnpm --prefix apps/bank-fixture run build','npm --prefix apps/bank-fixture run preview'],actions:['Leave the preview command running in a second terminal. Open the host fixture link below.'],expected:['The Northstar search page loads at 127.0.0.1:4173 with the synthetic-data label and no preselected member.'],links:[['Open host fixture','http://127.0.0.1:4173/']]},
-    {id:'fixture-manual',title:'Exercise search, navigation and reset',kind:'manual',actions:['Search 00123. Confirm Demo Member A, open Savings, and check $1,234.56 USD. Return to accounts, open Checking, then search another member.','Search 00456. Confirm Demo Member B and Savings $98.07 USD. The old member and balance must not remain.','Search 00999: expect “Member not found.” Try 123 and 00a23: expect a five-digit validation error without silently padding or coercing.','Reload the page: expect an empty search field. Stop the host preview with Ctrl+C in its terminal and close its tab.'],expected:['Leading zeroes and exact member identities are preserved. Back navigation works; reload resets the fixture.','Missing and invalid IDs never display a guessed balance. This was your own manual UI check.']}
-  ]},
-  {id:'desktop',title:'03 / Observe real desktop control',intro:'Use the read-only desktop viewer for this section. Reconnect or reload it after every desktop reset. Keep the operator panel closed until the takeover section.',steps:[
-    {id:'native',title:'Open the native calibration surface',kind:'manual',commands:['make reset MODE=native\nmake ready'],actions:['Open the viewer and inspect the native pad. Try clicking a blue target and typing into its field through the viewer.'],expected:['The same 1280 × 800 desktop is visible, with no clipped targets. The session UUID differs from the previous bank session.','Your viewer clicks and keys do not change the pad. noVNC is server-enforced view-only.'],links:[['Open read-only desktop viewer','http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true']]},
-    {id:'native-smoke',title:'Watch native mouse, keyboard and scroll input',kind:'harness',commands:['./scripts/desktop smoke'],actions:['Watch the viewer as the command runs. Read its eight PASS checks and evidence path.'],expected:['Three targets turn green, text is selected/replaced/submitted, and the native list scrolls.','The smoke reports screenshot agreement, server-side VNC input rejection, stop behavior, network probes and an unchanged session.'],note:'This trusted calibration harness intentionally saves synthetic screenshots and uses fixed coordinates. It proves input plumbing; it is not a model-discovered capability or a shareable safe export.'},
-    {id:'browser-smoke',title:'Watch the same adapter control Chromium',kind:'harness',commands:['make reset MODE=bank SCENARIO=default','./scripts/desktop browser-smoke --member-id 00123'],actions:['Reload the viewer after reset. Observe the banking app search, account navigation and return to search.'],expected:['Sandboxed Chromium runs inside the isolated desktop. The browser calibration completes successfully and leaves the search screen.','The input mechanism works on both native and browser surfaces; no browser DOM locator is used by the replay engine.']}
-  ]},
-  {id:'replay',title:'04 / Replay the reviewed capability',intro:'These runs use the manually authored artifact and local anchors/OCR. The CLI prints an evidence path /artifacts/<run>; on the host it is tmp/desktop-artifacts/<run>. Inspect result.json for values and report.json for metadata.',steps:[
-    {id:'replay-a',title:'Get the exact savings balance for member A',kind:'command',commands:['make reset MODE=bank SCENARIO=default\nmake validate','make replay MEMBER_ID=00123'],actions:['Watch the viewer. Open this run’s result.json and report.json from the printed evidence path. Save the successful run folder name below for the export check.'],capture:'replayRun',expected:['Success: memberId 00123, Demo Member A, Savings, USD, amountMinor 123456; the screen shows $1,234.56.','The report records modelCalls: 0 and capability digest 94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17.'],links:[['Manual capability','../capabilities/poc/savings-balance/capability.json']]},
-    {id:'replay-b',title:'Reuse the unchanged artifact for member B',kind:'command',commands:['make demo SCENARIO=default MEMBER_ID=00456'],expected:['Success: memberId 00456, Demo Member B, Savings, USD, amountMinor 9807; the screen shows $98.07.','The capability digest is unchanged, modelCalls is zero, and a fresh session was used.']},
-    {id:'invalid',title:'Reject invalid invocation inputs before UI changes',kind:'command',commands:['make reset MODE=bank SCENARIO=default','make replay MEMBER_ID=123','./scripts/desktop replay --inputs-json \'{"memberId":123}\''],expected:['Both invocations exit nonzero with invalid_input. Their reports show preflight failure and zero completed actions.','The search page stays untouched. A number is not accepted as a string, padded, or converted into an ID.'],note:'Here and in later negative checks, a nonzero exit with the specified rejection is the expected passing result.'},
-    {id:'missing',title:'Handle a member who does not exist',kind:'command',commands:['make demo SCENARIO=default MEMBER_ID=00999'],expected:['Named business_outcome: member_not_found, with no account click or fabricated output.','The visible page identifies the queried ID and says the member was not found.']},
-    {id:'translated',title:'Find targets after the supported layout shift',kind:'command',commands:['make demo SCENARIO=translated MEMBER_ID=00123','make demo SCENARIO=translated MEMBER_ID=00456'],actions:['Run and inspect each command separately. Observe that content has moved 40 pixels right and down.'],expected:['Both members return their exact expected outputs using the same artifact and anchor files.','No manual coordinate correction or model fallback is needed.']},
-    {id:'delayed',title:'Wait for slow rendering within the existing bounds',kind:'command',commands:['make demo SCENARIO=delayed MEMBER_ID=00123'],expected:['“Searching…” remains visible longer than the default scenario (configured delay 1.8 seconds).','The run waits and succeeds with $1,234.56; it does not retype the ID or use a model.']},
-    {id:'duplicate',title:'Stop on two indistinguishable Savings targets',kind:'command',commands:['make demo SCENARIO=duplicate MEMBER_ID=00123'],expected:['Two Savings targets are visible. The run exits nonzero with ambiguous_target at open-savings.','Four input actions completed; neither Savings button is selected by guessing.']},
-    {id:'unreadable',title:'Refuse to invent an unreadable balance',kind:'command',commands:['make demo SCENARIO=unreadable MEMBER_ID=00123'],expected:['The account shows Balance unavailable rather than an amount.','The run exits nonzero with ocr_uncertain at read-balance; five input actions completed, but there is no success output.']},
-    {id:'blocked',title:'Stop a search that never resolves',kind:'command',commands:['make demo SCENARIO=blocked MEMBER_ID=00123'],expected:['The app remains on loading. The run exits nonzero with checkpoint_timeout at search-member.','No account navigation or unlimited retry occurs. The step has a five-second bound; startup/reset time is separate.']}
-  ]},
-  {id:'policy',title:'05 / Challenge policy and evidence boundaries',intro:'Use the ordinary automation action CLI for the forbidden-input check. Human takeover grants explicit manual authority and is not the way to test the automation-only bank allowlist.',steps:[
-    {id:'operation',title:'Deny a risky control and a browser shortcut',kind:'command',commands:['make reset MODE=bank SCENARIO=policy\nmake ready','./scripts/desktop action --session \'{{POLICY_SESSION}}\' --json \'{"type":"click","x":1070,"y":710}\'','./scripts/desktop action --session \'{{POLICY_SESSION}}\' --json \'{"type":"hotkey","keys":["ctrl","l"]}\''],capture:'policySession',actions:['Reload the viewer. Confirm the synthetic Transfer funds panel is visible. Copy the current readiness session UUID into the field below before copying the action commands.'],expected:['Both actions exit nonzero with policy_operation_denied. Transfer status remains “No transfer requested”; the address bar does not receive focus.','The page’s instruction to ignore restrictions does not grant permission.'],note:'Use the fixed supported 1280 × 800 policy scenario. Do not click Transfer funds through the human-control gateway to test this rule.'},
-    {id:'capture',title:'Reject ordinary raw screenshot persistence',kind:'command',commands:['./scripts/desktop screenshot'],expected:['The command exits nonzero and says raw screenshot persistence is disabled.','No ordinary screenshot bundle is created. The live viewer can still display pixels. Legacy calibration images are a separate documented exception.']},
-    {id:'export',title:'Inspect an actual safe evidence export',kind:'command',commands:['make export RUN={{REPLAY_RUN}}','ls tmp/desktop-artifacts/exports/{{REPLAY_RUN}}\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/manifest.json\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/summary.json\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/events.jsonl'],capture:'replayRun',actions:['Use the successful replay folder saved earlier, not a handoff or calibration folder. Compare the export to its source result.json and events.jsonl.'],expected:['Exactly summary.json, events.jsonl and manifest.json are exported. There is no result.json, screenshot or arbitrary extra file.','The export retains approved metadata but excludes member values, recognized text, input text and private markers. modelCalls remains zero.'],note:'The exporter refuses to overwrite an existing export. On a repeated pass, use a newly created successful replay; do not delete an old export just to make a command pass.'}
-  ]},
-  {id:'handoff',title:'06 / Perform the real human takeover',intro:'This is the missing real-person check. You must perform these steps yourself in the operator panel. The human lease lasts 15 minutes after Take control, with at most 100 requests. Finish this block before running any other reset or harness.',steps:[
-    {id:'handoff-start',title:'Reach expiry and record the original session',kind:'manual',commands:['make handoff-demo'],actions:['Open or reload the operator panel (port 6081). Enter member 00123 and choose Start lookup.','Wait for Session expired. Copy the panel’s session UUID into your notes; compare it at the end.'],expected:['Phase becomes awaiting human, with owner quiescing. The diagnostic line shows search-member and intervention_required. Pending automation is already revoked.','The desktop remains at expiry; no recovery input is issued automatically. Verify & resume is disabled until you take control.'],links:[['Open operator panel','http://127.0.0.1:6081/']]},
-    {id:'handoff-premature',title:'Take control and reject premature resumption',kind:'manual',actions:['Choose Take control. Confirm the panel shows human ownership.','While the expiry dialog is still present, choose Verify & resume.'],expected:['The request is rejected with the “return to the original member overview” message.','You retain control, the session UUID has not changed, and automation does not issue input.']},
-    {id:'handoff-restore',title:'Restore access yourself through desktop input',kind:'manual',actions:['Click the training-code field inside the desktop image. In the panel’s Text to send field, enter wrong, choose Send text, then click Restore workspace inside the desktop. Expect a training-code error.','Click the desktop code field again, choose Select all, then send demo using Text to send → Send text. Click Restore workspace inside the desktop.'],expected:['The code is masked on the desktop and the panel clears its send-text field after sending.','The original Demo Member A / 00123 overview returns. The session UUID is unchanged, you still own input, and automation waits for explicit resumption.'],note:'Use the panel’s text controls; typing on the host keyboard while looking at the image does not directly type into the remote app. Use only the synthetic code demo.'},
-    {id:'handoff-wrong',title:'Reject the wrong screen and the wrong member',kind:'manual',actions:['While you own control, click Member search in the desktop breadcrumb. Choose Verify & resume; expect rejection on the search page.','Click the desktop member-ID field, send 00456 with the panel’s text controls, and choose the panel’s Enter button. Wait for Demo Member B. Choose Verify & resume; expect rejection for the wrong member.','Click Member search again, send 00123 into the desktop field, choose Enter, and return to Demo Member A’s overview.'],expected:['Both incorrect return states are rejected. The engine does not silently restart search or accept another member.','Human ownership persists through each rejection. You return to the correct overview yourself.']},
-    {id:'handoff-resume-a',title:'Resume and verify member A in the same session',kind:'manual',actions:['On the original 00123 member overview, choose Verify & resume. Watch the account selection.','Compare the final session UUID with the one recorded at expiry.'],expected:['Ownership returns to automation and the run succeeds with Demo Member A, Savings and $1,234.56 USD.','The session UUID is identical. Automation continues with opening Savings; it does not repeat typing/search.']},
-    {id:'handoff-audit',title:'Review the audit from your own handoff',kind:'command',commands:['HANDOFF_DIR="$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)"\ncat "$HANDOFF_DIR/summary.json"\ncat "$HANDOFF_DIR/audit.jsonl"'],actions:['Record the run folder path in notes. Read the lifecycle entries from awaiting_human through human, resumed and success.'],expected:['summary.json reports sessionUnchanged: true, modelCalls: 0, five automation actions, and a positive humanActions count.','No automation actions occur between human and resumed. Human sequence numbers increase; human entries omit text, keys and input coordinates. No screenshots or recognized business text are retained in the audit.'],note:'Run this immediately after your completed handoff, with no other runs in parallel, so the newest handoff directory is yours. Nested interpreter entries retain reviewed step/target/checkpoint IDs, confidence and recognition-region boxes; these are not human input coordinates. This audit is separate from M2’s replay-only export command.'},
-    {id:'handoff-b',title:'Repeat the positive handoff for member B',kind:'manual',commands:['make handoff-demo'],actions:['Reload the operator panel. Start a lookup for 00456, take control at expiry, send demo into the desktop training-code field, and restore the workspace.','On Demo Member B’s overview, choose Verify & resume. Compare the session UUID before and after this run, and note its audit folder.'],expected:['The second handoff succeeds with 00456 / Demo Member B / Savings / $98.07 USD.','The session remains unchanged within this run. It is correctly different from the previous run because you explicitly reset between them.']},
-    {id:'handoff-stop-panel',title:'Stop from the panel while text input is pending',kind:'manual',commands:['make handoff-demo', 'python3 -c "print(\'x\' * 256)"'],actions:['Reload the operator panel, start a lookup and take control at expiry. Click the training-code field inside the desktop.','Copy the 256 synthetic x characters printed by the second command into Text to send. Choose Send text, then immediately choose the panel’s Stop button while Send text is still disabled.','Observe the stopped state, try the disabled input/resume controls, and reload the panel.'],expected:['Stop stays clickable during the input request. The request is interrupted with stopped; the panel becomes stopped and retains the same session UUID.','Input and resumption remain disabled after reload. A reset is required.'],note:'If typing finished before you clicked Stop, reset and repeat this check. The HTTP regression also tests this race deterministically with simulated slow input, including modifier cleanup and concurrent status polling. A CLI stop alone does not exercise this route.'},
-    {id:'handoff-stop',title:'Stop through the CLI while a human owns the desktop',kind:'manual',commands:['make handoff-demo','make stop'],actions:['After the first command, reload the panel, start a lookup and choose Take control at expiry.','Then run make stop in the terminal. Observe the panel and try to continue.'],expected:['The panel changes to stopped, human controls are disabled, and input/resume cannot proceed.','Refreshing the panel does not clear stop. A desktop reset is required.'],note:'Do not copy and execute both command blocks before taking control; they are intentionally separated by the manual action.'},
-    {id:'arbitrary',title:'Refuse to guess a continuation after an arbitrary interruption',kind:'manual',commands:['make reset MODE=bank SCENARIO=blocked'],actions:['Reload the operator panel. Start a lookup and immediately choose Take control while it is running (before the five-second blocked-search timeout).','Inspect the guidance and resume control. Stop this run using the panel’s Stop button.'],expected:['You can take ownership in the same session, but the panel says there is no verified continuation. Verify & resume is disabled.','The engine does not improvise a recovery or blindly replay prior actions. Reset is required.'],note:'If the run timed out before your click, record the timing issue and repeat this one setup. Do not record that attempt as a successful arbitrary takeover.'},
-    {id:'handoff-diagnostics',title:'Inspect the context of a failed panel run',kind:'manual',commands:['make reset MODE=bank SCENARIO=blocked', 'HANDOFF_DIR="$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)"\ncat "$HANDOFF_DIR/result.json"\ncat "$HANDOFF_DIR/audit.jsonl"'],actions:['Reload the panel, start a lookup for 00123, and let it reach failure without taking control.','Record the visible step and reason, then inspect the newest handoff files using the second command.'],expected:['The panel reports step search-member and reason checkpoint_timeout. result.json identifies the failed step and expected checkpoint.','audit.jsonl retains nested interpreter entries with reviewed step/target IDs and a failed step event. It contains no typed training code, raw keystrokes, member ID values, recognized business text or screenshot.','Take control and Verify & resume are disabled after this terminal failure. Broader failure-to-handoff integration remains future work; the current behavior is explicit.'],note:'Last verified checkpoint means the last successful observation, not a claim about the current screen. Record evidence before the next reset.'}
-  ]},
-  {id:'lifecycle',title:'07 / Invalidate old sessions',intro:'Complete the stop/reset checks before the final harnesses. These commands intentionally attempt input against an obsolete session.',steps:[
-    {id:'stale',title:'Reject input from a session that was reset',kind:'command',commands:['make ready','make reset MODE=bank SCENARIO=default','./scripts/desktop action --session \'{{STALE_SESSION}}\' --json \'{"type":"click","x":200,"y":200}\''],capture:'staleSession',actions:['Copy the session UUID from the first readiness command into the field below, before resetting. After reset, use that old UUID for the final action command.'],expected:['Reset produces a new UUID. The old-session action exits nonzero with stale_session before input.','The new search screen is untouched. This does not substitute for the ownership-epoch tests within one session.']}
-  ]},
-  {id:'backstop',title:'08 / Review the checks that need a harness',intro:'Close the operator panel before these commands. Do not operate the desktop or run another reset concurrently. Keep each output directory path in your notes. These automated runs supplement your manual observations.',steps:[
-    {id:'fixture-suite',title:'Run the full fixture test suite',kind:'harness',commands:['PLAYWRIGHT_BROWSERS_PATH="$PWD/tmp/playwright" make fixture-test'],expected:['All 15 fixture tests pass at this revision, including expiry, validation, navigation and all configured rendering scenarios.','A nonzero exit or failed test is recorded as failed/blocked, not skipped silently.'],note:'If the repository browser cache is absent, install the pinned browser with PLAYWRIGHT_BROWSERS_PATH="$PWD/tmp/playwright" ./apps/bank-fixture/node_modules/.bin/playwright install chromium, then rerun. The suite uses ports 4180–4187.'},
-    {id:'policy-suite',title:'Run M2 plus the complete M1 regression once',kind:'harness',commands:['make policy-check'],actions:['Let the entire command finish. Open its retained summary and the embedded m1-regression summary.'],expected:['The M2 gate passes operation/application checks, fixed-route and direct-origin denials, browser restrictions, and safe export.','The embedded M1 gate passes lifecycle, native/browser input, server view-only, session/focus/stop/exclusivity checks, runtime/isolation verification, 85 engine tests, ten baseline replays, seven scenario replays, and seven rejection cases.','Invalid/unapproved artifacts, input typing, symlink/FIFO export handling and closed metadata rules are covered by the engine tests. A fresh bank search screen is left at the end.'],note:'policy-check already invokes the full M1 gate. Do not also run make check or replay-check just to duplicate it. Preserve a failed attempt before rerunning a corrected setup.'},
-    {id:'handoff-suite',title:'Run the adversarial takeover harness',kind:'harness',commands:['make handoff-check'],expected:['85 engine tests and both simulated-operator handoff cases pass.','The checks cover in-flight input draining, modifier release, stale epochs, immediate pause revocation, duplicate requests, expiry without browser polling, HTTP Stop during in-flight typing/hotkeys, status-poll contention, HTTP request protection, sanitized interpreter traces, wrong-member return and exact completion.','The evidence labels its operator as automated-test-through-operator-api. It is separate from the real-person handoffs you performed above.']}
-  ]},
-  {id:'finish-up',title:'09 / Preserve the result and leave a clean app',intro:'Your final report should say which revision you tested, which runs contain the evidence, and what failed. A screenshot of a green page alone is not a complete acceptance record.',steps:[
-    {id:'final-state',title:'Reset, record issues, and export your checklist',kind:'command',commands:['make reset MODE=bank SCENARIO=default\nmake ready'],actions:['Record the manual handoff folders and harness evidence directories in the relevant notes. For each issue, include expected versus actual behavior and the screen/phase where it happened.','Check that any failed, blocked or skipped step is still marked honestly. Fill your name/revision/date, then use the real-person attestation and export below.'],expected:['The app is left on a fresh bank search screen with inputStopped: false. Reopen/reload the operator panel when you want another run.','The downloaded checklist report keeps per-step status and notes. Only all-passed steps plus reviewer details and explicit attestation can produce an overall passed result.'],links:[['M1 specification','MILESTONE_1.md'],['M2 specification','MILESTONE_2.md'],['M3 specification','MILESTONE_3.md'],['Roadmap','ROADMAP.md']]}
-  ]}
+  {
+    "id": "prepare",
+    "title": "01 / Prepare the workspace",
+    "intro": "Use a terminal in the repository root for every command below. Finish one scenario before starting the next; there is only one shared desktop.",
+    "steps": [
+      {
+        "id": "setup",
+        "title": "Record the environment and starting revision",
+        "kind": "command",
+        "actions": [
+          "Start Docker Desktop. Use Node 22 (see .nvmrc), host Python 3.9+ and uv for the quick gate. The engine runs in Docker. No OpenAI key is needed.",
+          "Close old operator/fixture tabs and any previous fixture test servers. Keep this checklist open. Record the revision above and environment versions in notes."
+        ],
+        "commands": [
+          "cd /Users/phillip/interview/interface-ai\ngit describe --always --dirty\ngit status --short\ndocker version\ndocker compose version\nnode --version\nmake help"
+        ],
+        "expected": [
+          "Record the actual revision, including -dirty for local changes. This pass expects cleanup commit 3f11b9d or a later revision containing it. Docker reports a running server.",
+          "Make lists replay, policy-check, handoff-demo, handoff-check, and export. Ports 4173, 4180–4187, 6080 and 6081 are available for their respective services."
+        ],
+        "links": [
+          [
+            "Repository guide",
+            "../README.md"
+          ],
+          [
+            "Current evidence index",
+            "../evidence/README.md"
+          ]
+        ]
+      },
+      {
+        "id": "build",
+        "title": "Build and start from a fresh desktop",
+        "kind": "command",
+        "commands": [
+          "make build",
+          "make reset MODE=bank SCENARIO=default\nmake ready"
+        ],
+        "expected": [
+          "Both Docker images build; desktop, fixture, gateway and viewer become healthy.",
+          "Readiness reports mode bank, dimensions 1280 × 800, a session UUID, and inputStopped: false. Record that UUID in notes."
+        ],
+        "note": "If public image metadata stalls, use the documented temporary Docker credential-helper workaround. Record the setup issue and retain runtime restrictions.",
+        "links": [
+          [
+            "Build troubleshooting",
+            "DEVELOPMENT.md#public-image-credential-helper-workaround"
+          ]
+        ]
+      },
+      {
+        "id": "quick-gate",
+        "title": "Verify current builds and the quick quality gate",
+        "kind": "harness",
+        "commands": [
+          "make fixture-install\nmake quick-check"
+        ],
+        "expected": [
+          "The quick gate passes formatting/lint, four host harness tests, 92 Linux engine tests, four schema comparisons and fixture typechecking. Record the printed evidence directory.",
+          "build-preflight.json binds source to both image IDs and verifies shipped engine files and compiled fixture assets. A stale build fails with make build instructions; no desktop input occurs and no schema is rewritten."
+        ],
+        "links": [
+          [
+            "Development checks",
+            "DEVELOPMENT.md"
+          ],
+          [
+            "Cleanup validation",
+            "../evidence/cleanup-implementation-2026-09-17/README.md"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fixture",
+    "title": "02 / Check the banking UI by hand",
+    "intro": "This host preview lets you exercise the React fixture directly. It is a separate surface from the isolated desktop and does not demonstrate computer-use replay.",
+    "steps": [
+      {
+        "id": "fixture-start",
+        "title": "Launch the host fixture preview",
+        "kind": "command",
+        "commands": [
+          "make fixture-install\nnpm --prefix apps/bank-fixture run build",
+          "npm --prefix apps/bank-fixture run preview"
+        ],
+        "actions": [
+          "Leave the preview command running in a second terminal. Open the host fixture link below."
+        ],
+        "expected": [
+          "The Northstar search page loads at 127.0.0.1:4173 with the synthetic-data label and no preselected member."
+        ],
+        "links": [
+          [
+            "Open host fixture",
+            "http://127.0.0.1:4173/"
+          ]
+        ]
+      },
+      {
+        "id": "fixture-manual",
+        "title": "Exercise search, navigation and reset",
+        "kind": "manual",
+        "actions": [
+          "Search 00123. Confirm Demo Member A, open Savings, and check $1,234.56 USD. Return to accounts, open Checking, then search another member.",
+          "Search 00456. Confirm Demo Member B and Savings $98.07 USD. The old member and balance must not remain.",
+          "Search 00999: expect “Member not found.” Try 123 and 00a23: expect a five-digit validation error without silently padding or coercing.",
+          "Reload the page: expect an empty search field. Stop the host preview with Ctrl+C in its terminal and close its tab."
+        ],
+        "expected": [
+          "Leading zeroes and exact member identities are preserved. Back navigation works; reload resets the fixture.",
+          "Missing and invalid IDs never display a guessed balance. This was your own manual UI check."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "desktop",
+    "title": "03 / Observe real desktop control",
+    "intro": "Use the read-only desktop viewer for this section. Reconnect or reload it after every desktop reset. Keep the operator panel closed until the takeover section.",
+    "steps": [
+      {
+        "id": "native",
+        "title": "Open the native calibration surface",
+        "kind": "manual",
+        "commands": [
+          "make reset MODE=native\nmake ready"
+        ],
+        "actions": [
+          "Open the viewer and inspect the native pad. Try clicking a blue target and typing into its field through the viewer."
+        ],
+        "expected": [
+          "The same 1280 × 800 desktop is visible, with no clipped targets. The session UUID differs from the previous bank session.",
+          "Your viewer clicks and keys do not change the pad. noVNC is server-enforced view-only."
+        ],
+        "links": [
+          [
+            "Open read-only desktop viewer",
+            "http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true"
+          ]
+        ]
+      },
+      {
+        "id": "native-smoke",
+        "title": "Watch native mouse, keyboard and scroll input",
+        "kind": "harness",
+        "commands": [
+          "./scripts/desktop smoke"
+        ],
+        "actions": [
+          "Watch the viewer as the command runs. Read its eight PASS checks and evidence path."
+        ],
+        "expected": [
+          "Three targets turn green, text is selected/replaced/submitted, and the native list scrolls.",
+          "The smoke reports screenshot agreement, server-side VNC input rejection, stop behavior, network probes and an unchanged session."
+        ],
+        "note": "This trusted calibration harness intentionally saves synthetic screenshots and uses fixed coordinates. It proves input plumbing; it is not a model-discovered capability or a shareable safe export."
+      },
+      {
+        "id": "browser-smoke",
+        "title": "Watch the same adapter control Chromium",
+        "kind": "harness",
+        "commands": [
+          "make reset MODE=bank SCENARIO=default",
+          "./scripts/desktop browser-smoke --member-id 00123"
+        ],
+        "actions": [
+          "Reload the viewer after reset. Observe the banking app search, account navigation and return to search."
+        ],
+        "expected": [
+          "Sandboxed Chromium runs inside the isolated desktop. The browser calibration completes successfully and leaves the search screen.",
+          "The input mechanism works on both native and browser surfaces; no browser DOM locator is used by the replay engine."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "replay",
+    "title": "04 / Replay the reviewed capability",
+    "intro": "These runs use the manually authored artifact and local anchors/OCR. The CLI prints an evidence path /artifacts/<run>; on the host it is tmp/desktop-artifacts/<run>. Inspect result.json for values and report.json for metadata.",
+    "steps": [
+      {
+        "id": "replay-a",
+        "title": "Get the exact savings balance for member A",
+        "kind": "command",
+        "commands": [
+          "make reset MODE=bank SCENARIO=default\nmake validate",
+          "make replay MEMBER_ID=00123"
+        ],
+        "actions": [
+          "Watch the viewer. Open this run’s result.json and report.json from the printed evidence path. Save the successful run folder name below for the export check."
+        ],
+        "capture": "replayRun",
+        "expected": [
+          "Success: memberId 00123, Demo Member A, Savings, USD, amountMinor 123456; the screen shows $1,234.56.",
+          "The report records modelCalls: 0 and capability digest 94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17."
+        ],
+        "links": [
+          [
+            "Manual capability",
+            "../capabilities/poc/savings-balance/capability.json"
+          ]
+        ]
+      },
+      {
+        "id": "replay-b",
+        "title": "Reuse the unchanged artifact for member B",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=default MEMBER_ID=00456"
+        ],
+        "expected": [
+          "Success: memberId 00456, Demo Member B, Savings, USD, amountMinor 9807; the screen shows $98.07.",
+          "The capability digest is unchanged, modelCalls is zero, and a fresh session was used."
+        ]
+      },
+      {
+        "id": "invalid",
+        "title": "Reject invalid invocation inputs before UI changes",
+        "kind": "command",
+        "commands": [
+          "make reset MODE=bank SCENARIO=default",
+          "make replay MEMBER_ID=123",
+          "./scripts/desktop replay --inputs-json '{\"memberId\":123}'"
+        ],
+        "expected": [
+          "Both invocations exit nonzero with invalid_input. Their reports show preflight failure and zero completed actions.",
+          "The search page stays untouched. A number is not accepted as a string, padded, or converted into an ID."
+        ],
+        "note": "Here and in later negative checks, a nonzero exit with the specified rejection is the expected passing result."
+      },
+      {
+        "id": "missing",
+        "title": "Handle a member who does not exist",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=default MEMBER_ID=00999"
+        ],
+        "expected": [
+          "Named business_outcome: member_not_found, with no account click or fabricated output.",
+          "The visible page identifies the queried ID and says the member was not found."
+        ]
+      },
+      {
+        "id": "translated",
+        "title": "Find targets after the supported layout shift",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=translated MEMBER_ID=00123",
+          "make demo SCENARIO=translated MEMBER_ID=00456"
+        ],
+        "actions": [
+          "Run and inspect each command separately. Observe that content has moved 40 pixels right and down."
+        ],
+        "expected": [
+          "Both members return their exact expected outputs using the same artifact and anchor files.",
+          "No manual coordinate correction or model fallback is needed."
+        ]
+      },
+      {
+        "id": "delayed",
+        "title": "Wait for slow rendering within the existing bounds",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=delayed MEMBER_ID=00123"
+        ],
+        "expected": [
+          "“Searching…” remains visible longer than the default scenario (configured delay 1.8 seconds).",
+          "The run waits and succeeds with $1,234.56; it does not retype the ID or use a model."
+        ]
+      },
+      {
+        "id": "duplicate",
+        "title": "Stop on two indistinguishable Savings targets",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=duplicate MEMBER_ID=00123"
+        ],
+        "expected": [
+          "Two Savings targets are visible. The run exits nonzero with ambiguous_target at open-savings.",
+          "Four input actions completed; neither Savings button is selected by guessing."
+        ]
+      },
+      {
+        "id": "unreadable",
+        "title": "Refuse to invent an unreadable balance",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=unreadable MEMBER_ID=00123"
+        ],
+        "expected": [
+          "The account shows Balance unavailable rather than an amount.",
+          "The run exits nonzero with ocr_uncertain at read-balance; five input actions completed, but there is no success output."
+        ]
+      },
+      {
+        "id": "blocked",
+        "title": "Stop a search that never resolves",
+        "kind": "command",
+        "commands": [
+          "make demo SCENARIO=blocked MEMBER_ID=00123"
+        ],
+        "expected": [
+          "The app remains on loading. The run exits nonzero with checkpoint_timeout at search-member.",
+          "No account navigation or unlimited retry occurs. The step has a five-second bound; startup/reset time is separate."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "policy",
+    "title": "05 / Challenge policy and evidence boundaries",
+    "intro": "Use the ordinary automation action CLI for the forbidden-input check. Human takeover grants explicit manual authority and is not the way to test the automation-only bank allowlist.",
+    "steps": [
+      {
+        "id": "operation",
+        "title": "Deny a risky control and a browser shortcut",
+        "kind": "command",
+        "commands": [
+          "make reset MODE=bank SCENARIO=policy\nmake ready",
+          "./scripts/desktop action --session '{{POLICY_SESSION}}' --json '{\"type\":\"click\",\"x\":1070,\"y\":710}'",
+          "./scripts/desktop action --session '{{POLICY_SESSION}}' --json '{\"type\":\"hotkey\",\"keys\":[\"ctrl\",\"l\"]}'"
+        ],
+        "capture": "policySession",
+        "actions": [
+          "Reload the viewer. Confirm the synthetic Transfer funds panel is visible. Copy the current readiness session UUID into the field below before copying the action commands."
+        ],
+        "expected": [
+          "Both actions exit nonzero with policy_operation_denied. Transfer status remains “No transfer requested”; the address bar does not receive focus.",
+          "The page’s instruction to ignore restrictions does not grant permission."
+        ],
+        "note": "Use the fixed supported 1280 × 800 policy scenario. Do not click Transfer funds through the human-control gateway to test this rule."
+      },
+      {
+        "id": "capture",
+        "title": "Reject ordinary raw screenshot persistence",
+        "kind": "command",
+        "commands": [
+          "./scripts/desktop screenshot"
+        ],
+        "expected": [
+          "The command exits nonzero and says raw screenshot persistence is disabled.",
+          "No ordinary screenshot bundle is created. The live viewer can still display pixels. Legacy calibration images are a separate documented exception."
+        ]
+      },
+      {
+        "id": "export",
+        "title": "Inspect an actual safe evidence export",
+        "kind": "command",
+        "commands": [
+          "make export RUN={{REPLAY_RUN}}",
+          "ls tmp/desktop-artifacts/exports/{{REPLAY_RUN}}\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/manifest.json\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/summary.json\ncat tmp/desktop-artifacts/exports/{{REPLAY_RUN}}/events.jsonl"
+        ],
+        "capture": "replayRun",
+        "actions": [
+          "Use the successful replay folder saved earlier, not a handoff or calibration folder. Compare the export to its source result.json and events.jsonl."
+        ],
+        "expected": [
+          "Exactly summary.json, events.jsonl and manifest.json are exported. There is no result.json, screenshot or arbitrary extra file.",
+          "The export retains approved metadata but excludes member values, recognized text, input text and private markers. modelCalls remains zero."
+        ],
+        "note": "The exporter refuses to overwrite an existing export. On a repeated pass, use a newly created successful replay; do not delete an old export just to make a command pass."
+      }
+    ]
+  },
+  {
+    "id": "handoff",
+    "title": "06 / Perform the real human takeover",
+    "intro": "This is the missing real-person check. You must perform these steps yourself in the operator panel. The human lease lasts 15 minutes after Take control, with at most 100 requests. Finish this block before running any other reset or harness.",
+    "steps": [
+      {
+        "id": "handoff-invalid-input",
+        "title": "Explain invalid panel input without starting automation",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo"
+        ],
+        "actions": [
+          "Reload the operator panel, replace Member with 123 and choose Start lookup. Observe the message and unchanged desktop.",
+          "Record the response, then continue with the normal five-digit member in the next step."
+        ],
+        "expected": [
+          "A clear message asks for exactly five digits, including leading zeroes. The panel remains idle; no lookup starts.",
+          "The request is classified as 400 invalid_input, rather than a server failure, if you inspect the operator request in browser developer tools."
+        ],
+        "links": [
+          [
+            "Open operator panel",
+            "http://127.0.0.1:6081/"
+          ]
+        ]
+      },
+      {
+        "id": "handoff-start",
+        "title": "Reach expiry and record the original session",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo"
+        ],
+        "actions": [
+          "Open or reload the operator panel (port 6081). Enter member 00123 and choose Start lookup.",
+          "Wait for Session expired. Copy the panel’s session UUID into your notes; compare it at the end."
+        ],
+        "expected": [
+          "Phase becomes awaiting human, with owner quiescing. The diagnostic line shows search-member and intervention_required. Pending automation is already revoked.",
+          "The desktop remains at expiry; no recovery input is issued automatically. Verify & resume is disabled until you take control."
+        ],
+        "links": [
+          [
+            "Open operator panel",
+            "http://127.0.0.1:6081/"
+          ]
+        ]
+      },
+      {
+        "id": "handoff-premature",
+        "title": "Take control and reject premature resumption",
+        "kind": "manual",
+        "actions": [
+          "Choose Take control. Confirm the panel shows human ownership.",
+          "While the expiry dialog is still present, choose Verify & resume."
+        ],
+        "expected": [
+          "The request is rejected with the “return to the original member overview” message.",
+          "You retain control, the session UUID has not changed, and automation does not issue input."
+        ]
+      },
+      {
+        "id": "handoff-restore",
+        "title": "Restore access yourself through desktop input",
+        "kind": "manual",
+        "actions": [
+          "Click the training-code field inside the desktop image. In the panel’s Text to send field, enter wrong, choose Send text, then click Restore workspace inside the desktop. Expect a training-code error.",
+          "Click the desktop code field again, choose Select all, then send demo using Text to send → Send text. Click Restore workspace inside the desktop."
+        ],
+        "expected": [
+          "The code is masked on the desktop and the panel clears its send-text field after sending.",
+          "The original Demo Member A / 00123 overview returns. The session UUID is unchanged, you still own input, and automation waits for explicit resumption."
+        ],
+        "note": "Use the panel’s text controls; typing on the host keyboard while looking at the image does not directly type into the remote app. Use only the synthetic code demo."
+      },
+      {
+        "id": "handoff-wrong",
+        "title": "Reject the wrong screen and the wrong member",
+        "kind": "manual",
+        "actions": [
+          "While you own control, click Member search in the desktop breadcrumb. Choose Verify & resume; expect rejection on the search page.",
+          "Click the desktop member-ID field, send 00456 with the panel’s text controls, and choose the panel’s Enter button. Wait for Demo Member B. Choose Verify & resume; expect rejection for the wrong member.",
+          "Click Member search again, send 00123 into the desktop field, choose Enter, and return to Demo Member A’s overview."
+        ],
+        "expected": [
+          "Both incorrect return states are rejected. The engine does not silently restart search or accept another member.",
+          "Human ownership persists through each rejection. You return to the correct overview yourself."
+        ]
+      },
+      {
+        "id": "handoff-resume-a",
+        "title": "Resume and verify member A in the same session",
+        "kind": "manual",
+        "actions": [
+          "On the original 00123 member overview, choose Verify & resume. Watch the account selection.",
+          "Compare the final session UUID with the one recorded at expiry."
+        ],
+        "expected": [
+          "Ownership returns to automation and the run succeeds with Demo Member A, Savings and $1,234.56 USD.",
+          "The session UUID is identical. Automation continues with opening Savings; it does not repeat typing/search."
+        ]
+      },
+      {
+        "id": "handoff-audit",
+        "title": "Review the audit from your own handoff",
+        "kind": "command",
+        "commands": [
+          "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/summary.json\"\ncat \"$HANDOFF_DIR/audit.jsonl\"",
+          "shasum -a 256 \"$HANDOFF_DIR/result.json\""
+        ],
+        "actions": [
+          "Record the run folder path in notes. Read the lifecycle entries from awaiting_human through human, resumed and success."
+        ],
+        "expected": [
+          "summary.json reports sessionUnchanged: true, modelCalls: 0, five automation actions, and a positive humanActions count.",
+          "No automation actions occur between human and resumed. Human sequence numbers increase; human entries omit text, keys and input coordinates. No screenshots or recognized business text are retained in the audit.",
+          "The handoff-v2 summary includes resultStatus, reason, sessionId, step, lastCheckpoint, auditEvents and resultSha256. The digest matches result.json; the explicit business result remains separate from the audit."
+        ],
+        "note": "Run this immediately after your completed handoff, with no other runs in parallel, so the newest handoff directory is yours. Nested interpreter entries retain reviewed step/target/checkpoint IDs, confidence and recognition-region boxes; these are not human input coordinates. This audit is separate from M2’s replay-only export command."
+      },
+      {
+        "id": "handoff-b",
+        "title": "Repeat the positive handoff for member B",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo"
+        ],
+        "actions": [
+          "Reload the operator panel. Start a lookup for 00456, take control at expiry, send demo into the desktop training-code field, and restore the workspace.",
+          "On Demo Member B’s overview, choose Verify & resume. Compare the session UUID before and after this run, and note its audit folder."
+        ],
+        "expected": [
+          "The second handoff succeeds with 00456 / Demo Member B / Savings / $98.07 USD.",
+          "The session remains unchanged within this run. It is correctly different from the previous run because you explicitly reset between them."
+        ]
+      },
+      {
+        "id": "handoff-stop-panel",
+        "title": "Stop from the panel while text input is pending",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo",
+          "python3 -c \"print('x' * 256)\"",
+          "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/summary.json\"\ncat \"$HANDOFF_DIR/result.json\""
+        ],
+        "actions": [
+          "Reload the operator panel, start a lookup and take control at expiry. Click the training-code field inside the desktop.",
+          "Copy the 256 synthetic x characters printed by the second command into Text to send. Choose Send text, then immediately choose the panel’s Stop button while Send text is still disabled.",
+          "Observe the stopped state, try the disabled input/resume controls, and reload the panel.",
+          "After Stop has settled, run the final command to inspect your stopped run, before resetting."
+        ],
+        "expected": [
+          "Stop stays clickable during the input request. The request is interrupted with stopped; the panel becomes stopped and retains the same session UUID.",
+          "Input and resumption remain disabled after reload. A reset is required.",
+          "Both terminal files exist: summary status stopped/reason stopped, result status failure/code stopped. Last step/checkpoint and session context remain available. A late worker result cannot replace Stop."
+        ],
+        "note": "If typing finished before you clicked Stop, reset and repeat this check. The HTTP regression also tests this race deterministically with simulated slow input, including modifier cleanup and concurrent status polling. A CLI stop alone does not exercise this route."
+      },
+      {
+        "id": "handoff-stop",
+        "title": "Stop through the CLI while a human owns the desktop",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo",
+          "make stop"
+        ],
+        "actions": [
+          "After the first command, reload the panel, start a lookup and choose Take control at expiry.",
+          "Then run make stop in the terminal. Observe the panel and try to continue."
+        ],
+        "expected": [
+          "The panel changes to stopped, human controls are disabled, and input/resume cannot proceed.",
+          "Refreshing the panel does not clear stop. A desktop reset is required."
+        ],
+        "note": "Do not copy and execute both command blocks before taking control; they are intentionally separated by the manual action."
+      },
+      {
+        "id": "arbitrary",
+        "title": "Refuse to guess a continuation after an arbitrary interruption",
+        "kind": "manual",
+        "commands": [
+          "make reset MODE=bank SCENARIO=blocked"
+        ],
+        "actions": [
+          "Reload the operator panel. Start a lookup and immediately choose Take control while it is running (before the five-second blocked-search timeout).",
+          "Inspect the guidance and resume control. Stop this run using the panel’s Stop button."
+        ],
+        "expected": [
+          "You can take ownership in the same session, but the panel says there is no verified continuation. Verify & resume is disabled.",
+          "The engine does not improvise a recovery or blindly replay prior actions. Reset is required."
+        ],
+        "note": "If the run timed out before your click, record the timing issue and repeat this one setup. Do not record that attempt as a successful arbitrary takeover."
+      },
+      {
+        "id": "handoff-diagnostics",
+        "title": "Inspect the context of a failed panel run",
+        "kind": "manual",
+        "commands": [
+          "make reset MODE=bank SCENARIO=blocked",
+          "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/result.json\"\ncat \"$HANDOFF_DIR/audit.jsonl\""
+        ],
+        "actions": [
+          "Reload the panel, start a lookup for 00123, and let it reach failure without taking control.",
+          "Record the visible step and reason, then inspect the newest handoff files using the second command."
+        ],
+        "expected": [
+          "The panel reports step search-member and reason checkpoint_timeout. result.json identifies the failed step and expected checkpoint.",
+          "audit.jsonl retains nested interpreter entries with reviewed step/target IDs and a failed step event. It contains no typed training code, raw keystrokes, member ID values, recognized business text or screenshot.",
+          "Take control and Verify & resume are disabled after this terminal failure. Broader failure-to-handoff integration remains future work; the current behavior is explicit."
+        ],
+        "note": "Last verified checkpoint means the last successful observation, not a claim about the current screen. Record evidence before the next reset."
+      }
+    ]
+  },
+  {
+    "id": "lifecycle",
+    "title": "07 / Invalidate old sessions",
+    "intro": "Complete the stop/reset checks before the final harnesses. These commands intentionally attempt input against an obsolete session.",
+    "steps": [
+      {
+        "id": "stale",
+        "title": "Reject input from a session that was reset",
+        "kind": "command",
+        "commands": [
+          "make ready",
+          "make reset MODE=bank SCENARIO=default",
+          "./scripts/desktop action --session '{{STALE_SESSION}}' --json '{\"type\":\"click\",\"x\":200,\"y\":200}'"
+        ],
+        "capture": "staleSession",
+        "actions": [
+          "Copy the session UUID from the first readiness command into the field below, before resetting. After reset, use that old UUID for the final action command."
+        ],
+        "expected": [
+          "Reset produces a new UUID. The old-session action exits nonzero with stale_session before input.",
+          "The new search screen is untouched. This does not substitute for the ownership-epoch tests within one session."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "backstop",
+    "title": "08 / Review the checks that need a harness",
+    "intro": "Close the operator panel before these commands. Do not operate the desktop or run another reset concurrently. Keep each output directory path in your notes. These automated runs supplement your manual observations.",
+    "steps": [
+      {
+        "id": "fixture-suite",
+        "title": "Run the full fixture test suite",
+        "kind": "harness",
+        "commands": [
+          "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/tmp/playwright\" make fixture-test"
+        ],
+        "expected": [
+          "All 15 fixture tests pass at this revision, including expiry, validation, navigation and all configured rendering scenarios.",
+          "A nonzero exit or failed test is recorded as failed/blocked, not skipped silently."
+        ],
+        "note": "If the repository browser cache is absent, install the pinned browser with PLAYWRIGHT_BROWSERS_PATH=\"$PWD/tmp/playwright\" ./apps/bank-fixture/node_modules/.bin/playwright install chromium, then rerun. The suite uses ports 4180–4187."
+      },
+      {
+        "id": "policy-suite",
+        "title": "Run M2 plus the complete M1 regression once",
+        "kind": "harness",
+        "commands": [
+          "make policy-check"
+        ],
+        "actions": [
+          "Let the entire command finish. Open its retained summary and the embedded m1-regression summary."
+        ],
+        "expected": [
+          "The M2 gate passes operation/application checks, fixed-route and direct-origin denials, browser restrictions, and safe export.",
+          "The embedded M1 gate passes lifecycle, native/browser input, server view-only, session/focus/stop/exclusivity checks, runtime/isolation verification, 92 engine tests, ten baseline replays, seven scenario replays, and seven rejection cases.",
+          "Invalid/unapproved artifacts, input typing, symlink/FIFO export handling and closed metadata rules are covered by the engine tests. A fresh bank search screen is left at the end.",
+          "Both image fingerprints and actual running container IDs match reviewed source before acceptance input. Artifact FIFOs, verified image-byte snapshots and terminal finalization are included in regressions."
+        ],
+        "note": "policy-check already invokes the full M1 gate. Do not also run make check or replay-check just to duplicate it. Preserve a failed attempt before rerunning a corrected setup."
+      },
+      {
+        "id": "handoff-suite",
+        "title": "Run the adversarial takeover harness",
+        "kind": "harness",
+        "commands": [
+          "make handoff-check"
+        ],
+        "expected": [
+          "92 engine tests and both simulated-operator handoff cases pass.",
+          "The checks cover in-flight input draining, modifier release, stale epochs, immediate pause revocation, duplicate requests, expiry without browser polling, HTTP Stop during in-flight typing/hotkeys, status-poll contention, HTTP request protection, sanitized interpreter traces, wrong-member return and exact completion.",
+          "The evidence labels its operator as automated-test-through-operator-api. It is separate from the real-person handoffs you performed above."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "finish-up",
+    "title": "09 / Preserve the result and leave a clean app",
+    "intro": "Your final report should say which revision you tested, which runs contain the evidence, and what failed. A screenshot of a green page alone is not a complete acceptance record.",
+    "steps": [
+      {
+        "id": "final-state",
+        "title": "Reset, record issues, and export your checklist",
+        "kind": "command",
+        "commands": [
+          "make reset MODE=bank SCENARIO=default\nmake ready"
+        ],
+        "actions": [
+          "Record the manual handoff folders and harness evidence directories in the relevant notes. For each issue, include expected versus actual behavior and the screen/phase where it happened.",
+          "Check that any failed, blocked or skipped step is still marked honestly. Fill your name/revision/date, then use the real-person attestation and export below."
+        ],
+        "expected": [
+          "The app is left on a fresh bank search screen with inputStopped: false. Reopen/reload the operator panel when you want another run.",
+          "The downloaded checklist report keeps per-step status and notes. Only all-passed steps plus reviewer details and explicit attestation can produce an overall passed result."
+        ],
+        "links": [
+          [
+            "M1 specification",
+            "MILESTONE_1.md"
+          ],
+          [
+            "M2 specification",
+            "MILESTONE_2.md"
+          ],
+          [
+            "M3 specification",
+            "MILESTONE_3.md"
+          ],
+          [
+            "Roadmap",
+            "ROADMAP.md"
+          ]
+        ]
+      }
+    ]
+  }
 ];
-const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-manual-acceptance-v2';
+const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-manual-acceptance-v3';
 const VALID=['not-run','passed','failed','blocked','skipped'];
 const $=id=>document.getElementById(id);
 const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const captureSpec={replayRun:{label:'Successful replay folder name',example:'20260916T120000Z-replay-1234abcd',valid:v=>/^[0-9]{8}T[0-9]{6}Z-replay-[0-9a-f]{8}$/.test(v)},policySession:{label:'Current policy-scenario session UUID',example:'Paste the UUID from make ready after the policy reset',valid:v=>uuidPattern.test(v)},staleSession:{label:'Old session UUID — captured before reset',example:'Paste the UUID from the first command, then reset',valid:v=>uuidPattern.test(v)}};
 const tokenFields={REPLAY_RUN:'replayRun',POLICY_SESSION:'policySession',STALE_SESSION:'staleSession'};
-const blank=()=>({version:2,startedAt:new Date().toISOString(),reviewer:'',revision:'',date:new Date().toLocaleDateString('en-CA'),attested:false,captures:{},steps:{}});
+const blank=()=>({version:3,startedAt:new Date().toISOString(),reviewer:'',revision:'',date:new Date().toLocaleDateString('en-CA'),attested:false,captures:{},steps:{}});
 let state=blank(),storageOK=true,toastTimer;
 function notify(message){$('message').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('message').textContent='',5000);}
-function normalize(raw){const clean=blank();if(!raw||raw.version!==2)return clean;for(const k of ['reviewer','revision','date','startedAt'])if(typeof raw[k]==='string')clean[k]=raw[k].slice(0,120);clean.attested=raw.attested===true;for(const k of Object.keys(captureSpec))if(typeof raw.captures?.[k]==='string')clean.captures[k]=raw.captures[k].slice(0,120);for(const step of STEPS){const old=raw.steps?.[step.id];if(old)clean.steps[step.id]={status:VALID.includes(old.status)?old.status:'not-run',notes:typeof old.notes==='string'?old.notes.slice(0,4000):'',updatedAt:typeof old.updatedAt==='string'?old.updatedAt.slice(0,40):null};}return clean;}
+function normalize(raw){const clean=blank();if(!raw||raw.version!==3)return clean;for(const k of ['reviewer','revision','date','startedAt'])if(typeof raw[k]==='string')clean[k]=raw[k].slice(0,120);clean.attested=raw.attested===true;for(const k of Object.keys(captureSpec))if(typeof raw.captures?.[k]==='string')clean.captures[k]=raw.captures[k].slice(0,120);for(const step of STEPS){const old=raw.steps?.[step.id];if(old)clean.steps[step.id]={status:VALID.includes(old.status)?old.status:'not-run',notes:typeof old.notes==='string'?old.notes.slice(0,4000):'',updatedAt:typeof old.updatedAt==='string'?old.updatedAt.slice(0,40):null};}return clean;}
 try {const raw=localStorage.getItem(KEY);if(raw)state=normalize(JSON.parse(raw));}catch{storageOK=false;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch{storageOK=false;}$('storage').textContent=storageOK?'Progress saved in this browser':'Local storage unavailable — export to keep your work';}
 function result(id){return state.steps[id]||{status:'not-run',notes:'',updatedAt:null};}
@@ -206,7 +853,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' checks passed. '+counts.failed+' failed, '+counts.blocked+' blocked, '+counts.skipped+' skipped, '+counts['not-run']+' not run.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-manual-acceptance-v2',baseline:'a63a143 + local React refactor (2026-09-17)',checklistRevision:'2026-09-17-v2',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-17-v3',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-manual-pass-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 for(const id of ['reviewer','revision','date'])$(id).addEventListener('input',()=>{state[id]=$(id).value;save();update();});
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});

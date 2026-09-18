@@ -71,8 +71,9 @@
 <div class="shell">
   <header class="hero">
     <div><p class="eyebrow">Interface AI / Repository review</p><h1>Know the code.<br>Explain the decisions.</h1><p>Work from the architecture down to individual functions. Read, trace a concrete example, explain it aloud, and record what you would improve. Use this alongside the behavioral audit; your learning notes and progress are saved separately.</p></div>
-    <div class="scope"><strong>Prepared: a63a143 + local React refactor · September 17, 2026</strong><p>An interview preparation and maintainability review of the current repository. Mark a topic understood only when you can explain the code and its limits. Use the companion manual audit to verify runtime behavior. Read the <a href="CLEANUP_AUDIT_2026-09-17.md">repository-wide cleanup findings and implementation backlog</a> alongside this checklist.</p></div>
+    <div class="scope"><strong>Prepared: 3f11b9d + checklist updates · September 17, 2026</strong><p>An interview preparation and maintainability review of the current repository. Mark a topic understood only when you can explain the code and its limits. Use the companion manual audit to verify runtime behavior. Read the <a href="CLEANUP_AUDIT_2026-09-17.md">repository-wide cleanup findings and implementation backlog</a> alongside this checklist.</p></div>
   </header>
+<p class="muted">Cleanup revision: this checklist uses a new progress key. Earlier review data remains stored separately and is not carried forward as a pass. No human results are prefilled.</p>
   <div class="meta">
     <label class="field">Reviewer<input id="reviewer" autocomplete="off" maxlength="120" placeholder="Your name"></label>
     <label class="field">Revision reviewed<input id="revision" maxlength="120" placeholder="Paste git describe --always --dirty"></label>
@@ -295,7 +296,8 @@ const GROUPS = [
         "kind": "code",
         "actions": [
           "Trace strict JSON parsing, semantic references, asset confinement and digests.",
-          "Locate the independent approved capability digest. Explain what changes when JSON whitespace, an anchor or a step identifier changes."
+          "Locate the independent approved capability digest. Explain what changes when JSON whitespace, an anchor or a step identifier changes.",
+          "Trace files.read_regular: nonblocking open, fstat regular-file check, bounded read and BytesIO decoding of the already verified snapshot. Explain the FIFO and replacement regressions."
         ],
         "expected": [
           "You can explain why a schema-valid artifact can still be unauthorized.",
@@ -324,6 +326,10 @@ const GROUPS = [
           [
             "engine/tests/test_replay.py",
             "../engine/tests/test_replay.py"
+          ],
+          [
+            "Bounded file snapshots",
+            "../engine/src/interface_ai/files.py"
           ]
         ]
       }
@@ -403,6 +409,10 @@ const GROUPS = [
           [
             "engine/tests/test_desktop.py",
             "../engine/tests/test_desktop.py"
+          ],
+          [
+            "Desktop backend protocol",
+            "../engine/src/interface_ai/desktop/types.py"
           ]
         ]
       },
@@ -734,7 +744,7 @@ const GROUPS = [
   {
     "id": "handoff",
     "title": "06 / Walk through human takeover and the Stop repair",
-    "intro": "Use the latest code and pre-audit evidence. Describe the sequence of events rather than memorizing a list of safeguards.",
+    "intro": "Use the current code and evidence index. Describe the sequence of events rather than memorizing a list of safeguards.",
     "steps": [
       {
         "id": "controller",
@@ -742,11 +752,13 @@ const GROUPS = [
         "kind": "code",
         "actions": [
           "Follow start, expiry detection, immediate revocation, takeover, manual input, verification and launch of the continuation.",
-          "Locate the 15-minute lease, request sequence/cap and per-action deadline. Explain ordinary terminal failure versus the known intervention boundary."
+          "Locate the 15-minute lease, request sequence/cap and per-action deadline. Explain ordinary terminal failure versus the known intervention boundary.",
+          "Trace finalize and atomic terminal evidence for completion, Stop, expiry and worker/storage failures. Explain why late events can refresh counts but cannot replace the outcome."
         ],
         "expected": [
           "You can predict which controls are enabled in idle, running, awaiting_human, human, failure and stopped.",
-          "You can explain why arbitrary interruption and post-failure takeover are limited today."
+          "You can explain why arbitrary interruption and post-failure takeover are limited today.",
+          "You can distinguish lifecycle status stopped from business result status failure, explain resultSha256 as the last-written summary boundary, and describe what unavailable storage cannot guarantee."
         ],
         "prompts": [
           "What exactly changes when the expiry screen is detected before the human clicks Take control?"
@@ -763,6 +775,14 @@ const GROUPS = [
           [
             "engine/src/interface_ai/handoff/operator.html",
             "../engine/src/interface_ai/handoff/operator.html"
+          ],
+          [
+            "Terminal evidence writer",
+            "../engine/src/interface_ai/handoff/evidence.py"
+          ],
+          [
+            "Lifecycle and evidence guide",
+            "../engine/src/interface_ai/handoff/README.md"
           ]
         ]
       },
@@ -1000,12 +1020,58 @@ const GROUPS = [
             "../scripts/m3-check"
           ],
           [
-            "evidence/pre-audit-2026-09-17/README.md",
-            "../evidence/pre-audit-2026-09-17/README.md"
-          ],
-          [
             "docs/manual-acceptance.html",
             "../docs/manual-acceptance.html"
+          ],
+          [
+            "Evidence index",
+            "../evidence/README.md"
+          ],
+          [
+            "Cleanup validation",
+            "../evidence/cleanup-implementation-2026-09-17/README.md"
+          ]
+        ]
+      },
+      {
+        "id": "build-provenance",
+        "title": "Prove which source and image a check exercised",
+        "kind": "code",
+        "actions": [
+          "Follow desktop input enumeration and the fixture build-time manifest through build-check, quick-check and the live harness preflight. Locate compiled asset hashes and running-container identity checks.",
+          "Read the retained negative probes for edited source, a new untracked source file, a changed compiled asset and schema drift. Explain why source freezing alone would not prove image freshness."
+        ],
+        "expected": [
+          "You can show the immutable image IDs, source/runtime fingerprints and explicit stale-build failure. Neither fixture manifest nor oracle is an application route.",
+          "You distinguish trusted local build verification from signed build attestation, and quick CI from live desktop/human acceptance."
+        ],
+        "prompts": [
+          "What would happen if you edited App.tsx but forgot make build?"
+        ],
+        "links": [
+          [
+            "Build verifier",
+            "../scripts/lib/builds.py"
+          ],
+          [
+            "Desktop manifest",
+            "../infra/desktop/build_manifest.py"
+          ],
+          [
+            "Fixture manifest",
+            "../apps/bank-fixture/server/build-manifest.mjs"
+          ],
+          [
+            "Quick gate",
+            "../scripts/quick-check"
+          ],
+          [
+            "Shared host helpers",
+            "../scripts/lib/acceptance.py"
+          ],
+          [
+            "Host regressions",
+            "../scripts/tests/test_checks.py"
           ]
         ]
       }
@@ -1094,11 +1160,12 @@ const GROUPS = [
         "kind": "review",
         "actions": [
           "Follow event handlers, busy state, polling, image scaling, text clearing and error messages.",
-          "Assess whether the inline JavaScript remains understandable; record what would justify extracting modules or adding React later."
+          "Read the HTML, CSS and JavaScript sources, then trace server assembly into one nonce-protected document. Explain why this adds no asset routes or token URLs, and why Stop stays enabled during pending input."
         ],
         "expected": [
           "You can explain the current choice of a small standalone panel despite your React experience.",
-          "You can identify the API fields and actions a refactor must preserve."
+          "You can identify the API fields and actions a refactor must preserve.",
+          "Expected input errors map to 400 invalid_input with a five-digit-ID message; ownership conflicts, busy polls and infrastructure failures remain distinct."
         ],
         "prompts": [
           "When would a UI framework reduce complexity here, and what would it add today?"
@@ -1119,6 +1186,18 @@ const GROUPS = [
           [
             "scripts/checks/m3_operator_stop.mjs",
             "../scripts/checks/m3_operator_stop.mjs"
+          ],
+          [
+            "Operator JavaScript",
+            "../engine/src/interface_ai/handoff/operator.js"
+          ],
+          [
+            "Operator styles",
+            "../engine/src/interface_ai/handoff/operator.css"
+          ],
+          [
+            "Shared panel test helpers",
+            "../scripts/checks/operator_helpers.mjs"
           ]
         ]
       },
@@ -1165,10 +1244,18 @@ const GROUPS = [
           [
             "AGENTS.md",
             "../AGENTS.md"
+          ],
+          [
+            "Development and build provenance",
+            "DEVELOPMENT.md"
+          ],
+          [
+            "Pinned quick-check CI",
+            "../.github/workflows/quality.yml"
           ]
         ],
         "commands": [
-          "git status --short\nmake help"
+          "git status --short\nmake help\nmake quality"
         ]
       }
     ]
@@ -1279,14 +1366,14 @@ const GROUPS = [
     ]
   }
 ];
-const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-repository-review-v1';
+const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-repository-review-v2';
 const VALID=['not-run','passed','failed','blocked','skipped'];
 const LABELS={'not-run':'Not reviewed',passed:'Understood',failed:'Needs work',blocked:'Blocked',skipped:'Deferred'};
 const $=id=>document.getElementById(id);
-const blank=()=>({version:1,startedAt:new Date().toISOString(),reviewer:'',revision:'',date:new Date().toLocaleDateString('en-CA'),attested:false,steps:{}});
+const blank=()=>({version:2,startedAt:new Date().toISOString(),reviewer:'',revision:'',date:new Date().toLocaleDateString('en-CA'),attested:false,steps:{}});
 let state=blank(),storageOK=true,toastTimer;
 function notify(message){$('message').textContent=message;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('message').textContent='',5000);}
-function normalize(raw){const clean=blank();if(!raw||raw.version!==1)return clean;for(const k of ['reviewer','revision','date','startedAt'])if(typeof raw[k]==='string')clean[k]=raw[k].slice(0,120);clean.attested=raw.attested===true;for(const step of STEPS){const old=raw.steps?.[step.id];if(old)clean.steps[step.id]={status:VALID.includes(old.status)?old.status:'not-run',notes:typeof old.notes==='string'?old.notes.slice(0,4000):'',updatedAt:typeof old.updatedAt==='string'?old.updatedAt.slice(0,40):null};}return clean;}
+function normalize(raw){const clean=blank();if(!raw||raw.version!==2)return clean;for(const k of ['reviewer','revision','date','startedAt'])if(typeof raw[k]==='string')clean[k]=raw[k].slice(0,120);clean.attested=raw.attested===true;for(const step of STEPS){const old=raw.steps?.[step.id];if(old)clean.steps[step.id]={status:VALID.includes(old.status)?old.status:'not-run',notes:typeof old.notes==='string'?old.notes.slice(0,4000):'',updatedAt:typeof old.updatedAt==='string'?old.updatedAt.slice(0,40):null};}return clean;}
 try {const raw=localStorage.getItem(KEY);if(raw)state=normalize(JSON.parse(raw));}catch{storageOK=false;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch{storageOK=false;}$('storage').textContent=storageOK?'Progress saved in this browser':'Local storage unavailable — export to keep your work';}
 function result(id){return state.steps[id]||{status:'not-run',notes:'',updatedAt:null};}
@@ -1328,7 +1415,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' topics understood. '+counts.failed+' need work, '+counts.blocked+' blocked, '+counts.skipped+' deferred, '+counts['not-run']+' not reviewed.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-repository-review-v1',baseline:'a63a143 + local React refactor (2026-09-17)',checklistRevision:'2026-09-17-repository-v1',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-repository-review-v2',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-17-repository-v2',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-repository-review-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 for(const id of ['reviewer','revision','date'])$(id).addEventListener('input',()=>{state[id]=$(id).value;save();update();});
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
