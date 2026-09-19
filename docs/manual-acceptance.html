@@ -21,8 +21,6 @@
     .hero { display:grid; grid-template-columns:1.35fr 1fr; gap:40px; margin-bottom:28px; }
     .hero p { max-width:710px; color:var(--muted); } .scope { border-left:3px solid var(--green); padding:14px 20px; background:#e6efea; align-self:start; border-radius:0 9px 9px 0; }
     .scope strong { display:block; margin-bottom:5px; } .scope p { font-size:14px; margin:0; }
-    .meta { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; background:white; padding:20px; border:1px solid var(--line); border-radius:12px; }
-    label.field { display:flex; flex-direction:column; gap:5px; font-weight:600; font-size:13px; }
     .toolbar { display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin:18px 0 30px; }
     .primary { background:var(--green); color:white; border-color:var(--green); } .primary:hover { background:#114e3e; }
     .toolbar .storage { margin-left:auto; color:var(--muted); font-size:12px; }
@@ -63,22 +61,16 @@
     #review { font-size:14px; } #message { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#172f35; color:white; padding:11px 20px; border-radius:8px; max-width:90%; z-index:10; box-shadow:0 4px 20px #0002; }
     #message:empty { display:none; } .print-value { display:none; } footer { color:var(--muted); font-size:12px; margin-top:25px; }
     @media (max-width:900px) { .hero { grid-template-columns:1fr; gap:8px; } .layout { grid-template-columns:1fr; } aside.rail { position:static; } nav { grid-template-columns:1fr 1fr; } .meter { display:flex; flex-wrap:wrap; gap:10px; align-items:center; } .meter progress { flex-basis:100%; } #counts { margin:0; } .meter button { width:auto; margin-left:auto; } .legend { display:none; } }
-    @media (max-width:560px) { .shell { padding:24px 14px 50px; } .meta { grid-template-columns:1fr; } .toolbar .storage { margin-left:0; width:100%; } summary { padding:14px 12px; gap:8px; flex-wrap:wrap; } .step-title { flex:1; min-width:180px; } .body { padding:0 16px 18px; } .status-chip { margin-left:22px; } .result { flex-wrap:wrap; } .command { padding-right:16px; padding-top:48px; } h1 { letter-spacing:-1px; } }
-    @media print { body { background:white; color:black; font-size:10pt; } .shell { padding:0; max-width:none; } .layout { display:block; } .hero { display:block; } .scope { padding:10px; } .toolbar,.rail,.command button,.result select,.result button,.finish button,#message { display:none!important; } .card[hidden] { display:block!important; } .card { break-inside:avoid; } .group { break-before:auto; } summary::after { display:none; } .command { color:black; background:#eee; padding:10px; } .body { padding:0 18px 15px; } .print-value { display:inline; white-space:pre-wrap; overflow-wrap:anywhere; } textarea { display:none; } .notes-print { display:block; } a { color:black; } .meta { grid-template-columns:1fr 1fr 1fr; } footer { font-size:9pt; } }
+    @media (max-width:560px) { .shell { padding:24px 14px 50px; } .toolbar .storage { margin-left:0; width:100%; } summary { padding:14px 12px; gap:8px; flex-wrap:wrap; } .step-title { flex:1; min-width:180px; } .body { padding:0 16px 18px; } .status-chip { margin-left:22px; } .result { flex-wrap:wrap; } .command { padding-right:16px; padding-top:48px; } h1 { letter-spacing:-1px; } }
+    @media print { body { background:white; color:black; font-size:10pt; } .shell { padding:0; max-width:none; } .layout { display:block; } .hero { display:block; } .scope { padding:10px; } .toolbar,.rail,.command button,.result select,.result button,.finish button,#message { display:none!important; } .card[hidden] { display:block!important; } .card { break-inside:avoid; } .group { break-before:auto; } summary::after { display:none; } .command { color:black; background:#eee; padding:10px; } .body { padding:0 18px 15px; } .print-value { display:inline; white-space:pre-wrap; overflow-wrap:anywhere; } textarea { display:none; } .notes-print { display:block; } a { color:black; } footer { font-size:9pt; } }
   </style>
 </head>
 <body>
 <div class="shell">
   <header class="hero">
-    <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue. This revised checklist starts a separate pass and does not reuse earlier acceptance marks.</p></div>
-    <div class="scope"><strong>Prepared: 3f11b9d + checklist updates · September 17, 2026</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
+    <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue.</p></div>
+    <div class="scope"><strong>What this covers</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
   </header>
-<p class="muted">Cleanup revision: this checklist uses a new progress key. Earlier review data remains stored separately and is not carried forward as a pass. No human results are prefilled.</p>
-  <div class="meta">
-    <label class="field">Reviewer<input id="reviewer" autocomplete="off" maxlength="120" placeholder="Your name"></label>
-    <label class="field">Revision actually tested<input id="revision" maxlength="120" placeholder="Paste git describe --always --dirty"></label>
-    <label class="field">Pass date<input id="date" type="date"></label>
-  </div>
   <div class="toolbar">
     <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New pass</button>
     <span id="storage" class="storage" role="status">Checking local storage…</span>
@@ -109,17 +101,17 @@ const GROUPS = [
     "steps": [
       {
         "id": "setup",
-        "title": "Record the environment and starting revision",
+        "title": "Check the environment",
         "kind": "command",
         "actions": [
           "Start Docker Desktop. Use Node 22 (see .nvmrc), host Python 3.9+ and uv for the quick gate. The engine runs in Docker. No OpenAI key is needed.",
-          "Close old operator/fixture tabs and any previous fixture test servers. Keep this checklist open. Record the revision above and environment versions in notes."
+          "Close old operator/fixture tabs and any previous fixture test servers. Keep this checklist open. If a command fails, save its output in notes."
         ],
         "commands": [
           "cd /Users/phillip/interview/interface-ai\ngit describe --always --dirty\ngit status --short\ndocker version\ndocker compose version\nnode --version\nmake help"
         ],
         "expected": [
-          "Record the actual revision, including -dirty for local changes. This pass expects cleanup commit 3f11b9d or a later revision containing it. Docker reports a running server.",
+          "Docker reports a running server. The commands show your current revision and environment; no setup form is needed.",
           "Make lists replay, policy-check, handoff-demo, handoff-check, and export. Ports 4173, 4180–4187, 6080 and 6081 are available for their respective services."
         ],
         "links": [
@@ -763,7 +755,7 @@ const GROUPS = [
   {
     "id": "finish-up",
     "title": "09 / Preserve the result and leave a clean app",
-    "intro": "Your final report should say which revision you tested, which runs contain the evidence, and what failed. A screenshot of a green page alone is not a complete acceptance record.",
+    "intro": "Keep the relevant run folders and any issues in your notes, then export your results. Dates are saved automatically.",
     "steps": [
       {
         "id": "final-state",
@@ -774,11 +766,11 @@ const GROUPS = [
         ],
         "actions": [
           "Record the manual handoff folders and harness evidence directories in the relevant notes. For each issue, include expected versus actual behavior and the screen/phase where it happened.",
-          "Check that any failed, blocked or skipped step is still marked honestly. Fill your name/revision/date, then use the real-person attestation and export below."
+          "Check that any failed, blocked or skipped step is still marked honestly. Confirm you performed the manual steps using the checkbox below, then export."
         ],
         "expected": [
           "The app is left on a fresh bank search screen with inputStopped: false. Reopen/reload the operator panel when you want another run.",
-          "The downloaded checklist report keeps per-step status and notes. Only all-passed steps plus reviewer details and explicit attestation can produce an overall passed result."
+          "The downloaded checklist report keeps per-step status and notes. All steps must pass and the final confirmation must be checked for an overall passed result."
         ],
         "links": [
           [
@@ -838,24 +830,23 @@ function render(){
       const notes=element('textarea',{id:'notes-'+step.id,maxlength:'4000',rows:'3',placeholder:'Actual result, session/run folder, issue and reproduction details. Use synthetic data only.'});notes.value=result(step.id).notes;notes.addEventListener('input',()=>updateStep(step.id,{notes:notes.value}));body.append(element('label',{class:'notes-label',for:notes.id},'Notes / evidence path'),notes,element('div',{class:'print-value notes-print',id:'print-notes-'+step.id}));details.append(body);card.append(details);section.append(card);
     }$('groups').append(section);
   }
-  for(const id of ['reviewer','revision','date'])$(id).value=state[id];$('attest').checked=state.attested;refreshCommands();update();
+  $('attest').checked=state.attested;refreshCommands();update();
 }
 function refreshCommands(){document.querySelectorAll('[data-command]').forEach(code=>{const output=materialize(code.dataset.command);code.textContent=output.text;code.closest('.command').querySelector('button').disabled=!output.ready;});}
-function overall(){if(STEPS.some(s=>['failed','blocked'].includes(result(s.id).status)))return 'needs-review';if(STEPS.every(s=>result(s.id).status==='passed')&&state.attested&&state.reviewer.trim()&&state.revision.trim()&&state.date)return 'passed';return 'incomplete';}
+function overall(){if(STEPS.some(s=>['failed','blocked'].includes(result(s.id).status)))return 'needs-review';if(STEPS.every(s=>result(s.id).status==='passed')&&state.attested)return 'passed';return 'incomplete';}
 function update(){
   const counts=Object.fromEntries(VALID.map(k=>[k,STEPS.filter(s=>result(s.id).status===k).length]));
   $('count').textContent=counts.passed;$('total').textContent=' / '+STEPS.length+' passed';$('progress').max=STEPS.length;$('progress').value=counts.passed;
   $('counts').textContent=(counts.failed+counts.blocked)+' need attention · '+(counts['not-run']+counts.skipped)+' unverified';
-  const verdict=overall();$('overall').textContent=verdict==='passed'?'Pass recorded':verdict==='needs-review'?'Issues need review':counts.passed===STEPS.length?'Add reviewer details & attest':'Manual pass in progress';
+  const verdict=overall();$('overall').textContent=verdict==='passed'?'Pass recorded':verdict==='needs-review'?'Issues need review':counts.passed===STEPS.length?'Confirm completion below':'Manual pass in progress';
   for(const group of GROUPS)$('group-count-'+group.id).textContent=group.steps.filter(s=>result(s.id).status==='passed').length+'/'+group.steps.length;
   const filter=$('filter').value;
   for(const step of STEPS){const r=result(step.id),card=$('check-'+step.id);card.dataset.status=r.status;$('chip-'+step.id).textContent=r.status==='not-run'?'Not run':r.status[0].toUpperCase()+r.status.slice(1);$('print-status-'+step.id).textContent=r.status;$('print-notes-'+step.id).textContent=r.notes||'No notes recorded.';card.hidden=filter==='unresolved'?r.status==='passed':filter==='issues'?!['failed','blocked'].includes(r.status):false;}
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' checks passed. '+counts.failed+' failed, '+counts.blocked+' blocked, '+counts.skipped+' skipped, '+counts['not-run']+' not run.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-17-v3',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-19-v3',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-manual-pass-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
-for(const id of ['reviewer','revision','date'])$(id).addEventListener('input',()=>{state[id]=$(id).value;save();update();});
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;
 $('expand').onclick=()=>document.querySelectorAll('details').forEach(d=>d.open=true);$('collapse').onclick=()=>document.querySelectorAll('details').forEach(d=>d.open=false);
