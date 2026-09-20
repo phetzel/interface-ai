@@ -81,25 +81,24 @@ services:
       start_period: 15s
     stop_grace_period: 10s
 
-  viewer:
+  operator:
     image: interface-ai-desktop:local
     pull_policy: never
-    entrypoint: [python, /opt/desktop/viewer_relay.py]
+    entrypoint: [python, /opt/desktop/operator_relay.py]
     init: true
     depends_on:
       desktop:
         condition: service_healthy
     ports:
-      - "127.0.0.1:${DESKTOP_PORT:-6080}:6080"
       - "127.0.0.1:6081:6081"
-    networks: [desktop, viewer]
+    networks: [desktop, operator]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     mem_limit: 128mb
     cpus: 0.5
     pids_limit: 64
     healthcheck:
-      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6080/vnc.html', timeout=2).close()"]
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6081/', timeout=2).close()"]
       interval: 3s
       timeout: 5s
       retries: 5
@@ -109,4 +108,4 @@ networks:
     internal: true
   desktop:
     internal: true
-  viewer:
+  operator:

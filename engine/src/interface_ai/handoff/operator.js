@@ -16,6 +16,18 @@ async function read(path) {
 }
 function render() {
   if (!state) return;
+  const titles = {
+    idle: 'Ready to start',
+    running: 'Running lookup',
+    awaiting_human: 'Your help is needed',
+    quiescing: 'Giving you control',
+    human: 'You have control',
+    success: 'Lookup complete',
+    failure: 'Lookup failed',
+    business_outcome: 'Member not found',
+    stopped: 'Stopped',
+  };
+  $('status-title').textContent = titles[state.phase] || 'Checking desktop';
   $('state').textContent = state.phase.replaceAll('_', ' ') + ' · ' + state.owner;
   $('session').textContent = 'Session ' + state.session;
   $('diagnostic').textContent = [
@@ -26,6 +38,10 @@ function render() {
     .filter(Boolean)
     .join(' · ');
   const human = state.phase === 'human' && !busy;
+  $('lookup-controls').hidden = state.phase !== 'idle';
+  $('human-controls').hidden = state.phase !== 'human';
+  $('takeover').hidden = !['running', 'awaiting_human', 'quiescing'].includes(state.phase);
+  $('resume').hidden = state.phase !== 'human';
   $('start').disabled = busy || state.phase !== 'idle';
   $('member').disabled = state.phase !== 'idle';
   $('takeover').disabled = busy || !['running', 'awaiting_human'].includes(state.phase);
@@ -34,8 +50,15 @@ function render() {
   for (const id of ['send', 'select', 'text']) $(id).disabled = !human;
   document.querySelectorAll('[data-key]').forEach((b) => (b.disabled = !human));
   $('screen').classList.toggle('human', human);
+  $('input-mode').textContent =
+    state.phase === 'human' ? (busy ? 'Sending input…' : 'You control this desktop') : 'View only';
+  $('input-mode').dataset.human = String(state.phase === 'human');
+  $('screen-help').textContent =
+    state.phase === 'human'
+      ? 'Click in the image to use the desktop. Send text and keys with the panel controls.'
+      : 'Watch the same desktop the automation uses. Take control when available to interact.';
   const messages = {
-    idle: 'Start a lookup on a fresh search screen.',
+    idle: 'Look up a member’s savings balance on the desktop.',
     running: 'Automation owns input. You can request control or stop.',
     awaiting_human:
       'Session expired. Take control, restore the workspace with the synthetic code demo, then verify and resume.',
@@ -43,7 +66,8 @@ function render() {
     human: state.resumable
       ? 'You own control. Restore the workspace, return to the original member overview, then verify and resume.'
       : 'You own control. This interruption has no verified continuation; inspect, then reset the desktop.',
-    success: 'Lookup complete. The savings balance is visible below.',
+    success:
+      'The savings balance is visible on the desktop. Reset the desktop and reload this page for another run.',
     failure:
       'Run stopped: ' +
       (state.reason || 'verification failed') +

@@ -2,6 +2,8 @@
 
 Read `controller.py` for the lifecycle, `evidence.py` for atomic terminal files, `server.py` for HTTP admission and `operator.html` / `operator.css` / `operator.js` for the panel. The server assembles these assets into one nonce-protected document: no new public asset endpoints, token URLs or frontend framework.
 
+The operator is the demo's main interface. It shows a plain-language phase and the relevant start/takeover/resume controls beside the live desktop (stacked on narrow windows). Text and key controls appear only during human ownership; Stop remains in the sticky header, including while input is pending. **Run details** holds the raw phase/owner, session UUID and checkpoint diagnostics. The image keeps a constant three-pixel border so scaling matches the desktop-coordinate conversion without a layout shift during takeover. No direct host-keyboard forwarding or new input authority is added. The native calibration pad remains a development/test fixture, visible in this same panel. The standalone VNC/noVNC stack has been removed.
+
 | From | Trigger | Result |
 | --- | --- | --- |
 | idle | Valid five-digit start | running, automation ownership |

@@ -4,11 +4,19 @@ The [root README](../README.md) is the current setup/status entry point. The mil
 
 ## Quick and live checks
 
+For the short demo, `make start` only needs Docker/Compose and Make; see the [assessor walkthrough](DEMO.md). For the full internal manual audit, `make audit-setup` installs the host fixture dependencies and Playwright Chromium, builds both images, runs `make quick-check`, and then resets/validates a fresh bank desktop. It stops at the first failed command. Both startup commands replace the current desktop session. Use `make fixture-preview` in a second terminal for the direct fixture UI checks.
+
 `make quick-check` requires Docker, host Python 3.9+, Node 22 and `uv` (tested with 0.9.18). Run `make fixture-install` and `make build` first. It runs pinned Ruff 0.12.12 and Prettier 3.9.6, host harness tests, Linux engine tests in a disposable network-disabled image, four published-schema comparisons and fixture typechecking. It starts no live desktop and rewrites no artifacts. `make format` covers active source only; no historical evidence is reformatted.
 
 Ruff uses a small correctness/unused-name rule set rather than an expansive style backlog. Prettier is an exact development dependency, as recommended by its [installation guide](https://prettier.io/docs/install); configuration follows [Ruff's configuration reference](https://docs.astral.sh/ruff/configuration/). The Python runtime lock remains separate from development tools. CI pins official actions and uses the [documented ARM64 runner](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
 
 Live gates remain explicit: `make policy-check` includes the full M1 suite; `make handoff-check` simulates both members through the operator API. Reset to `make handoff-demo` before each panel browser script. No two live suites should manipulate the shared desktop concurrently. Keep executable source frozen during acceptance; the harness records/rechecks it. `make fixture-test` is an independent browser UI gate against the host preview.
+
+## Operator-only desktop
+
+The operator at `http://127.0.0.1:6081/` is the only desktop page. `make operator` prints its URL. The relay forwards only to `desktop:6081`; it keeps the desktop on its internal network. VNC, noVNC, websockify and the old `make viewer`/`DESKTOP_PORT` configuration are removed. Reset prunes the old viewer container automatically; existing evidence is retained. An unused legacy `interface-ai_viewer` network from an earlier checkout can be removed with `docker network rm interface-ai_viewer` after the viewer container is gone.
+
+The native calibration smoke now compares the operator PNG to X11, attempts input without human ownership and asserts ports 5900/6080 are closed. The M1 runtime probe also checks the removed programs/assets are absent, and Compose acceptance permits only loopback 6081 on the operator relay. Historic VNC evidence describes its original revision and remains unchanged.
 
 ## Build identity
 

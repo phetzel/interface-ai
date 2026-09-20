@@ -32,7 +32,7 @@ An invocation returns one of the published [result schema](../../schemas/result-
 - `business_outcome` with `outcome: member_not_found` and no fabricated output.
 - `failure` with a code, failed step, expected checkpoint/output summary, and observed-state category. No partial OCR values are returned.
 
-The printed evidence directory contains `report.json`, `events.jsonl`, and `result.json`. Explicit output values live only in the result file; routine events omit typed text, recognized identities/balances, and raw key sequences. This command retains no screenshots: observations and OCR crops stay in memory. The live viewer still shows the same desktop. These are synthetic local results, not a general financial-data retention policy.
+The printed evidence directory contains `report.json`, `events.jsonl`, and `result.json`. Explicit output values live only in the result file; routine events omit typed text, recognized identities/balances, and raw key sequences. This command retains no screenshots: observations and OCR crops stay in memory. The operator’s live image still shows the same desktop. CLI replay status comes from its terminal/result files until lifecycle integration in M4. These are synthetic local results, not a general financial-data retention policy.
 
 ## Validation and supported bounds
 

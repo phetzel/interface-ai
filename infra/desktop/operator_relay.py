@@ -1,4 +1,4 @@
-"""Forward viewer bytes to one fixed service; never accept a destination from clients.
+"""Forward operator bytes to one fixed service; never accept a destination from clients.
 
 Docker Desktop does not publish the internal-only desktop network's port on this
 host. This separate relay joins both networks; the desktop retains no default
@@ -8,15 +8,12 @@ route. The relay has no host mounts, credentials, or generic proxy capability.
 import selectors
 import socket
 import socketserver
-import threading
 
 
 class Handler(socketserver.BaseRequestHandler):
     def handle(self):
         try:
-            with socket.create_connection(
-                ('desktop', self.server.server_address[1]), timeout=5
-            ) as upstream:
+            with socket.create_connection(('desktop', 6081), timeout=5) as upstream:
                 upstream.settimeout(10)
                 self.request.settimeout(10)
                 with selectors.DefaultSelector() as selector:
@@ -38,10 +35,6 @@ class Server(socketserver.ThreadingTCPServer):
 
 
 if __name__ == '__main__':
-    with (
-        Server(('0.0.0.0', 6080), Handler) as server,
-        Server(('0.0.0.0', 6081), Handler) as operator,
-    ):
-        threading.Thread(target=operator.serve_forever, daemon=True).start()
-        print('Viewer relay: fixed upstream desktop:6080', flush=True)
+    with Server(('0.0.0.0', 6081), Handler) as server:
+        print('Operator relay: fixed upstream desktop:6081', flush=True)
         server.serve_forever()

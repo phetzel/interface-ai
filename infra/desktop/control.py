@@ -22,9 +22,9 @@ def ready():
             raise RuntimeError('Bootstrapped application is not focused')
     finally:
         backend.close()
-    with urllib.request.urlopen('http://127.0.0.1:6080/vnc.html', timeout=2) as response:
+    with urllib.request.urlopen('http://127.0.0.1:6081/', timeout=2) as response:
         if response.status != 200:
-            raise RuntimeError('Viewer is not ready')
+            raise RuntimeError('Operator is not ready')
     return session | {'inputStopped': STOP.exists()}
 
 

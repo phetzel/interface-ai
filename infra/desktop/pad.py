@@ -90,7 +90,7 @@ scroll.configure(state='disabled')
 canvas.create_text(
     64,
     716,
-    text='The viewer cannot send input. Automation acts inside this isolated desktop.',
+    text='Observe in the operator panel. Calibration commands exercise desktop input.',
     anchor='w',
     fill='#475569',
     font=('DejaVu Sans', 12),

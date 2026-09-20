@@ -12,11 +12,17 @@ Use this index to distinguish a claim from the exact source and environment that
 | M2 baseline `3726347` | [M2 record](poc-m2/README.md) | Bounded policy, isolation, safe export and M1 regression | Synthetic fixed environment; no general redaction or arbitrary-page authorization |
 | Original M1 gate | [M1 acceptance](poc-m1/acceptance/README.md) | Native/browser desktop primitives, manual capability, OCR, repeated replay and rejections | Manually authored capability, fixed Linux ARM64 environment |
 
+## Latest local validation (not yet packaged for submission)
+
+The user reports the M1–M3 manual checklist passed, including a real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results, and link the ignored local evidence. Preserve the exported reviewer checklist and review these files before publishing. This does not complete the separate repository/interview review or genuine discovery.
+
+The [M4 specification](../docs/MILESTONE_4.md) defines the remaining discovery-to-replay proof.
+
 ## Pending evidence
 
 - A real OpenAI discovery run with reviewed outbound observations and an artifact recorder.
 - An operator-reviewed generated capability replayed for the second member with zero model calls.
-- A real person's same-session intervention and verified continuation, recorded through the manual checklist.
+- Final packaging of the witnessed real-person handoff and reviewer checklist export.
 - Final assignment report and end-to-end demo/evidence packaging.
 
 The [manual checklist](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) hold separate reviewer self-reports. Automated testing of those pages does not complete either review. Routine run metadata omits typed values, OCR text and screenshots; explicit synthetic results/debug calibration records have their own documented retention boundaries.

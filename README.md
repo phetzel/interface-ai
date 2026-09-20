@@ -4,20 +4,31 @@ A computer-use automation assignment built around a synthetic banking desktop. P
 
 **Current:** M1 desktop/replay, M2 bounded policy/evidence and M3 same-session takeover are implemented. The repository cleanup fixes artifact snapshots, terminal handoff evidence and input error classification; adds build verification and a quick quality gate; and separates the React views and operator assets. [Evidence and limitations](evidence/README.md) · [cleanup audit and resolution](docs/CLEANUP_AUDIT_2026-09-17.md).
 
-**Still required:** genuine OpenAI discovery → reviewed generated capability → replay for the second member, a real-person handoff demonstration, and final `REPORT.md`/demo packaging. The existing manual artifact and simulated operator checks do not satisfy those remaining requirements. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
+**Still required:** genuine OpenAI discovery → reviewed generated capability → replay for the second member, and final `REPORT.md`/discovery demo packaging. The user completed the real-person handoff; see [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). The existing manual artifact and simulated operator checks do not satisfy discovery. [Next milestone specification](docs/MILESTONE_4.md). [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
 
-## Start the desktop
+## Try the demo
 
-Prerequisites: Docker Desktop/Compose on the tested Apple Silicon host, with network access for the initial build. Runtime support is Linux ARM64, Python 3.11, one 1280×800 X11 display, fixed scale/fonts and en-US/USD. Docker is the supported distribution; a standalone Python wheel is not validated.
+Prerequisites: Docker Desktop/Compose and Make on the tested Apple Silicon host, with network access for the initial build. From the repository root:
 
 ```sh
-make build
-make up
-make validate
-make replay MEMBER_ID=00123
+make start
 ```
 
-Open the [read-only viewer](http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true). The bank runs inside isolated Chromium at `http://fixture:4173/`. `00123` and `00456` are synthetic members; `00999` exercises the named member-not-found outcome. IDs are strings, including leading zeroes.
+Open the [operator panel](http://127.0.0.1:6081/) and choose **Start lookup** with member `00123`. Watch the desktop reach Demo Member A's savings balance, **$1,234.56 USD**. Follow the [short assessor walkthrough](docs/DEMO.md) for second-member replay and same-session human takeover.
+
+`make start` builds both images, resets to a fresh bank desktop, waits for readiness and validates the bundled capability. Rerunning it replaces the current desktop session; Docker reuses unchanged build layers. The demo needs no host Node/Python installation or OpenAI key. It demonstrates the current manually authored capability, not the still-pending model discovery requirement.
+
+Runtime support is Linux ARM64, Python 3.11, one 1280×800 X11 display, fixed scale/fonts and en-US/USD. Docker is the supported distribution; a standalone Python wheel is not validated. The bank runs inside isolated Chromium at `http://fixture:4173/`. `00123` and `00456` are synthetic members; `00999` exercises the named member-not-found outcome. IDs are strings, including leading zeroes. Watch the same desktop in the operator panel; the legacy 6080 viewer has been removed.
+
+The demo has one entry point: the operator panel. The other surfaces serve development and verification:
+
+| Surface | Purpose | Needed for the demo? |
+| --- | --- | --- |
+| Operator, port 6081 | Start a lookup, watch the desktop, take control and resume | Yes |
+| Host bank preview, port 4173 | Develop and manually test the synthetic sample app outside the isolated desktop | No |
+| Native calibration pad | Prove OS clicks, typing and scrolling work outside a browser | No; keep for desktop regression tests |
+
+The operator shows controls for the current phase, keeps Stop available during pending input, and puts the session UUID and step/reason in **Run details**. Human text input still uses **Text to send → Send text** after clicking a field in the desktop image.
 
 ```sh
 make demo MEMBER_ID=00456 SCENARIO=translated  # Reset, then replay
@@ -40,7 +51,7 @@ Open the [operator panel](http://127.0.0.1:6081/), start a lookup, and choose **
 
 Stop remains available during pending input. Each started handoff writes a separate `result.json`, sanitized `audit.jsonl`, and terminal `summary.json`, including stopped/expired runs. The summary binds the result digest and records step/checkpoint context and action counts. An already-dispatched primitive may finish; its event updates the count without replacing the terminal outcome. Storage failure revokes input and is visible in panel status. [Lifecycle/evidence details](engine/src/interface_ai/handoff/README.md).
 
-noVNC is server-enforced view-only. The operator panel alone grants human input through the same guarded OS adapter. Automated panel/API tests simulate a human; your demonstration remains a separate acceptance gate.
+The operator image is observation only. Input requires human ownership and goes through the guarded OS adapter; there is no separate VNC server. Automated panel/API tests and the completed real-person demonstration have distinct evidence provenance.
 
 ## Development and checks
 
@@ -61,7 +72,7 @@ Install Playwright's Chromium once with `cd apps/bank-fixture && npx playwright 
 
 [Quality CI](.github/workflows/quality.yml) runs the same quick gate on Linux ARM64. It does not stand in for the live desktop or human gates. Every local quick/live attempt retains logs under `tmp/`. A stale build or schema fails explicitly; checks do not silently rebuild images or rewrite schemas. The schema command is documented in the [replay guide](engine/src/interface_ai/replay/README.md).
 
-For host React work, `make fixture-dev` starts Vite. A built preview uses `npm --prefix apps/bank-fixture run build` and `npm --prefix apps/bank-fixture run preview`, then [127.0.0.1:4173](http://127.0.0.1:4173). This is separate from the isolated desktop fixture.
+For host React work, `make fixture-dev` starts Vite. After dependency installation, `make fixture-preview` builds and serves the preview at [127.0.0.1:4173](http://127.0.0.1:4173). This is separate from the isolated desktop fixture.
 
 ## Read the repo in this order
 
@@ -80,25 +91,33 @@ The primitive `BankVision` path is retained for M1 calibration/history; producti
 
 ## Manual review and interview preparation
 
-Open [the M1–M3 manual checklist](docs/manual-acceptance.html) and [the repository/interview checklist](docs/repository-audit.html). On macOS:
+Start with [the M1–M3 manual checklist](docs/manual-acceptance.html) to test behavior. Then use [the repository/interview checklist](docs/repository-audit.html) to explain the code and its tradeoffs. These are our detailed internal reviews; assessors can use the [short demo guide](docs/DEMO.md).
+
+With the development prerequisites above installed, run this once from the repository root:
+
+```sh
+make audit-setup
+```
+
+This installs fixture dependencies and Playwright Chromium, builds both images, runs the quick gate, and starts a fresh validated bank desktop. Review its output for the checklist's setup checks; no results are marked automatically. Then run `make fixture-preview` in a second terminal for the banking UI section. Open the checklists on macOS:
 
 ```sh
 open docs/manual-acceptance.html
 open docs/repository-audit.html
 ```
 
-Both work offline, save independent browser-local notes/statuses, export JSON and print. They execute no commands and prefill no acceptance results. Record the actual commit and dirty state (`git describe --always --dirty`) and use the [evidence index](evidence/README.md) to distinguish historical runs from current validation.
+Both work offline, save independent browser-local notes/statuses, export JSON and print. They require no name, revision or date form. They execute no commands and prefill no acceptance results. The acceptance harnesses record source provenance; include `git describe --always --dirty` output in issue notes when useful. Use the [evidence index](evidence/README.md) to distinguish historical runs from current validation.
 
 ## Boundaries and troubleshooting
 
-The non-root desktop has no default route, host home, credentials, Docker socket or fixture oracle. A fixed-upstream gateway exposes approved fixture routes; managed Chromium policy restricts navigation. The viewer relay alone publishes loopback ports 6080/6081. Runtime observations stay in memory. Explicit synthetic calibration utilities retain debug captures; ordinary replay and safe export suppress images. Export approved replay metadata with `make export RUN=<printed-run-directory>`; business results stay local.
+The non-root desktop has no default route, host home, credentials, Docker socket or fixture oracle. A fixed-upstream gateway exposes approved fixture routes; managed Chromium policy restricts navigation. The fixed operator relay alone publishes loopback port 6081; the desktop still has no default route. Runtime observations stay in memory. Explicit synthetic calibration utilities retain debug captures; ordinary replay and safe export suppress images. Export approved replay metadata with `make export RUN=<printed-run-directory>`; business results stay local.
 
 Exact member identity, integer money, ambiguity rejection, bounded waits and typed failure/business outcomes remain deliberate constraints. The trusted host, runtime and fixture are inside the PoC's trust boundary; this is not authorization for arbitrary applications or general screenshot redaction. Base images and Python packages are pinned; most OS packages resolve at build time, with versions retained in evidence. A later rebuild must be validated.
 
 - Docker unavailable: start Docker Desktop; use `make logs` and `make ready` for diagnosis.
 - Stale image: `make build`, then `make reset`; acceptance now refuses a stale source/image pair.
-- Wrong screen, stopped input or expired ownership: reset the desktop, then reconnect the viewer/panel.
-- Port conflict: 6081 is fixed for the panel. Set `DESKTOP_PORT=6082` consistently for viewer commands if 6080 is occupied.
+- Wrong screen, stopped input or expired ownership: reset the desktop, then reload the operator panel.
+- Port conflict: free loopback port 6081 before starting the operator. Port 6080 is no longer used.
 - Public image metadata hangs on macOS: see the documented credential-helper workaround in [desktop setup](docs/DEVELOPMENT.md).
 
 [Development and build provenance](docs/DEVELOPMENT.md) · [M1 history](docs/MILESTONE_1.md) · [M2 design](docs/MILESTONE_2.md) · [M3 design](docs/MILESTONE_3.md) · [initial decisions](docs/DECISIONS.md).

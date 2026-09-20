@@ -13,7 +13,7 @@
 - One guarded OS adapter: exact session, focus/application, display, deadline, Stop and input-lock checks. Keep exact string IDs, integer minor-unit amounts, distinct result variants, ambiguity rejection and bounded observation waits. Never retry uncertain input.
 - Artifact loading must use bounded regular-file snapshots and decode the same bytes whose digest was checked. A capability cannot authorize itself; preserve independent policy admission.
 - Ownership uses epochs and an input-lock quiescence barrier. Future model actions retain the epoch observed before the model call. JSON cannot select the trusted human role.
-- noVNC stays server-enforced view-only. Human input uses the loopback operator panel and the same adapter. Keep Host/Origin/token/CSP boundaries and Stop available during pending input.
+- The loopback operator is the only desktop observation/control surface; no standalone VNC server. Its image endpoint never grants input. Human input uses the panel and the same guarded adapter. Keep Host/Origin/token/CSP boundaries and Stop available during pending input.
 - Resume is only the reviewed `search-member` → `open-savings` boundary, after visual verification of the original member. Arbitrary interruption requires reset.
 - Routine evidence contains closed metadata, never input text, keys, raw OCR or screenshots. Explicit business results remain separate. Storage failure must stop input; terminal worker results cannot overwrite Stop.
 - Manual capability, simulated operator, real-person observation and genuine model discovery are different claims. Never prefill human checklist results or relabel automated evidence.

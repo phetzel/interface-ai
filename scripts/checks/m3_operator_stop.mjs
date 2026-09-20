@@ -15,6 +15,7 @@ const { poll, phase, clickDesktop } = operatorControls(page);
 
 try {
   await page.goto('http://127.0.0.1:6081/');
+  await page.locator('#run-details > summary').click();
   await phase('idle');
   const session = await page.locator('#session').innerText();
   await page.locator('#start').click();
@@ -52,6 +53,7 @@ try {
   for (const id of ['send', 'resume', 'takeover', 'start'])
     assert.equal(await page.locator('#' + id).isEnabled(), false);
   await page.reload();
+  await page.locator('#run-details > summary').click();
   await phase('stopped · stopped');
   assert.equal(await page.locator('#send').isEnabled(), false);
   assert.equal(await page.locator('#resume').isEnabled(), false);

@@ -1,8 +1,10 @@
 # Current planning direction
 
-Updated 2026-09-17. **M1, bounded M2 and the M3 takeover mechanism are implemented** in the fixed Linux ARM64 environment. The current cleanup addresses the audit's A1–A6 repairs, build provenance, quality checks, readability and documentation. The [root README](../README.md) and [evidence index](../evidence/README.md) are authoritative for current validation; milestone counts below/elsewhere describe their dated source revisions.
+Updated 2026-09-19. **M1, bounded M2 and the M3 takeover mechanism are implemented** in the fixed Linux ARM64 environment. The current cleanup addresses the audit's A1–A6 repairs, build provenance, quality checks, readability and documentation. The [root README](../README.md) and [evidence index](../evidence/README.md) are authoritative for current validation; milestone counts below/elsewhere describe their dated source revisions.
 
-**Next:** integrate CLI/panel lifecycle and explicit recognition/checkpoint interfaces alongside real OpenAI discovery, a recorder and an operator-reviewed promotion manifest. Prove a genuinely discovered capability replays for the second member with zero model calls. The real-person handoff demonstration, final report and complete demo packaging remain pending. Cleanup is not evidence of completed discovery.
+**Next:** integrate CLI/panel lifecycle and explicit recognition/checkpoint interfaces alongside real OpenAI discovery, a recorder and an operator-reviewed promotion manifest. Prove a genuinely discovered capability replays for the second member with zero model calls. The real-person handoff is complete; final report and discovery demo packaging remain pending. See the [M4 implementation specification](MILESTONE_4.md) for the next work packages and acceptance gates. Cleanup is not evidence of completed discovery.
+
+**Manual audit update (2026-09-19):** the user completed the member-A takeover and resume flow; its evidence review passed. The user reports the M1–M3 manual checklist fully passed; command/harness checks and agent-operated checks retain their separate provenance. See [manual audit observations](MANUAL_AUDIT_NOTES.md) for the run reference and the deferred human-control click-targeting UX issue.
 
 ## Confirmed and open choices
 
@@ -16,7 +18,7 @@ Updated 2026-09-17. **M1, bounded M2 and the M3 takeover mechanism are implement
 | Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and broader recovery contracts |
 | Repository | No further pushes without an explicit user request | Changes remain local until requested |
 
-Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. M2 proves the declared policy/evidence boundary. M3 now provides the handoff mechanism; model discovery and a witnessed real-person handoff remain separate evidence requirements.
+Initial directions are accepted. The desktop gate has passed on native and browser calibration fixtures, and manual artifact replay passes the repeated acceptance gate. M2 proves the declared policy/evidence boundary. M3 now provides the handoff mechanism; genuine model discovery remains unimplemented; the witnessed real-person handoff is recorded separately.
 
 ## Revised language comparison
 
@@ -91,7 +93,7 @@ Screenshots are observations, not an enforcement boundary. A visual agent cannot
 
 ## Next design work
 
-1. Witness a real-person takeover using `make handoff-demo`; automated M3 validation is complete.
+1. Follow [M4](MILESTONE_4.md): prove provider access/action dispatch, then integrate the coordinator and discovery recorder. The M1–M3 manual pass and real-person takeover are complete.
 2. Keep recovery scoped to the declared expiry checkpoint; defer generic workflow recovery.
 3. Verify OpenAI API access and define allowed outbound model observations; metadata-only evidence export does not authorize raw screenshot transmission.
 4. Validate genuine discovery to a reusable artifact, including explicit artifact promotion into the reviewed policy.

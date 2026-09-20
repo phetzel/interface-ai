@@ -217,8 +217,10 @@ def isolation():
             assert any(option.startswith('seccomp=') for option in host['SecurityOpt'])
         else:
             assert not config['Mounts']
-        if service == 'viewer':
-            assert host['PortBindings']['6080/tcp'][0]['HostIp'] == '127.0.0.1'
+        if service == 'operator':
+            assert host['PortBindings'] == {
+                '6081/tcp': [{'HostIp': '127.0.0.1', 'HostPort': '6081'}]
+            }
         observations.append(
             {
                 'service': service,
@@ -230,7 +232,7 @@ def isolation():
                 'portBindings': host['PortBindings'],
             }
         )
-    assert {o['service'] for o in observations} == {'desktop', 'fixture', 'gateway', 'viewer'}
+    assert {o['service'] for o in observations} == {'desktop', 'fixture', 'gateway', 'operator'}
     (OUTPUT / 'container-boundaries.json').write_text(json.dumps(observations, indent=2) + '\n')
     stdout = container_script(
         'runtime-isolation',
@@ -401,7 +403,7 @@ try:
     check('provenance', provenance)
     check('shutdown-fresh-start-repeated-start', lifecycle)
     check(
-        'native-input-viewer-stop',
+        'native-input-operator-stop',
         lambda: retain_command_bundle('native-smoke', logged('native-smoke', desktop('smoke'))),
     )
     check('live-session-exclusivity-stop-guards', native_guards)

@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates chromium fonts-dejavu-core tesseract-ocr=5.3.0-2 tesseract-ocr-eng=1:4.1.0-2 \
-    novnc openbox scrot websockify x11-utils x11vnc xauth xvfb \
+    openbox scrot x11-utils xauth xvfb \
     python3 python3-dev python3-tk python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,5 +31,5 @@ RUN python /build-source/infra/desktop/build_manifest.py /build-source /opt/buil
     && rm -rf /build-source
 USER desktop
 WORKDIR /home/desktop
-EXPOSE 6080
+EXPOSE 6081
 ENTRYPOINT ["python", "/opt/desktop/start.py"]

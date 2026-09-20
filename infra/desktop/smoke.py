@@ -11,7 +11,12 @@ import json
 import platform
 import signal
 import socket
-import struct
+import re
+import urllib.error
+import urllib.request
+from io import BytesIO
+
+from PIL import Image
 import subprocess
 import sys
 import time
@@ -37,75 +42,59 @@ def assert_calibration_screen(screen):
             raise AssertionError('Screen is not the known calibration pad; capture suppressed')
 
 
-def receive(connection, size):
-    data = bytearray()
-    while len(data) < size:
-        chunk = connection.recv(size - len(data))
-        if not chunk:
-            raise EOFError('VNC connection closed')
-        data.extend(chunk)
-    return bytes(data)
-
-
-def verify_vnc():
-    """Use a raw RFB client so view-only is tested beyond a client UI setting.
-
-    Wire format: RFC 6143, sections 7.1, 7.3, 7.5 and 7.6.
-    """
+def verify_operator(screen):
+    """The observation surface matches X11 and cannot bypass human ownership."""
+    origin = 'http://127.0.0.1:6081'
     before = read_json(STATE)
-    with socket.create_connection(('127.0.0.1', 5900), timeout=3) as connection:
-        connection.settimeout(3)
-        if receive(connection, 12) != b'RFB 003.008\n':
-            raise AssertionError('Expected RFB 3.8')
-        connection.sendall(b'RFB 003.008\n')
-        count = receive(connection, 1)[0]
-        if 1 not in receive(connection, count):
-            raise AssertionError('Expected local view-only VNC security handshake')
-        connection.sendall(b'\x01')
-        if receive(connection, 4) != b'\0\0\0\0':
-            raise AssertionError('VNC security handshake failed')
-        connection.sendall(b'\x01')  # Shared viewer; never replace an existing viewer.
-        header = receive(connection, 24)
-        dimensions = struct.unpack('>HH', header[:4])
-        if dimensions != (WIDTH, HEIGHT):
-            raise AssertionError(f'Viewer dimensions mismatch: {dimensions}')
-        receive(connection, struct.unpack('>I', header[20:24])[0])
-        pixels = struct.pack('>BBBBHHHBBBxxx', 32, 24, 0, 1, 255, 255, 255, 16, 8, 0)
-        connection.sendall(b'\0\0\0\0' + pixels)
-        connection.sendall(struct.pack('>BBHi', 2, 0, 1, 0))  # Raw encoding only.
-        # Try a click on target 1 and a key press, despite the viewer restriction.
-        connection.sendall(struct.pack('>BBHH', 5, 1, 100, 190))
-        connection.sendall(struct.pack('>BBHH', 5, 0, 100, 190))
-        connection.sendall(struct.pack('>BBHI', 4, 1, 0, ord('x')))
-        connection.sendall(struct.pack('>BBHI', 4, 0, 0, ord('x')))
-        connection.sendall(struct.pack('>BBHHHH', 3, 0, 90, 180, 4, 4))
-        message = receive(connection, 4)
-        if message[0] != 0:
-            raise AssertionError(f'Expected framebuffer update, got {message[0]}')
-        rectangles = struct.unpack('>H', message[2:4])[0]
-        if rectangles == 0:
-            raise AssertionError('No framebuffer pixels returned')
-        sampled = False
-        for _ in range(rectangles):
-            x, y, width, height, encoding = struct.unpack('>HHHHi', receive(connection, 12))
-            if encoding != 0:
-                raise AssertionError(f'Unexpected VNC encoding {encoding}')
-            data = receive(connection, width * height * 4)
-            if x <= 90 < x + width and y <= 180 < y + height:
-                offset = ((180 - y) * width + 90 - x) * 4
-                if data[offset : offset + 3] != bytes((235, 99, 37)):
-                    raise AssertionError('VNC does not show the same blue calibration target')
-                sampled = True
-        if not sampled:
-            raise AssertionError('VNC did not return the requested calibration pixels')
-        # Allow the independent UI oracle to publish after the server processes input.
-        deadline = time.monotonic() + 0.4
-        while time.monotonic() < deadline:
-            after = read_json(STATE)
-            if after['clicks'] != before['clicks'] or after['entry'] != before['entry']:
-                raise AssertionError('VNC accepted input despite view-only policy')
-            time.sleep(0.05)
-    return {'dimensions': list(dimensions), 'serverRejectedInput': True}
+    with urllib.request.urlopen(origin + '/', timeout=3) as response:
+        token = re.search(r"const token='([a-f0-9]{64})';", response.read().decode()).group(1)
+    headers = {'X-Operator-Token': token}
+    with urllib.request.urlopen(
+        urllib.request.Request(origin + '/frame', headers=headers), timeout=3
+    ) as response:
+        assert response.headers['Content-Type'] == 'image/png'
+        assert response.headers['Cache-Control'] == 'no-store'
+        with Image.open(BytesIO(response.read())) as frame:
+            assert_calibration_screen(frame)
+            for point in ((90, 180), (310, 180), (530, 180)):
+                assert frame.getpixel(point)[:3] == screen.getpixel(point)[:3]
+    with urllib.request.urlopen(
+        urllib.request.Request(origin + '/status', headers=headers), timeout=3
+    ) as response:
+        status = json.load(response)
+    assert status['phase'] == 'idle' and status['owner'] == 'automation'
+    action = {
+        'lease': {key: status[key] for key in ('session', 'epoch')},
+        'sequence': status['sequence'],
+        'action': {'type': 'click', 'x': 100, 'y': 190},
+    }
+    request = urllib.request.Request(
+        origin + '/action',
+        data=json.dumps(action).encode(),
+        headers=headers | {'Origin': origin, 'Content-Type': 'application/json'},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=3):
+            raise AssertionError('Operator accepted input without human ownership')
+    except urllib.error.HTTPError as exc:
+        assert exc.code == 409 and json.load(exc)['code'] == 'invalid_transition'
+    # The former VNC transports must not provide a second input/observation path.
+    for port in (5900, 6080):
+        try:
+            connection = socket.create_connection(('127.0.0.1', port), timeout=1)
+        except ConnectionRefusedError:
+            continue
+        else:
+            connection.close()
+            raise AssertionError(f'Legacy viewer port {port} is still listening')
+    after = read_json(STATE)
+    assert after['clicks'] == before['clicks'] and after['entry'] == before['entry']
+    return {
+        'dimensions': [WIDTH, HEIGHT],
+        'frameMatchesDesktop': True,
+        'inputWithoutHumanOwnershipRejected': True,
+        'legacyPortsClosed': [5900, 6080],
+    }
 
 
 def verify_network():
@@ -179,7 +168,7 @@ def run(gui, session):
         assert_calibration_screen(screen)
         screen.save(output / 'before.png')
         record('screenshot_dimensions_and_fixture')
-        record('same_framebuffer_and_server_view_only', verify_vnc())
+        record('same_framebuffer_and_guarded_operator', verify_operator(screen))
         for number, x in [(1, 100), (2, 320), (3, 540)]:
             gui.click(x, 190)
             wait_for(f'click {number}', lambda: len(read_json(STATE)['clicks']) == number, 3)

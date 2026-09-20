@@ -10,46 +10,84 @@
   </head>
   <body>
     <main>
-      <header>
-        <h1>Interface AI <span class="hint">/ Operator</span></h1>
-        <span id="state">Connecting…</span>
+      <header class="app-header">
+        <div>
+          <h1>Interface AI</h1>
+          <p class="hint">Desktop operator <span aria-hidden="true">·</span> Synthetic bank demo</p>
+        </div>
+        <button id="stop" class="danger" disabled>Stop</button>
       </header>
-      <p id="session"></p>
-      <div class="controls">
-        <label>Member <input id="member" value="00123" maxlength="5" size="6" /></label>
-        <button id="start" class="primary" disabled>Start lookup</button
-        ><button id="takeover" disabled>Take control</button>
-        <button id="resume" disabled>Verify &amp; resume</button
-        ><button id="stop" class="danger" disabled>Stop</button>
+      <div class="workspace">
+        <section class="control-panel" aria-label="Lookup controls">
+          <p class="eyebrow">Savings balance lookup</p>
+          <h2 id="status-title" aria-live="polite">Connecting…</h2>
+          <p id="guidance">Loading desktop state…</p>
+          <div id="lookup-controls" class="control-group" hidden>
+            <label for="member">Member</label>
+            <input
+              id="member"
+              value="00123"
+              maxlength="5"
+              inputmode="numeric"
+              aria-describedby="member-help"
+            />
+            <p id="member-help" class="hint">Use 00123 or 00456. Keep all five digits.</p>
+            <button id="start" class="primary" disabled>Start lookup</button>
+          </div>
+          <div class="run-actions">
+            <button id="takeover" class="primary" disabled hidden>Take control</button>
+            <button id="resume" class="primary" disabled hidden>Verify &amp; resume</button>
+          </div>
+          <p id="message" role="status" aria-live="polite"></p>
+          <div id="human-controls" class="control-group" hidden>
+            <h3>Control the desktop</h3>
+            <p class="hint" id="input-help">
+              Click a field in the desktop image first. Then send text here; your keyboard does not
+              type directly into the image.
+            </p>
+            <label for="text">Text to send</label>
+            <input
+              id="text"
+              type="password"
+              autocomplete="off"
+              maxlength="256"
+              placeholder="Synthetic data only"
+              aria-describedby="input-help"
+              disabled
+            />
+            <button id="send" disabled>Send text</button>
+            <div class="key-controls" aria-label="Desktop keys">
+              <button data-key="enter" disabled>Enter</button>
+              <button data-key="tab" disabled>Tab</button>
+              <button data-key="backspace" disabled>Backspace</button>
+              <button id="select" disabled>Select all</button>
+            </div>
+            <p class="hint">Sent text clears from this panel and is not saved in the audit.</p>
+          </div>
+        </section>
+        <section class="desktop-panel" aria-label="Live desktop">
+          <div class="desktop-heading">
+            <h2>Live desktop</h2>
+            <span id="input-mode" class="mode">View only</span>
+          </div>
+          <img
+            id="screen"
+            alt="Live isolated desktop. Click to interact when you own control."
+            draggable="false"
+          />
+          <p id="screen-help" class="hint">Watch the same desktop the automation uses.</p>
+        </section>
+        <details id="run-details" class="diagnostics">
+          <summary>Run details</summary>
+          <p id="session"></p>
+          <p id="state">Connecting…</p>
+          <p id="diagnostic"></p>
+          <p class="hint">
+            Run evidence records action metadata. Typed text and screenshots are not saved. The
+            business result is stored separately.
+          </p>
+        </details>
       </div>
-      <p id="guidance">Loading desktop state…</p>
-      <p id="diagnostic" class="hint"></p>
-      <p id="message" role="status"></p>
-      <div class="controls">
-        <label
-          >Text to send
-          <input
-            id="text"
-            type="password"
-            autocomplete="off"
-            maxlength="256"
-            placeholder="Synthetic data only"
-        /></label>
-        <button id="send" disabled>Send text</button><button data-key="enter" disabled>Enter</button
-        ><button data-key="tab" disabled>Tab</button
-        ><button data-key="backspace" disabled>Backspace</button
-        ><button id="select" disabled>Select all</button>
-      </div>
-      <img
-        id="screen"
-        alt="Live isolated desktop. Click to interact when you own control."
-        draggable="false"
-      />
-      <p class="hint">
-        Click the desktop to focus a field or button, then send text with the controls above. Human
-        action types are recorded; text, keys and screenshots are not saved. This panel controls the
-        same desktop as the read-only viewer.
-      </p>
     </main>
     <script nonce="__TOKEN__">
       /*__SCRIPT__*/

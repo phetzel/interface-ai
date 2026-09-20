@@ -108,31 +108,6 @@ def main():
     if mode == 'bank':
         wait_for('painted banking fixture', bank_painted, 15)
         sandbox = wait_for('Chromium renderer sandbox', lambda: sandbox_status(app.pid), 10)
-    launch(
-        'read-only VNC',
-        [
-            'x11vnc',
-            '-display',
-            os.environ['DISPLAY'],
-            '-auth',
-            str(auth),
-            '-localhost',
-            '-rfbport',
-            '5900',
-            '-forever',
-            '-shared',
-            '-viewonly',
-            '-nopw',
-            '-noxdamage',
-            '-quiet',
-        ],
-    )
-    wait_for('VNC', lambda: port_ready(5900))
-    launch(
-        'web viewer',
-        ['/usr/bin/websockify', '--web=/usr/share/novnc', '0.0.0.0:6080', '127.0.0.1:5900'],
-    )
-    wait_for('web viewer', lambda: port_ready(6080))
     write_json(
         SESSION,
         {
@@ -140,7 +115,7 @@ def main():
             'display': os.environ['DISPLAY'],
             'width': WIDTH,
             'height': HEIGHT,
-            'viewer': 'read-only',
+            'operator': 'http://127.0.0.1:6081/',
             'mode': mode,
             **application,
             'appPid': app.pid,
@@ -150,7 +125,7 @@ def main():
     )
     launch('operator gateway', [sys.executable, '-m', 'interface_ai.handoff.server'])
     wait_for('operator gateway', lambda: port_ready(6081))
-    print(f'Desktop ready: {mode}, 1280x800; read-only viewer on port 6080', flush=True)
+    print(f'Desktop ready: {mode}, 1280x800; operator on port 6081', flush=True)
     while not stopping:
         for name, process in children:
             if process.poll() is not None:

@@ -68,9 +68,10 @@
 <body>
 <div class="shell">
   <header class="hero">
-    <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue.</p></div>
+    <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue. For a short assessor walkthrough, use the <a href="DEMO.md">demo guide</a>.</p></div>
     <div class="scope"><strong>What this covers</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
   </header>
+  <p class="note">2026-09-19: the operator at 6081 replaces the standalone 6080 viewer. Instructions are updated; saved results remain observations of the revision you tested. See the <a href="MILESTONE_4.md">next milestone specification</a> for discovery work still to come.</p>
   <div class="toolbar">
     <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New pass</button>
     <span id="storage" class="storage" role="status">Checking local storage…</span>
@@ -101,18 +102,18 @@ const GROUPS = [
     "steps": [
       {
         "id": "setup",
-        "title": "Check the environment",
+        "title": "Prepare the audit with one command",
         "kind": "command",
         "actions": [
-          "Start Docker Desktop. Use Node 22 (see .nvmrc), host Python 3.9+ and uv for the quick gate. The engine runs in Docker. No OpenAI key is needed.",
-          "Close old operator/fixture tabs and any previous fixture test servers. Keep this checklist open. If a command fails, save its output in notes."
+          "Start Docker Desktop. Use Node 22 (nvm use if you use nvm), host Python 3.9+, uv and Make. No OpenAI key is needed.",
+          "Close old operator/fixture tabs and stop any previous fixture preview servers. Run the combined setup below and keep its output open for the next two checks. If it fails, save the output in notes."
         ],
         "commands": [
-          "cd /Users/phillip/interview/interface-ai\ngit describe --always --dirty\ngit status --short\ndocker version\ndocker compose version\nnode --version\nmake help"
+          "cd /Users/phillip/interview/interface-ai\nmake audit-setup"
         ],
         "expected": [
-          "Docker reports a running server. The commands show your current revision and environment; no setup form is needed.",
-          "Make lists replay, policy-check, handoff-demo, handoff-check, and export. Ports 4173, 4180–4187, 6080 and 6081 are available for their respective services."
+          "The command installs fixture dependencies and Playwright Chromium, builds both images, runs the quick gate, and starts a fresh validated bank desktop. It stops on the first failure.",
+          "Ports 4173, 4180–4187 and 6081 are available for their respective services. No checklist results are marked automatically."
         ],
         "links": [
           [
@@ -127,14 +128,10 @@ const GROUPS = [
       },
       {
         "id": "build",
-        "title": "Build and start from a fresh desktop",
+        "title": "Review desktop readiness from setup",
         "kind": "command",
-        "commands": [
-          "make build",
-          "make reset MODE=bank SCENARIO=default\nmake ready"
-        ],
         "expected": [
-          "Both Docker images build; desktop, fixture, gateway and viewer become healthy.",
+          "Both Docker images build; desktop, fixture, gateway and operator become healthy.",
           "Readiness reports mode bank, dimensions 1280 × 800, a session UUID, and inputStopped: false. Record that UUID in notes."
         ],
         "note": "If public image metadata stalls, use the documented temporary Docker credential-helper workaround. Record the setup issue and retain runtime restrictions.",
@@ -143,18 +140,18 @@ const GROUPS = [
             "Build troubleshooting",
             "DEVELOPMENT.md#public-image-credential-helper-workaround"
           ]
+        ],
+        "actions": [
+          "Review the build and readiness output from make audit-setup above. There is no need to rebuild or reset again here."
         ]
       },
       {
         "id": "quick-gate",
-        "title": "Verify current builds and the quick quality gate",
+        "title": "Review the quick quality gate from setup",
         "kind": "harness",
-        "commands": [
-          "make fixture-install\nmake quick-check"
-        ],
         "expected": [
           "The quick gate passes formatting/lint, four host harness tests, 92 Linux engine tests, four schema comparisons and fixture typechecking. Record the printed evidence directory.",
-          "build-preflight.json binds source to both image IDs and verifies shipped engine files and compiled fixture assets. A stale build fails with make build instructions; no desktop input occurs and no schema is rewritten."
+          "build-preflight.json binds source to both image IDs and verifies shipped engine files and compiled fixture assets. The quick-check phase performs no desktop input and rewrites no schemas; setup starts the fresh desktop only after this gate passes."
         ],
         "links": [
           [
@@ -165,6 +162,9 @@ const GROUPS = [
             "Cleanup validation",
             "../evidence/cleanup-implementation-2026-09-17/README.md"
           ]
+        ],
+        "actions": [
+          "Review the quick-check output already produced by make audit-setup. Open its printed evidence directory; do not rerun the gate unless you are investigating a failure."
         ]
       }
     ]
@@ -179,11 +179,10 @@ const GROUPS = [
         "title": "Launch the host fixture preview",
         "kind": "command",
         "commands": [
-          "make fixture-install\nnpm --prefix apps/bank-fixture run build",
-          "npm --prefix apps/bank-fixture run preview"
+          "make fixture-preview"
         ],
         "actions": [
-          "Leave the preview command running in a second terminal. Open the host fixture link below."
+          "In a second terminal at the repository root, run the preview command and leave it running. Open the host fixture link below. Dependencies were installed by audit-setup."
         ],
         "expected": [
           "The Northstar search page loads at 127.0.0.1:4173 with the synthetic-data label and no preselected member."
@@ -215,7 +214,7 @@ const GROUPS = [
   {
     "id": "desktop",
     "title": "03 / Observe real desktop control",
-    "intro": "Use the read-only desktop viewer for this section. Reconnect or reload it after every desktop reset. Keep the operator panel closed until the takeover section.",
+    "intro": "Use the operator’s Live desktop image for this section without starting a panel lookup. Reload after each reset. CLI/harness runs update the image; their status and results come from the terminal, not the panel’s lookup status.",
     "steps": [
       {
         "id": "native",
@@ -225,16 +224,16 @@ const GROUPS = [
           "make reset MODE=native\nmake ready"
         ],
         "actions": [
-          "Open the viewer and inspect the native pad. Try clicking a blue target and typing into its field through the viewer."
+          "Open the operator and inspect its Live desktop image of the native pad. Without starting a lookup, try clicking a blue target and typing into the image."
         ],
         "expected": [
           "The same 1280 × 800 desktop is visible, with no clipped targets. The session UUID differs from the previous bank session.",
-          "Your viewer clicks and keys do not change the pad. noVNC is server-enforced view-only."
+          "Clicks and keys on the observation image do not change the pad. Human input requires an explicit ownership transfer; no standalone VNC server remains."
         ],
         "links": [
           [
-            "Open read-only desktop viewer",
-            "http://127.0.0.1:6080/vnc.html?autoconnect=true&resize=scale&view_only=true"
+            "Open operator live desktop",
+            "http://127.0.0.1:6081/"
           ]
         ]
       },
@@ -246,11 +245,11 @@ const GROUPS = [
           "./scripts/desktop smoke"
         ],
         "actions": [
-          "Watch the viewer as the command runs. Read its eight PASS checks and evidence path."
+          "Watch the operator’s live image as the command runs. Read its eight PASS checks and evidence path."
         ],
         "expected": [
           "Three targets turn green, text is selected/replaced/submitted, and the native list scrolls.",
-          "The smoke reports screenshot agreement, server-side VNC input rejection, stop behavior, network probes and an unchanged session."
+          "The smoke reports screenshot agreement, operator image agreement and input rejection without human ownership, stop behavior, network probes and an unchanged session."
         ],
         "note": "This trusted calibration harness intentionally saves synthetic screenshots and uses fixed coordinates. It proves input plumbing; it is not a model-discovered capability or a shareable safe export."
       },
@@ -263,7 +262,7 @@ const GROUPS = [
           "./scripts/desktop browser-smoke --member-id 00123"
         ],
         "actions": [
-          "Reload the viewer after reset. Observe the banking app search, account navigation and return to search."
+          "Reload the operator after reset. Observe the banking app search, account navigation and return to search."
         ],
         "expected": [
           "Sandboxed Chromium runs inside the isolated desktop. The browser calibration completes successfully and leaves the search screen.",
@@ -286,7 +285,7 @@ const GROUPS = [
           "make replay MEMBER_ID=00123"
         ],
         "actions": [
-          "Watch the viewer. Open this run’s result.json and report.json from the printed evidence path. Save the successful run folder name below for the export check."
+          "Watch the operator’s live image. Open this run’s result.json and report.json from the printed evidence path. Save the successful run folder name below for the export check."
         ],
         "capture": "replayRun",
         "expected": [
@@ -421,7 +420,7 @@ const GROUPS = [
         ],
         "capture": "policySession",
         "actions": [
-          "Reload the viewer. Confirm the synthetic Transfer funds panel is visible. Copy the current readiness session UUID into the field below before copying the action commands."
+          "Reload the operator. Confirm the synthetic Transfer funds panel is visible. Copy the current readiness session UUID into the field below before copying the action commands."
         ],
         "expected": [
           "Both actions exit nonzero with policy_operation_denied. Transfer status remains “No transfer requested”; the address bar does not receive focus.",
@@ -438,7 +437,7 @@ const GROUPS = [
         ],
         "expected": [
           "The command exits nonzero and says raw screenshot persistence is disabled.",
-          "No ordinary screenshot bundle is created. The live viewer can still display pixels. Legacy calibration images are a separate documented exception."
+          "No ordinary screenshot bundle is created. The operator’s live image can still display pixels. Legacy calibration images are a separate documented exception."
         ]
       },
       {
@@ -464,7 +463,7 @@ const GROUPS = [
   {
     "id": "handoff",
     "title": "06 / Perform the real human takeover",
-    "intro": "This is the missing real-person check. You must perform these steps yourself in the operator panel. The human lease lasts 15 minutes after Take control, with at most 100 requests. Finish this block before running any other reset or harness.",
+    "intro": "Use the operator panel on port 6081 for this real-person check. Open Run details for the session UUID, raw phase/owner and diagnostics. Text/key controls appear only while you own the desktop; Stop remains at the top. The human lease lasts 15 minutes after Take control, with at most 100 requests. Checks 21–27 share one session; reset only where a later check explicitly asks you to.",
     "steps": [
       {
         "id": "handoff-invalid-input",
@@ -497,11 +496,11 @@ const GROUPS = [
         ],
         "actions": [
           "Open or reload the operator panel (port 6081). Enter member 00123 and choose Start lookup.",
-          "Wait for Session expired. Copy the panel’s session UUID into your notes; compare it at the end."
+          "Wait for Session expired and the panel’s Your help is needed status. Open Run details, copy the session UUID into your notes and compare it at the end."
         ],
         "expected": [
-          "Phase becomes awaiting human, with owner quiescing. The diagnostic line shows search-member and intervention_required. Pending automation is already revoked.",
-          "The desktop remains at expiry; no recovery input is issued automatically. Verify & resume is disabled until you take control."
+          "Run details shows phase awaiting human, with owner quiescing. The diagnostic line shows search-member and intervention_required. Pending automation is already revoked.",
+          "The desktop remains at expiry; no recovery input is issued automatically. Verify & resume becomes available only after you take control."
         ],
         "links": [
           [
@@ -610,7 +609,7 @@ const GROUPS = [
         "actions": [
           "Reload the operator panel, start a lookup and take control at expiry. Click the training-code field inside the desktop.",
           "Copy the 256 synthetic x characters printed by the second command into Text to send. Choose Send text, then immediately choose the panel’s Stop button while Send text is still disabled.",
-          "Observe the stopped state, try the disabled input/resume controls, and reload the panel.",
+          "Observe the stopped state, confirm input/resume controls are unavailable, and reload the panel.",
           "After Stop has settled, run the final command to inspect your stopped run, before resetting."
         ],
         "expected": [
@@ -668,9 +667,9 @@ const GROUPS = [
           "Record the visible step and reason, then inspect the newest handoff files using the second command."
         ],
         "expected": [
-          "The panel reports step search-member and reason checkpoint_timeout. result.json identifies the failed step and expected checkpoint.",
+          "Open Run details: the panel reports step search-member and reason checkpoint_timeout. result.json identifies the failed step and expected checkpoint.",
           "audit.jsonl retains nested interpreter entries with reviewed step/target IDs and a failed step event. It contains no typed training code, raw keystrokes, member ID values, recognized business text or screenshot.",
-          "Take control and Verify & resume are disabled after this terminal failure. Broader failure-to-handoff integration remains future work; the current behavior is explicit."
+          "Take control and Verify & resume are unavailable after this terminal failure. Broader failure-to-handoff integration remains future work; the current behavior is explicit."
         ],
         "note": "Last verified checkpoint means the last successful observation, not a claim about the current screen. Record evidence before the next reset."
       }
@@ -711,13 +710,13 @@ const GROUPS = [
         "title": "Run the full fixture test suite",
         "kind": "harness",
         "commands": [
-          "PLAYWRIGHT_BROWSERS_PATH=\"$PWD/tmp/playwright\" make fixture-test"
+          "make fixture-test"
         ],
         "expected": [
           "All 15 fixture tests pass at this revision, including expiry, validation, navigation and all configured rendering scenarios.",
           "A nonzero exit or failed test is recorded as failed/blocked, not skipped silently."
         ],
-        "note": "If the repository browser cache is absent, install the pinned browser with PLAYWRIGHT_BROWSERS_PATH=\"$PWD/tmp/playwright\" ./apps/bank-fixture/node_modules/.bin/playwright install chromium, then rerun. The suite uses ports 4180–4187."
+        "note": "audit-setup installs Playwright Chromium. If you set PLAYWRIGHT_BROWSERS_PATH yourself, use the same value during setup and this test."
       },
       {
         "id": "policy-suite",
@@ -845,7 +844,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' checks passed. '+counts.failed+' failed, '+counts.blocked+' blocked, '+counts.skipped+' skipped, '+counts['not-run']+' not run.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-19-v3',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-19-v4-operator-only',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-manual-pass-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

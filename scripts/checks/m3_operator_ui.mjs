@@ -13,6 +13,7 @@ const { poll, phase: state, ready, clickDesktop } = operatorControls(page);
 
 try {
   await page.goto('http://127.0.0.1:6081/');
+  await page.locator('#run-details > summary').click();
   await state('idle');
   await page.locator('#member').fill('123');
   await page.locator('#start').click();

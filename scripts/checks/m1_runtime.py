@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import platform
 import socket
+import shutil
 import subprocess
 import urllib.request
 
@@ -49,6 +50,18 @@ assert not any(
 )
 with urllib.request.urlopen('http://fixture:4173/healthz', timeout=3) as response:
     assert response.status == 200
+
+for program in ('x11vnc', 'websockify'):
+    assert shutil.which(program) is None, f'Legacy viewer software remains: {program}'
+assert not Path('/usr/share/novnc').exists()
+for port in (5900, 6080):
+    try:
+        connection = socket.create_connection(('127.0.0.1', port), timeout=1)
+    except ConnectionRefusedError:
+        pass
+    else:
+        connection.close()
+        raise AssertionError(f'Legacy viewer port {port} is still listening')
 
 probes = []
 for address in ('1.1.1.1', '8.8.8.8', '2606:4700:4700::1111'):
@@ -110,6 +123,8 @@ print(
             'noModelSDK': True,
             'modelCalls': 0,
             'fixtureHealthReachable': True,
+            'legacyViewerRemoved': True,
+            'legacyPortsClosed': [5900, 6080],
             'noDefaultIPv4Route': True,
             'tcpProbes': probes,
             'packages': packages,
