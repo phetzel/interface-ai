@@ -82,7 +82,9 @@ class DiscoveryLoopTests(unittest.TestCase):
             self.addCleanup(patcher.stop)
         self.c = Controller(output_root=self.root)
         self.now = None
-        self.discovery = Discovery(self.c, desktop_factory=self.desktop, policy_factory=Policy)
+        self.discovery = Discovery(
+            self.c, desktop_factory=self.desktop, policy_factory=Policy, recorder_factory=None
+        )
         self.addCleanup(self.close)
 
     def desktop(self, session_id, **kw):

@@ -5,11 +5,13 @@ import argparse
 from pathlib import Path
 from pydantic import TypeAdapter
 from .models import Capability, MemberInput, RunResult, SavingsOutput
+from .generated import GeneratedCapability
 
 
 def schemas():
     return {
         'capability-v1': Capability.model_json_schema(),
+        'capability-v2': GeneratedCapability.model_json_schema(),
         'input-v1': MemberInput.model_json_schema(),
         'output-v1': SavingsOutput.model_json_schema(),
         'result-v1': TypeAdapter(RunResult).json_schema(),

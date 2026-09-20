@@ -63,6 +63,8 @@ def run_discovery(client, transport, report, save, member, *, clock=time.monoton
         report['responses'].append(metadata)
         report['usageUnknown'] = any(len(item['usage']) != 3 for item in report['responses'])
         save()
+        if metadata['model'] != MODEL:
+            raise ProbeError('provider_model_mismatch')
         call = selected_call(response)
         actions = call.get('actions')
         if not isinstance(actions, list) or not 1 <= len(actions) <= 4:
@@ -84,8 +86,10 @@ def run_discovery(client, transport, report, save, member, *, clock=time.monoton
             },
         )
         report['actionsCompleted'] = frame['actionsCompleted']
+        report['lastAcknowledgedActions'] = frame['actionsCompleted']
         report['inputDispatchUncertain'] = False
         if frame.get('result') is not None:
+            report['candidate'] = frame.get('candidate')
             report['status'] = 'passed' if frame['result']['status'] == 'success' else 'failed'
             report['resultStatus'] = frame['result']['status']
             save()

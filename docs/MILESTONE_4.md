@@ -1,6 +1,6 @@
 # M4 — Discover, record, review, and replay
 
-Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../evidence/m4-03-goal-discovery/README.md). M4-04 through M4-06 remain in progress. [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
+Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../evidence/m4-03-goal-discovery/README.md). M4-04 [recorded candidate passed](../evidence/m4-04-recorded-candidate/README.md). M4-05 and M4-06 remain in progress. [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
 
 ## Outcome
 

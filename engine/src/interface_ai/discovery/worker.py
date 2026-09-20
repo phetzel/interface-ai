@@ -19,10 +19,20 @@ from interface_ai.handoff.evidence import atomic_write
 from .probe import Probe
 from .policy import DiscoveryPolicy
 from .actions import normalize
+from .recorder import Recorder
+from interface_ai.replay.loader import ReplayError
+from pydantic import ValidationError
 
 
 class Discovery(Probe):
-    def __init__(self, controller, *, desktop_factory=Desktop, policy_factory=DiscoveryPolicy):
+    def __init__(
+        self,
+        controller,
+        *,
+        desktop_factory=Desktop,
+        policy_factory=DiscoveryPolicy,
+        recorder_factory=Recorder,
+    ):
         super().__init__(controller, desktop_factory=desktop_factory, policy_factory=policy_factory)
         self.inputs = None
         self.trace = []
@@ -33,6 +43,9 @@ class Discovery(Probe):
         self.result = None
         self.policy = None
         self.observation_refs = []
+        self.recorder_factory = recorder_factory
+        self.recorder = None
+        self.candidate = None
 
     def start(self, session, member_id):
         c = self.controller
@@ -94,6 +107,7 @@ class Discovery(Probe):
             limits={'requests': 20, 'actions': 40, 'seconds': 120},
             screenshots='memory-only',
             responses=self.responses,
+            candidate=self.candidate,
         )
 
     def persist(self):
@@ -145,6 +159,8 @@ class Discovery(Probe):
         )
         view.reference = ref['id']
         self.observation_refs.append(ref)
+        if self.recorder is not None:
+            self.recorder.observe(view, state)
         return view, state, result
 
     def frame(self, desktop, *, view=None):
@@ -297,6 +313,8 @@ class Discovery(Probe):
         pending = initial
         try:
             self.policy = self.policy_factory(self.inputs)
+            if self.recorder_factory is not None:
+                self.recorder = self.recorder_factory(self.policy.bundle)
             with self.desktop_factory(
                 self.controller.session['id'],
                 epoch=self.epoch,
@@ -330,6 +348,11 @@ class Discovery(Probe):
                         break
                     pending.set_result(result)
                     pending = None
+            if self.recorder is not None and self.result.status == 'success':
+                try:
+                    self.candidate = self.recorder.finish(self)
+                except (ReplayError, ValidationError, KeyError, ValueError):
+                    self.candidate = dict(status='incomplete', code='recording_incomplete')
             with self.controller.mutex:
                 if self.controller.phase == 'running':
                     self.status = 'passed' if self.result.status == 'success' else 'failed'
@@ -337,6 +360,7 @@ class Discovery(Probe):
                 else:
                     raise DesktopError('ownership_revoked', 'Discovery lost ownership')
             self.persist()
+            result['candidate'] = self.candidate
             pending.set_result(result)
             pending = None
         except Exception as exc:
@@ -363,6 +387,7 @@ class Discovery(Probe):
                     DesktopError(self.code, 'Discovery failed; inspect the operator')
                 )
         finally:
+            self.recorder = None  # Release remaining crop/geometry buffers after the run.
             while not self.commands.empty():
                 _, _, future = self.commands.get_nowait()
                 if not future.done():

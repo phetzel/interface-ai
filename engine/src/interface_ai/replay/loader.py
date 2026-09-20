@@ -7,6 +7,7 @@ from pathlib import Path
 from PIL import Image
 from pydantic import ValidationError
 from interface_ai.contracts.models import Capability, MemberInput
+from interface_ai.contracts.generated import GeneratedCapability
 from interface_ai.files import read_regular
 
 
@@ -18,7 +19,7 @@ class ReplayError(RuntimeError):
 
 @dataclass(frozen=True)
 class Bundle:
-    capability: Capability
+    capability: Capability | GeneratedCapability
     sha256: str
     templates: dict
 
@@ -42,7 +43,13 @@ def load_bundle(path):
     try:
         path = Path(path).resolve(strict=True)
         raw = read_regular(path, 262144)
-        capability = Capability.model_validate(strict_json(raw))
+        data = strict_json(raw)
+        model = (
+            GeneratedCapability
+            if isinstance(data, dict) and data.get('schemaVersion') == '2.0'
+            else Capability
+        )
+        capability = model.model_validate(data)
     except (OSError, ValueError, RecursionError):
         raise ReplayError(
             'invalid_capability', 'Capability JSON or semantic validation failed'

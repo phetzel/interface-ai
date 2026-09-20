@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "checks": [
+    "quality",
+    "host-harness-tests",
+    "engine-tests",
+    "model-schemas",
+    "fixture-typecheck"
+  ],
+  "schemas": [
+    "capability-v1",
+    "capability-v2",
+    "input-v1",
+    "output-v1",
+    "result-v1"
+  ]
+}
