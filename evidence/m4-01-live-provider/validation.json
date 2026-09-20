@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-20",
+  "baseCommit": "4646f05",
+  "scope": "uncommitted M4-01 worktree; exact executable source manifest attached",
+  "liveOpenAIStatus": "passed",
+  "model": "gpt-5.6-sol",
+  "successfulRun": "tmp/discovery-probes/20260920T091504Z-a7068a57",
+  "desktopRun": "tmp/desktop-artifacts/20260920T091505Z-probe-3d6e8b83",
+  "transportRun": "tmp/discovery-checks/20260920T091235Z-f722f769",
+  "successfulRequests": 3,
+  "successfulResponses": 3,
+  "nativeActions": 1,
+  "hostTests": 15,
+  "transportChecks": 6,
+  "quality": "passed",
+  "changesSinceOfflineValidation": [
+    "scripts/discovery-check",
+    "scripts/lib/discovery.py",
+    "scripts/tests/test_discovery.py"
+  ],
+  "imageIds": {
+    "desktop": "sha256:cedfb81ffd27090ec94264303f4332d72dae5e40919fc3a7631650d46916e7b5",
+    "fixture": "sha256:0ece5b0fc53d0250a0d3ac0823c7a3526dd8d1ebb0766cbfe0036cc7e42ab4ab"
+  },
+  "priorFailedAttempts": 4,
+  "allLiveResponseRequestsAttempted": 7,
+  "allLiveResponsesCompleted": 6,
+  "priorConnectionFailureUsage": "unknown",
+  "diagnostics": {
+    "authenticatedModelAccessRead": "passed",
+    "rawModelTranscriptsRetained": false
+  },
+  "operatorVisibleStatus": "Model action test complete"
+}

@@ -1,5 +1,7 @@
 # Current planning direction
 
+**M4-01 update (2026-09-20):** the host-only OpenAI client, bounded transport, one-click visual policy and offline negative tests are implemented. [Genuine provider acceptance passed](../evidence/m4-01-live-provider/README.md): three OpenAI responses, one native click and a stateless screenshot round trip. [Run and explain the probe](M4_01_PROVIDER_PROBE.md). Shared lifecycle (M4-02), goal-driven discovery and generated artifacts remain next; a connection probe is not the assignment's discovery demonstration.
+
 Updated 2026-09-19. **M1, bounded M2 and the M3 takeover mechanism are implemented** in the fixed Linux ARM64 environment. The current cleanup addresses the audit's A1–A6 repairs, build provenance, quality checks, readability and documentation. The [root README](../README.md) and [evidence index](../evidence/README.md) are authoritative for current validation; milestone counts below/elsewhere describe their dated source revisions.
 
 **Next:** integrate CLI/panel lifecycle and explicit recognition/checkpoint interfaces alongside real OpenAI discovery, a recorder and an operator-reviewed promotion manifest. Prove a genuinely discovered capability replays for the second member with zero model calls. The real-person handoff is complete; final report and discovery demo packaging remain pending. See the [M4 implementation specification](MILESTONE_4.md) for the next work packages and acceptance gates. Cleanup is not evidence of completed discovery.
@@ -12,7 +14,7 @@ Updated 2026-09-19. **M1, bounded M2 and the M3 takeover mechanism are implement
 | --- | --- | --- |
 | Language | Python engine; TypeScript available for UI | Dependencies pass M1 on Linux ARM64; other environments remain untested |
 | UI | React/TypeScript as the initial sample-app direction | Keep operator UI minimal; no polished console yet |
-| Models | OpenAI only, using one provider key; start with GPT-5.6 Sol | Account access and performance on the actual fixture |
+| Models | OpenAI only, using one provider key; GPT-5.6 Sol access and one-click computer-tool exchange verified | Performance on full workflow discovery |
 | Automation | Computer use across application surfaces; PyAutoGUI and local visual recognition pass M1 | Broader rendering conditions and model discovery |
 | Target | Three-view synthetic banking app; read-only savings lookup passes M1 | M3 expiry is implemented; generic dialogs remain later integration work |
 | Schema | Pydantic source, portable JSON, and exported JSON Schema are implemented | Discovery-generated target provenance and broader recovery contracts |

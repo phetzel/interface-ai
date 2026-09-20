@@ -26,6 +26,9 @@ function render() {
     failure: 'Lookup failed',
     business_outcome: 'Member not found',
     stopped: 'Stopped',
+    probing: 'Testing model connection',
+    probe_complete: 'Model action test complete',
+    probe_failed: 'Model action test failed',
   };
   $('status-title').textContent = titles[state.phase] || 'Checking desktop';
   $('state').textContent = state.phase.replaceAll('_', ' ') + ' · ' + state.owner;
@@ -74,6 +77,10 @@ function render() {
       '. Reset the desktop before retrying.',
     business_outcome: 'Member not found. Reset the desktop before another run.',
     stopped: 'Input stopped. Reset the desktop to continue.',
+    probing: 'The host is testing one model-selected click. Stop remains available.',
+    probe_complete:
+      'The transport test finished. See the host report for OpenAI results. Reset before a lookup.',
+    probe_failed: 'The transport test ended. See the host report, then reset the desktop.',
   };
   $('guidance').textContent = messages[state.phase] || state.phase;
   if (state.evidenceStatus === 'failed')

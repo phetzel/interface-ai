@@ -168,7 +168,7 @@ Choose at most one or two: a broader repeated-run stability report; a second ban
 
 Do not build production orchestration, multiple model providers, multiple operating systems, or a rich operator dashboard before the core is complete.
 
-## Current dependency update (2026-09-19)
+## Current dependency update (2026-09-20)
 
 The user has completed the M1–M3 manual acceptance checklist, including the real-person takeover. The next implementation is [M4: discovery → recorded candidate → reviewed promotion → offline replay](MILESTONE_4.md). The operator at 6081 is now the only desktop surface; the separate 6080 VNC viewer was retired. Earlier phase/PoC sections retain their planning history.
 
@@ -179,11 +179,12 @@ The native/browser desktop input gate passed. Initial focus, viewer-port, Chromi
 | Prerequisite | First dependent work | Can other work proceed? |
 | --- | --- | --- |
 | Next implementation scope — M4 specified | PoC E, generated artifacts and lifecycle integration | [M4](MILESTONE_4.md) defines the work and gates |
+| M4-01 genuine provider/transport proof passed | Shared lifecycle and bounded discovery | [Live evidence](../evidence/m4-01-live-provider/README.md): three responses and one guarded click; M4-02 is next |
 | Local desktop runtime/operator — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
-| OpenAI API access | Genuine discovery | All model-free PoCs can proceed |
+| OpenAI API access and computer-tool exchange — verified | Genuine discovery | Provider access is no longer blocking; coordinator/recorder work remains |
 | Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
 | Visual recognition and repeated manual replay — gate passed | Discovery-generated artifact validation | Handoff and policy are already implemented |
 | Bounded policy/evidence gate — passed in M2 | Controlled model execution still needs reviewed outbound observations | Coordinator/recorder design can proceed |
 | Same-session handoff mechanism — M3 implemented and real-person demonstration witnessed | Integrated escalation acceptance | Core discovery/replay can proceed |
 
-M1 and bounded M2/PoC B are complete; M3 implements the same-session handoff mechanism and its automated checks. The real-person demonstration has been completed and recorded in the manual audit notes. Next is genuine discovery: verify OpenAI API access, review outbound observations, bind pending model actions to ownership epochs, and promote a genuinely generated artifact. Discovery has not been implemented.
+M1 and bounded M2/PoC B are complete; M3 implements the same-session handoff mechanism and its automated checks. The real-person demonstration has been completed and recorded in the manual audit notes. M4-01 has verified OpenAI access, the admitted observation boundary and ownership-bound action dispatch. Next is shared lifecycle, bounded goal-driven discovery, and promotion of a genuinely generated artifact. Discovery has not been implemented.

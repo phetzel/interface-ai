@@ -1,0 +1,15 @@
+{
+  "format": "provider-probe-host-v1",
+  "provenance": "real-openai-provider-probe",
+  "requestedModel": "gpt-5.6-sol",
+  "status": "failed",
+  "requestsAttempted": 0,
+  "responsesCompleted": 0,
+  "responses": [],
+  "usageUnknown": false,
+  "guardedClickPassed": false,
+  "statelessRoundTripPassed": false,
+  "screenshots": "memory-only",
+  "rawTranscript": "not-retained",
+  "code": "missing_api_key"
+}

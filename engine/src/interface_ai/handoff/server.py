@@ -10,6 +10,8 @@ import threading
 from interface_ai.desktop import DesktopError
 from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import request_stop
+from interface_ai.discovery.http import handle as handle_probe
+from interface_ai.discovery.probe import Probe, provision
 from interface_ai.policy.evidence import safe_code
 from interface_ai.replay.loader import ReplayError, strict_json
 from .controller import Controller
@@ -83,7 +85,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.reply(503, {'code': 'busy'})
                     return
                 try:
-                    state = controller.snapshot()
+                    state = self.server.snapshot()
                 finally:
                     controller.mutex.release()
                 self.reply(200, state)
@@ -104,6 +106,9 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(503, {'code': 'session_unavailable'})
 
     def do_POST(self):
+        if self.path.startswith('/probe/'):
+            handle_probe(self)
+            return
         if (
             not self.allowed()
             or self.headers.get_all('Origin') != [ORIGIN]
@@ -147,7 +152,7 @@ class Handler(BaseHTTPRequestHandler):
                 request_stop()
                 with controller.mutex:
                     controller.stop()
-            self.reply(200, controller.snapshot())
+            self.reply(200, self.server.snapshot())
         except DesktopError as exc:
             self.reply(409, {'code': safe_code(exc.code)})
         except ReplayError as exc:
@@ -164,11 +169,20 @@ class Handler(BaseHTTPRequestHandler):
 class Server(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, address, controller):
+    def __init__(self, address, controller, *, probe=None, probe_token=None):
         self.controller = controller
+        self.probe, self.probe_token = probe, probe_token
         self.token = secrets.token_hex(32)
         self.slots = threading.BoundedSemaphore(6)
         super().__init__(address, Handler)
+
+    def snapshot(self):
+        state = self.controller.snapshot()
+        if self.probe is not None and self.probe.status is not None:
+            state.update(runKind='provider_probe', modelCalls=None)
+            if state['phase'] != 'stopped':
+                state['reason'] = self.probe.code
+        return state
 
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):
@@ -199,5 +213,11 @@ class Server(ThreadingHTTPServer):
 
 
 if __name__ == '__main__':
-    with Server(('0.0.0.0', 6081), Controller()) as server:
+    controller = Controller()
+    with Server(
+        ('0.0.0.0', 6081),
+        controller,
+        probe=Probe(controller),
+        probe_token=provision(controller.session['id']),
+    ) as server:
         server.serve_forever(poll_interval=0.5)

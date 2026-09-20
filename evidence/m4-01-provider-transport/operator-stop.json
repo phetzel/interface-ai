@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "provenance": "agent-operated-panel-simulated-provider",
+  "visibleStart": "Testing model connection",
+  "visibleEnd": "Stopped",
+  "lateResponseCode": "invalid_transition",
+  "desktopSummary": {
+    "format": "provider-probe-v1",
+    "policy": "synthetic-search-single-click-v1",
+    "runId": "d033d333-2ee6-4cd2-894f-5cee29a637ce",
+    "sessionId": "49af7e52-66b3-4125-a005-cc2b8c171d6a",
+    "epoch": 0,
+    "status": "failed",
+    "code": "ownership_revoked",
+    "actionsCompleted": 0,
+    "observations": 1,
+    "modelCalls": null,
+    "provenance": "guarded-transport-probe",
+    "elapsedMs": 31689
+  }
+}

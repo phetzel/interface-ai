@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "provenance": "mock-http-real-sdk",
+  "sdkVersion": "3.16.2",
+  "checks": [
+    "initial-original-resolution",
+    "tool-output-original-resolution",
+    "caller-managed-history",
+    "store-false",
+    "second-turn-tools-disabled"
+  ],
+  "modelCalls": 0
+}

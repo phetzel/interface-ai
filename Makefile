@@ -9,7 +9,7 @@ export MODE SCENARIO MEMBER_ID RUN
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format
+.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -41,6 +41,12 @@ ready: ## Check desktop readiness and print session status
 
 operator: ## Print the same-session operator panel URL
 	./scripts/desktop operator
+
+discovery-probe: ## Test one real OpenAI-selected click on the current fresh bank desktop; host key + uv required
+	uv run --locked --script scripts/discovery-probe
+
+discovery-check: ## Test discovery transport with a simulated provider and real desktop; resets between cases
+	python3 scripts/discovery-check
 
 handoff-demo: ## Reset to the expiry scenario; open make operator to start
 	./scripts/desktop reset bank expired

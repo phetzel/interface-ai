@@ -1,0 +1,160 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "passed",
+  "startedAt": "2026-09-20T07:59:27.798151+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 135,
+      "elapsedSeconds": 0.534
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "5d5b6b48-9c53-4539-84e7-509047f8eb4b",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 14.023
+    },
+    {
+      "name": "native-input-operator-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "5d5b6b48-9c53-4539-84e7-509047f8eb4b",
+      "elapsedSeconds": 2.342
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "cfdc4450-7338-4361-b761-fcf989309c84",
+      "elapsedSeconds": 12.234
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "8fe07733-a9a8-4429-88d3-fd5d7b1cb9b7",
+      "elapsedSeconds": 21.127
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 74,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.396
+    },
+    {
+      "name": "unit-tests",
+      "status": "passed",
+      "evidence": "unit-tests.log",
+      "testsPassed": 107,
+      "elapsedSeconds": 6.551
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.271
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "passed",
+      "evidence": "replay/summary.json",
+      "baselinePasses": 10,
+      "scenarioPasses": 7,
+      "baselineSeconds": {
+        "min": 3.353,
+        "median": 3.595,
+        "max": 3.692
+      },
+      "elapsedSeconds": 385.068
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 40.966
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 24,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.11
+    }
+  ],
+  "sourceCommit": "4646f05f5ef8b2a72422dfde71b15b245544dbb0",
+  "uncommittedFiles": [
+    " M Makefile",
+    " M README.md",
+    " M docs/MILESTONE_4.md",
+    " M engine/src/interface_ai/desktop/adapter.py",
+    " M engine/src/interface_ai/handoff/operator.js",
+    " M engine/src/interface_ai/handoff/server.py",
+    " M ruff.toml",
+    "?? .env.example",
+    "?? docs/M4_01_PROVIDER_PROBE.md",
+    "?? engine/src/interface_ai/discovery/",
+    "?? engine/tests/test_discovery_probe.py",
+    "?? scripts/discovery-check",
+    "?? scripts/discovery-probe",
+    "?? scripts/discovery-probe.lock",
+    "?? scripts/lib/discovery.py",
+    "?? scripts/tests/test_discovery.py"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-20T08:07:50.427396+00:00"
+}

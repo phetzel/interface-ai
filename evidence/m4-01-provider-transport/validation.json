@@ -1,0 +1,25 @@
+{
+  "baseCommit": "4646f05",
+  "scope": "uncommitted M4-01 worktree changes; exact executable source manifest attached",
+  "offlineStatus": "passed",
+  "liveOpenAIStatus": "pending_api_key",
+  "actualOpenAIRequests": 0,
+  "engineTests": 107,
+  "hostTestsWithSDK": 11,
+  "transportChecks": 5,
+  "replayBaselines": 10,
+  "replayScenarios": 7,
+  "handoffCases": 2,
+  "imageIds": {
+    "desktop": "sha256:cedfb81ffd27090ec94264303f4332d72dae5e40919fc3a7631650d46916e7b5",
+    "fixture": "sha256:0ece5b0fc53d0250a0d3ac0823c7a3526dd8d1ebb0766cbfe0036cc7e42ab4ab"
+  },
+  "localAttempts": {
+    "quick": "tmp/quick-checks/20260920T075335Z-b2585515",
+    "transport": "tmp/discovery-checks/20260920T075343Z-7c32d76c",
+    "policy": "tmp/m2-checks/20260920T075905Z-f3670f2b",
+    "m1": "tmp/m1-checks/20260920T075927Z-c210c392",
+    "handoff": "tmp/m3-checks/20260920T080813Z-6b136c0f",
+    "missingKey": "tmp/discovery-probes/20260920T075956Z-b1f6e526"
+  }
+}

@@ -8,6 +8,8 @@ A computer-use automation assignment built around a synthetic banking desktop. P
 
 ## Try the demo
 
+M4-01 adds a host-only provider/transport probe: `make discovery-probe` tests one OpenAI-selected click; `make discovery-check` uses a clearly labeled fake provider. [Genuine OpenAI acceptance passed](evidence/m4-01-live-provider/README.md) on 2026-09-20. [Setup, decisions and limits](docs/M4_01_PROVIDER_PROBE.md). The ordinary demo below still needs no key.
+
 Prerequisites: Docker Desktop/Compose and Make on the tested Apple Silicon host, with network access for the initial build. From the repository root:
 
 ```sh

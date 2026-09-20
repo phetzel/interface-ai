@@ -106,6 +106,7 @@ class Desktop:
         calibration=False,
         role='automation',
         epoch=None,
+        bank_policy_factory=None,
     ):
         if (
             type(timeout) not in (int, float)
@@ -135,6 +136,8 @@ class Desktop:
         # Only trusted Python calibration code can select this path. There is no
         # action JSON/CLI/model field for disabling the bank policy.
         self._calibration = calibration
+        # Trusted composition only: no action JSON/CLI/model field selects this.
+        self._bank_policy_factory = bank_policy_factory
         self.policy = None
 
     def __enter__(self):
@@ -160,7 +163,7 @@ class Desktop:
             ):
                 from interface_ai.policy.bank import BankPolicy
 
-                self.policy = BankPolicy()
+                self.policy = (self._bank_policy_factory or BankPolicy)()
             return self
         except BaseException:
             self.__exit__(None, None, None)

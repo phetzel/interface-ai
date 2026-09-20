@@ -4,6 +4,8 @@ Use this index to distinguish a claim from the exact source and environment that
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
+| M4-01 live acceptance after `4646f05`, working-tree source hashes retained | [Live provider validation](m4-01-live-provider/README.md) | Three genuine OpenAI responses, one guarded native click and stateless screenshot return; 15 host tests and six transport checks | One-click proof; full discovery and artifacts remain pending |
+| Earlier M4-01 offline validation after `4646f05` | [Provider/transport validation](m4-01-provider-transport/README.md) | Guarded host transport, simulated-provider/native-input negatives, SDK mock wire checks and passing M1–M3 regressions | No real API calls in this dated record; later live proof is above |
 | September 17 repository cleanup, after `d0a4f21`; formatting separated as `f4f8e99` | [Cleanup implementation](cleanup-implementation-2026-09-17/README.md) | Loader/terminal/HTTP repairs, build/source verification, quality gate and affected regressions; exact source manifest included | Read the run results for the tested source, not just the parent commit |
 | React component refactor, pushed as `d0a4f21` | [Frontend refactor](frontend-refactor-2026-09-17/README.md) | 15 browser tests, 31 exact visual/DOM comparisons, nine replay cases and two simulated handoffs | Comparisons describe the pre-formatting React revision |
 | Repository audit at `a63a143` plus React changes | [Audit reproductions](cleanup-audit-2026-09-17/README.md) | 85 tests, 30 runtime source matches, four schema matches and reproduced defects | Baseline findings; fixes are in the newer cleanup record |

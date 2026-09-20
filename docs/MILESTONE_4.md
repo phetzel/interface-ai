@@ -1,6 +1,6 @@
 # M4 — Discover, record, review, and replay
 
-Status: specified, not implemented. Prepared 2026-09-19 after the M1–M3 manual acceptance pass. No model request is part of this planning work.
+Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 through M4-06 remain specified. [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
 
 ## Outcome
 

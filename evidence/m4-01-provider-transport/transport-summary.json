@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "provenance": "simulated-provider-real-desktop",
+  "modelCalls": 0,
+  "checks": [
+    "single-click-and-stateless-tool-output",
+    "unrelated-control",
+    "unsupported-input",
+    "duplicate-proposal",
+    "late-response-after-stop"
+  ]
+}

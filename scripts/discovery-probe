@@ -1,0 +1,82 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11,<3.12"
+# dependencies = ["openai==3.16.2"]
+# ///
+"""Explicit online proof; the OpenAI SDK is not installed in the desktop image."""
+
+import argparse
+import logging
+import os
+import sys
+
+from lib.acceptance import attempt, source_hashes, write_json
+from lib.builds import retain_builds, verify_running
+from lib.discovery import (
+    ProbeError,
+    Transport,
+    bootstrap,
+    load_key,
+    new_report,
+    run_flow,
+)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        '--key-file', help='Local file containing OPENAI_API_KEY=…; never source it'
+    )
+    args = parser.parse_args()
+    directory = attempt('discovery-probes')
+    directory.chmod(0o700)
+    report = new_report()
+    transport = None
+
+    def save():
+        write_json(directory / 'report.json', report)
+
+    try:
+        key = load_key(args.key_file)
+        # Prevent SDK/environment debug settings from logging payloads or headers.
+        os.environ.pop('OPENAI_LOG', None)
+        for name in ('openai', 'httpx2', 'httpcore2'):
+            logging.getLogger(name).disabled = True
+        from openai import OpenAI
+        import httpx2
+
+        save()
+        hashes = source_hashes()
+        write_json(directory / 'source-manifest.json', hashes)
+        retain_builds(directory)
+        verify_running(directory)
+        transport = Transport(bootstrap())
+        with OpenAI(
+            api_key=key,
+            base_url='https://api.openai.com/v1',
+            max_retries=0,
+            timeout=30,
+            http_client=httpx2.Client(trust_env=False, timeout=30),
+        ) as client:
+            run_flow(client, transport, report, save)
+        if source_hashes() != hashes:
+            raise ProbeError('source_changed')
+    except (Exception, KeyboardInterrupt) as exc:
+        if transport is not None:
+            try:
+                transport.post('abort', {})
+            except Exception:
+                pass
+        report['status'] = 'failed'
+        report['code'] = exc.code if isinstance(exc, ProbeError) else 'preflight_or_storage_failed'
+        try:
+            save()
+        except OSError:
+            pass
+    print(report['status'].upper() + ' ' + report.get('code', 'guarded_provider_round_trip'))
+    print('Evidence: ' + str(directory))
+    return 0 if report['status'] == 'passed' else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
