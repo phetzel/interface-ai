@@ -130,7 +130,10 @@ class PolicyTests(unittest.TestCase):
         args = SimpleNamespace(
             capability=target / 'capability.json', member_id='00123', inputs_json=None, session=None
         )
-        with patch('interface_ai.replay.command.Desktop') as acquire, redirect_stdout(StringIO()):
+        with (
+            patch('interface_ai.replay.command.run_coordinated') as acquire,
+            redirect_stdout(StringIO()),
+        ):
             self.assertEqual(replay(args, output_root=self.root), 1)
         acquire.assert_not_called()
         directory = next(self.root.glob('*-replay-*'))

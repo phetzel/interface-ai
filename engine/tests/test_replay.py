@@ -122,7 +122,7 @@ import sys
 from types import SimpleNamespace
 from unittest.mock import patch
 from interface_ai.replay.command import replay
-with patch('interface_ai.replay.command.Desktop') as desktop:
+with patch('interface_ai.replay.command.run_coordinated') as desktop:
     args = SimpleNamespace(capability=sys.argv[1], member_id='00123', inputs_json=None, session=None)
     assert replay(args, output_root=__import__('pathlib').Path(sys.argv[2])) == 1
     desktop.assert_not_called()
@@ -200,7 +200,7 @@ with patch('interface_ai.replay.command.Desktop') as desktop:
                     capability=str(capability), member_id=member, inputs_json=None, session=None
                 )
                 with (
-                    patch('interface_ai.replay.command.Desktop') as desktop,
+                    patch('interface_ai.replay.command.run_coordinated') as desktop,
                     redirect_stdout(StringIO()),
                 ):
                     self.assertEqual(replay(args, output_root=root), 1)

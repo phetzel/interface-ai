@@ -1,0 +1,93 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "passed",
+  "startedAt": "2026-09-20T09:52:51.281138+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 139,
+      "elapsedSeconds": 0.513
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 41.073
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 7,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.234
+    }
+  ],
+  "fullAcceptance": false,
+  "sourceCommit": "e52c206fea1c3fad1728be43be6dfb490aa2e022",
+  "uncommittedFiles": [
+    " M engine/src/interface_ai/discovery/http.py",
+    " M engine/src/interface_ai/handoff/controller.py",
+    " M engine/src/interface_ai/handoff/operator.js",
+    " M engine/src/interface_ai/handoff/server.py",
+    " M engine/src/interface_ai/replay/command.py",
+    " M engine/src/interface_ai/replay/interpreter.py",
+    " M engine/tests/test_handoff.py",
+    " M engine/tests/test_policy.py",
+    " M engine/tests/test_replay.py",
+    " M scripts/m1-check",
+    "?? docs/M4_02_SHARED_LIFECYCLE.md",
+    "?? engine/src/interface_ai/handoff/client.py",
+    "?? engine/src/interface_ai/handoff/run_evidence.py",
+    "?? engine/src/interface_ai/replay/recognition.py",
+    "?? scripts/lifecycle-check"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-20T09:53:52.103804+00:00"
+}

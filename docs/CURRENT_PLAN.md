@@ -1,6 +1,6 @@
 # Current planning direction
 
-**M4-01 update (2026-09-20):** the host-only OpenAI client, bounded transport, one-click visual policy and offline negative tests are implemented. [Genuine provider acceptance passed](../evidence/m4-01-live-provider/README.md): three OpenAI responses, one native click and a stateless screenshot round trip. [Run and explain the probe](M4_01_PROVIDER_PROBE.md). Shared lifecycle (M4-02), goal-driven discovery and generated artifacts remain next; a connection probe is not the assignment's discovery demonstration.
+**M4-01 update (2026-09-20):** the host-only OpenAI client, bounded transport, one-click visual policy and offline negative tests are implemented. [Genuine provider acceptance passed](../evidence/m4-01-live-provider/README.md): three OpenAI responses, one native click and a stateless screenshot round trip. [Run and explain the probe](M4_01_PROVIDER_PROBE.md). [Shared lifecycle (M4-02)](M4_02_SHARED_LIFECYCLE.md) is implemented; goal-driven discovery and generated artifacts remain next; a connection probe is not the assignment's discovery demonstration.
 
 Updated 2026-09-19. **M1, bounded M2 and the M3 takeover mechanism are implemented** in the fixed Linux ARM64 environment. The current cleanup addresses the audit's A1–A6 repairs, build provenance, quality checks, readability and documentation. The [root README](../README.md) and [evidence index](../evidence/README.md) are authoritative for current validation; milestone counts below/elsewhere describe their dated source revisions.
 

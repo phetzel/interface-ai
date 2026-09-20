@@ -63,8 +63,11 @@ function render() {
   const messages = {
     idle: 'Look up a member’s savings balance on the desktop.',
     running: 'Automation owns input. You can request control or stop.',
-    awaiting_human:
-      'Session expired. Take control, restore the workspace with the synthetic code demo, then verify and resume.',
+    awaiting_human: state.resumable
+      ? 'Session expired. Take control, restore the workspace with the synthetic code demo, then verify and resume.'
+      : 'Verification stopped: ' +
+        (state.reason || 'verification failed') +
+        '. Take control to inspect; this interruption requires a reset before another run.',
     quiescing: 'Waiting for automation input to drain…',
     human: state.resumable
       ? 'You own control. Restore the workspace, return to the original member overview, then verify and resume.'

@@ -345,8 +345,8 @@ class ControllerTests(unittest.TestCase):
             patch('interface_ai.handoff.controller.Desktop'),
             patch('interface_ai.handoff.controller.Interpreter') as runner,
         ):
-            runner.return_value.run.return_value = SimpleNamespace(
-                status='failure', code='intervention_required', step='search-member'
+            runner.return_value.run.return_value = Failure(
+                code='intervention_required', step='search-member'
             )
             self.controller.run(0, 0)
         paused = self.controller.snapshot()
@@ -629,6 +629,59 @@ class ControllerTests(unittest.TestCase):
             self.assertEqual(exc.exception.code, 'evidence_rejected')
         self.assertEqual(self.controller.audit, before)
         self.assertIsNone(self.controller.snapshot()['step'])
+
+    def test_cli_and_panel_compete_for_one_coordinator_run(self):
+        from interface_ai.discovery.http import run_request
+        from interface_ai.policy.bank import REVIEWED_PATH
+
+        self.controller.phase = 'idle'
+        self.controller.launch = Mock(
+            side_effect=lambda _: setattr(self.controller, 'phase', 'running')
+        )
+        barrier = threading.Barrier(2)
+        outcomes = []
+
+        def start(cli):
+            barrier.wait(timeout=2)
+            try:
+                if cli:
+                    run_request(
+                        self.controller,
+                        '/run/start',
+                        dict(session='session', memberId='00123', capability=str(REVIEWED_PATH)),
+                    )
+                else:
+                    self.controller.start('00123', self.lease)
+                outcomes.append('started')
+            except DesktopError as exc:
+                outcomes.append(exc.code)
+
+        workers = [threading.Thread(target=start, args=(cli,)) for cli in (True, False)]
+        for worker in workers:
+            worker.start()
+        for worker in workers:
+            worker.join(3)
+        self.assertCountEqual(outcomes, ['started', 'invalid_transition'])
+        self.assertEqual(self.controller.launch.call_count, 1)
+
+    def test_non_expiry_failure_offers_human_control_without_resume(self):
+        self.controller.phase = 'running'
+        with (
+            patch('interface_ai.handoff.controller.Desktop'),
+            patch('interface_ai.handoff.controller.Interpreter') as runner,
+        ):
+            runner.return_value.run.return_value = Failure(
+                code='ambiguous_target', step='open-savings'
+            )
+            self.controller.run(0, 0)
+        state = self.controller.snapshot()
+        self.assertEqual((state['phase'], state['owner']), ('awaiting_human', 'quiescing'))
+        self.assertFalse(state['resumable'])
+        self.assertEqual(state['result']['code'], 'ambiguous_target')
+        self.controller.takeover({'session': 'session', 'epoch': state['epoch']})
+        state = self.controller.snapshot()
+        with self.assertRaises(DesktopError):
+            self.controller.resume({'session': 'session', 'epoch': state['epoch']})
 
 
 if __name__ == '__main__':

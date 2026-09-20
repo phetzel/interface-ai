@@ -40,7 +40,7 @@ make stop                                   # Block further input; reset to cont
 make down                                   # Stop services; retain evidence/images
 ```
 
-`make replay` uses the current screen; `make demo` resets first. Starts reuse existing images. After editing image inputs, **build before resetting**. `make build-check` checks both image/source fingerprints and shipped runtime bytes. The live acceptance gates also verify the running containers use those images. `make help` lists all commands; targets run sequentially because they share one desktop.
+`make replay` uses the same coordinator as the operator, so CLI runs are visible there and can be stopped or taken over. [Shared lifecycle](docs/M4_02_SHARED_LIFECYCLE.md). It uses the current screen; `make demo` resets first. Starts reuse existing images. After editing image inputs, **build before resetting**. `make build-check` checks both image/source fingerprints and shipped runtime bytes. The live acceptance gates also verify the running containers use those images. `make help` lists all commands; targets run sequentially because they share one desktop.
 
 ## Same-session human takeover
 

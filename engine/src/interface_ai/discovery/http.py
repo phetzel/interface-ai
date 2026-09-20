@@ -5,7 +5,7 @@ import re
 
 from interface_ai.desktop import DesktopError
 from interface_ai.policy.evidence import safe_code
-from interface_ai.replay.loader import ReplayError, strict_json
+from interface_ai.replay.loader import ReplayError, strict_json, load_bundle
 
 
 def handle(handler):
@@ -29,6 +29,10 @@ def handle(handler):
         if not 0 < size <= 4096:
             raise ValueError()
         data = strict_json(handler.rfile.read(size))
+        if handler.path.startswith('/run/'):
+            result = run_request(server.controller, handler.path, data)
+            handler.reply(200, result)
+            return
         operation = handler.path.removeprefix('/probe/')
         fields = {
             'start': {'session'},
@@ -53,3 +57,27 @@ def handle(handler):
         handler.reply(400, {'code': 'invalid_action'})
     except Exception:
         handler.reply(503, {'code': 'execution_failed'})
+
+
+def run_request(controller, path, data):
+    fields = {
+        '/run/start': {'session', 'capability', 'memberId'},
+        '/run/status': {'session', 'runId'},
+    }
+    if not isinstance(data, dict) or path not in fields or set(data) != fields[path]:
+        raise ValueError()
+    with controller.mutex:
+        if data['session'] != controller.session['id']:
+            raise DesktopError('stale_session', 'Refresh the desktop session')
+        if path == '/run/start':
+            bundle = load_bundle(data['capability'])
+            state = controller.ownership.read()
+            controller.start(
+                data['memberId'],
+                {'session': state['session'], 'epoch': state['epoch']},
+                bundle=bundle,
+                origin='cli',
+            )
+        elif controller.directory is None or data['runId'] != controller.directory.name:
+            raise DesktopError('invalid_transition', 'The requested run is not active')
+        return controller.snapshot()

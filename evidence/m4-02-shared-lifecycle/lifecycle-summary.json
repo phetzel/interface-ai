@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "provenance": "automated-cli-and-operator-api",
+  "realHumanWitnessed": false,
+  "checks": [
+    {
+      "scenario": "expired",
+      "cliVisibleInPanel": true,
+      "competingStartRejected": true,
+      "panelControlPassed": true,
+      "evidence": "20260920T094101Z-replay-04d68c63"
+    },
+    {
+      "scenario": "blocked",
+      "cliVisibleInPanel": true,
+      "competingStartRejected": true,
+      "panelControlPassed": true,
+      "evidence": "20260920T094123Z-replay-da1c10bb"
+    }
+  ]
+}

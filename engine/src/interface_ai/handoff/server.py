@@ -106,7 +106,7 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(503, {'code': 'session_unavailable'})
 
     def do_POST(self):
-        if self.path.startswith('/probe/'):
+        if self.path.startswith(('/probe/', '/run/')):
             handle_probe(self)
             return
         if (

@@ -1,4 +1,4 @@
-"""One volatile run, one declared continuation, no automatic recovery/retry."""
+"""Session coordinator shared by CLI, panel and provider reservations."""
 
 from datetime import datetime, timezone
 import json
@@ -17,10 +17,11 @@ from interface_ai.replay.interpreter import Interpreter
 from interface_ai.replay.loader import load_bundle, validate_inputs
 from interface_ai.vision import Box, VisionError
 from .evidence import write_terminal
+from .run_evidence import write_replay
 
 
 class Controller:
-    def __init__(self, *, output_root=Path('/artifacts')):
+    def __init__(self, *, output_root=Path('/artifacts'), bundle=None):
         self.session = read_session()
         self.ownership = Ownership(RUNTIME, self.session['id'])
         self.mutex = threading.RLock()
@@ -31,7 +32,7 @@ class Controller:
         self.directory = None
         self.output_root = output_root
         self.inputs = None
-        self.bundle = load_bundle(REVIEWED_PATH)
+        self.bundle = bundle or load_bundle(REVIEWED_PATH)
         admit(self.bundle)
         self.resume_at = None
         self.human_sequence = 0
@@ -42,6 +43,8 @@ class Controller:
         self.worker = None
         self.terminal_phase = None
         self.evidence_failed = False
+        self.run_kind = 'replay'
+        self.interruption = None
 
     def record(self, kind, **details):
         # All callers pass closed constants / validated metadata. Interpreter
@@ -55,7 +58,7 @@ class Controller:
             if self.directory:
                 with (self.directory / 'audit.jsonl').open('a') as stream:
                     stream.write(json.dumps(event) + '\n')
-            if self.result is not None:
+            if self.result is not None or self.interruption is not None:
                 # A primitive already dispatched when Stop arrives can finish.
                 # Keep its final count without changing the terminal outcome.
                 self.persist_terminal()
@@ -97,6 +100,11 @@ class Controller:
                 lastCheckpoint=self.last_checkpoint,
                 resumable=self.resume_at is not None,
                 modelCalls=0,
+                runKind=self.run_kind,
+                runId=self.directory.name if self.directory else None,
+                result=(self.result or self.interruption).model_dump()
+                if self.result or self.interruption
+                else None,
                 evidenceStatus='failed' if self.evidence_failed else 'available',
             )
 
@@ -122,20 +130,22 @@ class Controller:
             self.stop('handoff_expired')
 
     def persist_terminal(self):
-        if self.directory is None or self.result is None:
+        result = self.result or self.interruption
+        if self.directory is None or result is None:
             return
         try:
             session_unchanged = read_session()['id'] == self.session['id']
         except DesktopError:
             session_unchanged = False
+        write_replay(self, result)
         write_terminal(
             self.directory,
-            self.result,
+            result,
             {
                 'format': 'handoff-v2',
-                'status': self.terminal_phase,
-                'resultStatus': self.result.status,
-                'reason': getattr(self.result, 'code', None),
+                'status': self.terminal_phase or self.phase,
+                'resultStatus': result.status,
+                'reason': getattr(result, 'code', None),
                 'step': self.current_step,
                 'lastCheckpoint': self.last_checkpoint,
                 'modelCalls': 0,
@@ -171,6 +181,7 @@ class Controller:
         if self.result is not None:
             return
         self.result = result
+        self.interruption = None
         self.phase = self.terminal_phase = phase or result.status
         self.reason = getattr(result, 'code', None)
         self.resume_at = None
@@ -198,7 +209,7 @@ class Controller:
                 self.reason = reason
             self.resume_at = None
 
-    def start(self, member_id, lease):
+    def start(self, member_id, lease, *, bundle=None, origin='panel'):
         with self.mutex:
             self.verify(lease)
             if self.phase != 'idle' or self.session['mode'] != 'bank':
@@ -206,10 +217,13 @@ class Controller:
                     'invalid_transition', 'Reset the bank desktop before starting another run'
                 )
             self.inputs = validate_inputs({'memberId': member_id})
+            if bundle is not None:
+                admit(bundle)
+                self.bundle = bundle
             self.started = time.monotonic()
             name = (
                 datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-                + '-handoff-'
+                + ('-replay-' if origin == 'cli' else '-handoff-')
                 + uuid.uuid4().hex[:8]
             )
             self.directory = self.output_root / name
@@ -244,7 +258,7 @@ class Controller:
 
             def action_event(event):
                 with self.mutex:
-                    self.record('automation', **checked_event(event))
+                    self.record('automation', **checked_event(dict(event, step=self.current_step)))
 
             with Desktop(self.session['id'], epoch=epoch, event_sink=action_event) as desktop:
                 runner = Interpreter(
@@ -279,6 +293,27 @@ class Controller:
                     self.resume_at = 4  # Reviewed boundary: after search, before opening savings.
                     self.phase, self.reason = 'awaiting_human', 'intervention_required'
                     self.record('lifecycle', status='awaiting_human')
+                    self.interruption = result
+                    self.persist_terminal()
+                    return
+                if result.status == 'failure' and result.code not in (
+                    'stopped',
+                    'stale_session',
+                    'ownership_revoked',
+                ):
+                    self.ownership.change(
+                        'quiescing',
+                        expected={
+                            'session': self.session['id'],
+                            'owner': 'automation',
+                            'epoch': epoch,
+                        },
+                    )
+                    self.resume_at = None
+                    self.phase, self.reason = 'awaiting_human', result.code
+                    self.interruption = result
+                    self.record('lifecycle', status='awaiting_human', code=result.code)
+                    self.persist_terminal()
                     return
                 self.finalize(result)
         except Exception as exc:
@@ -296,6 +331,7 @@ class Controller:
                 )
             if self.phase == 'running':
                 self.resume_at = None  # An arbitrary interruption has no proven continuation.
+                self.interruption = Failure(code='intervention_required', step=self.current_step)
             self.phase = 'quiescing'
         try:
             state = self.ownership.takeover(LOCK, expected=state)
@@ -370,4 +406,5 @@ class Controller:
                 # Validate and transfer while input.lock still excludes human requests.
                 self.ownership.change('automation', expected=state)
                 self.record('lifecycle', status='resumed')
+                self.interruption = None
             self.launch(self.resume_at)

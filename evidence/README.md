@@ -4,6 +4,7 @@ Use this index to distinguish a claim from the exact source and environment that
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
+| M4-02 shared lifecycle after `e52c206` | [Shared lifecycle validation](m4-02-shared-lifecycle/README.md) | CLI/panel coordination, 17 replay cases, same-session handoff, focused preflight/Stop checks and safe export | Automated operator checks; two corrected full-gate attempts remain explicitly failed |
 | M4-01 live acceptance after `4646f05`, working-tree source hashes retained | [Live provider validation](m4-01-live-provider/README.md) | Three genuine OpenAI responses, one guarded native click and stateless screenshot return; 15 host tests and six transport checks | One-click proof; full discovery and artifacts remain pending |
 | Earlier M4-01 offline validation after `4646f05` | [Provider/transport validation](m4-01-provider-transport/README.md) | Guarded host transport, simulated-provider/native-input negatives, SDK mock wire checks and passing M1–M3 regressions | No real API calls in this dated record; later live proof is above |
 | September 17 repository cleanup, after `d0a4f21`; formatting separated as `f4f8e99` | [Cleanup implementation](cleanup-implementation-2026-09-17/README.md) | Loader/terminal/HTTP repairs, build/source verification, quality gate and affected regressions; exact source manifest included | Read the run results for the tested source, not just the parent commit |

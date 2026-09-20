@@ -21,7 +21,13 @@ from lib.acceptance import source_hashes, command as run_command
 from lib.builds import retain_builds, verify_running
 
 ROOT = Path(__file__).resolve().parent.parent
-argparse.ArgumentParser(description=__doc__).parse_args()
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    '--rejections-only',
+    action='store_true',
+    help='Focused preflight/Stop regression; not the full acceptance gate',
+)
+args = parser.parse_args()
 RUN_ID = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
 OUTPUT = ROOT / 'tmp/m1-checks' / RUN_ID
 OUTPUT.mkdir(parents=True)
@@ -33,6 +39,7 @@ SUMMARY = {
     'startedAt': datetime.now(timezone.utc).isoformat(),
     'scope': 'Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data',
     'checks': [],
+    'fullAcceptance': not args.rejections_only,
 }
 manifest_path = ARTIFACTS / ('m1-manifest-' + RUN_ID + '.json')
 temporary_artifacts = []
@@ -364,7 +371,8 @@ def final_verification():
         for p in ARTIFACTS.glob('*/report.json')
         if p.parent.name in run_ids and p.with_name('result.json').exists()
     ]
-    assert len(manifest['results']) == 24
+    expected_results = 7 if args.rejections_only else 24
+    assert len(manifest['results']) == expected_results
     manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
     logged('final-reset', desktop('reset', 'bank'))
     session = ready()
@@ -393,7 +401,7 @@ def final_verification():
     )
     return {
         'sourceUnchanged': True,
-        'typedResultsValidated': 24,
+        'typedResultsValidated': expected_results,
         'finalDesktop': 'fresh-bank-search',
         'evidence': 'final-runtime.json',
     }
@@ -401,21 +409,22 @@ def final_verification():
 
 try:
     check('provenance', provenance)
-    check('shutdown-fresh-start-repeated-start', lifecycle)
-    check(
-        'native-input-operator-stop',
-        lambda: retain_command_bundle('native-smoke', logged('native-smoke', desktop('smoke'))),
-    )
-    check('live-session-exclusivity-stop-guards', native_guards)
-    check('browser-input-and-sandbox', browser)
-    check('isolation-and-runtime-source', isolation)
-    check('unit-tests', unit_tests)
-    check(
-        'validate-capability',
-        lambda: json.loads(logged('validate-capability', desktop('validate-capability')))
-        | {'status': 'passed'},
-    )
-    check('ten-baselines-seven-scenarios', replays)
+    if not args.rejections_only:
+        check('shutdown-fresh-start-repeated-start', lifecycle)
+        check(
+            'native-input-operator-stop',
+            lambda: retain_command_bundle('native-smoke', logged('native-smoke', desktop('smoke'))),
+        )
+        check('live-session-exclusivity-stop-guards', native_guards)
+        check('browser-input-and-sandbox', browser)
+        check('isolation-and-runtime-source', isolation)
+        check('unit-tests', unit_tests)
+        check(
+            'validate-capability',
+            lambda: json.loads(logged('validate-capability', desktop('validate-capability')))
+            | {'status': 'passed'},
+        )
+        check('ten-baselines-seven-scenarios', replays)
     check('preflight-stale-and-stopped-rejections', rejections)
     check('final-source-results-and-reset', final_verification)
     SUMMARY['status'] = 'passed'
