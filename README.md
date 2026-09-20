@@ -1,26 +1,25 @@
 # interface-ai
 
-A computer-use automation assignment built around a synthetic banking desktop. Python drives OS input and reads pixels; React supplies the sample app. A reviewed manual capability looks up a member's savings balance with local vision/OCR and zero model calls.
+A computer-use automation assignment built around a synthetic banking desktop. Python drives OS input and reads pixels; React supplies the sample app. OpenAI discovers a savings lookup, a recorder captures the executed path, and an independently reviewed capability replays it for another member with local vision/OCR and zero model calls.
 
-**Current:** M1 desktop/replay, M2 bounded policy/evidence and M3 same-session takeover are implemented. The repository cleanup fixes artifact snapshots, terminal handoff evidence and input error classification; adds build verification and a quick quality gate; and separates the React views and operator assets. [Evidence and limitations](evidence/README.md) · [cleanup audit and resolution](docs/CLEANUP_AUDIT_2026-09-17.md).
+**Current:** M1–M3 desktop, policy and same-session takeover are implemented. M4 is complete: genuine discovery, recording, reviewed promotion and offline second-member replay have passed integrated acceptance and the full M1–M3 regressions. [Evidence and limitations](evidence/README.md) · [M4 design](docs/MILESTONE_4.md).
 
-**Still required:** record and review the generated capability → replay for the second member, and final `REPORT.md`/discovery demo packaging. The user completed the real-person handoff; see [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). The existing manual artifact and simulated operator checks do not satisfy discovery. [Next milestone specification](docs/MILESTONE_4.md). [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
+**Still required:** final `REPORT.md`, clean-clone demo rehearsal and the repository/interview walkthrough. The earlier real-person handoff is preserved in [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). Generated promotion is labeled agent review, and automated takeover checks remain simulated-operator evidence. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
 
 ## Try the demo
-
-M4-03 adds `make discover MEMBER_ID=00123` for bounded goal-driven discovery. [Genuine discovery passed](evidence/m4-03-goal-discovery/README.md); [setup and limits](docs/M4_03_DISCOVERY.md). Recording and promotion remain next.
-
-M4-01 adds a host-only provider/transport probe: `make discovery-probe` tests one OpenAI-selected click; `make discovery-check` uses a clearly labeled fake provider. [Genuine OpenAI acceptance passed](evidence/m4-01-live-provider/README.md) on 2026-09-20. [Setup, decisions and limits](docs/M4_01_PROVIDER_PROBE.md). The ordinary demo below still needs no key.
 
 Prerequisites: Docker Desktop/Compose and Make on the tested Apple Silicon host, with network access for the initial build. From the repository root:
 
 ```sh
-make start
+make build
+make demo CAPABILITY=discovered-savings MEMBER_ID=00456
 ```
 
-Open the [operator panel](http://127.0.0.1:6081/) and choose **Start lookup** with member `00123`. Watch the desktop reach Demo Member A's savings balance, **$1,234.56 USD**. Follow the [short assessor walkthrough](docs/DEMO.md) for second-member replay and same-session human takeover.
+Open the [operator panel](http://127.0.0.1:6081/). Expect Demo Member B’s Savings balance, **$98.07 USD**, and **Lookup complete**. This uses the checked-in artifact from a genuine discovery, with no host SDK or key. Follow the [short assessor walkthrough](docs/DEMO.md) for provenance, translated layout and takeover.
 
-`make start` builds both images, resets to a fresh bank desktop, waits for readiness and validates the bundled capability. Rerunning it replaces the current desktop session; Docker reuses unchanged build layers. The demo needs no host Node/Python installation or OpenAI key. It demonstrates the current manually authored capability, not the still-pending model discovery requirement.
+For a new online run, `make discover MEMBER_ID=00123` invokes the pinned host OpenAI environment after resetting the synthetic bank. The key stays in the host’s private `.env`. [Provider setup](docs/M4_01_PROVIDER_PROBE.md) · [discovery limits](docs/M4_03_DISCOVERY.md) · [recording evidence](evidence/m4-04-recorded-candidate/README.md) · [review and promotion](docs/M4_05_PROMOTION.md). `make review RUN=<host-discovery-folder>` evaluates an unapproved candidate; promotion is explicit and refuses to overwrite an existing approval.
+
+`make start` remains the one-command build/start entry for the historical manual capability and the original M1–M3 checklist. Choose **Start lookup** in the panel for member `00123`. This manual artifact has its own provenance and approval. Reset/start commands replace the desktop session; Docker reuses unchanged build layers.
 
 Runtime support is Linux ARM64, Python 3.11, one 1280×800 X11 display, fixed scale/fonts and en-US/USD. Docker is the supported distribution; a standalone Python wheel is not validated. The bank runs inside isolated Chromium at `http://fixture:4173/`. `00123` and `00456` are synthetic members; `00999` exercises the named member-not-found outcome. IDs are strings, including leading zeroes. Watch the same desktop in the operator panel; the legacy 6080 viewer has been removed.
 
@@ -35,7 +34,7 @@ The demo has one entry point: the operator panel. The other surfaces serve devel
 The operator shows controls for the current phase, keeps Stop available during pending input, and puts the session UUID and step/reason in **Run details**. Human text input still uses **Text to send → Send text** after clicking a field in the desktop image.
 
 ```sh
-make demo MEMBER_ID=00456 SCENARIO=translated  # Reset, then replay
+make demo CAPABILITY=discovered-savings MEMBER_ID=00456 SCENARIO=translated  # Reset, then replay
 make reset                                  # Fresh bank search/session
 make reset MODE=native                      # Native calibration pad
 make stop                                   # Block further input; reset to continue
@@ -47,11 +46,11 @@ make down                                   # Stop services; retain evidence/ima
 ## Same-session human takeover
 
 ```sh
-make handoff-demo
+make handoff-demo CAPABILITY=discovered-savings MEMBER_ID=00123
 make operator
 ```
 
-Open the [operator panel](http://127.0.0.1:6081/), start a lookup, and choose **Take control** when the synthetic session expires. Click the training-code field, send `demo` through the panel's text controls, and click **Restore workspace** on the desktop. Choose **Verify & resume** on the original member overview. The session stays the same; an invalid return keeps human ownership. Arbitrary interruption has no verified continuation and requires reset.
+Refresh the [operator panel](http://127.0.0.1:6081/) after reset and choose **Take control** at the paused synthetic expiry. The command already started the generated lookup. Click the training-code field, send `demo` through the panel's text controls, and click **Restore workspace** on the desktop. Choose **Verify & resume** on the original member overview. The session stays the same; an invalid return keeps human ownership. Arbitrary interruption has no verified continuation and requires reset.
 
 Stop remains available during pending input. Each started handoff writes a separate `result.json`, sanitized `audit.jsonl`, and terminal `summary.json`, including stopped/expired runs. The summary binds the result digest and records step/checkpoint context and action counts. An already-dispatched primitive may finish; its event updates the count without replacing the terminal outcome. Storage failure revokes input and is visible in panel status. [Lifecycle/evidence details](engine/src/interface_ai/handoff/README.md).
 
@@ -69,7 +68,8 @@ make build
 make quick-check    # No live desktop: build identity, unit tests, schemas, types
 make fixture-test   # React build + 15 Playwright browser tests
 make policy-check   # M2 policy/export plus full M1 lifecycle/replay regression
-make handoff-check  # Both members; simulated human through the operator API
+make handoff-check  # Manual artifact, both members; simulated operator
+make m4-check       # Generated matrix/handoff, offline boundary and safe export
 ```
 
 Install Playwright's Chromium once with `cd apps/bank-fixture && npx playwright install chromium`. The two panel browser checks are `scripts/checks/m3_operator_ui.mjs` and `scripts/checks/m3_operator_stop.mjs`; reset with `make handoff-demo` before each, then run it with Node from the repository root. They interact with bank pixels, never its DOM.
@@ -84,6 +84,7 @@ For host React work, `make fixture-dev` starts Vite. After dependency installati
 | --- | --- | --- |
 | Fixture | [App and component guide](apps/bank-fixture/README.md#code-walkthrough) | Screen composition, workflow hook, local UI state and synthetic scenarios |
 | Capability | [Manual capability](capabilities/poc/savings-balance/README.md), [Pydantic models](engine/src/interface_ai/contracts/models.py) | Inputs, relative targets, checkpoints, result variants and independent approval |
+| Discovery/promotion | [Host loop](scripts/lib/discovery_flow.py), [worker](engine/src/interface_ai/discovery/worker.py), [recorder](engine/src/interface_ai/discovery/recorder.py), [admission](engine/src/interface_ai/policy/admission.py) | Model-selected inputs, recorded derivations, private crops and independent authority |
 | Replay | [Loader](engine/src/interface_ai/replay/loader.py), [interpreter](engine/src/interface_ai/replay/interpreter.py) | Bounded verified snapshots; one observation per field set; no uncertain input retry |
 | Desktop | [Adapter](engine/src/interface_ai/desktop/adapter.py), [backend protocol](engine/src/interface_ai/desktop/types.py), [ownership](engine/src/interface_ai/desktop/ownership.py) | Input admission, Stop, epochs, lock draining and modifier cleanup |
 | Policy | [Bank policy](engine/src/interface_ai/policy/bank.py), [gateway](engine/src/interface_ai/policy/gateway.py), [evidence exporter](engine/src/interface_ai/policy/evidence.py) | Operator authority, allowed surfaces/routes and reconstructive metadata export |
@@ -91,11 +92,11 @@ For host React work, `make fixture-dev` starts Vite. After dependency installati
 | Infrastructure | [Compose](compose.yaml), [desktop startup](infra/desktop/start.py) | Isolation, sandboxing, process supervision and same-session viewing |
 | Verification | [Quick gate](scripts/quick-check), [build verification](scripts/lib/builds.py), [evidence index](evidence/README.md) | Distinguish test oracle, source identity, shipped image, automation evidence and human observations |
 
-The primitive `BankVision` path is retained for M1 calibration/history; production manual replay reads its targets from the capability. CLI replay and panel execution still have separate lifecycle entry points. Unifying them, exposing a recognition/checkpoint interface, and adding a reviewed promotion manifest are the next discovery/integration work, rather than additional cleanup abstractions.
+The primitive `BankVision` path remains for M1 calibration/history. Production replay reads the admitted capability; CLI and panel share one coordinator. Discovery reuses recognition and guarded input but chooses actions through the model. The recorder preserves executed inputs; independent approval supplies authority and the sole continuation boundary.
 
 ## Manual review and interview preparation
 
-Start with [the M1–M3 manual checklist](docs/manual-acceptance.html) to test behavior. Then use [the repository/interview checklist](docs/repository-audit.html) to explain the code and its tradeoffs. These are our detailed internal reviews; assessors can use the [short demo guide](docs/DEMO.md).
+Start with [the manual checklist and M4 supplement](docs/manual-acceptance.html) to test behavior. Then use [the repository/interview checklist](docs/repository-audit.html) to explain the code and its tradeoffs. These are our detailed internal reviews; assessors can use the [short demo guide](docs/DEMO.md).
 
 With the development prerequisites above installed, run this once from the repository root:
 

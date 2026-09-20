@@ -1,0 +1,29 @@
+{
+  "runId": "20260920T105224Z-replay-0ba04e5c",
+  "modelCalls": 0,
+  "actionsCompleted": 0,
+  "phase": "execution",
+  "policy": "bank-read-only-v2",
+  "capability": "savings-balance",
+  "capabilityVersion": "0.1.0",
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "provenance": "manually-authored-poc",
+  "admission": "approved",
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "sessionId": "c7a889ea-575a-4ea1-ba31-354a7aff0a6f",
+  "status": "failure",
+  "code": "stopped",
+  "failedStep": null,
+  "elapsedSeconds": 0.004
+}

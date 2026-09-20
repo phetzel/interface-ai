@@ -12,6 +12,7 @@ import sys
 import uuid
 
 from lib.builds import retain_builds, verify_running
+from lib.capabilities import IDS, selected
 
 ROOT = Path(__file__).resolve().parent.parent
 parser = argparse.ArgumentParser(description=__doc__)
@@ -20,7 +21,14 @@ parser.add_argument(
     action='store_true',
     help='Run ten alternating clean-reset baselines and seven scenario checks for M1-06',
 )
+parser.add_argument('--capability', choices=IDS, default='manual-savings')
 args = parser.parse_args()
+capability_path, capability, approval = selected(args.capability)
+continuation = approval['continuation']
+input_count = len(capability['steps']) - 1
+account_step = continuation['nextStep']
+extract_step = capability['steps'][-1]['id']
+search_step = continuation['interruptedStep']
 OUTPUT = (
     ROOT
     / 'tmp/replay-checks'
@@ -28,9 +36,7 @@ OUTPUT = (
 )
 OUTPUT.mkdir(parents=True)
 oracle = json.loads((ROOT / 'apps/bank-fixture/tests/oracle.json').read_text())
-artifact_hash = hashlib.sha256(
-    (ROOT / 'capabilities/poc/savings-balance/capability.json').read_bytes()
-).hexdigest()
+artifact_hash = hashlib.sha256(capability_path.read_bytes()).hexdigest()
 cases = [
     ('baseline-a', 'default', 0, None),
     ('baseline-b', 'default', 1, None),
@@ -45,7 +51,10 @@ cases = [
 if args.acceptance:
     cases = [(f'baseline-{i + 1:02d}', 'default', i % 2, None) for i in range(10)] + cases[2:]
 summary = {
-    'kind': 'M1-06-repeated-replay' if args.acceptance else 'M1-05-artifact-integration',
+    'kind': 'M4-generated-replay'
+    if args.capability == 'discovered-savings'
+    else ('M1-06-repeated-replay' if args.acceptance else 'M1-05-artifact-integration'),
+    'approvalId': args.capability,
     'status': 'running',
     'capabilitySha256': artifact_hash,
     'oracleSha256': hashlib.sha256(
@@ -86,12 +95,7 @@ try:
         item = {'case': name, 'scenario': scenario, 'status': 'running'}
         summary['cases'].append(item)
         try:
-            assert (
-                hashlib.sha256(
-                    (ROOT / 'capabilities/poc/savings-balance/capability.json').read_bytes()
-                ).hexdigest()
-                == artifact_hash
-            )
+            assert hashlib.sha256(capability_path.read_bytes()).hexdigest() == artifact_hash
             with (OUTPUT / (name + '-startup.log')).open('w') as log:
                 run(
                     ['./scripts/desktop', 'reset', 'bank', scenario],
@@ -106,7 +110,14 @@ try:
                 else oracle['successes'][index]['memberId']
             )
             response = run(
-                ['./scripts/desktop', 'replay', '--member-id', member_id],
+                [
+                    './scripts/desktop',
+                    'replay',
+                    '--capability',
+                    args.capability,
+                    '--member-id',
+                    member_id,
+                ],
                 capture_output=True,
                 text=True,
             )
@@ -131,7 +142,7 @@ try:
             sessions.add(report['sessionId'])
             assert report['capabilitySha256'] == artifact_hash
             assert report['modelCalls'] == 0
-            assert report['provenance'] == 'manually-authored-poc'
+            assert report['provenance'] == capability['provenance']
             item.update(
                 evidence=str(retained.relative_to(OUTPUT)),
                 rawEvidence=str(directory.relative_to(ROOT)),
@@ -152,15 +163,15 @@ try:
                     key: wanted[key]
                     for key in ['memberId', 'memberName', 'accountType', 'currency', 'amountMinor']
                 }
-                assert report['actionsCompleted'] == 5
+                assert report['actionsCompleted'] == input_count
                 item['exactOracleMatch'] = True
             elif expected == 'member_not_found':
                 assert response.returncode == 0 and result == {
                     'status': 'business_outcome',
                     'outcome': expected,
                 }
-                assert report['actionsCompleted'] == 4
-                assert not any(e['step'] in ('open-savings', 'read-balance') for e in events)
+                assert report['actionsCompleted'] == input_count - 1
+                assert not any(e['step'] in (account_step, extract_step) for e in events)
                 item['noAccountClickOrExtraction'] = True
             else:
                 assert (
@@ -169,12 +180,12 @@ try:
                     and result['code'] == expected
                 )
                 assert 'output' not in result and report['actionsCompleted'] == (
-                    5 if scenario == 'unreadable' else 4
+                    input_count if scenario == 'unreadable' else input_count - 1
                 )
                 expected_step = {
-                    'duplicate': 'open-savings',
-                    'unreadable': 'read-balance',
-                    'blocked': 'search-member',
+                    'duplicate': account_step,
+                    'unreadable': extract_step,
+                    'blocked': search_step,
                 }[scenario]
                 assert result['step'] == expected_step and result['expected']
                 assert events[-1]['status'] == 'failed' and events[-1]['code'] == expected

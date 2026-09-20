@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "provenance": "automated-integration-of-genuine-recorded-artifact",
+  "modelCalls": 0,
+  "realHumanWitnessed": false,
+  "checks": [
+    {
+      "name": "generated-replay-matrix",
+      "status": "passed"
+    },
+    {
+      "name": "generated-handoff",
+      "status": "passed"
+    }
+  ],
+  "failure": "[Errno 13] Permission denied: './scripts/discovery-check'"
+}

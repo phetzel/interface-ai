@@ -1,0 +1,8 @@
+{
+  "status": "success",
+  "phase": "execution",
+  "modelCalls": 0,
+  "actionsCompleted": 4,
+  "policy": "bank-read-only-v2",
+  "capabilitySha256": "a3e6acd5dfd97d7e420bf9a9287ff60f62b2ea66d4a7b930db8ab9bfa6ca25ca"
+}

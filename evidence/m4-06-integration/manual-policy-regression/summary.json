@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "policy-reset",
+      "status": "passed"
+    },
+    {
+      "name": "live-policy",
+      "status": "passed"
+    },
+    {
+      "name": "origin-ip-bypass",
+      "status": "passed"
+    },
+    {
+      "name": "m1-regression",
+      "status": "passed"
+    },
+    {
+      "name": "export-source-replay",
+      "status": "passed"
+    },
+    {
+      "name": "safe-export",
+      "status": "passed"
+    },
+    {
+      "name": "final-reset",
+      "status": "passed"
+    }
+  ],
+  "regression": "passed",
+  "safeExportFiles": {
+    "summary.json": "4307df5f793ff55cb819e9728529cc7e581254f9076421731ca6cb024d993399",
+    "events.jsonl": "aff08f47dffd0d03f9c23e80c06f6e7cfecd7855f05fb43f64b4d0d9c26a49e9",
+    "manifest.json": "8afd6eec26675f79beb056e78ac10cd57af6dc012d823eea2579c42ca4d862ee"
+  }
+}

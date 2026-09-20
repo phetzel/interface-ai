@@ -1,0 +1,14 @@
+{
+  "format": "provider-probe-v1",
+  "policy": "synthetic-search-single-click-v1",
+  "runId": "696c2226-f761-46fd-aa55-3e346ca787a0",
+  "sessionId": "b6ea5342-2d77-4788-bfe6-83e39b69f773",
+  "epoch": 0,
+  "status": "failed",
+  "code": "ownership_revoked",
+  "actionsCompleted": 1,
+  "observations": 2,
+  "modelCalls": null,
+  "provenance": "guarded-transport-probe",
+  "elapsedMs": 520
+}

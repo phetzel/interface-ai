@@ -1,0 +1,87 @@
+{
+  "runId": "20260920T104431Z-500c83d6",
+  "sessionId": "a0e49342-4ac1-412e-8507-bb02bb19a16e",
+  "status": "passed",
+  "kind": "native-desktop-calibration",
+  "adapter": "interface_ai.desktop.Desktop",
+  "modelCalls": 0,
+  "architecture": "aarch64",
+  "display": [
+    1280,
+    800
+  ],
+  "checks": [
+    {
+      "check": "screenshot_dimensions_and_fixture",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "same_framebuffer_and_guarded_operator",
+      "status": "passed",
+      "details": {
+        "dimensions": [
+          1280,
+          800
+        ],
+        "frameMatchesDesktop": true,
+        "inputWithoutHumanOwnershipRejected": true,
+        "legacyPortsClosed": [
+          5900,
+          6080
+        ]
+      }
+    },
+    {
+      "check": "three_pointer_coordinates_and_pixel_changes",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "native_typing_selection_and_enter",
+      "status": "passed",
+      "details": {
+        "matchedSyntheticInput": true
+      }
+    },
+    {
+      "check": "native_scroll",
+      "status": "passed",
+      "details": {
+        "topFraction": 0.14204545454545456
+      }
+    },
+    {
+      "check": "selected_external_egress_blocked",
+      "status": "passed",
+      "details": {
+        "noDefaultIPv4Route": true,
+        "blockedTcpProbes": [
+          "1.1.1.1",
+          "8.8.8.8"
+        ],
+        "scope": "Selected IPv4 probes; not a comprehensive network policy audit"
+      }
+    },
+    {
+      "check": "cooperative_stop_blocks_dispatch",
+      "status": "passed",
+      "details": {}
+    },
+    {
+      "check": "session_preserved",
+      "status": "passed",
+      "details": {}
+    }
+  ],
+  "python": "3.11.2",
+  "packages": {
+    "PyAutoGUI": "0.9.54",
+    "Pillow": "11.3.0",
+    "PyScreeze": "1.0.1",
+    "python3-xlib": "0.15"
+  },
+  "chromium": "Chromium 153.0.8010.52 built on Debian GNU/Linux 12 (bookworm)",
+  "systemPackagesSha256": "4b9f9c49e493cfa30fdf6f91fa09b4edc674b2e7674cc6b9e8fd24591212206e",
+  "elapsedSeconds": 1.952
+}

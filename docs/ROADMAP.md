@@ -1,3 +1,5 @@
+**2026-09-20 update:** genuine discovery, recorded capability and reviewed second-member replay are implemented in M4. Integrated acceptance and full M1–M3 regressions passed; see [current plan](CURRENT_PLAN.md) and [current evidence](../evidence/README.md). The dated phase descriptions below retain the original planning context.
+
 # Roadmap, proof-of-concept gates, and dependencies
 
 Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. M3 now implements PoC D with live simulated-operator checks; its [specification](MILESTONE_3.md) distinguishes automated validation from the real-person demonstration. OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 was committed and pushed as `3726347`.
@@ -170,21 +172,18 @@ Do not build production orchestration, multiple model providers, multiple operat
 
 ## Current dependency update (2026-09-20)
 
-The user has completed the M1–M3 manual acceptance checklist, including the real-person takeover. The next implementation is [M4: discovery → recorded candidate → reviewed promotion → offline replay](MILESTONE_4.md). The operator at 6081 is now the only desktop surface; the separate 6080 VNC viewer was retired. Earlier phase/PoC sections retain their planning history.
+M1–M4 are implemented. The user completed the M1–M3 manual acceptance checklist, including real-person takeover. M4 adds genuine discovery, a recorded candidate, agent-reviewed promotion, offline second-member replay and generated-artifact handoff. Its integrated gate and full earlier regressions passed; see [current evidence](../evidence/m4-06-integration/README.md). The operator at 6081 is the only desktop surface; the separate 6080 VNC viewer was retired.
 
-## What is actually blocking what today?
+## What is blocking the final assessment?
 
-The native/browser desktop input gate passed. Initial focus, viewer-port, Chromium sandbox, and process-readiness issues were corrected and documented. The remaining prerequisites are:
-
-| Prerequisite | First dependent work | Can other work proceed? |
+| Work | Current state | What depends on it |
 | --- | --- | --- |
-| Next implementation scope — M4 specified | PoC E, generated artifacts and lifecycle integration | [M4](MILESTONE_4.md) defines the work and gates |
-| M4-01 genuine provider/transport proof passed | Shared lifecycle and bounded discovery | [Live evidence](../evidence/m4-01-live-provider/README.md): three responses and one guarded click; M4-02 is next |
-| Local desktop runtime/operator — native/browser gate passed | Visual recognition and handoff | Fixture, oracle, and adapter are ready |
-| OpenAI API access and computer-tool exchange — verified | Genuine discovery | Provider access is no longer blocking; coordinator/recorder work remains |
-| Minimal fixture/reset data — implemented in M1-02 | Meaningful desktop replay and error scenarios | Native smoke remains available |
-| Visual recognition and repeated manual replay — gate passed | Discovery-generated artifact validation | Handoff and policy are already implemented |
-| Bounded policy/evidence gate — passed in M2 | Controlled model execution still needs reviewed outbound observations | Coordinator/recorder design can proceed |
-| Same-session handoff mechanism — M3 implemented and real-person demonstration witnessed | Integrated escalation acceptance | Core discovery/replay can proceed |
+| OpenAI access and genuine discovery | Verified; actual responses and a recorded input path are retained | No remaining provider prerequisite for the checked-in demonstration |
+| Generated artifact review and offline reuse | Passed for member B and translated layout; independent approval binds exact bytes | Ready for the assessor walkthrough |
+| Same-session generated recovery | Automated wrong-screen/member rejection and recovery passed | A new real-person generated-artifact check remains unverified in the M4 checklist supplement |
+| Required `REPORT.md` | Not written | Final written submission |
+| Clean-clone rehearsal | Not performed | Confidence that another reviewer can follow the short setup/demo commands |
+| Repository/interview walkthrough and checklist export | User review remains | Explain the implementation and preserve personal audit results |
+| Scaled desktop click UX (UX-01) | Known usability limitation, deferred | Optional polish before a live demonstration |
 
-M1 and bounded M2/PoC B are complete; M3 implements the same-session handoff mechanism and its automated checks. The real-person demonstration has been completed and recorded in the manual audit notes. M4-01 has verified OpenAI access, the admitted observation boundary and ownership-bound action dispatch. Next is shared lifecycle, bounded goal-driven discovery, and promotion of a genuinely generated artifact. Discovery has not been implemented.
+The next work is final packaging and rehearsal. The [current plan](CURRENT_PLAN.md) and [short demo](DEMO.md) contain the concrete steps; the earlier phase descriptions above preserve the original planning context.

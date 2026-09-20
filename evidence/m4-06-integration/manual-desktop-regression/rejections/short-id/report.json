@@ -1,0 +1,10 @@
+{
+  "runId": "20260920T105202Z-replay-2c032508",
+  "modelCalls": 0,
+  "actionsCompleted": 0,
+  "phase": "preflight",
+  "status": "failure",
+  "code": "invalid_input",
+  "failedStep": null,
+  "elapsedSeconds": 0.004
+}

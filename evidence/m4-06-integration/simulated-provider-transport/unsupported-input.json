@@ -1,0 +1,14 @@
+{
+  "format": "provider-probe-v1",
+  "policy": "synthetic-search-single-click-v1",
+  "runId": "08bcfb52-03ad-4208-8f6d-4986bbba99a3",
+  "sessionId": "adc29ef2-67af-4b5d-8040-a96d42324a78",
+  "epoch": 0,
+  "status": "failed",
+  "code": "invalid_action",
+  "actionsCompleted": 0,
+  "observations": 1,
+  "modelCalls": null,
+  "provenance": "guarded-transport-probe",
+  "elapsedMs": 317
+}

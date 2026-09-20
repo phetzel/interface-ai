@@ -14,4 +14,4 @@ The actual provider returned click/type/Enter batches and trailing waits. A wait
 
 A strict visual allowlist limits flexibility but gives an inspectable boundary for this first workflow. The alternative—accepting arbitrary coordinates or generated code—would make the recorder and safety proof harder to explain. This is a fixed-environment demonstration, not a general computer agent.
 
-[Validation and genuine provider evidence](../evidence/m4-03-goal-discovery/README.md). Full generated artifacts, promotion and offline reuse are subsequent M4 steps. Provider data controls remain separate from local retention: `store: false` is not a promise of zero provider retention.
+[Validation and genuine provider evidence](../evidence/m4-03-goal-discovery/README.md). The later [recorder evidence](../evidence/m4-04-recorded-candidate/README.md) and [promotion implementation](M4_05_PROMOTION.md) now establish generated artifact reuse. Provider data controls remain separate from local retention: `store: false` is not a promise of zero provider retention.

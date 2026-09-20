@@ -1,0 +1,80 @@
+{
+  "status": "passed",
+  "sourceParentCommit": "b18b0a5df7ae7d9b7f68f71739a5a29e47881d04",
+  "executableSource": "source-manifest.json",
+  "provenance": "automated-acceptance-and-agent-reviewed-metadata",
+  "realHumanWitnessed": false,
+  "providerCallsDuringFinalGates": 0,
+  "checks": [
+    {
+      "file": "summary.json",
+      "sha256": "80c4eec23037050a4c843392f89bf4f61effc31cccfffbd9654ed62896542e33",
+      "status": "passed"
+    },
+    {
+      "file": "quick-summary.json",
+      "sha256": "0686e105fafe459c443bee473b2eb2352cbce1b15c4a337ae59d10d90049e180",
+      "status": "passed"
+    },
+    {
+      "file": "generated-replay-matrix/summary.json",
+      "sha256": "7d19b73814fb2be8b377077d3378ca473c82ee247e50e2455f4ae98781b52314",
+      "status": "passed"
+    },
+    {
+      "file": "generated-handoff/summary.json",
+      "sha256": "26af5b27f24861a7218f821e0973c7c00a46236b777b87278cdf1d727e6aeb1f",
+      "status": "passed"
+    },
+    {
+      "file": "simulated-provider-transport/summary.json",
+      "sha256": "482877db12a9ed7cbe7fc14118eea7a15741da368766c70eae0ce56a482606b4",
+      "status": "passed"
+    },
+    {
+      "file": "manual-policy-regression/summary.json",
+      "sha256": "ce7435de7bb0b00a8e508aad6e1cfd07cba28ba5602857c7edc6b2a7631421ab",
+      "status": "passed"
+    },
+    {
+      "file": "manual-desktop-regression/summary.json",
+      "sha256": "8e5578f457ea8a130708869649966e0e3dbef8392b428b39a229b8e857922ef8",
+      "status": "passed"
+    },
+    {
+      "file": "manual-handoff-regression/summary.json",
+      "sha256": "e126fd1d3d83b4361aa5d1323910ba1b0e9a403989d88335b85b0bf28a08549f",
+      "status": "passed"
+    },
+    {
+      "file": "operator-ui-summary.json",
+      "sha256": "c84a75ff1f16331d9429249877f1e1cc7436cf56298d4a446ac549a421782021",
+      "status": "passed"
+    },
+    {
+      "file": "operator-stop-summary.json",
+      "sha256": "26505bd0eecad8bbb458721c1d6216b75d939468057d47ccd2c872ec5204ce1b",
+      "status": "passed"
+    }
+  ],
+  "fixtureBrowserTests": 15,
+  "linuxEngineTests": 127,
+  "publishedSchemas": 6,
+  "finalDemoRun": "20260920T105722Z-replay-1aed277e",
+  "operatorPageObserved": "Lookup complete",
+  "checklists": "Source updated; M4 self-report results remain unverified",
+  "hostSystemPython": {
+    "testsRun": 20,
+    "passed": 19,
+    "skipped": 1,
+    "reason": "Optional SDK absent"
+  },
+  "hostPinnedSDK": {
+    "testsRun": 20,
+    "passed": 20,
+    "skipped": 0,
+    "providerCalls": 0,
+    "log": "host-sdk-tests.log",
+    "sha256": "4d33fd235e6bb626c206b93ce037d4e227897b15446e7605c9ac1558dfbf4bd5"
+  }
+}

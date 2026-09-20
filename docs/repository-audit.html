@@ -71,7 +71,7 @@
     <div><p class="eyebrow">Interface AI / Repository review</p><h1>Know the code.<br>Explain the decisions.</h1><p>Work from the architecture down to individual functions. Read, trace a concrete example, explain it aloud, and record what you would improve. Complete the <a href="manual-acceptance.html">manual checklist</a> first, then use this to prepare your code walkthrough. Notes and progress are saved separately. Assessors can follow the <a href="DEMO.md">short demo guide</a>.</p></div>
     <div class="scope"><strong>What this covers</strong><p>An interview preparation and maintainability review of the current repository. Mark a topic understood only when you can explain the code and its limits. Use the companion manual audit to verify runtime behavior. Read the <a href="CLEANUP_AUDIT_2026-09-17.md">repository-wide cleanup findings and implementation backlog</a> alongside this checklist.</p></div>
   </header>
-  <p class="note">2026-09-19: the operator at 6081 replaces the standalone 6080 viewer. Instructions are updated; saved results remain observations of the revision you tested. See the <a href="MILESTONE_4.md">next milestone specification</a> for discovery work still to come.</p>
+  <p class="note">2026-09-20: M4 discovery, recording and promotion are implemented. The new M4 section starts unverified. Saved results remain observations of the revision you tested; updated instructions do not attest a new run. See the <a href="MILESTONE_4.md">milestone specification</a> and <a href="DEMO.md">short demo</a>.</p>
   <div class="toolbar">
     <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New review</button>
     <span id="storage" class="storage" role="status">Checking local storage…</span>
@@ -106,10 +106,10 @@ const GROUPS = [
         "kind": "rehearsal",
         "actions": [
           "Describe the intended discovery → reusable capability → deterministic replay → human intervention flow.",
-          "Separate implemented M1–M3 behavior from genuine model discovery, promotion and final submission work. Write your own short pitch."
+          "Separate implemented M1–M4 behavior from final report, clean-clone rehearsal and repository understanding. Write your own short pitch."
         ],
         "expected": [
-          "Your pitch names the supported synthetic Linux desktop, the manually authored artifact and zero model calls during replay.",
+          "Your pitch names the fixed synthetic Linux desktop, genuine recorded artifact, independent agent review and zero model calls during replay. Preserve the manual artifact’s separate provenance.",
           "You can explain why proving replay and ownership came before model integration."
         ],
         "prompts": [
@@ -299,7 +299,7 @@ const GROUPS = [
         ],
         "expected": [
           "You can explain why a schema-valid artifact can still be unauthorized.",
-          "You know how the four JSON Schemas are produced and what protects against stale published schemas."
+          "You know how the six JSON Schemas are produced and what protects against stale published schemas."
         ],
         "prompts": [
           "Why should an artifact never be allowed to approve its own permissions?"
@@ -789,12 +789,12 @@ const GROUPS = [
         "title": "Prove the continuation is safe and limited",
         "kind": "code",
         "actions": [
-          "Map resume_at=4 to the named open-savings step and member-ready checkpoint.",
+          "Trace approved interruptedStep/nextStep/checkpoint references through Admission.resume_index. Compare the manual and generated boundaries.",
           "Trace wrong-screen and wrong-member rejection, then valid return. Explain why previously completed search inputs are not repeated."
         ],
         "expected": [
           "You can explain what evidence is required for resumption and what happens when that evidence is missing.",
-          "You can name the hard-coded coupling that a future promotion manifest must replace."
+          "You can show why an undeclared continuation or the wrong member is rejected, even after taking control."
         ],
         "prompts": [
           "How would you support a new artifact without assuming its fifth step is always the correct continuation?"
@@ -1119,12 +1119,12 @@ const GROUPS = [
         "title": "Inventory the intentional hard-coded coupling",
         "kind": "design",
         "actions": [
-          "List the fixed business shapes, provenance, approved digest, safe identifier vocabulary, display environment and continuation index.",
-          "Separate deliberate scope constraints from changes genuinely needed for the first discovered artifact. Sketch a small operator-reviewed promotion manifest."
+          "List fixed business shapes, bank recognition semantics and display limits; distinguish them from manifest-supplied digests, provenance, structural IDs and continuation references.",
+          "Trace the independent promotion manifest and identify the deliberately narrow single-workflow scope."
         ],
         "expected": [
-          "You can say which modules must change for a generated artifact and why a recorder alone is insufficient.",
-          "Your proposal keeps authorization outside the unreviewed artifact and avoids a general workflow framework."
+          "You can explain recording, scoped evaluation, independent approval and replay as separate responsibilities.",
+          "The current implementation keeps authorization outside the unreviewed artifact and avoids a general workflow framework."
         ],
         "prompts": [
           "Where would you put configuration, and which invariants should stay in executable code?"
@@ -1265,18 +1265,18 @@ const GROUPS = [
     "steps": [
       {
         "id": "missing-flow",
-        "title": "Explain the next milestone without overstating it",
+        "title": "Explain discovery evidence and remaining submission work",
         "kind": "design",
         "actions": [
-          "Explain M4-01's one-click provider probe, host-only key, allowed observations and ownership-bound actions. Distinguish its offline tests from a real OpenAI run and from full goal-driven discovery.",
+          "Compare the M4-01 connection probe with the genuine M4-03/04 goal-driven run. Explain host-only credentials, bounded observations and stale-action rejection.",
           "Trace candidate recording → explicit review/promotion → second-member replay without model access. Separate observed actions from manually supplied exception rules."
         ],
         "expected": [
-          "You can name the genuine discovery evidence that is still missing and the API/policy prerequisites.",
+          "You can locate actual response IDs, usage, ordered inputs and the resulting capability, then name the remaining submission work.",
           "You can explain why a genuine model run and reviewed generated artifact are essential for the assignment."
         ],
         "prompts": [
-          "How will you prove the artifact came from discovery rather than a hidden hand-written path?"
+          "How do the recorded trajectory, candidate hash, reused annotations and promotion evaluations establish the artifact’s provenance?"
         ],
         "links": [
           [
@@ -1362,6 +1362,113 @@ const GROUPS = [
         ]
       }
     ]
+  },
+  {
+    "id": "m4-code",
+    "title": "10 / Explain M4 from goal to reuse",
+    "intro": "Read these new paths yourself. These topics start unverified and remain separate from runtime acceptance.",
+    "steps": [
+      {
+        "id": "m4-loop-code",
+        "title": "Trace one real model batch through the guarded worker",
+        "kind": "code",
+        "actions": [
+          "Start at scripts/discover and discovery_flow.run_discovery, then follow /discover/propose into Discovery.propose and Desktop.execute.",
+          "Explain run/session/epoch/sequence leases, no implicit retries, partial-batch accounting, Stop, no-progress limits and memory-only conversation state."
+        ],
+        "expected": [
+          "You can identify which side owns the key, which side owns input authority and how a late response is rejected."
+        ],
+        "links": [
+          [
+            "Host loop",
+            "../scripts/lib/discovery_flow.py"
+          ],
+          [
+            "Desktop worker",
+            "../engine/src/interface_ai/discovery/worker.py"
+          ]
+        ]
+      },
+      {
+        "id": "m4-recorder-code",
+        "title": "Explain exactly what the recorder creates and reuses",
+        "kind": "code",
+        "actions": [
+          "Map action-001 through action-004 from the genuine trajectory into the generated steps. Explain why select-all is absent.",
+          "Trace memberId binding, observed static crops, relative target offsets and reused fields/checkpoints. Explain incomplete-candidate failure rather than inventing missing actions."
+        ],
+        "expected": [
+          "You can distinguish executed path, inferred target geometry, reused environment annotations and the explicit empty review delta."
+        ],
+        "links": [
+          [
+            "Recorder",
+            "../engine/src/interface_ai/discovery/recorder.py"
+          ],
+          [
+            "Generated contract",
+            "../engine/src/interface_ai/contracts/generated.py"
+          ],
+          [
+            "Recording review",
+            "../capabilities/generated/savings-balance/recording-review.json"
+          ]
+        ]
+      },
+      {
+        "id": "m4-admission-code",
+        "title": "Trace candidate evaluation and independent authority",
+        "kind": "code",
+        "actions": [
+          "Read the host review command, candidate scope validation and ordinary admission. Follow the asset/capability/source/image hashes.",
+          "Explain why candidate-review grants no ordinary approval or continuation, and why modified files, symlinks and mismatched IDs fail."
+        ],
+        "expected": [
+          "You can show the authority file outside the bundle and explain its named continuation, policy version, agent reviewer and evaluation evidence."
+        ],
+        "links": [
+          [
+            "Review command",
+            "../scripts/review-capability"
+          ],
+          [
+            "Admission",
+            "../engine/src/interface_ai/policy/admission.py"
+          ],
+          [
+            "Promotion contract",
+            "../engine/src/interface_ai/contracts/approval.py"
+          ]
+        ]
+      },
+      {
+        "id": "m4-evidence-code",
+        "title": "Explain the evidence without overstating it",
+        "kind": "rehearsal",
+        "actions": [
+          "Compare genuine provider evidence, agent review, zero-model replay, simulated generated takeover and the earlier user-observed manual takeover.",
+          "Run through the short assessor demo aloud. State the single-workflow/display constraints, provider retention distinction, UX-01 and final packaging work."
+        ],
+        "expected": [
+          "You can support each claim with the correct evidence and say what remains unproven."
+        ],
+        "links": [
+          [
+            "Integrated evidence",
+            "../evidence/m4-06-integration/README.md"
+          ],
+          [
+            "Short demo",
+            "DEMO.md"
+          ],
+          [
+            "Current plan",
+            "CURRENT_PLAN.md"
+          ]
+        ]
+      }
+    ]
   }
 ];
 const STEPS=GROUPS.flatMap(g=>g.steps), KEY='interface-ai-repository-review-v2';
@@ -1413,7 +1520,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' topics understood. '+counts.failed+' need work, '+counts.blocked+' blocked, '+counts.skipped+' deferred, '+counts['not-run']+' not reviewed.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-repository-review-v2',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-19-repository-v3-operator-only',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-repository-review-v2',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-20-repository-v3-m4',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-repository-review-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

@@ -1,12 +1,12 @@
 # M4 — Discover, record, review, and replay
 
-Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../evidence/m4-03-goal-discovery/README.md). M4-04 [recorded candidate passed](../evidence/m4-04-recorded-candidate/README.md). M4-05 [review and promotion passed](../evidence/m4-05-promotion/README.md). M4-06 remains in progress. [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
+Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../evidence/m4-03-goal-discovery/README.md). M4-04 [recorded candidate passed](../evidence/m4-04-recorded-candidate/README.md). M4-05 [review and promotion passed](../evidence/m4-05-promotion/README.md). M4-06 [integrated acceptance and full regressions passed](../evidence/m4-06-integration/README.md). [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
 
 ## Outcome
 
 Given the goal “Find the savings balance for member 00123” and the running synthetic bank desktop, OpenAI chooses and performs the UI actions through our guarded desktop adapter. A recorder produces a candidate capability from the actions actually executed. After explicit local review and promotion, that capability retrieves member 00456’s balance using only local vision/OCR, with zero model calls.
 
-This is the largest remaining assessment requirement: genuine goal-driven discovery and an artifact demonstrably derived from it. M1–M3 already establish desktop input, manual-artifact replay, policy/evidence controls and same-session takeover. The real-person member-A recovery has now been witnessed; preserve that evidence rather than treating another simulated run as its replacement.
+At milestone planning, the largest remaining assessment requirement was: genuine goal-driven discovery and an artifact demonstrably derived from it. M1–M3 already establish desktop input, manual-artifact replay, policy/evidence controls and same-session takeover. The real-person member-A recovery has now been witnessed; preserve that evidence rather than treating another simulated run as its replacement.
 
 M4 is one complete savings-lookup workflow on the current Linux ARM64 desktop. It includes the lifecycle and artifact-admission changes needed to support that workflow. Cross-platform support, arbitrary workflow recovery, another provider, a workflow editor and operator click-targeting polish remain outside this milestone. The reported click difficulty remains tracked as UX-01 in [manual audit notes](MANUAL_AUDIT_NOTES.md).
 
@@ -113,17 +113,17 @@ Start with the small provider/action PoC, then lifecycle integration. Do not inv
 
 Keep discovery metadata, reviewed candidate/provenance, approval manifest, second-member replay, one failure and generated-artifact handoff evidence in an indexed export. Explicit synthetic business results stay separate from routine metadata. Preserve failed attempts honestly. Use bounded, reviewed reason codes with human-readable explanations of action purpose and admission decisions; do not persist raw model reasoning. A short execution trace with checkpoints, selected targets, policy decisions and the failed expectation supplies the richer failure diagnostic; screenshots are not required for every failure.
 
-Proposed commands below are an interface goal, **not available yet**:
+Implemented commands (the default generated promotion is already checked in):
 
 ```sh
 make discover MEMBER_ID=00123    # Explicit online run; key supplied through host environment
 make review RUN=<discovery-run>  # Validate candidate and show review/dry-run instructions
-make promote RUN=<discovery-run> # Explicitly approve the exact reviewed bundle
-make demo CAPABILITY=<approved-id> MEMBER_ID=00456
-make handoff-demo CAPABILITY=<approved-id>
+make promote RUN=<discovery-run> PROMOTION_ID=discovered-rehearsal # Explicitly approve a new reviewed revision
+make demo CAPABILITY=discovered-savings MEMBER_ID=00456
+make handoff-demo CAPABILITY=discovered-savings
 ```
 
-Reuse the current `make start` offline demo and operator at 6081. Keep setup concise; `make discover` should invoke the pinned host environment rather than require users to install SDK packages by hand. Never request a key in chat or commit an environment file containing one.
+The original `make start` remains the manual-artifact offline demo; generated replay uses `CAPABILITY=discovered-savings`, with the same operator at 6081. Keep setup concise; `make discover` should invoke the pinned host environment rather than require users to install SDK packages by hand. Never request a key in chat or commit an environment file containing one.
 
 ## Questions to settle through the first PoCs
 

@@ -4,6 +4,9 @@ Use this index to distinguish a claim from the exact source and environment that
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
+| M4-06 integrated acceptance | [Generated integration](m4-06-integration/README.md) | Nine generated replay cases, both generated handoffs, offline/export proof, full M1–M3 regressions and operator UI checks passed | No real-person generated takeover claimed |
+| M4-05 promotion after `03527b3` | [Independent review and promotion](m4-05-promotion/README.md) | Same candidate replayed for B and translated layout before agent approval; ordinary approved replay passes | Agent review, not a user attestation; one fixed bank workflow |
+| M4-04 recording after `7fed441` | [Genuine recorded candidate](m4-04-recorded-candidate/README.md) | Three real provider responses → four recorded inputs, explicit binding and static crops | Reused environment/OCR/checkpoint annotations are labeled; this dated record precedes approval |
 | M4-03 goal discovery after `06cfc07` | [Genuine discovery](m4-03-goal-discovery/README.md) | Three genuine OpenAI responses, four model-selected inputs, exact local result; 119 engine tests | Fixed bank environment; generated artifact and replay remain next |
 | M4-02 shared lifecycle after `e52c206` | [Shared lifecycle validation](m4-02-shared-lifecycle/README.md) | CLI/panel coordination, 17 replay cases, same-session handoff, focused preflight/Stop checks and safe export | Automated operator checks; two corrected full-gate attempts remain explicitly failed |
 | M4-01 live acceptance after `4646f05`, working-tree source hashes retained | [Live provider validation](m4-01-live-provider/README.md) | Three genuine OpenAI responses, one guarded native click and stateless screenshot return; 15 host tests and six transport checks | One-click proof; full discovery and artifacts remain pending |
@@ -16,21 +19,10 @@ Use this index to distinguish a claim from the exact source and environment that
 | M2 baseline `3726347` | [M2 record](poc-m2/README.md) | Bounded policy, isolation, safe export and M1 regression | Synthetic fixed environment; no general redaction or arbitrary-page authorization |
 | Original M1 gate | [M1 acceptance](poc-m1/acceptance/README.md) | Native/browser desktop primitives, manual capability, OCR, repeated replay and rejections | Manually authored capability, fixed Linux ARM64 environment |
 
-## Latest local validation (not yet packaged for submission)
+## Human observations and remaining work
 
-The user reports the M1–M3 manual checklist passed, including a real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results, and link the ignored local evidence. Preserve the exported reviewer checklist and review these files before publishing. This does not complete the separate repository/interview review or genuine discovery.
+The user reports the M1–M3 manual checklist passed, including real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results. Preserve the exported reviewer checklist before final submission. The generated promotion is explicitly agent-reviewed; generated takeover automation is not a second real-person attestation.
 
-The [M4 specification](../docs/MILESTONE_4.md) defines the remaining discovery-to-replay proof.
+Genuine discovery, recording and reviewed second-member reuse now have the records above. Remaining submission work is `REPORT.md`, clean-clone rehearsal, final packaging of the reviewer’s exported checklist, and the separate repository/interview walkthrough. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
 
-## Pending evidence
-
-- A real OpenAI discovery run with reviewed outbound observations and an artifact recorder.
-- An operator-reviewed generated capability replayed for the second member with zero model calls.
-- Final packaging of the witnessed real-person handoff and reviewer checklist export.
-- Final assignment report and end-to-end demo/evidence packaging.
-
-The [manual checklist](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) hold separate reviewer self-reports. Automated testing of those pages does not complete either review. Routine run metadata omits typed values, OCR text and screenshots; explicit synthetic results/debug calibration records have their own documented retention boundaries.
-
-- [M4-04: genuine recorded candidate](m4-04-recorded-candidate/README.md), still awaiting independent promotion.
-
-- [M4-05: reviewed promotion and approved member-B replay](m4-05-promotion/README.md).
+Both [manual acceptance](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) now include unverified M4 supplements. Automated tests do not complete those self-reports. Routine metadata excludes typed values, raw OCR and screenshots; separate synthetic business results and reviewed static crops have explicit retention boundaries. Historical limits in the table describe their original revisions, not the current implementation.

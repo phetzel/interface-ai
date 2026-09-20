@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "provenance": "automated-integration-of-genuine-recorded-artifact",
+  "modelCalls": 0,
+  "realHumanWitnessed": false,
+  "checks": [
+    {
+      "name": "generated-replay-matrix",
+      "status": "passed"
+    },
+    {
+      "name": "generated-handoff",
+      "status": "passed"
+    },
+    {
+      "name": "simulated-provider-transport",
+      "status": "passed"
+    }
+  ],
+  "offlineBoundary": {
+    "providerSDKAbsent": true,
+    "providerKeyAbsent": true,
+    "providerEgressBlocked": true
+  }
+}

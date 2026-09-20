@@ -154,7 +154,11 @@ def evaluate(name):
     )
 
 
-def promote(name, reviewer):
+def promote(name, reviewer, identifier='discovered-savings'):
+    if not re.fullmatch(r'discovered-[a-z0-9][a-z0-9-]{0,35}', identifier):
+        raise ValueError(
+            'Promotion ID must start with discovered- and use lowercase letters, digits or hyphens'
+        )
     host, desktop, candidate, cap, build = resolve(name)
     location = read(host / 'review-location.json')['directory']
     if not re.fullmatch(r'[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}', location):
@@ -201,14 +205,24 @@ def promote(name, reviewer):
     if len(boundaries) != 1:
         raise ValueError('No unique reviewed member-overview continuation')
     before, after = boundaries[0]
-    target = ROOT / 'capabilities/generated/savings-balance'
-    approval_path = ROOT / 'capabilities/approvals/discovered-savings.json'
+    relative = 'generated/' + (
+        'savings-balance' if identifier == 'discovered-savings' else identifier
+    )
+    target = ROOT / 'capabilities' / relative
+    approval_path = ROOT / 'capabilities/approvals' / (identifier + '.json')
+    if len(list((ROOT / 'capabilities/approvals').glob('*.json'))) >= 8:
+        raise ValueError('This bounded demo supports at most eight independent approvals')
+    if any(
+        read(path)['capabilitySha256'] == digest(candidate)
+        for path in (ROOT / 'capabilities/approvals').glob('*.json')
+    ):
+        raise ValueError('These exact bytes already have an approval; reuse its capability ID')
     if target.exists() or approval_path.exists():
         raise ValueError('Existing promotion is preserved; use a separately reviewed revision')
     approval = dict(
         format='promotion-v1',
-        id='discovered-savings',
-        capabilityFile='generated/savings-balance/capability.json',
+        id=identifier,
+        capabilityFile=relative + '/capability.json',
         candidateSha256=digest(candidate),
         capabilitySha256=digest(candidate),
         capabilityVersion=cap['capabilityVersion'],
@@ -259,7 +273,8 @@ def promote(name, reviewer):
         ),
     )
     write_json(approval_path, approval)  # Authority is written last, outside the bundle.
-    print('PROMOTED discovered-savings (' + reviewer + '). Run make build before replay.')
+    print('PROMOTED ' + identifier + ' (' + reviewer + '). Run make build before replay.')
+    print('Next: make demo CAPABILITY=' + identifier + ' MEMBER_ID=00456')
 
 
 def main():
@@ -267,13 +282,18 @@ def main():
     parser.add_argument('operation', choices=('review', 'promote'))
     parser.add_argument('--run', required=True)
     parser.add_argument(
+        '--id',
+        default='discovered-savings',
+        help='New independent promotion ID; existing approvals are never overwritten',
+    )
+    parser.add_argument(
         '--reviewer', choices=('agent-review', 'user-review'), default='user-review'
     )
     args = parser.parse_args()
     if args.operation == 'review':
         evaluate(args.run)
     else:
-        promote(args.run, args.reviewer)
+        promote(args.run, args.reviewer, args.id)
 
 
 if __name__ == '__main__':

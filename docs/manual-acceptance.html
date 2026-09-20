@@ -69,9 +69,9 @@
 <div class="shell">
   <header class="hero">
     <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue. For a short assessor walkthrough, use the <a href="DEMO.md">demo guide</a>.</p></div>
-    <div class="scope"><strong>What this covers</strong><p>Desktop control, the banking fixture, model-free replay, policy, evidence, and same-session takeover. OpenAI discovery, generated capability promotion, cross-OS support, and the final assignment report are still future work.</p></div>
+    <div class="scope"><strong>What this covers</strong><p>Desktop control, the banking fixture, offline replay, policy, same-session takeover and the M4 discovery/promotion supplement. Cross-OS support and final submission packaging remain outside these checks.</p></div>
   </header>
-  <p class="note">2026-09-19: the operator at 6081 replaces the standalone 6080 viewer. Instructions are updated; saved results remain observations of the revision you tested. See the <a href="MILESTONE_4.md">next milestone specification</a> for discovery work still to come.</p>
+  <p class="note">2026-09-20: M4 discovery, recording and promotion are implemented. The new M4 section starts unverified. Saved results remain observations of the revision you tested; updated instructions do not attest a new run. See the <a href="MILESTONE_4.md">milestone specification</a> and <a href="DEMO.md">short demo</a>.</p>
   <div class="toolbar">
     <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New pass</button>
     <span id="storage" class="storage" role="status">Checking local storage…</span>
@@ -150,7 +150,7 @@ const GROUPS = [
         "title": "Review the quick quality gate from setup",
         "kind": "harness",
         "expected": [
-          "The quick gate passes formatting/lint, four host harness tests, 92 Linux engine tests, four schema comparisons and fixture typechecking. Record the printed evidence directory.",
+          "The quick gate passes formatting/lint, the current host and Linux engine suites, six schema comparisons and fixture typechecking. Record the printed evidence directory.",
           "build-preflight.json binds source to both image IDs and verifies shipped engine files and compiled fixture assets. The quick-check phase performs no desktop input and rewrites no schemas; setup starts the fresh desktop only after this gate passes."
         ],
         "links": [
@@ -663,13 +663,13 @@ const GROUPS = [
           "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/result.json\"\ncat \"$HANDOFF_DIR/audit.jsonl\""
         ],
         "actions": [
-          "Reload the panel, start a lookup for 00123, and let it reach failure without taking control.",
+          "Reload the panel, start a lookup for 00123, and let it reach the blocked-search timeout without taking control.",
           "Record the visible step and reason, then inspect the newest handoff files using the second command."
         ],
         "expected": [
           "Open Run details: the panel reports step search-member and reason checkpoint_timeout. result.json identifies the failed step and expected checkpoint.",
           "audit.jsonl retains nested interpreter entries with reviewed step/target IDs and a failed step event. It contains no typed training code, raw keystrokes, member ID values, recognized business text or screenshot.",
-          "Take control and Verify & resume are unavailable after this terminal failure. Broader failure-to-handoff integration remains future work; the current behavior is explicit."
+          "The coordinator pauses in awaiting_human and offers Take control. There is no declared continuation: Verify & resume stays unavailable after takeover. The failure diagnostic is retained; reset is required."
         ],
         "note": "Last verified checkpoint means the last successful observation, not a claim about the current screen. Record evidence before the next reset."
       }
@@ -730,7 +730,7 @@ const GROUPS = [
         ],
         "expected": [
           "The M2 gate passes operation/application checks, fixed-route and direct-origin denials, browser restrictions, and safe export.",
-          "The embedded M1 gate passes lifecycle, native/browser input, server view-only, session/focus/stop/exclusivity checks, runtime/isolation verification, 92 engine tests, ten baseline replays, seven scenario replays, and seven rejection cases.",
+          "The embedded M1 gate passes lifecycle, native/browser input, server view-only, session/focus/stop/exclusivity checks, runtime/isolation verification, the current engine suite, ten baseline replays, seven scenario replays, and seven rejection cases.",
           "Invalid/unapproved artifacts, input typing, symlink/FIFO export handling and closed metadata rules are covered by the engine tests. A fresh bank search screen is left at the end.",
           "Both image fingerprints and actual running container IDs match reviewed source before acceptance input. Artifact FIFOs, verified image-byte snapshots and terminal finalization are included in regressions."
         ],
@@ -744,7 +744,7 @@ const GROUPS = [
           "make handoff-check"
         ],
         "expected": [
-          "92 engine tests and both simulated-operator handoff cases pass.",
+          "the current engine suite and both simulated-operator handoff cases pass.",
           "The checks cover in-flight input draining, modifier release, stale epochs, immediate pause revocation, duplicate requests, expiry without browser polling, HTTP Stop during in-flight typing/hotkeys, status-poll contention, HTTP request protection, sanitized interpreter traces, wrong-member return and exact completion.",
           "The evidence labels its operator as automated-test-through-operator-api. It is separate from the real-person handoffs you performed above."
         ]
@@ -787,6 +787,133 @@ const GROUPS = [
           [
             "Roadmap",
             "ROADMAP.md"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m4",
+    "title": "10 / Validate the generated capability",
+    "intro": "M4 supplement: these checks begin unverified and do not change the completed M1–M3 observations. Use the existing reviewed artifact for offline tests; inspect genuine discovery separately.",
+    "steps": [
+      {
+        "id": "m4-provenance",
+        "title": "Trace the genuine discovery to the approved bytes",
+        "kind": "manual",
+        "actions": [
+          "Read the genuine recording report, trajectory and recording-review.json. Match the candidate and approval digests.",
+          "Explain four executed inputs, the explicit memberId binding, static crops, reused OCR/checkpoint annotations and the unobserved missing-member branch. Distinguish agent review from a person performing takeover."
+        ],
+        "expected": [
+          "Three real OpenAI response IDs and four inputs are recorded; the generated steps preserve that order.",
+          "Candidate and promoted SHA-256 match. Review/promotion evidence shows member-B and translated evaluation before approval; reviewEdits is empty."
+        ],
+        "links": [
+          [
+            "Genuine recording",
+            "../evidence/m4-04-recorded-candidate/README.md"
+          ],
+          [
+            "Promotion evidence",
+            "../evidence/m4-05-promotion/README.md"
+          ],
+          [
+            "Approval",
+            "../capabilities/approvals/discovered-savings.json"
+          ]
+        ]
+      },
+      {
+        "id": "m4-offline",
+        "title": "Replay the generated artifact for member B",
+        "kind": "command",
+        "commands": [
+          "make demo CAPABILITY=discovered-savings MEMBER_ID=00456"
+        ],
+        "actions": [
+          "Watch the operator and inspect report.json plus the separate result.json in the printed run directory."
+        ],
+        "expected": [
+          "Demo Member B / 00456, Savings, USD, amountMinor 9807; the screen shows $98.07.",
+          "Report: modelCalls 0, actionsCompleted 4, admission approved, approvalId discovered-savings."
+        ]
+      },
+      {
+        "id": "m4-translated",
+        "title": "Reuse the same artifact after a layout shift",
+        "kind": "command",
+        "commands": [
+          "make demo CAPABILITY=discovered-savings MEMBER_ID=00456 SCENARIO=translated"
+        ],
+        "expected": [
+          "The fixture moves 40 pixels on each axis; the same capability digest returns exact member-B values with zero model calls."
+        ]
+      },
+      {
+        "id": "m4-human",
+        "title": "Take over and resume the generated artifact yourself",
+        "kind": "manual",
+        "commands": [
+          "make handoff-demo CAPABILITY=discovered-savings MEMBER_ID=00123"
+        ],
+        "actions": [
+          "Refresh the operator after reset. The command already starts the generated lookup. Record the UUID, take control and verify that resuming while expired is rejected.",
+          "Restore the synthetic workspace using demo. Before valid resume, return to search and then member 00456; verify both wrong-screen and wrong-member rejections. Return to 00123’s overview and verify/resume. Complete this within the 15-minute control window."
+        ],
+        "expected": [
+          "The approved pause is action-003 and continuation is action-004, checked against original-member member-ready.",
+          "Lookup completes with $1,234.56 USD in the same session. Human actions are recorded without raw text; automation issues no input during human ownership."
+        ],
+        "note": "This is a new real-person check for the generated artifact. The automated M4 handoff evidence does not mark it passed. Clicking in the scaled desktop remains UX-01; widen the panel or use its explicit key buttons.",
+        "links": [
+          [
+            "Step-by-step demo",
+            "DEMO.md"
+          ],
+          [
+            "Operator",
+            "http://127.0.0.1:6081/"
+          ]
+        ]
+      },
+      {
+        "id": "m4-gate",
+        "title": "Review generated integration and the offline boundary",
+        "kind": "harness",
+        "commands": [
+          "make m4-check"
+        ],
+        "expected": [
+          "Nine generated replay scenarios and both simulated-operator handoffs pass, including missing member, ambiguity, unreadable output, blocked loading and wrong resume state.",
+          "The fake-provider transport checks are labeled simulated. The desktop has no provider SDK/key and cannot reach the provider. Safe export excludes business values and images."
+        ],
+        "links": [
+          [
+            "M4 evidence",
+            "../evidence/m4-06-integration/README.md"
+          ]
+        ]
+      },
+      {
+        "id": "m4-close",
+        "title": "Preserve M4 observations and identify submission work",
+        "kind": "manual",
+        "actions": [
+          "Export this checklist again after recording your own observations. Keep skipped or unperformed human steps unverified.",
+          "Review REPORT.md status, the clean-clone rehearsal and the separate repository checklist before calling the assessment complete."
+        ],
+        "expected": [
+          "Your export distinguishes actual manual observations from harness evidence. A passing runtime gate is not a submission sign-off."
+        ],
+        "links": [
+          [
+            "Repository checklist",
+            "repository-audit.html"
+          ],
+          [
+            "Current plan",
+            "CURRENT_PLAN.md"
           ]
         ]
       }

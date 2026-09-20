@@ -5,12 +5,13 @@ MODE ?= bank
 SCENARIO ?= default
 MEMBER_ID ?= 00123
 CAPABILITY ?= manual-savings
+PROMOTION_ID ?= discovered-savings
 RUN ?=
-export MODE SCENARIO MEMBER_ID RUN CAPABILITY
+export MODE SCENARIO MEMBER_ID RUN CAPABILITY PROMOTION_ID
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote
+.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote m4-check
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -125,4 +126,7 @@ review: ## Validate and evaluate a recorded candidate for member B and translate
 	python3 scripts/review-capability review --run "$$RUN"
 
 promote: ## Approve the exact evaluated candidate after reviewing its static crops and annotations
-	python3 scripts/review-capability promote --run "$$RUN"
+	python3 scripts/review-capability promote --run "$$RUN" --id "$$PROMOTION_ID"
+
+m4-check: ## Check generated replay, same-session recovery, offline boundary and simulated provider rejection
+	./scripts/m4-check
