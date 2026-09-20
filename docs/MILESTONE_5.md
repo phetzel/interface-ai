@@ -7,10 +7,10 @@ Scope: finish the work that can be validated independently, then hand the author
 | M5-01 | Brief-to-code review; explicit bounded goal/target input; cleanup | Implemented; [coverage map](ASSESSMENT_CHECK.md), request tests and operator actual-size checks pass |
 | M5-02 | Seven-heading, approximately 1–3 page `REPORT.md` | Written; author must agree with and explain its claims |
 | M5-03 | Generated-artifact personal review and takeover | Automated coverage passes; real-person check and checklist export remain with the user |
-| M5-04 | Fresh checkout, offline setup, genuine discovery/review/new promotion/replay rehearsal | Pending final rehearsal |
-| M5-05 | Curated evidence and concise assessor path | [One-command demo](DEMO.md), requirement map and evidence index prepared; final validation being packaged |
+| M5-04 | Fresh checkout, offline setup, genuine discovery/review/new promotion/replay rehearsal | Passed on `2987382`; [complete rehearsal](../evidence/m5-readiness/clean-checkout/summary.json) |
+| M5-05 | Curated evidence and concise assessor path | [One-command demo](DEMO.md), requirement map and [final evidence](../evidence/m5-readiness/README.md) complete |
 | M5-06 | Interview route and repository checklist | [Route prepared](SUBMISSION.md#interview-route); personal understanding cannot be completed by an agent |
-| M5-07 | Private push, public-readiness check and submission draft | Local history scan passed; requested commit/push follows validation. Public visibility and sending the submission remain user actions |
+| M5-07 | Private push, public-readiness check and submission draft | History/working-tree scan passed; Private delivery is tracked in Git history. Public visibility and sending the submission remain user actions |
 
 ## Validation boundaries
 

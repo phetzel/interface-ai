@@ -4,6 +4,7 @@ Use this index to distinguish a claim from the exact source and environment that
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
+| M5 readiness, executable commit `2987382` | [Final assessment preparation](m5-readiness/README.md) | Full regressions, actual-size UI, fresh-clone one-command demo and new genuine discovery → review → agent promotion → offline replay | Existing host/caches; two retained native startup timeouts remain unresolved; personal generated takeover and submission remain |
 | M4-06 integrated acceptance | [Generated integration](m4-06-integration/README.md) | Nine generated replay cases, both generated handoffs, offline/export proof, full M1–M3 regressions and operator UI checks passed | No real-person generated takeover claimed |
 | M4-05 promotion after `03527b3` | [Independent review and promotion](m4-05-promotion/README.md) | Same candidate replayed for B and translated layout before agent approval; ordinary approved replay passes | Agent review, not a user attestation; one fixed bank workflow |
 | M4-04 recording after `7fed441` | [Genuine recorded candidate](m4-04-recorded-candidate/README.md) | Three real provider responses → four recorded inputs, explicit binding and static crops | Reused environment/OCR/checkpoint annotations are labeled; this dated record precedes approval |
@@ -23,6 +24,6 @@ Use this index to distinguish a claim from the exact source and environment that
 
 The user reports the M1–M3 manual checklist passed, including real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results. Preserve the exported reviewer checklist before final submission. The generated promotion is explicitly agent-reviewed; generated takeover automation is not a second real-person attestation.
 
-Genuine discovery, recording and reviewed second-member reuse now have the records above. Remaining submission work is `REPORT.md`, clean-clone rehearsal, final packaging of the reviewer’s exported checklist, and the separate repository/interview walkthrough. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
+Genuine discovery, recording and reviewed second-member reuse now have the records above. M5 completed `REPORT.md`, the clean-clone rehearsal and agent-owned packaging. Remaining author work is the personal generated-artifact takeover, preserving exported self-reports, the repository/interview walkthrough and public submission. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
 
 Both [manual acceptance](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) now include unverified M4 supplements. Automated tests do not complete those self-reports. Routine metadata excludes typed values, raw OCR and screenshots; separate synthetic business results and reviewed static crops have explicit retention boundaries. Historical limits in the table describe their original revisions, not the current implementation.

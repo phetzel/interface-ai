@@ -30,7 +30,7 @@ Discovery uses at most 20 requests, 40 inputs, four batch items and 120 seconds.
 
 The core M1–M4 implementation is complete. M5 closes the goal/target input gap, adds actual-size desktop viewing, writes the required report, rehearses setup from a fresh checkout and prepares submission evidence. See [M5 status](MILESTONE_5.md), [assessment coverage](ASSESSMENT_CHECK.md) and [REPORT.md](../REPORT.md).
 
-Automated validation and clean-checkout rehearsal are in progress. The final evidence record will identify the exact commit/source tested. No personal checklist results are completed by automation.
+[M5 validation and clean-checkout rehearsal passed](../evidence/m5-readiness/README.md) on executable source commit `2987382`. The fresh clone completed offline setup and a new real discovery → evaluated candidate → agent promotion → offline replay. The report, coverage map, submission draft and interview route are ready. Two intermittent native calibration startup timeouts are retained as an unresolved limitation; a subsequent full gate passed unchanged. No personal checklist results were completed by automation.
 
 ## Remaining author work
 

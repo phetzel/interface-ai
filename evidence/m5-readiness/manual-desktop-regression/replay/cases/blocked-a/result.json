@@ -1,0 +1,10 @@
+{
+  "status": "failure",
+  "code": "checkpoint_timeout",
+  "step": "search-member",
+  "expected": [
+    "member-ready",
+    "member-not-found"
+  ],
+  "observed": "checkpoint_not_satisfied"
+}

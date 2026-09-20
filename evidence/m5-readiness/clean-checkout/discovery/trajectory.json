@@ -1,0 +1,73 @@
+[
+  {
+    "id": "action-001",
+    "proposal": 2,
+    "callId": "call_NhkFPtI1mlEwQ76TMT6jlFlD",
+    "responseId": "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+    "actionIndex": 0,
+    "epoch": 0,
+    "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+    "action": "click",
+    "before": "search-ready",
+    "beforeObservation": "observation-004",
+    "status": "completed",
+    "target": "member-input",
+    "point": [
+      399,
+      495
+    ],
+    "after": "search-ready",
+    "afterObservation": "observation-005"
+  },
+  {
+    "id": "action-002",
+    "proposal": 2,
+    "callId": "call_NhkFPtI1mlEwQ76TMT6jlFlD",
+    "responseId": "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+    "actionIndex": 1,
+    "epoch": 0,
+    "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+    "action": "type",
+    "before": "search-ready",
+    "beforeObservation": "observation-006",
+    "status": "completed",
+    "inputBinding": "memberId",
+    "after": "input-entered",
+    "afterObservation": "observation-010"
+  },
+  {
+    "id": "action-003",
+    "proposal": 2,
+    "callId": "call_NhkFPtI1mlEwQ76TMT6jlFlD",
+    "responseId": "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+    "actionIndex": 2,
+    "epoch": 0,
+    "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+    "action": "press",
+    "before": "input-entered",
+    "beforeObservation": "observation-011",
+    "status": "completed",
+    "after": "member-ready",
+    "afterObservation": "observation-014"
+  },
+  {
+    "id": "action-004",
+    "proposal": 3,
+    "callId": "call_SF0hRhZFVmC6VOhJ77arNZmL",
+    "responseId": "resp_0515842bcca88455016ab04105672887d0881366b5d266cc13",
+    "actionIndex": 0,
+    "epoch": 0,
+    "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+    "action": "click",
+    "before": "member-ready",
+    "beforeObservation": "observation-017",
+    "status": "completed",
+    "target": "savings-button",
+    "point": [
+      1064,
+      630
+    ],
+    "after": "account-ready",
+    "afterObservation": "observation-018"
+  }
+]

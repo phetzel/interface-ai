@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "sourceCommit": "2987382866f677a7915a8d0103bf03ecbebc092f",
+  "offlineDemoPassed": true,
+  "genuineProviderResponses": 3,
+  "recordedInputs": 4,
+  "secondMemberEvaluation": [
+    "default",
+    "translated"
+  ],
+  "reviewer": "agent-review",
+  "staticCropsVisuallyReviewed": 7,
+  "reviewEdits": [],
+  "rehearsalApprovalId": "discovered-rehearsal",
+  "candidateAndApprovedSha256": "8ab0c1973e46e9e3af1dfcd0f0901ab7363347387cd6d6bed3c2b52baeda2943",
+  "postPromotionReplayPassed": true,
+  "modelCallsDuringReplay": 0,
+  "secretsCopied": false,
+  "realHumanWitnessed": false,
+  "supportedEnvironment": "Existing Apple Silicon host and cached toolchain/images; fixed Linux ARM64 desktop"
+}

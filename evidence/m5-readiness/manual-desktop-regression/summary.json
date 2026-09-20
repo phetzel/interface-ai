@@ -1,0 +1,147 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "passed",
+  "startedAt": "2026-09-20T20:12:21.717134+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 174,
+      "elapsedSeconds": 0.512
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "3da2dc7a-dfaf-436c-b7bd-73d6fb218ff1",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 13.613
+    },
+    {
+      "name": "native-input-operator-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "3da2dc7a-dfaf-436c-b7bd-73d6fb218ff1",
+      "elapsedSeconds": 2.238
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "4b0a69cc-e7d6-42be-ba4a-a5cb1d10f934",
+      "elapsedSeconds": 12.009
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "782e7c1f-a8ec-45d4-ab6d-a761bb2a4d59",
+      "elapsedSeconds": 20.953
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 103,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.409
+    },
+    {
+      "name": "unit-tests",
+      "status": "passed",
+      "evidence": "unit-tests.log",
+      "testsPassed": 127,
+      "elapsedSeconds": 7.275
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.252
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "passed",
+      "evidence": "replay/summary.json",
+      "baselinePasses": 10,
+      "scenarioPasses": 7,
+      "baselineSeconds": {
+        "min": 3.521,
+        "median": 3.643,
+        "max": 3.988
+      },
+      "elapsedSeconds": 388.0
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 40.814
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 24,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.082
+    }
+  ],
+  "fullAcceptance": true,
+  "sourceCommit": "2987382866f677a7915a8d0103bf03ecbebc092f",
+  "uncommittedFiles": [
+    " M docs/SUBMISSION.md",
+    "?? evidence/m5-readiness/"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-20T20:20:46.883995+00:00"
+}

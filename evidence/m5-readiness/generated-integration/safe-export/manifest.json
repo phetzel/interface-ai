@@ -1,0 +1,11 @@
+{
+  "format": "safe-evidence-v1",
+  "screenshots": "suppressed",
+  "businessResults": "excluded",
+  "sourceMetadata": "not-copied",
+  "files": [
+    "summary.json",
+    "events.jsonl",
+    "manifest.json"
+  ]
+}

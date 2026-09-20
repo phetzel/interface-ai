@@ -1,0 +1,23 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "name": "policy-reset",
+      "status": "passed"
+    },
+    {
+      "name": "live-policy",
+      "status": "passed"
+    },
+    {
+      "name": "origin-ip-bypass",
+      "status": "passed"
+    },
+    {
+      "name": "m1-regression",
+      "status": "failed",
+      "errorType": "AssertionError"
+    }
+  ],
+  "errorType": "AssertionError"
+}

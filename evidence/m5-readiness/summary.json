@@ -1,0 +1,31 @@
+{
+  "format": "m5-readiness-v1",
+  "status": "passed",
+  "validatedExecutableCommit": "2987382866f677a7915a8d0103bf03ecbebc092f",
+  "executableFiles": 174,
+  "engineTestsPassed": 127,
+  "hostTestsWithPinnedSDKPassed": 24,
+  "schemasMatched": 6,
+  "generatedReplayCasesPassed": 9,
+  "manualReplayCasesPassed": 17,
+  "preflightStaleStopRejectionsPassed": 7,
+  "generatedSimulatedHandoffsPassed": 2,
+  "manualSimulatedHandoffsPassed": 2,
+  "freshCloneOfflineDemoPassed": true,
+  "freshGenuineProviderResponses": 3,
+  "freshCandidateEvaluatedReviewedPromotedAndReplayed": true,
+  "operatorFitAndActualSizePassed": true,
+  "operatorStopDuringInputPassed": true,
+  "realHumanWitnessed": false,
+  "knownLimits": [
+    "Two native calibration starts timed out before an unchanged full gate passed; cause unresolved.",
+    "Existing host/toolchain/package and Docker caches were reused.",
+    "HTML checklist source checks only; visual local-file preview unavailable."
+  ],
+  "authorRemaining": [
+    "Personal generated-artifact takeover and Actual size usability review",
+    "Report and repository/interview understanding",
+    "Browser-local checklist exports",
+    "Public visibility and submission from application email"
+  ]
+}

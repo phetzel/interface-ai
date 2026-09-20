@@ -176,11 +176,11 @@ M1–M4 are implemented. The user completed the M1–M3 manual acceptance checkl
 
 ## What is blocking the final assessment?
 
-[M5: assessment readiness](MILESTONE_5.md) is the final implementation/packaging milestone. Goal/target admission, the required report, the one-command assessor demo and interview route are prepared; final regression and clean-checkout rehearsal are being completed.
+[M5: assessment readiness](MILESTONE_5.md) is the final implementation/packaging milestone. Goal/target admission, operator sizing, the required report, the one-command assessor demo, final regressions and a complete fresh-checkout discovery/replay rehearsal are finished. [M5 evidence](../evidence/m5-readiness/README.md) records the exact source and limits.
 
 | Remaining work | Owner | Completion |
 | --- | --- | --- |
-| Fresh-checkout and final evidence validation | Agent | Retained source-bound rehearsal, genuine new discovery/review/promotion/replay and final regression records |
+| Fresh-checkout and final evidence validation | Agent — complete | Source-bound offline setup, genuine new discovery/review/promotion/replay and full regressions passed |
 | Generated-artifact real-person takeover | User | Same-session recovery on the generated artifact, recorded in the M4 checklist supplement |
 | Report and repository/interview understanding | User | Explain the artifact, policy, replay and control-transfer decisions without relying on a script |
 | Checklist export and optional demo video | User | Preserve browser-local self-reports; video is optional |

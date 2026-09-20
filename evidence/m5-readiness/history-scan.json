@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "scope": "all locally reachable Git blobs plus nonignored working-tree files; credential patterns and prohibited historical filenames",
+  "blobsScanned": 1354,
+  "workingTreeFilesScanned": 1480,
+  "findings": [],
+  "limits": "Pattern scan is not a formal security audit; synthetic results and reviewed static assets are intentional."
+}

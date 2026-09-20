@@ -1,0 +1,129 @@
+{
+  "format": "candidate-review-v1",
+  "status": "pending-review",
+  "candidateSha256": "8ab0c1973e46e9e3af1dfcd0f0901ab7363347387cd6d6bed3c2b52baeda2943",
+  "capturePolicy": "static-synthetic-labels-only-v1",
+  "fullFramesRetained": false,
+  "actionDerivations": [
+    {
+      "step": "action-001",
+      "sourceAction": "action-001",
+      "beforeObservation": "observation-004",
+      "afterObservation": "observation-005",
+      "targetMethod": "recorded-point-relative-to-observed-label"
+    },
+    {
+      "step": "action-002",
+      "sourceAction": "action-002",
+      "beforeObservation": "observation-006",
+      "afterObservation": "observation-010",
+      "targetMethod": "admitted-native-primitive"
+    },
+    {
+      "step": "action-003",
+      "sourceAction": "action-003",
+      "beforeObservation": "observation-011",
+      "afterObservation": "observation-014",
+      "targetMethod": "admitted-native-primitive"
+    },
+    {
+      "step": "action-004",
+      "sourceAction": "action-004",
+      "beforeObservation": "observation-017",
+      "afterObservation": "observation-018",
+      "targetMethod": "recorded-point-relative-to-observed-label"
+    }
+  ],
+  "assetDerivations": {
+    "account-heading": {
+      "source": "observed-static-label",
+      "observation": "observation-018",
+      "target": "account-heading",
+      "box": [
+        108,
+        235,
+        384,
+        268
+      ],
+      "sha256": "08f498ce38034a03bb7769caab57381ae6bd9e1f28eea209cd88dd049fc9bef4"
+    },
+    "member-field": {
+      "source": "observed-static-label",
+      "observation": "observation-001",
+      "target": "member-field",
+      "box": [
+        135,
+        421,
+        202,
+        437
+      ],
+      "sha256": "5ba5ec895a2a0254532c99a8714c0c0e369c55eb6bf10abe8ec2aa0512aba71b"
+    },
+    "member-heading": {
+      "source": "observed-static-label",
+      "observation": "observation-014",
+      "target": "member-heading",
+      "box": [
+        101,
+        235,
+        378,
+        268
+      ],
+      "sha256": "7e80ede74989cf52dc06346858f40fe505475744961e40636d4da3532de259b5"
+    },
+    "not-found-label": {
+      "source": "reviewed-environment-profile",
+      "sha256": "f4d030fa651720b43179f8a5313aeb9840f83b1f55b4e063f33c478fa39f201d"
+    },
+    "savings-label": {
+      "source": "observed-static-label",
+      "observation": "observation-014",
+      "target": "savings-label",
+      "box": [
+        184,
+        610,
+        243,
+        629
+      ],
+      "sha256": "af3ee4e6aa71933a1705c4f400bd8b4f7e44cc1c6afb5f28fbe1f356cb59c2a8"
+    },
+    "search-heading": {
+      "source": "observed-static-label",
+      "observation": "observation-001",
+      "target": "search-heading",
+      "box": [
+        108,
+        235,
+        336,
+        268
+      ],
+      "sha256": "fe35ab2b3e26a788cd27f774db824545d6e134da44bc5c854a0371f5a4315940"
+    },
+    "view-account": {
+      "source": "observed-static-label",
+      "observation": "observation-014",
+      "target": "savings-button",
+      "box": [
+        1010,
+        621,
+        1088,
+        638
+      ],
+      "sha256": "cd9283ceb37f9459f9bec3f82ba15ef6cdede318923b9069c42a6855f27a2c83"
+    }
+  },
+  "reusedAnnotations": [
+    "environment",
+    "input/output schemas",
+    "anchor search regions",
+    "OCR fields",
+    "exact identity/account checkpoints",
+    "missing-member outcome"
+  ],
+  "inferredAnnotations": [
+    "relative click regions from executed points",
+    "pre/postconditions from observed states",
+    "final extraction using local verified result"
+  ],
+  "reviewEdits": []
+}

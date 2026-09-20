@@ -1,0 +1,113 @@
+{
+  "format": "promotion-v1",
+  "id": "discovered-rehearsal",
+  "capabilityFile": "generated/discovered-rehearsal/capability.json",
+  "candidateSha256": "8ab0c1973e46e9e3af1dfcd0f0901ab7363347387cd6d6bed3c2b52baeda2943",
+  "capabilitySha256": "8ab0c1973e46e9e3af1dfcd0f0901ab7363347387cd6d6bed3c2b52baeda2943",
+  "capabilityVersion": "0.1.0",
+  "assets": {
+    "account-heading": "08f498ce38034a03bb7769caab57381ae6bd9e1f28eea209cd88dd049fc9bef4",
+    "member-field": "5ba5ec895a2a0254532c99a8714c0c0e369c55eb6bf10abe8ec2aa0512aba71b",
+    "member-heading": "7e80ede74989cf52dc06346858f40fe505475744961e40636d4da3532de259b5",
+    "not-found-label": "f4d030fa651720b43179f8a5313aeb9840f83b1f55b4e063f33c478fa39f201d",
+    "savings-label": "af3ee4e6aa71933a1705c4f400bd8b4f7e44cc1c6afb5f28fbe1f356cb59c2a8",
+    "search-heading": "fe35ab2b3e26a788cd27f774db824545d6e134da44bc5c854a0371f5a4315940",
+    "view-account": "cd9283ceb37f9459f9bec3f82ba15ef6cdede318923b9069c42a6855f27a2c83"
+  },
+  "policy": "bank-read-only-v2",
+  "decision": "approved",
+  "reviewer": "agent-review",
+  "reviewEdits": [],
+  "provenance": {
+    "kind": "recorded-openai-discovery",
+    "runId": "b5f5ca4d-4609-4e3d-84bb-629934b014ac",
+    "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "requests": 3,
+    "responseIds": [
+      "resp_0515842bcca88455016ab040fd5c2c87d09ebc32daa53f1585",
+      "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+      "resp_0515842bcca88455016ab04105672887d0881366b5d266cc13"
+    ],
+    "executedActions": [
+      "action-001",
+      "action-002",
+      "action-003",
+      "action-004"
+    ],
+    "inputBindings": [
+      {
+        "sourceAction": "action-002",
+        "step": "action-002",
+        "input": "memberId"
+      }
+    ],
+    "trajectorySha256": "f6c368f18a895888a96b85bb15a6652235ebcfebf2694c76b9ff167cbdb5f6be",
+    "observationsSha256": "479f8a7f6b428f3a33c653e0ba4d4bb96b0059a2f0d247c4bb7c85e76f5aecba",
+    "runtimeManifestSha256": "0c8c335d5e694608f0f889c9cbdc4c2d2721259954f2953d2fda095d7bebfa44",
+    "recognitionProfileSha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+    "derivation": "bank-static-label-review-v1"
+  },
+  "source": {
+    "sourceManifestSha256": "966b0e026736a81c4c6cd5ea835db29eb28efe71e373933661ac862d7a80e7de",
+    "buildEvidenceSha256": "4f396437647eb9cfe8f6e6412005765e5f74f3cfa33ef4422436ff09f5e61ea7",
+    "desktopImage": "sha256:bae442d56d1713a7779e7eef3514e0a9f72b9e2a41c78288aabc57eff4fb30d2",
+    "fixtureImage": "sha256:86613f1e3939df6ac9d2ab082cc447524d04ed74415ae19350afd33ee1230289",
+    "reviewEvidenceSha256": "1826b7cb97ddc3f9bb1a50f2def5bd853b3c079ddee099b5eb2ea695956be46b"
+  },
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "allowedIds": {
+    "step": [
+      "action-001",
+      "action-002",
+      "action-003",
+      "action-004",
+      "extract-result"
+    ],
+    "target": [
+      "search-heading",
+      "member-heading",
+      "account-heading",
+      "member-field",
+      "savings-label",
+      "savings-button",
+      "not-found",
+      "target-action-001",
+      "target-action-004"
+    ],
+    "field": [
+      "entered-id",
+      "member-id",
+      "account-member-id",
+      "member-name",
+      "account-type",
+      "currency",
+      "balance",
+      "missing-message"
+    ],
+    "checkpoint": [
+      "search-ready",
+      "input-entered",
+      "member-ready",
+      "account-ready",
+      "member-not-found"
+    ]
+  },
+  "continuation": {
+    "interruptedStep": "action-003",
+    "nextStep": "action-004",
+    "checkpoint": "member-ready"
+  }
+}

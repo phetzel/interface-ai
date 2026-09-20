@@ -1,0 +1,14 @@
+desktop-1  | Starting display
+desktop-1  | Starting window manager
+desktop-1  | Starting native test pad
+desktop-1  | Openbox-Message: Unable to find a valid menu file "/var/lib/openbox/debian-menu.xml"
+desktop-1  | XIO:  fatal IO error 4 (Interrupted system call) on X server ":99"
+desktop-1  |       after 2044 requests (2044 known processed) with 0 events remaining.
+desktop-1  | Traceback (most recent call last):
+desktop-1  |   File "/opt/desktop/start.py", line 140, in <module>
+desktop-1  |     main()
+desktop-1  |   File "/opt/desktop/start.py", line 96, in main
+desktop-1  |     wait_for('native test pad', lambda: read_json(STATE).get('ready'))
+desktop-1  |   File "/opt/desktop/common.py", line 37, in wait_for
+desktop-1  |     raise TimeoutError(f'{description} not ready within {timeout}s; last error: {last_error}')
+desktop-1  | TimeoutError: native test pad not ready within 10s; last error: [Errno 2] No such file or directory: '/tmp/interface-ai/pad.json'

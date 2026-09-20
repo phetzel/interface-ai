@@ -1,0 +1,57 @@
+{"kind": "step", "step": "action-001", "action": "click", "status": "started"}
+{"kind": "target", "step": "action-001", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-001", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "action", "sequence": 1, "action": "click", "status": "completed", "durationMs": 99.914, "step": "action-001"}
+{"kind": "target", "step": "action-001", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "checkpoint", "step": "action-001", "checkpoint": "search-ready", "status": "satisfied"}
+{"kind": "step", "step": "action-001", "action": "click", "status": "completed"}
+{"kind": "step", "step": "action-002", "action": "type", "status": "started"}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "action", "sequence": 2, "action": "type", "status": "completed", "durationMs": 163.438, "step": "action-002"}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-002", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-002", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-002", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-002", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "target", "step": "action-002", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-002", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "reading", "step": "action-002", "field": "entered-id", "confidence": 96.68, "box": [183, 518, 315, 549]}
+{"kind": "checkpoint", "step": "action-002", "checkpoint": "input-entered", "status": "satisfied"}
+{"kind": "step", "step": "action-002", "action": "type", "status": "completed"}
+{"kind": "step", "step": "action-003", "action": "press", "status": "started"}
+{"kind": "target", "step": "action-003", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-003", "target": "member-field", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [175, 461, 242, 477]}
+{"kind": "reading", "step": "action-003", "field": "entered-id", "confidence": 96.68, "box": [183, 518, 315, 549]}
+{"kind": "action", "sequence": 3, "action": "press", "status": "completed", "durationMs": 109.963, "step": "action-003"}
+{"kind": "target", "step": "action-003", "target": "member-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "target", "step": "action-003", "target": "search-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [148, 275, 376, 308]}
+{"kind": "target", "step": "action-003", "target": "not-found", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "target", "step": "action-003", "target": "member-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [141, 275, 418, 308]}
+{"kind": "reading", "step": "action-003", "field": "member-id", "confidence": 96.169, "box": [281, 415, 369, 433]}
+{"kind": "target", "step": "action-003", "target": "search-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "checkpoint", "step": "action-003", "checkpoint": "member-ready", "status": "satisfied"}
+{"kind": "step", "step": "action-003", "action": "press", "status": "completed"}
+{"kind": "step", "step": "action-004", "action": "click", "status": "started"}
+{"kind": "target", "step": "action-004", "target": "member-heading", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [141, 275, 418, 308]}
+{"kind": "reading", "step": "action-004", "field": "member-id", "confidence": 96.169, "box": [281, 415, 369, 433]}
+{"kind": "target", "step": "action-004", "target": "savings-label", "status": "matched", "score": 0.999999, "candidateCount": 1, "box": [224, 650, 283, 669]}
+{"kind": "target", "step": "action-004", "target": "savings-button", "status": "matched", "score": 1.0, "candidateCount": 1, "box": [1050, 661, 1128, 678]}
+{"kind": "action", "sequence": 4, "action": "click", "status": "completed", "durationMs": 102.066, "step": "action-004"}
+{"kind": "target", "step": "action-004", "target": "account-heading", "status": "rejected", "code": "target_missing", "candidateCount": 0}
+{"kind": "target", "step": "action-004", "target": "account-heading", "status": "matched", "score": 0.946365, "candidateCount": 1, "box": [141, 275, 417, 308]}
+{"kind": "reading", "step": "action-004", "field": "account-member-id", "confidence": 96.169, "box": [281, 415, 369, 433]}
+{"kind": "reading", "step": "action-004", "field": "account-type", "confidence": 96.248, "box": [1115, 500, 1184, 524]}
+{"kind": "reading", "step": "action-004", "field": "currency", "confidence": 96.461, "box": [1131, 571, 1184, 596]}
+{"kind": "checkpoint", "step": "action-004", "checkpoint": "account-ready", "status": "satisfied"}
+{"kind": "step", "step": "action-004", "action": "click", "status": "completed"}
+{"kind": "step", "step": "extract-result", "action": "extract", "status": "started"}
+{"kind": "target", "step": "extract-result", "target": "account-heading", "status": "matched", "score": 0.946365, "candidateCount": 1, "box": [141, 275, 417, 308]}
+{"kind": "reading", "step": "extract-result", "field": "account-member-id", "confidence": 96.169, "box": [281, 415, 369, 433]}
+{"kind": "reading", "step": "extract-result", "field": "account-type", "confidence": 96.248, "box": [1115, 500, 1184, 524]}
+{"kind": "reading", "step": "extract-result", "field": "currency", "confidence": 96.461, "box": [1131, 571, 1184, 596]}
+{"kind": "reading", "step": "extract-result", "field": "member-name", "confidence": 90.999, "box": [219, 385, 541, 413]}
+{"kind": "reading", "step": "extract-result", "field": "balance", "confidence": 96.429, "box": [171, 553, 861, 628]}
+{"kind": "step", "step": "extract-result", "action": "extract", "status": "completed"}

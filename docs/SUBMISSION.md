@@ -38,3 +38,26 @@ Thanks,
 Phillip
 
 Confirm that this URL is publicly accessible before sending. The draft is not a sent message.
+
+## Your remaining hands-on check
+
+Keep your previous checklist results. The remaining manual supplement is section 10, checks 38–43. Checks 38 and 42 are evidence reviews; the automated M5 records support the command checks. Record what you actually reviewed or observed rather than rerunning a paid discovery just for the checklist.
+
+From `/Users/phillip/interview/interface-ai`, open the checklists in the same browser you used before:
+
+```sh
+open -a "Google Chrome" docs/manual-acceptance.html docs/repository-audit.html
+make handoff-demo CAPABILITY=discovered-savings MEMBER_ID=00123
+```
+
+For check 41, finish the following in one session, within 15 minutes of taking control. Do not reset between these steps:
+
+1. Refresh [the operator](http://127.0.0.1:6081/). The command already started the lookup. At **Your help is needed**, record the UUID from **Run details** and choose **Take control**.
+2. While the expiry dialog remains open, choose **Verify & resume**. Expect rejection, with human control retained.
+3. Choose **Actual size** if the image is too small. Click the training-code field inside the desktop. Use the panel's **Text to send → Send text** to send `demo`, then its **Enter** button. Expect Demo Member A's overview.
+4. Click **Member search** inside the desktop and choose **Verify & resume**. Expect rejection because this is the wrong screen.
+5. Focus the desktop member-ID field. Use the panel's **Select all**, send `00456`, then **Enter**. On member B's overview, choose **Verify & resume**; expect rejection because this is the wrong member.
+6. Return through **Member search**, focus the ID field, **Select all**, send `00123`, then **Enter**. On member A's overview, choose **Verify & resume**. Expect **Lookup complete**, Savings **$1,234.56 USD**, and the original UUID.
+7. Record whether Actual size and viewport scrolling made clicking comfortable. Export the manual checklist after your observations; export the repository checklist after the interview route above. Keep any unperformed personal checks unverified.
+
+If the control window expires, run the handoff command again and start a new session. When finished, `make down` stops the local services while retaining evidence.

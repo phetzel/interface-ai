@@ -1,0 +1,58 @@
+[
+  {
+    "sequence": 1,
+    "responseId": "resp_0515842bcca88455016ab040fd5c2c87d09ebc32daa53f1585",
+    "callId": "call_PdCji4EAMPhigwVBq5rYVuSS",
+    "items": [
+      {
+        "index": 0,
+        "action": "screenshot",
+        "status": "observed"
+      }
+    ]
+  },
+  {
+    "sequence": 2,
+    "responseId": "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+    "callId": "call_NhkFPtI1mlEwQ76TMT6jlFlD",
+    "items": [
+      {
+        "index": 0,
+        "action": "click",
+        "status": "completed"
+      },
+      {
+        "index": 1,
+        "action": "type",
+        "status": "completed"
+      },
+      {
+        "index": 2,
+        "action": "press",
+        "status": "completed"
+      },
+      {
+        "index": 3,
+        "action": "wait",
+        "status": "observed"
+      }
+    ]
+  },
+  {
+    "sequence": 3,
+    "responseId": "resp_0515842bcca88455016ab04105672887d0881366b5d266cc13",
+    "callId": "call_SF0hRhZFVmC6VOhJ77arNZmL",
+    "items": [
+      {
+        "index": 0,
+        "action": "click",
+        "status": "completed"
+      },
+      {
+        "index": 1,
+        "action": "wait",
+        "status": "observed"
+      }
+    ]
+  }
+]

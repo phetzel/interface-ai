@@ -1,0 +1,73 @@
+{
+  "sourceChanged": false,
+  "startupTimeoutChanged": false,
+  "isolatedDiagnosticLaunches": [
+    {
+      "file": "m5-native-diagnostic-2.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-diagnostic-3.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-diagnostic-4.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-diagnostic-5.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-fast-1.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-fast-2.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-fast-3.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-native-fast-4.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-real-start-1.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-real-start-2.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-real-start-3.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-real-start-4.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-direct-start-1.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-direct-start-2.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-direct-start-3.log",
+      "startupReadyObserved": true
+    },
+    {
+      "file": "m5-direct-start-4.log",
+      "startupReadyObserved": true
+    }
+  ],
+  "allDiagnosticsReady": true,
+  "knownCause": null,
+  "note": "One earlier tracing-wrapper import error was corrected before these runs. Periodic faulthandler dumps in healthy mainloops are diagnostic timer output, not additional startup failures."
+}

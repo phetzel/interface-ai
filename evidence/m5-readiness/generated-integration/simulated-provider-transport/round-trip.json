@@ -1,0 +1,29 @@
+{
+  "format": "provider-probe-host-v1",
+  "provenance": "simulated-provider-real-desktop",
+  "requestedModel": "gpt-5.6-sol",
+  "status": "passed",
+  "requestsAttempted": 2,
+  "responsesCompleted": 2,
+  "responses": [
+    {
+      "id": "offline_response_1",
+      "model": "offline-fixture",
+      "usage": {}
+    },
+    {
+      "id": "offline_response_2",
+      "model": "offline-fixture",
+      "usage": {}
+    }
+  ],
+  "usageUnknown": true,
+  "initialScreenshotRequested": false,
+  "guardedClickPassed": true,
+  "statelessRoundTripPassed": true,
+  "screenshots": "memory-only",
+  "rawTranscript": "not-retained",
+  "modelCalls": 0,
+  "sessionId": "f475366b-ae8b-426b-a904-c01aa2d5f086",
+  "runId": "6a121b5f-3257-432c-92ff-43dcb386f488"
+}

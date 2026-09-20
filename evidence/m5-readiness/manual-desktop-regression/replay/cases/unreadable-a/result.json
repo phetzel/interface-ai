@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "code": "ocr_uncertain",
+  "step": "read-balance",
+  "expected": [
+    "validated-output"
+  ],
+  "observed": "rejected"
+}

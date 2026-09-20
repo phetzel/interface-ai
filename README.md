@@ -4,7 +4,7 @@ A computer-use automation assignment built around a synthetic banking desktop. P
 
 **Current:** M1–M3 desktop, policy and same-session takeover are implemented. M4 is complete: genuine discovery, recording, reviewed promotion and offline second-member replay have passed integrated acceptance and the full M1–M3 regressions. [Evidence and limitations](evidence/README.md) · [M4 design](docs/MILESTONE_4.md).
 
-**Submission preparation:** [REPORT.md](REPORT.md) and the [requirements review](docs/ASSESSMENT_CHECK.md) are written. M5 validation and clean-checkout rehearsal are in progress; your manual review and interview walkthrough remain. The earlier real-person handoff is preserved in [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). Generated promotion is labeled agent review, and automated takeover checks remain simulated-operator evidence. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md) · [author review and delivery](docs/SUBMISSION.md).
+**Submission preparation:** [REPORT.md](REPORT.md) and the [requirements review](docs/ASSESSMENT_CHECK.md) are written. [M5 validation and clean-checkout rehearsal passed](evidence/m5-readiness/README.md); your personal generated-artifact takeover and interview walkthrough remain. The earlier real-person handoff is preserved in [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). Generated promotion is labeled agent review, and automated takeover checks remain simulated-operator evidence. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md) · [author review and delivery](docs/SUBMISSION.md).
 
 ## Try the demo
 

@@ -1,0 +1,7 @@
+{
+  "status": "failure",
+  "code": "stopped",
+  "step": null,
+  "expected": [],
+  "observed": "rejected"
+}

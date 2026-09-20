@@ -1,0 +1,21 @@
+{
+  "id": "3da2dc7a-dfaf-436c-b7bd-73d6fb218ff1",
+  "display": ":99",
+  "width": 1280,
+  "height": 800,
+  "operator": "http://127.0.0.1:6081/",
+  "mode": "native",
+  "windowId": 2097221,
+  "windowClass": [
+    "tk",
+    "Tk"
+  ],
+  "appPid": 21,
+  "sandbox": null,
+  "pids": {
+    "display": 9,
+    "window manager": 14,
+    "native test pad": 21
+  },
+  "inputStopped": false
+}

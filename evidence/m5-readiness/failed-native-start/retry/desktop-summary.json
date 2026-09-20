@@ -1,0 +1,46 @@
+{
+  "kind": "M1-06-acceptance",
+  "status": "failed",
+  "startedAt": "2026-09-20T20:05:47.413091+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 174,
+      "elapsedSeconds": 0.49
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "29aeb880-6ddc-42d6-92b2-35a538128aca",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 13.834
+    },
+    {
+      "name": "native-input-operator-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "29aeb880-6ddc-42d6-92b2-35a538128aca",
+      "elapsedSeconds": 2.296
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "failed",
+      "error": "RuntimeError",
+      "message": "guard-reset-native exited 1; see its log",
+      "elapsedSeconds": 11.878
+    }
+  ],
+  "fullAcceptance": true,
+  "sourceCommit": "2987382866f677a7915a8d0103bf03ecbebc092f",
+  "uncommittedFiles": [
+    "?? evidence/m5-readiness/"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "error": "RuntimeError",
+  "message": "guard-reset-native exited 1; see its log",
+  "finishedAt": "2026-09-20T20:06:15.922128+00:00"
+}

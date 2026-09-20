@@ -1,0 +1,55 @@
+{
+  "format": "discovery-host-v1",
+  "provenance": "real-openai-goal-discovery",
+  "requestedModel": "gpt-5.6-sol",
+  "status": "passed",
+  "requestsAttempted": 3,
+  "responsesCompleted": 3,
+  "responses": [
+    {
+      "id": "resp_0515842bcca88455016ab040fd5c2c87d09ebc32daa53f1585",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 2136,
+        "output_tokens": 32,
+        "total_tokens": 2168
+      }
+    },
+    {
+      "id": "resp_0515842bcca88455016ab0410017f487d094bdd5e5bb0800e3",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 3368,
+        "output_tokens": 66,
+        "total_tokens": 3434
+      }
+    },
+    {
+      "id": "resp_0515842bcca88455016ab04105672887d0881366b5d266cc13",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 4671,
+        "output_tokens": 48,
+        "total_tokens": 4719
+      }
+    }
+  ],
+  "usageUnknown": false,
+  "actionsCompleted": 4,
+  "screenshots": "memory-only",
+  "rawTranscript": "not-retained",
+  "requestKind": "savings-balance",
+  "target": "synthetic-bank",
+  "entryPoint": "http://fixture:4173/",
+  "sessionId": "7f2a38a4-dd43-43a3-844c-79712b3cb326",
+  "runId": "b5f5ca4d-4609-4e3d-84bb-629934b014ac",
+  "desktopRun": "20260920T202428Z-discovery-b5f5ca4d",
+  "lastAcknowledgedActions": 4,
+  "inputDispatchUncertain": false,
+  "candidate": {
+    "status": "candidate",
+    "directory": "candidate",
+    "sha256": "8ab0c1973e46e9e3af1dfcd0f0901ab7363347387cd6d6bed3c2b52baeda2943"
+  },
+  "resultStatus": "success"
+}
