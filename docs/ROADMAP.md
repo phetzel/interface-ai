@@ -176,14 +176,14 @@ M1–M4 are implemented. The user completed the M1–M3 manual acceptance checkl
 
 ## What is blocking the final assessment?
 
-| Work | Current state | What depends on it |
-| --- | --- | --- |
-| OpenAI access and genuine discovery | Verified; actual responses and a recorded input path are retained | No remaining provider prerequisite for the checked-in demonstration |
-| Generated artifact review and offline reuse | Passed for member B and translated layout; independent approval binds exact bytes | Ready for the assessor walkthrough |
-| Same-session generated recovery | Automated wrong-screen/member rejection and recovery passed | A new real-person generated-artifact check remains unverified in the M4 checklist supplement |
-| Required `REPORT.md` | Not written | Final written submission |
-| Clean-clone rehearsal | Not performed | Confidence that another reviewer can follow the short setup/demo commands |
-| Repository/interview walkthrough and checklist export | User review remains | Explain the implementation and preserve personal audit results |
-| Scaled desktop click UX (UX-01) | Known usability limitation, deferred | Optional polish before a live demonstration |
+[M5: assessment readiness](MILESTONE_5.md) is the final implementation/packaging milestone. Goal/target admission, the required report, the one-command assessor demo and interview route are prepared; final regression and clean-checkout rehearsal are being completed.
 
-The next work is final packaging and rehearsal. The [current plan](CURRENT_PLAN.md) and [short demo](DEMO.md) contain the concrete steps; the earlier phase descriptions above preserve the original planning context.
+| Remaining work | Owner | Completion |
+| --- | --- | --- |
+| Fresh-checkout and final evidence validation | Agent | Retained source-bound rehearsal, genuine new discovery/review/promotion/replay and final regression records |
+| Generated-artifact real-person takeover | User | Same-session recovery on the generated artifact, recorded in the M4 checklist supplement |
+| Report and repository/interview understanding | User | Explain the artifact, policy, replay and control-transfer decisions without relying on a script |
+| Checklist export and optional demo video | User | Preserve browser-local self-reports; video is optional |
+| Final public repository and submission email | User approval | Private preparation ends only after review; send the link from the application email address |
+
+The scaled click issue has an Actual size / Fit to panel mitigation with automated coordinate checks. Personal usability confirmation remains pending. The earlier phase descriptions above preserve the original planning context.

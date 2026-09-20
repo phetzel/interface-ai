@@ -4,7 +4,7 @@ The [root README](../README.md) is the current setup/status entry point. The mil
 
 ## Quick and live checks
 
-For the short demo, `make start` only needs Docker/Compose and Make; see the [assessor walkthrough](DEMO.md). For the full internal manual audit, `make audit-setup` installs the host fixture dependencies and Playwright Chromium, builds both images, runs `make quick-check`, and then resets/validates a fresh bank desktop. It stops at the first failed command. Both startup commands replace the current desktop session. Use `make fixture-preview` in a second terminal for the direct fixture UI checks.
+For the short generated-artifact demo, `make assess` only needs Docker/Compose and Make; see the [assessor walkthrough](DEMO.md). For the full internal manual audit, `make audit-setup` installs the host fixture dependencies and Playwright Chromium, builds both images, runs `make quick-check`, and then resets/validates a fresh bank desktop. It stops at the first failed command. The demo and audit startup commands replace the current desktop session. Use `make fixture-preview` in a second terminal for the direct fixture UI checks.
 
 `make quick-check` requires Docker, host Python 3.9+, Node 22 and `uv` (tested with 0.9.18). Run `make fixture-install` and `make build` first. It runs pinned Ruff 0.12.12 and Prettier 3.9.6, host harness tests, Linux engine tests in a disposable network-disabled image, six published-schema comparisons and fixture typechecking. It starts no live desktop and rewrites no artifacts. `make format` covers active source only; no historical evidence is reformatted.
 

@@ -7,11 +7,13 @@ MEMBER_ID ?= 00123
 CAPABILITY ?= manual-savings
 PROMOTION_ID ?= discovered-savings
 RUN ?=
-export MODE SCENARIO MEMBER_ID RUN CAPABILITY PROMOTION_ID
+GOAL ?=
+TARGET ?= synthetic-bank
+export MODE SCENARIO MEMBER_ID RUN CAPABILITY PROMOTION_ID GOAL TARGET
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote m4-check
+.PHONY: help assess start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote m4-check
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -20,6 +22,9 @@ start: build ## Build and launch a fresh bank demo; requires Docker and Make
 	./scripts/desktop reset bank default
 	./scripts/desktop validate-capability
 	@echo 'Ready: open http://127.0.0.1:6081/ and choose Start lookup.'
+
+assess: build ## Build and demonstrate the generated capability for member B; no key required
+	$(MAKE) demo CAPABILITY=discovered-savings MEMBER_ID=00456
 
 audit-setup: fixture-install build ## Install audit tools, run quick checks, then launch a fresh bank desktop
 	./apps/bank-fixture/node_modules/.bin/playwright install chromium
@@ -45,8 +50,7 @@ operator: ## Print the same-session operator panel URL
 	./scripts/desktop operator
 
 discover: ## Reset the synthetic bank and run bounded online goal discovery; host key + uv required
-	./scripts/desktop reset bank default
-	uv run --locked --script scripts/discover --member-id "$$MEMBER_ID"
+	uv run --locked --script scripts/discover --reset --member-id "$$MEMBER_ID" --goal "$$GOAL" --target "$$TARGET"
 
 discovery-probe: ## Test one real OpenAI-selected click on the current fresh bank desktop; host key + uv required
 	uv run --locked --script scripts/discovery-probe

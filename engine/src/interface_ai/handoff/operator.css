@@ -178,6 +178,7 @@ label {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 .desktop-heading h2 {
   font-size: 15px;
@@ -206,6 +207,25 @@ label {
 #screen.human {
   cursor: crosshair;
   border-color: #13796b;
+}
+#desktop-viewport {
+  overflow: auto;
+  max-height: 80vh;
+  border-radius: 12px;
+}
+#desktop-viewport.actual-size #screen {
+  width: 1286px;
+  max-width: none;
+}
+#desktop-size {
+  min-height: 36px;
+  padding: 5px 10px;
+  font-size: 12px;
+  margin-left: auto;
+}
+#desktop-viewport:focus-visible {
+  outline: 3px solid #287b71;
+  outline-offset: 3px;
 }
 #screen-help {
   margin: 10px 3px 0;

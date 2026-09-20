@@ -4,20 +4,25 @@ A computer-use automation assignment built around a synthetic banking desktop. P
 
 **Current:** M1–M3 desktop, policy and same-session takeover are implemented. M4 is complete: genuine discovery, recording, reviewed promotion and offline second-member replay have passed integrated acceptance and the full M1–M3 regressions. [Evidence and limitations](evidence/README.md) · [M4 design](docs/MILESTONE_4.md).
 
-**Still required:** final `REPORT.md`, clean-clone demo rehearsal and the repository/interview walkthrough. The earlier real-person handoff is preserved in [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). Generated promotion is labeled agent review, and automated takeover checks remain simulated-operator evidence. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
+**Submission preparation:** [REPORT.md](REPORT.md) and the [requirements review](docs/ASSESSMENT_CHECK.md) are written. M5 validation and clean-checkout rehearsal are in progress; your manual review and interview walkthrough remain. The earlier real-person handoff is preserved in [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). Generated promotion is labeled agent review, and automated takeover checks remain simulated-operator evidence. [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md) · [author review and delivery](docs/SUBMISSION.md).
 
 ## Try the demo
 
 Prerequisites: Docker Desktop/Compose and Make on the tested Apple Silicon host, with network access for the initial build. From the repository root:
 
 ```sh
-make build
-make demo CAPABILITY=discovered-savings MEMBER_ID=00456
+make assess
 ```
 
 Open the [operator panel](http://127.0.0.1:6081/). Expect Demo Member B’s Savings balance, **$98.07 USD**, and **Lookup complete**. This uses the checked-in artifact from a genuine discovery, with no host SDK or key. Follow the [short assessor walkthrough](docs/DEMO.md) for provenance, translated layout and takeover.
 
-For a new online run, `make discover MEMBER_ID=00123` invokes the pinned host OpenAI environment after resetting the synthetic bank. The key stays in the host’s private `.env`. [Provider setup](docs/M4_01_PROVIDER_PROBE.md) · [discovery limits](docs/M4_03_DISCOVERY.md) · [recording evidence](evidence/m4-04-recorded-candidate/README.md) · [review and promotion](docs/M4_05_PROMOTION.md). `make review RUN=<host-discovery-folder>` evaluates an unapproved candidate; promotion is explicit and refuses to overwrite an existing approval.
+For a new online run (after the build), provide a goal and approved target:
+
+```sh
+make discover GOAL="Find the savings balance for member 00123" TARGET=synthetic-bank MEMBER_ID=00123
+```
+
+This uses the pinned host OpenAI environment and resets the synthetic bank only after request/key/build validation. The supported goal grammar accepts find/read/get/look up a savings balance for a five-digit member; other intents or targets fail before execution. See `python3 scripts/discover --help` or validate without a key/desktop using `--check-request --goal "Find the savings balance for member 00123" --target synthetic-bank`. The key stays in the host’s private `.env`. [Provider setup](docs/M4_01_PROVIDER_PROBE.md) · [discovery limits](docs/M4_03_DISCOVERY.md) · [recording evidence](evidence/m4-04-recorded-candidate/README.md) · [review and promotion](docs/M4_05_PROMOTION.md). `make review RUN=<host-discovery-folder>` evaluates an unapproved candidate; promotion is explicit and refuses to overwrite an existing approval.
 
 `make start` remains the one-command build/start entry for the historical manual capability and the original M1–M3 checklist. Choose **Start lookup** in the panel for member `00123`. This manual artifact has its own provenance and approval. Reset/start commands replace the desktop session; Docker reuses unchanged build layers.
 
@@ -31,7 +36,7 @@ The demo has one entry point: the operator panel. The other surfaces serve devel
 | Host bank preview, port 4173 | Develop and manually test the synthetic sample app outside the isolated desktop | No |
 | Native calibration pad | Prove OS clicks, typing and scrolling work outside a browser | No; keep for desktop regression tests |
 
-The operator shows controls for the current phase, keeps Stop available during pending input, and puts the session UUID and step/reason in **Run details**. Human text input still uses **Text to send → Send text** after clicking a field in the desktop image.
+The operator shows controls for the current phase, keeps Stop available during pending input, and puts the session UUID and step/reason in **Run details**. Choose **Actual size** for larger targets and scroll within the desktop viewport; **Fit to panel** restores the scaled view. Human text input uses **Text to send → Send text** after clicking a field in the desktop image.
 
 ```sh
 make demo CAPABILITY=discovered-savings MEMBER_ID=00456 SCENARIO=translated  # Reset, then replay

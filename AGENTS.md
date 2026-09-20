@@ -4,7 +4,7 @@
 
 - Commit/push only when the user explicitly requests it. Never bypass this with an upload/API. Local edits may proceed within the requested scope.
 - Keep the repository private during preparation. Do not include the assignment PDF, credentials, real customer data or raw unreviewed captures.
-- Python owns automation; TypeScript/React owns the synthetic banking fixture. Use OpenAI only for future discovery, with one provider key. Keep the operator UI minimal.
+- Python owns automation; TypeScript/React owns the synthetic banking fixture. Use OpenAI only for discovery, with one provider key. Keep the operator UI minimal.
 - Use computer input/observations across surfaces. The runtime must not use fixture DOM, hidden state, host acceptance oracles or browser automation as execution shortcuts.
 - Docker on Linux ARM64, one 1280×800 X11 display, fixed fonts/scale and en-US/USD is the supported environment. Other environments and standalone wheel distribution remain unproven.
 

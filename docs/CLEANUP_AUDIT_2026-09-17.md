@@ -2,7 +2,7 @@
 
 September 17, 2026 · `a63a143` plus the local React refactor
 
-**Implementation follow-up:** A1–A6 are addressed by the subsequent repository cleanup; see the [resolution and validation record](../evidence/cleanup-implementation-2026-09-17/README.md). The findings and reproductions below describe the original audited baseline and are preserved as history. A7–A9 remain the discovery/integration milestone; A10 remains conditional distribution work.
+**Implementation follow-up:** A1–A6 are addressed by the subsequent repository cleanup; see the [resolution and validation record](../evidence/cleanup-implementation-2026-09-17/README.md). The findings and reproductions below describe the original audited baseline and are preserved as history. A7–A9 were subsequently addressed by M4 ([shared lifecycle](../evidence/m4-02-shared-lifecycle/README.md) and [independent promotion](../evidence/m4-05-promotion/README.md)); A10 remains conditional distribution work.
 
 The repository has sensible subsystem boundaries and meaningful defensive tests. It needs a focused cleanup pass, particularly around artifact loading, run lifecycle, evidence, test provenance and documentation. A framework rewrite would add work without resolving those problems. The largest remaining product requirement is still genuine discovery → reviewed artifact → model-free replay.
 

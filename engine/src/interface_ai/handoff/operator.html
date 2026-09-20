@@ -68,13 +68,18 @@
         <section class="desktop-panel" aria-label="Live desktop">
           <div class="desktop-heading">
             <h2>Live desktop</h2>
+            <button id="desktop-size" aria-pressed="false" aria-controls="desktop-viewport">
+              Actual size
+            </button>
             <span id="input-mode" class="mode">View only</span>
           </div>
-          <img
-            id="screen"
-            alt="Live isolated desktop. Click to interact when you own control."
-            draggable="false"
-          />
+          <div id="desktop-viewport" tabindex="0" role="region" aria-label="Desktop viewport">
+            <img
+              id="screen"
+              alt="Live isolated desktop. Click to interact when you own control."
+              draggable="false"
+            />
+          </div>
           <p id="screen-help" class="hint">Watch the same desktop the automation uses.</p>
         </section>
         <details id="run-details" class="diagnostics">

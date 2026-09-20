@@ -26,13 +26,19 @@ The separate approval manifest binds exact bundle/asset digests and closed struc
 
 Discovery uses at most 20 requests, 40 inputs, four batch items and 120 seconds. No-progress and uncertain-input handling fail closed. The host retains provider conversation items in bounded memory with `store: false`; local retention and provider data controls remain distinct. Offline replay has no provider SDK/key/route and makes zero model calls.
 
-## Remaining after M4
+## M5 — Assessment readiness
 
-1. Write the required `REPORT.md` with architecture, schema, determinism/error handling, heterogeneity/multi-tenant scope, escalation, safety and cuts.
-2. Rehearse [the short demo](DEMO.md) from a clean clone, including setup and optional online discovery.
-3. Complete the repository/interview checklist and explain the code in the user’s own words.
-4. Decide whether to improve the scaled operator click targets (UX-01) before the final demonstration. It remains documented, not silently marked fixed.
+The core M1–M4 implementation is complete. M5 closes the goal/target input gap, adds actual-size desktop viewing, writes the required report, rehearses setup from a fresh checkout and prepares submission evidence. See [M5 status](MILESTONE_5.md), [assessment coverage](ASSESSMENT_CHECK.md) and [REPORT.md](../REPORT.md).
 
-The M4 supplement in the manual checklist and the new repository topics begin unverified. Existing saved checklist results refer to their original revision. Final publication/submission and further pushes require the user’s explicit request.
+Automated validation and clean-checkout rehearsal are in progress. The final evidence record will identify the exact commit/source tested. No personal checklist results are completed by automation.
 
-[Full roadmap and original comparisons](ROADMAP.md) · [M4 specification and tradeoffs](MILESTONE_4.md) · [review/promotion design](M4_05_PROMOTION.md) · [manual audit observations](MANUAL_AUDIT_NOTES.md).
+## Remaining author work
+
+1. Read the report and verify that its explanations match your understanding.
+2. Perform the M4 generated-artifact takeover yourself and assess the Actual size control. The previous real-person manual-artifact test is preserved separately.
+3. Complete the repository/interview checklist and export both checklists from your browser.
+4. Review the publication-ready repository, approve public visibility and send the submission email from your application address.
+
+The [author review and delivery guide](SUBMISSION.md) provides the route and an unsent email draft. A new app, production orchestration and tenant infrastructure remain outside scope. UX-01 now has a tested actual-size mitigation, with personal usability acceptance pending.
+
+[Full roadmap and original comparisons](ROADMAP.md) · [M4 specification](MILESTONE_4.md) · [M5 readiness](MILESTONE_5.md) · [manual audit observations](MANUAL_AUDIT_NOTES.md).

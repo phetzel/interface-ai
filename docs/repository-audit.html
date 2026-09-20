@@ -1344,7 +1344,7 @@ const GROUPS = [
           "Unclear areas remain marked Needs work or Blocked with notes. Your completed review is an honest self-assessment, not assignment sign-off."
         ],
         "prompts": [
-          "Which design decision are you most comfortable defending, and which would you revisit after genuine discovery?"
+          "Which design decision are you most comfortable defending, and what would you change after testing a second app or tenant?"
         ],
         "links": [
           [
@@ -1358,6 +1358,18 @@ const GROUPS = [
           [
             "docs/ROADMAP.md",
             "../docs/ROADMAP.md"
+          ],
+          [
+            "Required report",
+            "../REPORT.md"
+          ],
+          [
+            "Interview route and delivery",
+            "SUBMISSION.md"
+          ],
+          [
+            "Assessment coverage",
+            "ASSESSMENT_CHECK.md"
           ]
         ]
       }
@@ -1373,6 +1385,7 @@ const GROUPS = [
         "title": "Trace one real model batch through the guarded worker",
         "kind": "code",
         "actions": [
+          "Explain discovery_request.py: supported natural-language intent, approved target, exact member binding and rejection before reset/provider use. Distinguish the request grammar from the model choosing UI actions.",
           "Start at scripts/discover and discovery_flow.run_discovery, then follow /discover/propose into Discovery.propose and Desktop.execute.",
           "Explain run/session/epoch/sequence leases, no implicit retries, partial-batch accounting, Stop, no-progress limits and memory-only conversation state."
         ],
@@ -1387,6 +1400,10 @@ const GROUPS = [
           [
             "Desktop worker",
             "../engine/src/interface_ai/discovery/worker.py"
+          ],
+          [
+            "Goal and target contract",
+            "../scripts/lib/discovery_request.py"
           ]
         ]
       },
@@ -1520,7 +1537,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' topics understood. '+counts.failed+' need work, '+counts.blocked+' blocked, '+counts.skipped+' deferred, '+counts['not-run']+' not reviewed.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-repository-review-v2',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-20-repository-v3-m4',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-repository-review-v2',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-m5-readiness',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-repository-review-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

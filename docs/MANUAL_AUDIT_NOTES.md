@@ -62,3 +62,8 @@ The 6080 viewer, VNC/noVNC processes and packages, viewer relay/service and its 
 The rebuilt source passed the quick gate (92 engine tests and four host harness tests), the full M1/M2 gate, both M3 handoffs and a browser-operated member-A lookup. New native/runtime checks verify image agreement, rejection of input without human ownership, absence of legacy software and closed 5900/6080 ports. The final app was reset for another run. [Local validation and exact run references](../tmp/operator-only-review-20260920/RESULTS.md).
 
 These are automated/agent-operated regressions of the operator-only revision. Saved checklist results and historical evidence retain their original provenance. [M4](MILESTONE_4.md) is specified, not implemented.
+
+
+## 2026-09-20 — M5 actual-size view
+
+M5 adds an Actual size / Fit to panel control with a scrollable desktop viewport. The automated operator test verifies fit and actual-size clicks, correct coordinates after resizing to a narrow panel and scrolling, successful recovery, and unchanged Stop behavior. This mitigates small rendered targets without changing ownership or native input. The original cause of the user's difficulty remains unconfirmed; personal usability acceptance is still pending. Earlier audit observations and saved checklist results are unchanged.

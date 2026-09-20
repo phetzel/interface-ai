@@ -2,6 +2,7 @@
 import { chromium } from '../../apps/bank-fixture/node_modules/playwright/index.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import assert from 'node:assert/strict';
 import { operatorControls } from './operator_helpers.mjs';
 const output = resolve(process.argv[2] || 'tmp/m3-operator-ui');
 await mkdir(output, { recursive: true });
@@ -34,10 +35,26 @@ try {
   await page.getByRole('button', { name: 'Verify & resume', exact: true }).click();
   await poll(async () => (await page.locator('#message').innerText()).includes('Resume rejected'));
   await clickDesktop(600, 390);
+  await page.getByRole('button', { name: 'Actual size', exact: true }).click();
+  await page.setViewportSize({ width: 720, height: 1200 });
+  assert.equal(await page.locator('#desktop-size').getAttribute('aria-pressed'), 'true');
+  assert.equal((await page.locator('#screen').boundingBox()).width, 1286);
+  await page.locator('#desktop-viewport').evaluate((view) => view.scrollTo(180, 120));
+  const clickRequest = page.waitForRequest(
+    (r) => r.url().endsWith('/action') && r.method() === 'POST',
+  );
+  await clickDesktop(600, 390);
+  const mapped = (await clickRequest).postDataJSON().action;
+  assert.equal(mapped.type, 'click');
+  assert.ok(Math.abs(mapped.x - 600) <= 1 && Math.abs(mapped.y - 390) <= 1);
   await page.getByLabel('Text to send').fill('demo');
   await page.getByRole('button', { name: 'Send text', exact: true }).click();
   await ready();
   await clickDesktop(640, 450);
+  await page.getByRole('button', { name: 'Fit to panel', exact: true }).click();
+  await page.setViewportSize({ width: 1000, height: 1200 });
+  assert.equal(await page.locator('#desktop-size').getAttribute('aria-pressed'), 'false');
+  assert.ok((await page.locator('#screen').boundingBox()).width < 1000);
   await page.getByRole('button', { name: 'Verify & resume', exact: true }).click();
   await state('success');
   if (!(await page.locator('#diagnostic').innerText()).includes('read-balance'))
@@ -53,6 +70,9 @@ try {
         provenance: 'automated-operator-ui-test',
         viewport: [1000, 1200],
         scaledDesktopClicks: true,
+        actualSizeAtNarrowViewport: true,
+        scrolledClickCoordinatesVerified: true,
+        fitRestoredAfterResize: true,
         invalidMemberExplained: true,
         prematureResumeRejected: true,
         stepAndReasonVisible: true,

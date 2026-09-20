@@ -829,7 +829,7 @@ const GROUPS = [
         "title": "Replay the generated artifact for member B",
         "kind": "command",
         "commands": [
-          "make demo CAPABILITY=discovered-savings MEMBER_ID=00456"
+          "make assess"
         ],
         "actions": [
           "Watch the operator and inspect report.json plus the separate result.json in the printed run directory."
@@ -865,7 +865,7 @@ const GROUPS = [
           "The approved pause is action-003 and continuation is action-004, checked against original-member member-ready.",
           "Lookup completes with $1,234.56 USD in the same session. Human actions are recorded without raw text; automation issues no input during human ownership."
         ],
-        "note": "This is a new real-person check for the generated artifact. The automated M4 handoff evidence does not mark it passed. Clicking in the scaled desktop remains UX-01; widen the panel or use its explicit key buttons.",
+        "note": "This is a personal check of the generated artifact. Automated evidence does not mark it passed. Try Actual size and scroll inside the desktop viewport, then Fit to panel; note whether target clicking is comfortable. Use explicit Enter when helpful.",
         "links": [
           [
             "Step-by-step demo",
@@ -914,6 +914,18 @@ const GROUPS = [
           [
             "Current plan",
             "CURRENT_PLAN.md"
+          ],
+          [
+            "Required report",
+            "../REPORT.md"
+          ],
+          [
+            "Assessment coverage",
+            "ASSESSMENT_CHECK.md"
+          ],
+          [
+            "Author steps",
+            "SUBMISSION.md"
           ]
         ]
       }
@@ -971,7 +983,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' checks passed. '+counts.failed+' failed, '+counts.blocked+' blocked, '+counts.skipped+' skipped, '+counts['not-run']+' not run.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'3f11b9d + checklist updates (2026-09-17)',checklistRevision:'2026-09-19-v4-operator-only',scope:['M1','M2','M3'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-m5-readiness',scope:['M1','M2','M3','M4','M5-readiness'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-manual-pass-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

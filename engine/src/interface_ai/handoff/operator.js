@@ -142,6 +142,11 @@ async function command(path, extra = {}) {
   }
 }
 const action = (a) => command('/action', { sequence: state.sequence, action: a });
+$('desktop-size').onclick = () => {
+  const actual = $('desktop-viewport').classList.toggle('actual-size');
+  $('desktop-size').setAttribute('aria-pressed', String(actual));
+  $('desktop-size').textContent = actual ? 'Fit to panel' : 'Actual size';
+};
 $('start').onclick = () => command('/start', { memberId: $('member').value });
 $('takeover').onclick = () => command('/takeover');
 $('resume').onclick = () => command('/resume');

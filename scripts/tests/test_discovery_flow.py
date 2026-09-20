@@ -10,6 +10,7 @@ from unittest.mock import Mock
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from lib.discovery import ProbeError
 from lib.discovery_flow import goal, run_discovery
+from lib.discovery_request import DiscoveryRequest
 from test_discovery import FIRST, Transport as ProbeTransport
 
 
@@ -53,6 +54,18 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(client.responses.create.call_count, 1)
         self.assertFalse(client.responses.create.call_args.kwargs['store'])
         self.assertNotIn('MEMORY-ONLY', json.dumps(saved))
+
+    def test_explicit_goal_reaches_model_but_is_not_retained_in_metadata(self):
+        request = DiscoveryRequest.parse('Please get the savings balance for member 00123.')
+        client = self.client()
+        saved = report()
+        run_discovery(
+            client, Transport(complete=True), saved, lambda: None, '00123', request=request
+        )
+        prompt = client.responses.create.call_args.kwargs['input'][0]['content'][0]['text']
+        self.assertIn(request.goal, prompt)
+        self.assertIn(request.entry_point, prompt)
+        self.assertNotIn(request.goal, json.dumps(saved))
 
     def test_twenty_request_budget_is_enforced(self):
         client = self.client()

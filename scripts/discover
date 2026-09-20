@@ -8,21 +8,46 @@
 import argparse
 import logging
 import os
-import re
 import sys
-from lib.acceptance import attempt, source_hashes, write_json
+import subprocess
+from lib.acceptance import ROOT, attempt, source_hashes, write_json
 from lib.builds import retain_builds, verify_running
 from lib.discovery import MODEL, ProbeError, Transport, bootstrap, load_key
 from lib.discovery_flow import run_discovery
+from lib.discovery_request import DiscoveryRequest
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--member-id', default='00123')
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog='Examples: "Find the savings balance for member 00123"; '
+        '"Read the current savings account balance for member ID 00456". '
+        'Only this read-only workflow and the approved synthetic-bank target are supported.',
+    )
+    parser.add_argument('--member-id', help='Five-digit input binding; otherwise derived from goal')
+    parser.add_argument(
+        '--goal', help='Savings-balance lookup in natural language; see --help examples'
+    )
+    parser.add_argument(
+        '--target', default='synthetic-bank', help='synthetic-bank or http://fixture:4173/'
+    )
+    parser.add_argument(
+        '--reset', action='store_true', help='Reset the approved target before discovery'
+    )
+    parser.add_argument(
+        '--check-request',
+        action='store_true',
+        help='Validate goal/target only; no key, model or desktop',
+    )
     parser.add_argument('--key-file')
     args = parser.parse_args()
-    if not re.fullmatch('[0-9]{5}', args.member_id):
-        parser.error('Member ID must have exactly five digits')
+    try:
+        request = DiscoveryRequest.parse(args.goal, args.target, args.member_id)
+    except ValueError as exc:
+        parser.error(str(exc))
+    if args.check_request:
+        print('VALID savings-balance goal for approved target synthetic-bank')
+        return 0
     directory = attempt('discovery-runs')
     directory.chmod(0o700)
     report = dict(
@@ -37,6 +62,9 @@ def main():
         actionsCompleted=0,
         screenshots='memory-only',
         rawTranscript='not-retained',
+        requestKind='savings-balance',
+        target=request.target,
+        entryPoint=request.entry_point,
     )
     transport = None
 
@@ -55,6 +83,15 @@ def main():
         hashes = source_hashes()
         write_json(directory / 'source-manifest.json', hashes)
         retain_builds(directory)
+        if args.reset:
+            environment = {k: v for k, v in os.environ.items() if not k.startswith('OPENAI_')}
+            subprocess.run(
+                ['./scripts/desktop', 'reset', 'bank', 'default'],
+                cwd=ROOT,
+                env=environment,
+                check=True,
+                timeout=180,
+            )
         verify_running(directory)
         transport = Transport(bootstrap(), prefix='discover')
         with OpenAI(
@@ -64,7 +101,9 @@ def main():
             timeout=30,
             http_client=httpx2.Client(trust_env=False, timeout=30),
         ) as client:
-            result = run_discovery(client, transport, report, save, args.member_id)
+            result = run_discovery(
+                client, transport, report, save, request.member_id, request=request
+            )
         write_json(directory / 'result.json', result)
         if source_hashes() != hashes:
             raise ProbeError('source_changed')

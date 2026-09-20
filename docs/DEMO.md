@@ -7,8 +7,7 @@ This now demonstrates a capability recorded from a real OpenAI desktop run, revi
 Start Docker Desktop. From the repository root:
 
 ```sh
-make build
-make demo CAPABILITY=discovered-savings MEMBER_ID=00456
+make assess
 ```
 
 Open [the operator](http://127.0.0.1:6081/). Expect **Lookup complete**, Demo Member B / `00456`, Savings, **$98.07 USD**. The printed evidence directory contains the separate exact result and a report with `modelCalls: 0`, four completed inputs and the promoted capability digest. Docker/Compose and Make are sufficient for this offline demonstration; no host SDK or key is needed.
@@ -24,7 +23,7 @@ Three actual OpenAI responses produced four native inputs. The artifact preserve
 A new online discovery is optional for this walkthrough and requires `uv` plus the private host key configured in [the provider setup](M4_01_PROVIDER_PROBE.md):
 
 ```sh
-make discover MEMBER_ID=00123
+make discover GOAL="Find the savings balance for member 00123" TARGET=synthetic-bank MEMBER_ID=00123
 make review RUN=<the-printed-host-discovery-folder-name>
 ```
 
@@ -44,10 +43,10 @@ The command starts the lookup and pauses at **Session expired**. Refresh the ope
 4. On Demo Member A / `00123`’s overview, choose **Verify & resume**.
 5. Expect **$1,234.56 USD**, **Lookup complete**, and the same session UUID.
 
-Finish within the 15-minute human-control window. Wrong screen or wrong member cannot resume. Arbitrary interruption has no declared continuation and requires reset. Clicking small targets in a scaled panel remains a known UX limitation; a wider panel and the explicit key buttons help.
+Finish within the 15-minute human-control window. Wrong screen or wrong member cannot resume. Arbitrary interruption has no declared continuation and requires reset. Choose **Actual size** above the image when targets are small, then scroll inside that viewport. **Fit to panel** restores the compact view. The explicit Enter button avoids aiming at a small submit button. Personal usability confirmation remains part of the author review.
 
 ## Evidence and cleanup
 
 `make m4-check` runs generated-artifact scenarios, simulated takeover and offline-boundary/export checks; it does not call OpenAI or attest a real human test. `make policy-check` and `make handoff-check` retain the manual artifact’s regression coverage. The [evidence index](../evidence/README.md) separates genuine discovery, agent review, simulated operators and the earlier real-person observation.
 
-Use `make down` when finished. The [manual acceptance checklist](manual-acceptance.html) and [repository/interview checklist](repository-audit.html) are optional internal reviews. Final submission still needs `REPORT.md`, a clean-clone rehearsal and the repository walkthrough.
+Use `make down` when finished. The [manual acceptance checklist](manual-acceptance.html) and [repository/interview checklist](repository-audit.html) are optional internal reviews. Read [REPORT.md](../REPORT.md) and [assessment coverage](ASSESSMENT_CHECK.md); [author review and delivery](SUBMISSION.md) lists the remaining personal steps.
