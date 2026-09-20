@@ -33,23 +33,43 @@ def handle(handler):
             result = run_request(server.controller, handler.path, data)
             handler.reply(200, result)
             return
-        operation = handler.path.removeprefix('/probe/')
-        fields = {
-            'start': {'session'},
-            'action': {'lease', 'action'},
-            'check': {'lease'},
-            'finish': {'lease'},
-            'abort': set(),
-        }
-        if not isinstance(data, dict) or operation not in fields or set(data) != fields[operation]:
+        discovery = handler.path.startswith('/discover/')
+        worker = server.discovery if discovery else server.probe
+        operation = handler.path.removeprefix('/discover/' if discovery else '/probe/')
+        fields = (
+            {
+                'start': {'session', 'memberId'},
+                'propose': {'lease', 'actions', 'callId', 'responseId'},
+                'check': {'lease'},
+                'abort': set(),
+            }
+            if discovery
+            else {
+                'start': {'session'},
+                'action': {'lease', 'action'},
+                'check': {'lease'},
+                'finish': {'lease'},
+                'abort': set(),
+            }
+        )
+        if (
+            worker is None
+            or not isinstance(data, dict)
+            or operation not in fields
+            or set(data) != fields[operation]
+        ):
             raise ValueError()
         if operation == 'start':
-            result = server.probe.start(data['session'])
+            result = (
+                worker.start(data['session'], data['memberId'])
+                if discovery
+                else worker.start(data['session'])
+            )
         elif operation == 'abort':
-            server.probe.abort()
+            worker.abort()
             result = {'status': 'stopped'}
         else:
-            result = server.probe.request(operation, data)
+            result = worker.request(operation, data)
         handler.reply(200, result)
     except DesktopError as exc:
         handler.reply(409, {'code': safe_code(exc.code)})

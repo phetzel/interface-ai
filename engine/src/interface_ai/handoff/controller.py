@@ -45,6 +45,7 @@ class Controller:
         self.evidence_failed = False
         self.run_kind = 'replay'
         self.interruption = None
+        self.external = None
 
     def record(self, kind, **details):
         # All callers pass closed constants / validated metadata. Interpreter
@@ -99,7 +100,7 @@ class Controller:
                 step=self.current_step,
                 lastCheckpoint=self.last_checkpoint,
                 resumable=self.resume_at is not None,
-                modelCalls=0,
+                modelCalls=None if self.external else 0,
                 runKind=self.run_kind,
                 runId=self.directory.name if self.directory else None,
                 result=(self.result or self.interruption).model_dump()
@@ -130,6 +131,9 @@ class Controller:
             self.stop('handoff_expired')
 
     def persist_terminal(self):
+        if self.external is not None:
+            self.external.persist()
+            return
         result = self.result or self.interruption
         if self.directory is None or result is None:
             return

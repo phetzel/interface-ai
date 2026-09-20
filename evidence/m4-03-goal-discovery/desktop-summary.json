@@ -1,0 +1,25 @@
+{
+  "format": "discovery-desktop-v1",
+  "provenance": "guarded-goal-discovery",
+  "runId": "7aa6acc3-c8bd-4fba-b551-5ef0839fa435",
+  "sessionId": "7301b671-cc66-4cab-ad9e-116b3e538e64",
+  "epoch": 0,
+  "status": "passed",
+  "code": null,
+  "actionsCompleted": 4,
+  "proposals": 3,
+  "observations": 4,
+  "modelCalls": null,
+  "elapsedMs": 11363,
+  "limits": {
+    "requests": 20,
+    "actions": 40,
+    "seconds": 120
+  },
+  "screenshots": "memory-only",
+  "responses": [
+    "resp_0bcd68e6940fd67c016aafae870e9487d0ac9737ec595a588d",
+    "resp_0bcd68e6940fd67c016aafae89182c87d08258052abdc935d1",
+    "resp_0bcd68e6940fd67c016aafae8dda2087d0837c57c2820f8767"
+  ]
+}

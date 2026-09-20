@@ -4,9 +4,11 @@ A computer-use automation assignment built around a synthetic banking desktop. P
 
 **Current:** M1 desktop/replay, M2 bounded policy/evidence and M3 same-session takeover are implemented. The repository cleanup fixes artifact snapshots, terminal handoff evidence and input error classification; adds build verification and a quick quality gate; and separates the React views and operator assets. [Evidence and limitations](evidence/README.md) · [cleanup audit and resolution](docs/CLEANUP_AUDIT_2026-09-17.md).
 
-**Still required:** genuine OpenAI discovery → reviewed generated capability → replay for the second member, and final `REPORT.md`/discovery demo packaging. The user completed the real-person handoff; see [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). The existing manual artifact and simulated operator checks do not satisfy discovery. [Next milestone specification](docs/MILESTONE_4.md). [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
+**Still required:** record and review the generated capability → replay for the second member, and final `REPORT.md`/discovery demo packaging. The user completed the real-person handoff; see [manual audit observations](docs/MANUAL_AUDIT_NOTES.md). The existing manual artifact and simulated operator checks do not satisfy discovery. [Next milestone specification](docs/MILESTONE_4.md). [Current plan](docs/CURRENT_PLAN.md) · [full roadmap](docs/ROADMAP.md).
 
 ## Try the demo
+
+M4-03 adds `make discover MEMBER_ID=00123` for bounded goal-driven discovery. [Genuine discovery passed](evidence/m4-03-goal-discovery/README.md); [setup and limits](docs/M4_03_DISCOVERY.md). Recording and promotion remain next.
 
 M4-01 adds a host-only provider/transport probe: `make discovery-probe` tests one OpenAI-selected click; `make discovery-check` uses a clearly labeled fake provider. [Genuine OpenAI acceptance passed](evidence/m4-01-live-provider/README.md) on 2026-09-20. [Setup, decisions and limits](docs/M4_01_PROVIDER_PROBE.md). The ordinary demo below still needs no key.
 

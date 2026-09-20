@@ -18,7 +18,7 @@ function render() {
   if (!state) return;
   const titles = {
     idle: 'Ready to start',
-    running: 'Running lookup',
+    running: state.runKind === 'discovery' ? 'Discovering the workflow' : 'Running lookup',
     awaiting_human: 'Your help is needed',
     quiescing: 'Giving you control',
     human: 'You have control',
@@ -62,7 +62,10 @@ function render() {
       : 'Watch the same desktop the automation uses. Take control when available to interact.';
   const messages = {
     idle: 'Look up a member’s savings balance on the desktop.',
-    running: 'Automation owns input. You can request control or stop.',
+    running:
+      state.runKind === 'discovery'
+        ? 'The model is choosing actions from the synthetic desktop. You can request control or stop.'
+        : 'Automation owns input. You can request control or stop.',
     awaiting_human: state.resumable
       ? 'Session expired. Take control, restore the workspace with the synthetic code demo, then verify and resume.'
       : 'Verification stopped: ' +

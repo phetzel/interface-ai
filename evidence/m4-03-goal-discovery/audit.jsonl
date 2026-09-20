@@ -1,0 +1,5 @@
+{"kind": "automation", "elapsedMs": 4557, "sequence": 1, "action": "click", "status": "completed", "durationMs": 159.473}
+{"kind": "automation", "elapsedMs": 5085, "sequence": 2, "action": "type", "status": "completed", "durationMs": 227.032}
+{"kind": "automation", "elapsedMs": 6157, "sequence": 3, "action": "press", "status": "completed", "durationMs": 158.201}
+{"kind": "automation", "elapsedMs": 9831, "sequence": 4, "action": "click", "status": "completed", "durationMs": 161.266}
+{"kind": "lifecycle", "elapsedMs": 11360, "status": "success"}

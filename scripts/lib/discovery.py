@@ -96,21 +96,26 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class Transport:
-    def __init__(self, credentials):
+    def __init__(self, credentials, *, prefix='probe'):
+        if prefix not in ('probe', 'discover'):
+            raise ProbeError('invalid_transport_operation')
+        self.prefix = prefix
         self.session, self.token = credentials['session'], credentials['token']
         self.opener = build_opener(ProxyHandler({}), NoRedirect())
 
     def post(self, operation, data):
-        if operation not in ('start', 'check', 'action', 'finish', 'abort'):
+        if operation not in ('start', 'check', 'action', 'finish', 'abort', 'propose'):
             raise ProbeError('invalid_transport_operation')
         request = Request(
-            'http://127.0.0.1:6081/probe/' + operation,
+            'http://127.0.0.1:6081/' + self.prefix + '/' + operation,
             data=json.dumps(data, allow_nan=False).encode(),
             headers={'Content-Type': 'application/json', 'X-Discovery-Token': self.token},
             method='POST',
         )
         try:
-            with self.opener.open(request, timeout=10) as response:
+            with self.opener.open(
+                request, timeout=35 if self.prefix == 'discover' else 10
+            ) as response:
                 raw = response.read(6 * 1024 * 1024 + 1)
                 if len(raw) > 6 * 1024 * 1024:
                     raise ValueError()
@@ -122,6 +127,10 @@ class Transport:
             except Exception:
                 code = None
             known = {
+                'discovery_budget',
+                'discovery_stuck',
+                'identity_mismatch',
+                'checkpoint_timeout',
                 'request_denied',
                 'invalid_action',
                 'invalid_transition',

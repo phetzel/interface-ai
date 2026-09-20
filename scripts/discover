@@ -1,0 +1,89 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11,<3.12"
+# dependencies = ["openai==3.16.2"]
+# ///
+"""Explicit online goal discovery. The key and provider SDK remain on the host."""
+
+import argparse
+import logging
+import os
+import re
+import sys
+from lib.acceptance import attempt, source_hashes, write_json
+from lib.builds import retain_builds, verify_running
+from lib.discovery import MODEL, ProbeError, Transport, bootstrap, load_key
+from lib.discovery_flow import run_discovery
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--member-id', default='00123')
+    parser.add_argument('--key-file')
+    args = parser.parse_args()
+    if not re.fullmatch('[0-9]{5}', args.member_id):
+        parser.error('Member ID must have exactly five digits')
+    directory = attempt('discovery-runs')
+    directory.chmod(0o700)
+    report = dict(
+        format='discovery-host-v1',
+        provenance='real-openai-goal-discovery',
+        requestedModel=MODEL,
+        status='running',
+        requestsAttempted=0,
+        responsesCompleted=0,
+        responses=[],
+        usageUnknown=False,
+        actionsCompleted=0,
+        screenshots='memory-only',
+        rawTranscript='not-retained',
+    )
+    transport = None
+
+    def save():
+        write_json(directory / 'report.json', report)
+
+    try:
+        key = load_key(args.key_file)
+        os.environ.pop('OPENAI_LOG', None)
+        for name in ('openai', 'httpx2', 'httpcore2'):
+            logging.getLogger(name).disabled = True
+        from openai import OpenAI
+        import httpx2
+
+        save()
+        hashes = source_hashes()
+        write_json(directory / 'source-manifest.json', hashes)
+        retain_builds(directory)
+        verify_running(directory)
+        transport = Transport(bootstrap(), prefix='discover')
+        with OpenAI(
+            api_key=key,
+            base_url='https://api.openai.com/v1',
+            max_retries=0,
+            timeout=30,
+            http_client=httpx2.Client(trust_env=False, timeout=30),
+        ) as client:
+            result = run_discovery(client, transport, report, save, args.member_id)
+        write_json(directory / 'result.json', result)
+        if source_hashes() != hashes:
+            raise ProbeError('source_changed')
+    except (Exception, KeyboardInterrupt) as exc:
+        if transport is not None:
+            try:
+                transport.post('abort', {})
+            except Exception:
+                pass
+        report['status'] = 'failed'
+        report['code'] = exc.code if isinstance(exc, ProbeError) else 'preflight_or_storage_failed'
+        try:
+            save()
+        except OSError:
+            pass
+    print(report['status'].upper() + ' ' + report.get('code', 'goal_discovery'))
+    print('Evidence: ' + str(directory))
+    return 0 if report['status'] == 'passed' else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

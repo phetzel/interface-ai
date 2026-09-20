@@ -1,0 +1,45 @@
+{
+  "format": "discovery-host-v1",
+  "provenance": "real-openai-goal-discovery",
+  "requestedModel": "gpt-5.6-sol",
+  "status": "failed",
+  "requestsAttempted": 3,
+  "responsesCompleted": 3,
+  "responses": [
+    {
+      "id": "resp_044ff6cd74ca4082016aafadbaa62c87d087ffc1eac1170cce",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 2109,
+        "output_tokens": 17,
+        "total_tokens": 2126
+      }
+    },
+    {
+      "id": "resp_044ff6cd74ca4082016aafadbcee9487d0abdbad2698186c16",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 3326,
+        "output_tokens": 53,
+        "total_tokens": 3379
+      }
+    },
+    {
+      "id": "resp_044ff6cd74ca4082016aafadc2287487d09d0eb1ce101213e2",
+      "model": "gpt-5.6-sol",
+      "usage": {
+        "input_tokens": 4616,
+        "output_tokens": 51,
+        "total_tokens": 4667
+      }
+    }
+  ],
+  "usageUnknown": false,
+  "actionsCompleted": 3,
+  "screenshots": "memory-only",
+  "rawTranscript": "not-retained",
+  "sessionId": "a0c10b2a-6127-41ba-a961-6d1c85ac9e1f",
+  "runId": "41f1beb0-7549-41a0-8713-b41772a8aa07",
+  "desktopRun": "20260920T095609Z-discovery-41f1beb0",
+  "code": "invalid_action"
+}

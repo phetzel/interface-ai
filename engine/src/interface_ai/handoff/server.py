@@ -12,6 +12,7 @@ from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import request_stop
 from interface_ai.discovery.http import handle as handle_probe
 from interface_ai.discovery.probe import Probe, provision
+from interface_ai.discovery.worker import Discovery
 from interface_ai.policy.evidence import safe_code
 from interface_ai.replay.loader import ReplayError, strict_json
 from .controller import Controller
@@ -106,7 +107,7 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(503, {'code': 'session_unavailable'})
 
     def do_POST(self):
-        if self.path.startswith(('/probe/', '/run/')):
+        if self.path.startswith(('/probe/', '/run/', '/discover/')):
             handle_probe(self)
             return
         if (
@@ -169,9 +170,10 @@ class Handler(BaseHTTPRequestHandler):
 class Server(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, address, controller, *, probe=None, probe_token=None):
+    def __init__(self, address, controller, *, probe=None, probe_token=None, discovery=None):
         self.controller = controller
         self.probe, self.probe_token = probe, probe_token
+        self.discovery = discovery
         self.token = secrets.token_hex(32)
         self.slots = threading.BoundedSemaphore(6)
         super().__init__(address, Handler)
@@ -218,6 +220,7 @@ if __name__ == '__main__':
         ('0.0.0.0', 6081),
         controller,
         probe=Probe(controller),
+        discovery=Discovery(controller),
         probe_token=provision(controller.session['id']),
     ) as server:
         server.serve_forever(poll_interval=0.5)

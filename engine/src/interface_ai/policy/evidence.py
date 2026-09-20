@@ -19,7 +19,7 @@ invalid_capability invalid_input invalid_amount invalid_anchor invalid_region
 invalid_threshold target_missing ambiguous_target ocr_environment ocr_failed
 ocr_timeout ocr_unavailable ocr_uncertain invalid_output execution_failed
 missing_completion preflight_failed evidence_rejected ownership_revoked
-quiesce_timeout intervention_required resume_rejected invalid_transition handoff_expired""".split()
+discovery_budget discovery_stuck quiesce_timeout intervention_required resume_rejected invalid_transition handoff_expired""".split()
 )
 ENUMS = {
     'kind': {'action', 'step', 'target', 'reading', 'checkpoint'},

@@ -1,3 +1,5 @@
+**M4-03 update (2026-09-20):** [genuine goal-driven discovery passed](../evidence/m4-03-goal-discovery/README.md): three model requests, four native inputs, exact local member-A result. Recorder, reviewed promotion and generated-artifact offline reuse remain next.
+
 # Current planning direction
 
 **M4-01 update (2026-09-20):** the host-only OpenAI client, bounded transport, one-click visual policy and offline negative tests are implemented. [Genuine provider acceptance passed](../evidence/m4-01-live-provider/README.md): three OpenAI responses, one native click and a stateless screenshot round trip. [Run and explain the probe](M4_01_PROVIDER_PROBE.md). [Shared lifecycle (M4-02)](M4_02_SHARED_LIFECYCLE.md) is implemented; goal-driven discovery and generated artifacts remain next; a connection probe is not the assignment's discovery demonstration.

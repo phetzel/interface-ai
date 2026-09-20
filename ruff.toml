@@ -1,7 +1,7 @@
 target-version = "py39"
 line-length = 100
 extend-exclude = ["evidence", "tmp", "node_modules"]
-extend-include = ["scripts/*-check", "scripts/build-check", "scripts/quick-check", "scripts/quality", "scripts/discovery-probe"]
+extend-include = ["scripts/*-check", "scripts/build-check", "scripts/quick-check", "scripts/quality", "scripts/discovery-probe", "scripts/discover"]
 
 [lint]
 select = ["E9", "F"]
