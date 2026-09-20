@@ -8,7 +8,7 @@ from PIL import Image
 from pydantic import ValidationError
 from interface_ai.contracts.models import Capability, MemberInput
 from interface_ai.contracts.generated import GeneratedCapability
-from interface_ai.files import read_regular
+from interface_ai.files import read_regular, safe_path
 
 
 class ReplayError(RuntimeError):
@@ -41,7 +41,7 @@ def strict_json(data):
 
 def load_bundle(path):
     try:
-        path = Path(path).resolve(strict=True)
+        path = safe_path(Path(path))
         raw = read_regular(path, 262144)
         data = strict_json(raw)
         model = (
@@ -57,7 +57,7 @@ def load_bundle(path):
     templates = {}
     for name, asset in capability.assets.items():
         try:
-            asset_path = (path.parent / asset.file).resolve(strict=True)
+            asset_path = safe_path(path.parent / asset.file)
             if not asset_path.is_relative_to(path.parent):
                 raise ValueError('Invalid asset location or size')
             encoded = read_regular(asset_path, 131072)

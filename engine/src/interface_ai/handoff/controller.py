@@ -33,7 +33,7 @@ class Controller:
         self.output_root = output_root
         self.inputs = None
         self.bundle = bundle or load_bundle(REVIEWED_PATH)
-        admit(self.bundle)
+        self.admission = admit(self.bundle)
         self.resume_at = None
         self.human_sequence = 0
         self.human_deadline = None
@@ -72,7 +72,7 @@ class Controller:
     def interpreter_event(self, event):
         # Use the same closed event vocabulary as CLI replay. Keep it nested so
         # interpreter completion cannot be counted as an OS input action.
-        event = checked_event(event)
+        event = checked_event(event, self.admission.allowed_ids)
         with self.mutex:
             if self.result is None and event.get('step') is not None:
                 self.current_step = event['step']
@@ -213,7 +213,7 @@ class Controller:
                 self.reason = reason
             self.resume_at = None
 
-    def start(self, member_id, lease, *, bundle=None, origin='panel'):
+    def start(self, member_id, lease, *, bundle=None, origin='panel', admission=None):
         with self.mutex:
             self.verify(lease)
             if self.phase != 'idle' or self.session['mode'] != 'bank':
@@ -222,7 +222,7 @@ class Controller:
                 )
             self.inputs = validate_inputs({'memberId': member_id})
             if bundle is not None:
-                admit(bundle)
+                self.admission = admission or admit(bundle)
                 self.bundle = bundle
             self.started = time.monotonic()
             name = (
@@ -241,9 +241,9 @@ class Controller:
         self.worker = threading.Thread(target=self.run, args=(start_at, epoch), daemon=True)
         self.worker.start()
 
-    @staticmethod
-    def detect_expiry(runner, observation):
-        if runner.step.id != 'search-member':
+    def detect_expiry(self, runner, observation):
+        continuation = self.admission.continuation
+        if continuation is None or runner.step.id != continuation.interruptedStep:
             return
         try:
             text = runner.ocr.line(observation.image, Box(400, 235, 880, 290), timeout=1).text
@@ -262,7 +262,12 @@ class Controller:
 
             def action_event(event):
                 with self.mutex:
-                    self.record('automation', **checked_event(dict(event, step=self.current_step)))
+                    self.record(
+                        'automation',
+                        **checked_event(
+                            dict(event, step=self.current_step), self.admission.allowed_ids
+                        ),
+                    )
 
             with Desktop(self.session['id'], epoch=epoch, event_sink=action_event) as desktop:
                 runner = Interpreter(
@@ -282,7 +287,8 @@ class Controller:
                 if (
                     result.status == 'failure'
                     and result.code == 'intervention_required'
-                    and result.step == 'search-member'
+                    and self.admission.continuation is not None
+                    and result.step == self.admission.continuation.interruptedStep
                 ):
                     # Revoke queued actions immediately on detection, even if the
                     # operator has not opened the panel or requested control yet.
@@ -294,7 +300,7 @@ class Controller:
                             'epoch': epoch,
                         },
                     )
-                    self.resume_at = 4  # Reviewed boundary: after search, before opening savings.
+                    self.resume_at = self.admission.resume_index(self.bundle.capability)
                     self.phase, self.reason = 'awaiting_human', 'intervention_required'
                     self.record('lifecycle', status='awaiting_human')
                     self.interruption = result
@@ -393,13 +399,13 @@ class Controller:
                 runner.step = runner.cap.steps[self.resume_at]
                 runner.step_deadline = time.monotonic() + 5
                 try:
-                    valid = runner.observe().checkpoint('member-ready')
+                    valid = runner.observe().checkpoint(self.admission.continuation.checkpoint)
                     runner.guard()
                 except (DesktopError, VisionError):
                     valid = False
                 runner.emit(
                     'checkpoint',
-                    checkpoint='member-ready',
+                    checkpoint=self.admission.continuation.checkpoint,
                     status='satisfied' if valid else 'unsatisfied',
                 )
                 if not valid:

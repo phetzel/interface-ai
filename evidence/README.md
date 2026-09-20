@@ -32,3 +32,5 @@ The [M4 specification](../docs/MILESTONE_4.md) defines the remaining discovery-t
 The [manual checklist](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) hold separate reviewer self-reports. Automated testing of those pages does not complete either review. Routine run metadata omits typed values, OCR text and screenshots; explicit synthetic results/debug calibration records have their own documented retention boundaries.
 
 - [M4-04: genuine recorded candidate](m4-04-recorded-candidate/README.md), still awaiting independent promotion.
+
+- [M4-05: reviewed promotion and approved member-B replay](m4-05-promotion/README.md).

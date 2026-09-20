@@ -4,32 +4,23 @@ This is not authorization for arbitrary web pages: a malicious application can
 imitate pixels. Only the reviewed fixture and a single controller are supported.
 """
 
-from pathlib import Path
 import re
 from types import SimpleNamespace
 
 from interface_ai.desktop.adapter import DesktopError
-from interface_ai.replay.loader import load_bundle
 from interface_ai.vision import VisionError
+from .controls import controls
 
-POLICY_ID = 'bank-read-only-v1'
-APPROVED_SHA256 = '94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17'
-REVIEWED_PATH = (
-    Path(__file__).resolve().parents[4] / 'capabilities/poc/savings-balance/capability.json'
-)
+from .admission import admit as admit, capability_path, reference_bundle
+from interface_ai.contracts.approval import POLICY_ID as POLICY_ID
 
-
-def admit(bundle):
-    if bundle.sha256 != APPROVED_SHA256:
-        raise DesktopError(
-            'policy_artifact_denied', 'Capability revision has not been approved for this policy'
-        )
+# Compatibility name for the environment profile; its path is operator-owned.
+REVIEWED_PATH = capability_path()
 
 
 class BankPolicy:
     def __init__(self):
-        self.bundle = load_bundle(REVIEWED_PATH)
-        admit(self.bundle)
+        self.bundle = reference_bundle()
         self.keyboard = None
         self.pending = None
 
@@ -67,11 +58,16 @@ class BankPolicy:
         if not search:
             self.keyboard = None
         if action['type'] == 'click':
+            was_typed = self.keyboard == 'typed'
             self.keyboard = None
-            if search and inside(locate('member-input')):
+            if search and inside(controls(view, 'search-ready')['member-input']):
                 self.pending = 'field'
                 return
-            if locate('member-heading') and inside(locate('savings-button')):
+            if search and was_typed and inside(controls(view, 'search-ready')['search-button']):
+                return
+            if locate('member-heading') and inside(
+                controls(view, 'member-ready')['savings-button']
+            ):
                 return
         elif search and self.keyboard:
             if action == {'type': 'hotkey', 'keys': ['ctrl', 'a']}:

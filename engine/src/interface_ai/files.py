@@ -17,3 +17,11 @@ def read_regular(path: Path, maximum: int) -> bytes:
         if len(data) > maximum:
             raise ValueError('File grew beyond its allowed size')
         return data
+
+
+def safe_path(path: Path) -> Path:
+    """Reject symlink components before canonicalizing an artifact location."""
+    path = Path(path).absolute()
+    if any(part.is_symlink() for part in (path, *path.parents)):
+        raise ValueError('Symlink artifact path')
+    return path.resolve(strict=True)

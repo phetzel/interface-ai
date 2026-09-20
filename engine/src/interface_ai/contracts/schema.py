@@ -6,10 +6,12 @@ from pathlib import Path
 from pydantic import TypeAdapter
 from .models import Capability, MemberInput, RunResult, SavingsOutput
 from .generated import GeneratedCapability
+from .approval import Approval
 
 
 def schemas():
     return {
+        'promotion-v1': Approval.model_json_schema(),
         'capability-v1': Capability.model_json_schema(),
         'capability-v2': GeneratedCapability.model_json_schema(),
         'input-v1': MemberInput.model_json_schema(),

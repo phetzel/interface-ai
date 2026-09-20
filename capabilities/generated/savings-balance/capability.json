@@ -1,0 +1,518 @@
+{
+  "schemaVersion": "2.0",
+  "name": "savings-balance-discovered",
+  "capabilityVersion": "0.1.0",
+  "provenance": {
+    "kind": "recorded-openai-discovery",
+    "runId": "e746dd79-c7cc-4a4b-ab3e-51fb2fde8b2a",
+    "sessionId": "d39926d1-4e21-4f5c-9008-9d8bb7f07c11",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "requests": 3,
+    "responseIds": [
+      "resp_0b5532e2a420e628016aafb0ac47d087d0a1dd3170e7814d69",
+      "resp_0b5532e2a420e628016aafb0af505887d09ffeb9b83a2df84d",
+      "resp_0b5532e2a420e628016aafb0b45b1887d0aafa69fd7542e48f"
+    ],
+    "executedActions": [
+      "action-001",
+      "action-002",
+      "action-003",
+      "action-004"
+    ],
+    "inputBindings": [
+      {
+        "sourceAction": "action-002",
+        "step": "action-002",
+        "input": "memberId"
+      }
+    ],
+    "trajectorySha256": "2b8088ef5f3a8ef4262d5195567b60d3fc778ecf3409ed3b9257bfa49113bb28",
+    "observationsSha256": "78b85bd2f6b70880428f9de26e56a5fe0c85230dbe9f34fb3cd2ae09022c321e",
+    "runtimeManifestSha256": "504cba6b5a931c0c7511f92290404c301c7d9658d4842ca6504c2e8078bc8e86",
+    "recognitionProfileSha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+    "derivation": "bank-static-label-review-v1"
+  },
+  "description": "Candidate recorded from executed OpenAI computer actions; visual/OCR annotations require explicit local review.",
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      }
+    },
+    "required": [
+      "memberId"
+    ],
+    "title": "MemberInput",
+    "type": "object"
+  },
+  "outputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "memberId": {
+        "pattern": "^[0-9]{5}$",
+        "title": "Memberid",
+        "type": "string"
+      },
+      "memberName": {
+        "pattern": "^[A-Za-z][A-Za-z .'-]{1,79}$",
+        "title": "Membername",
+        "type": "string"
+      },
+      "accountType": {
+        "const": "Savings",
+        "title": "Accounttype",
+        "type": "string"
+      },
+      "currency": {
+        "const": "USD",
+        "title": "Currency",
+        "type": "string"
+      },
+      "amountMinor": {
+        "maximum": 99999999999999,
+        "minimum": 0,
+        "title": "Amountminor",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "memberId",
+      "memberName",
+      "accountType",
+      "currency",
+      "amountMinor"
+    ],
+    "title": "SavingsOutput",
+    "type": "object"
+  },
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "assets": {
+    "account-heading": {
+      "file": "anchors/account-heading.png",
+      "sha256": "08f498ce38034a03bb7769caab57381ae6bd9e1f28eea209cd88dd049fc9bef4"
+    },
+    "member-field": {
+      "file": "anchors/member-field.png",
+      "sha256": "5ba5ec895a2a0254532c99a8714c0c0e369c55eb6bf10abe8ec2aa0512aba71b"
+    },
+    "member-heading": {
+      "file": "anchors/member-heading.png",
+      "sha256": "7e80ede74989cf52dc06346858f40fe505475744961e40636d4da3532de259b5"
+    },
+    "not-found-label": {
+      "file": "anchors/not-found-label.png",
+      "sha256": "f4d030fa651720b43179f8a5313aeb9840f83b1f55b4e063f33c478fa39f201d"
+    },
+    "savings-label": {
+      "file": "anchors/savings-label.png",
+      "sha256": "af3ee4e6aa71933a1705c4f400bd8b4f7e44cc1c6afb5f28fbe1f356cb59c2a8"
+    },
+    "search-heading": {
+      "file": "anchors/search-heading.png",
+      "sha256": "fe35ab2b3e26a788cd27f774db824545d6e134da44bc5c854a0371f5a4315940"
+    },
+    "view-account": {
+      "file": "anchors/view-account.png",
+      "sha256": "cd9283ceb37f9459f9bec3f82ba15ef6cdede318923b9069c42a6855f27a2c83"
+    }
+  },
+  "targets": {
+    "search-heading": {
+      "kind": "anchor",
+      "asset": "search-heading",
+      "region": {
+        "relativeTo": null,
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "member-heading": {
+      "kind": "anchor",
+      "asset": "member-heading",
+      "region": {
+        "relativeTo": null,
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "account-heading": {
+      "kind": "anchor",
+      "asset": "account-heading",
+      "region": {
+        "relativeTo": null,
+        "box": [
+          70,
+          180,
+          650,
+          330
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "member-field": {
+      "kind": "anchor",
+      "asset": "member-field",
+      "region": {
+        "relativeTo": "search-heading",
+        "box": [
+          0,
+          140,
+          700,
+          260
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "savings-label": {
+      "kind": "anchor",
+      "asset": "savings-label",
+      "region": {
+        "relativeTo": "member-heading",
+        "box": [
+          0,
+          250,
+          1080,
+          565
+        ],
+        "clipToDisplay": true
+      },
+      "threshold": 0.92
+    },
+    "savings-button": {
+      "kind": "anchor",
+      "asset": "view-account",
+      "region": {
+        "relativeTo": "savings-label",
+        "box": [
+          700,
+          -10,
+          985,
+          45
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "not-found": {
+      "kind": "anchor",
+      "asset": "not-found-label",
+      "region": {
+        "relativeTo": "search-heading",
+        "box": [
+          0,
+          290,
+          730,
+          420
+        ],
+        "clipToDisplay": false
+      },
+      "threshold": 0.92
+    },
+    "target-action-001": {
+      "kind": "relative",
+      "region": {
+        "relativeTo": "member-field",
+        "box": [
+          222,
+          72,
+          226,
+          76
+        ],
+        "clipToDisplay": false
+      }
+    },
+    "target-action-004": {
+      "kind": "relative",
+      "region": {
+        "relativeTo": "savings-button",
+        "box": [
+          54,
+          6,
+          58,
+          10
+        ],
+        "clipToDisplay": false
+      }
+    }
+  },
+  "fields": {
+    "entered-id": {
+      "region": {
+        "relativeTo": "member-field",
+        "box": [
+          8,
+          57,
+          140,
+          88
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "member-id": {
+      "region": {
+        "relativeTo": "member-heading",
+        "box": [
+          140,
+          140,
+          228,
+          158
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "account-member-id": {
+      "region": {
+        "relativeTo": "account-heading",
+        "box": [
+          140,
+          140,
+          228,
+          158
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "member_id"
+    },
+    "member-name": {
+      "region": {
+        "relativeTo": "account-heading",
+        "box": [
+          78,
+          110,
+          400,
+          138
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "account-type": {
+      "region": {
+        "relativeTo": "account-heading",
+        "box": [
+          974,
+          225,
+          1043,
+          249
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "currency": {
+      "region": {
+        "relativeTo": "account-heading",
+        "box": [
+          990,
+          296,
+          1043,
+          321
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    },
+    "balance": {
+      "region": {
+        "relativeTo": "account-heading",
+        "box": [
+          30,
+          278,
+          720,
+          353
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "usd_minor"
+    },
+    "missing-message": {
+      "region": {
+        "relativeTo": "not-found",
+        "box": [
+          -2,
+          20,
+          370,
+          46
+        ],
+        "clipToDisplay": false
+      },
+      "parser": "text"
+    }
+  },
+  "checkpoints": {
+    "search-ready": {
+      "targets": [
+        "search-heading"
+      ],
+      "assertions": []
+    },
+    "input-entered": {
+      "targets": [
+        "search-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "entered-id",
+          "input": "memberId",
+          "prefix": "",
+          "suffix": ""
+        }
+      ]
+    },
+    "member-ready": {
+      "targets": [
+        "member-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "member-id",
+          "input": "memberId",
+          "prefix": "",
+          "suffix": ""
+        }
+      ]
+    },
+    "account-ready": {
+      "targets": [
+        "account-heading"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "account-member-id",
+          "input": "memberId",
+          "prefix": "",
+          "suffix": ""
+        },
+        {
+          "kind": "text_equals",
+          "field": "account-type",
+          "text": "Savings"
+        },
+        {
+          "kind": "text_equals",
+          "field": "currency",
+          "text": "USD"
+        }
+      ]
+    },
+    "member-not-found": {
+      "targets": [
+        "not-found"
+      ],
+      "assertions": [
+        {
+          "kind": "input_equals",
+          "field": "missing-message",
+          "input": "memberId",
+          "prefix": "No member matches ID ",
+          "suffix": ". Check the ID and search again."
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "action-001",
+      "precondition": "search-ready",
+      "timeoutSeconds": 5.0,
+      "postconditions": [
+        {
+          "checkpoint": "search-ready",
+          "outcome": null
+        }
+      ],
+      "action": "click",
+      "target": "target-action-001"
+    },
+    {
+      "id": "action-002",
+      "precondition": "search-ready",
+      "timeoutSeconds": 5.0,
+      "postconditions": [
+        {
+          "checkpoint": "input-entered",
+          "outcome": null
+        }
+      ],
+      "action": "type",
+      "input": "memberId"
+    },
+    {
+      "id": "action-003",
+      "precondition": "input-entered",
+      "timeoutSeconds": 5.0,
+      "postconditions": [
+        {
+          "checkpoint": "member-ready",
+          "outcome": null
+        },
+        {
+          "checkpoint": "member-not-found",
+          "outcome": "member_not_found"
+        }
+      ],
+      "action": "press",
+      "key": "enter"
+    },
+    {
+      "id": "action-004",
+      "precondition": "member-ready",
+      "timeoutSeconds": 5.0,
+      "postconditions": [
+        {
+          "checkpoint": "account-ready",
+          "outcome": null
+        }
+      ],
+      "action": "click",
+      "target": "target-action-004"
+    },
+    {
+      "id": "extract-result",
+      "precondition": "account-ready",
+      "timeoutSeconds": 5.0,
+      "action": "extract",
+      "fields": {
+        "memberId": "account-member-id",
+        "memberName": "member-name",
+        "accountType": "account-type",
+        "currency": "currency",
+        "amountMinor": "balance"
+      }
+    }
+  ]
+}

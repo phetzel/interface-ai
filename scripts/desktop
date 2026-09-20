@@ -12,7 +12,7 @@ case "$command_name" in
   operator)
     echo 'Operator: http://127.0.0.1:6081/'
     exit 0 ;;
-  build|up|ready|smoke|browser-smoke|vision-probe|replay|validate-capability|export-evidence|screenshot|stop-input|reset|down|logs|action|test) ;;
+  build|up|ready|smoke|browser-smoke|vision-probe|replay|review-validate|validate-capability|export-evidence|screenshot|stop-input|reset|down|logs|action|test) ;;
   *) usage >&2; exit 2 ;;
 esac
 if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
@@ -48,7 +48,7 @@ case "$command_name" in
   smoke) docker compose exec -T desktop python /opt/desktop/smoke.py ;;
   browser-smoke) docker compose exec -T desktop python /opt/desktop/browser_smoke.py "$@" ;;
   vision-probe) docker compose exec -T desktop python /opt/desktop/vision_probe.py "$@" ;;
-  replay|validate-capability|export-evidence) docker compose exec -T desktop python -m interface_ai.cli "$command_name" "$@" ;;
+  replay|review-validate|validate-capability|export-evidence) docker compose exec -T desktop python -m interface_ai.cli "$command_name" "$@" ;;
   action) docker compose exec -T desktop python -m interface_ai.cli action "$@" ;;
   test) docker compose exec -T desktop python -m unittest discover -s /opt/engine/tests -v ;;
   down) docker compose --profile bank down --remove-orphans --timeout 10 ;;

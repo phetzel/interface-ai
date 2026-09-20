@@ -4,12 +4,13 @@ SHELL := /bin/sh
 MODE ?= bank
 SCENARIO ?= default
 MEMBER_ID ?= 00123
+CAPABILITY ?= manual-savings
 RUN ?=
-export MODE SCENARIO MEMBER_ID RUN
+export MODE SCENARIO MEMBER_ID RUN CAPABILITY
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover
+.PHONY: help start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote
 
 help: ## Show available commands (the default target)
 	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
@@ -52,9 +53,10 @@ discovery-probe: ## Test one real OpenAI-selected click on the current fresh ban
 discovery-check: ## Test discovery transport with a simulated provider and real desktop; resets between cases
 	python3 scripts/discovery-check
 
-handoff-demo: ## Reset to the expiry scenario; open make operator to start
+handoff-demo: ## Launch expiry; generated CAPABILITY starts its lookup and pauses for takeover
 	./scripts/desktop reset bank expired
-	@echo 'Open http://127.0.0.1:6081/ and start a lookup.'
+	@if [ "$$CAPABILITY" != manual-savings ]; then ./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID" --pause-for-human; fi
+	@echo 'Open http://127.0.0.1:6081/; start a lookup if idle, then take control when paused.'
 
 handoff-check: ## Run same-session acceptance with a simulated human operator
 	./scripts/m3-check
@@ -72,11 +74,11 @@ validate: ## Validate the bundled capability and anchor assets
 	./scripts/desktop validate-capability
 
 replay: ## Replay MEMBER_ID on the current bank screen; no automatic reset
-	./scripts/desktop replay --member-id "$$MEMBER_ID"
+	./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID"
 
 demo: ## Reset the bank scenario, then replay MEMBER_ID
 	./scripts/desktop reset bank "$$SCENARIO"
-	./scripts/desktop replay --member-id "$$MEMBER_ID"
+	./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID"
 
 test: ## Run the engine tests inside the running desktop
 	./scripts/desktop test
@@ -118,3 +120,9 @@ quality: ## Check active source formatting and Python correctness lint
 
 format: ## Format active source; never rewrites historical evidence
 	./scripts/quality --write
+
+review: ## Validate and evaluate a recorded candidate for member B and translated layout
+	python3 scripts/review-capability review --run "$$RUN"
+
+promote: ## Approve the exact evaluated candidate after reviewing its static crops and annotations
+	python3 scripts/review-capability promote --run "$$RUN"

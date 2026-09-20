@@ -1,0 +1,461 @@
+{
+  "$defs": {
+    "Continuation": {
+      "additionalProperties": false,
+      "properties": {
+        "interruptedStep": {
+          "pattern": "^[a-z][a-z0-9-]{0,47}$",
+          "title": "Interruptedstep",
+          "type": "string"
+        },
+        "nextStep": {
+          "pattern": "^[a-z][a-z0-9-]{0,47}$",
+          "title": "Nextstep",
+          "type": "string"
+        },
+        "checkpoint": {
+          "const": "member-ready",
+          "title": "Checkpoint",
+          "type": "string"
+        }
+      },
+      "required": [
+        "interruptedStep",
+        "nextStep",
+        "checkpoint"
+      ],
+      "title": "Continuation",
+      "type": "object"
+    },
+    "DiscoveryProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "recorded-openai-discovery",
+          "title": "Kind",
+          "type": "string"
+        },
+        "runId": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Runid",
+          "type": "string"
+        },
+        "sessionId": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Sessionid",
+          "type": "string"
+        },
+        "provider": {
+          "const": "openai",
+          "title": "Provider",
+          "type": "string"
+        },
+        "model": {
+          "const": "gpt-5.6-sol",
+          "title": "Model",
+          "type": "string"
+        },
+        "requests": {
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Requests",
+          "type": "integer"
+        },
+        "responseIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9_.:-]{1,128}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Responseids",
+          "type": "array"
+        },
+        "executedActions": {
+          "items": {
+            "pattern": "^action-[0-9]{3}$",
+            "type": "string"
+          },
+          "maxItems": 40,
+          "minItems": 1,
+          "title": "Executedactions",
+          "type": "array"
+        },
+        "inputBindings": {
+          "items": {
+            "$ref": "#/$defs/InputBinding"
+          },
+          "maxItems": 40,
+          "minItems": 1,
+          "title": "Inputbindings",
+          "type": "array"
+        },
+        "trajectorySha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Trajectorysha256",
+          "type": "string"
+        },
+        "observationsSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Observationssha256",
+          "type": "string"
+        },
+        "runtimeManifestSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Runtimemanifestsha256",
+          "type": "string"
+        },
+        "recognitionProfileSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Recognitionprofilesha256",
+          "type": "string"
+        },
+        "derivation": {
+          "const": "bank-static-label-review-v1",
+          "title": "Derivation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "runId",
+        "sessionId",
+        "provider",
+        "model",
+        "requests",
+        "responseIds",
+        "executedActions",
+        "inputBindings",
+        "trajectorySha256",
+        "observationsSha256",
+        "runtimeManifestSha256",
+        "recognitionProfileSha256",
+        "derivation"
+      ],
+      "title": "DiscoveryProvenance",
+      "type": "object"
+    },
+    "DiscoverySource": {
+      "additionalProperties": false,
+      "properties": {
+        "sourceManifestSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sourcemanifestsha256",
+          "type": "string"
+        },
+        "buildEvidenceSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Buildevidencesha256",
+          "type": "string"
+        },
+        "desktopImage": {
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "title": "Desktopimage",
+          "type": "string"
+        },
+        "fixtureImage": {
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "title": "Fixtureimage",
+          "type": "string"
+        },
+        "reviewEvidenceSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Reviewevidencesha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceManifestSha256",
+        "buildEvidenceSha256",
+        "desktopImage",
+        "fixtureImage",
+        "reviewEvidenceSha256"
+      ],
+      "title": "DiscoverySource",
+      "type": "object"
+    },
+    "Environment": {
+      "additionalProperties": false,
+      "properties": {
+        "platform": {
+          "const": "linux-x11",
+          "title": "Platform",
+          "type": "string"
+        },
+        "width": {
+          "const": 1280,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "const": 800,
+          "title": "Height",
+          "type": "integer"
+        },
+        "locale": {
+          "const": "en-US",
+          "title": "Locale",
+          "type": "string"
+        },
+        "scale": {
+          "const": 1,
+          "title": "Scale",
+          "type": "integer"
+        },
+        "ocrModelSha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Ocrmodelsha256",
+          "type": "string"
+        },
+        "minimumConfidence": {
+          "maximum": 100,
+          "minimum": 80,
+          "title": "Minimumconfidence",
+          "type": "number"
+        },
+        "ocrScale": {
+          "const": 3,
+          "title": "Ocrscale",
+          "type": "integer"
+        },
+        "ocrPSM": {
+          "const": 7,
+          "title": "Ocrpsm",
+          "type": "integer"
+        },
+        "totalTimeoutSeconds": {
+          "exclusiveMinimum": 0,
+          "maximum": 60,
+          "title": "Totaltimeoutseconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "platform",
+        "width",
+        "height",
+        "locale",
+        "scale",
+        "ocrModelSha256",
+        "minimumConfidence",
+        "ocrScale",
+        "ocrPSM",
+        "totalTimeoutSeconds"
+      ],
+      "title": "Environment",
+      "type": "object"
+    },
+    "InputBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "sourceAction": {
+          "pattern": "^action-[0-9]{3}$",
+          "title": "Sourceaction",
+          "type": "string"
+        },
+        "step": {
+          "pattern": "^[a-z][a-z0-9-]{0,47}$",
+          "title": "Step",
+          "type": "string"
+        },
+        "input": {
+          "const": "memberId",
+          "title": "Input",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceAction",
+        "step",
+        "input"
+      ],
+      "title": "InputBinding",
+      "type": "object"
+    },
+    "Vocabulary": {
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "type": "string"
+          },
+          "maxItems": 41,
+          "minItems": 2,
+          "title": "Step",
+          "type": "array"
+        },
+        "target": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Target",
+          "type": "array"
+        },
+        "field": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "type": "string"
+          },
+          "maxItems": 24,
+          "minItems": 1,
+          "title": "Field",
+          "type": "array"
+        },
+        "checkpoint": {
+          "items": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Checkpoint",
+          "type": "array"
+        }
+      },
+      "required": [
+        "step",
+        "target",
+        "field",
+        "checkpoint"
+      ],
+      "title": "Vocabulary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "promotion-v1",
+      "title": "Format",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[a-z][a-z0-9-]{0,47}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "capabilityFile": {
+      "maxLength": 160,
+      "pattern": "^[a-z0-9/-]+/capability\\.json$",
+      "title": "Capabilityfile",
+      "type": "string"
+    },
+    "candidateSha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidatesha256",
+      "type": "string"
+    },
+    "capabilitySha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Capabilitysha256",
+      "type": "string"
+    },
+    "capabilityVersion": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "title": "Capabilityversion",
+      "type": "string"
+    },
+    "assets": {
+      "maxProperties": 16,
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-z][a-z0-9-]{0,47}$": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "title": "Assets",
+      "type": "object"
+    },
+    "policy": {
+      "const": "bank-read-only-v2",
+      "title": "Policy",
+      "type": "string"
+    },
+    "decision": {
+      "const": "approved",
+      "title": "Decision",
+      "type": "string"
+    },
+    "reviewer": {
+      "enum": [
+        "historical-manual-review",
+        "agent-review",
+        "user-review"
+      ],
+      "title": "Reviewer",
+      "type": "string"
+    },
+    "reviewEdits": {
+      "items": {
+        "pattern": "^[a-z][a-z0-9-]{0,47}$",
+        "type": "string"
+      },
+      "maxItems": 40,
+      "title": "Reviewedits",
+      "type": "array"
+    },
+    "provenance": {
+      "anyOf": [
+        {
+          "const": "manually-authored-poc",
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/DiscoveryProvenance"
+        }
+      ],
+      "title": "Provenance"
+    },
+    "source": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DiscoverySource"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "environment": {
+      "$ref": "#/$defs/Environment"
+    },
+    "allowedIds": {
+      "$ref": "#/$defs/Vocabulary"
+    },
+    "continuation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Continuation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "format",
+    "id",
+    "capabilityFile",
+    "candidateSha256",
+    "capabilitySha256",
+    "capabilityVersion",
+    "assets",
+    "policy",
+    "decision",
+    "reviewer",
+    "reviewEdits",
+    "provenance",
+    "source",
+    "environment",
+    "allowedIds",
+    "continuation"
+  ],
+  "title": "Approval",
+  "type": "object"
+}

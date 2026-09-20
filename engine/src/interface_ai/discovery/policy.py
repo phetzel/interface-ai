@@ -10,7 +10,8 @@ from interface_ai.desktop import DesktopError
 from interface_ai.policy.bank import REVIEWED_PATH, admit
 from interface_ai.replay.loader import load_bundle
 from interface_ai.replay.recognition import Recognition
-from interface_ai.vision import Box, VisionError
+from interface_ai.vision import VisionError
+from interface_ai.policy.controls import controls
 
 OUTPUT_FIELDS = dict(
     memberId='account-member-id',
@@ -69,29 +70,6 @@ class DiscoveryPolicy:
         except VisionError as exc:
             raise DesktopError(exc.code, 'Visual verification rejected the observation') from None
 
-    @staticmethod
-    def controls(view, state):
-        if state in ('search-ready', 'input-entered'):
-            label = view.target('member-field')
-            return {
-                'member-input': Box(
-                    label.left + 8, label.top + 57, label.left + 520, label.top + 90
-                ),
-                'search-button': Box(
-                    label.left + 535, label.top + 57, label.left + 640, label.top + 90
-                ),
-            }
-        if state == 'member-ready':
-            # Matching a label is narrower than its button. Include the button's
-            # reviewed padding, but never the neighboring account row.
-            label = view.target('savings-button')
-            return {
-                'savings-button': Box(
-                    label.left - 12, label.top - 12, label.right + 30, label.bottom + 12
-                )
-            }
-        return {}
-
     def authorize(self, action, desktop):
         self.pending = self.last_target = None
         view, state, result = self.view(desktop)
@@ -101,7 +79,7 @@ class DiscoveryPolicy:
             self.keyboard = None
             matches = [
                 name
-                for name, box in self.controls(view, state).items()
+                for name, box in controls(view, state).items()
                 if box.left <= action['x'] < box.right and box.top <= action['y'] < box.bottom
             ]
             if len(matches) == 1:

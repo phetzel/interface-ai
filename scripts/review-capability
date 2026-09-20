@@ -1,0 +1,280 @@
+#!/usr/bin/env python3
+"""Host-owned candidate evaluation and explicit promotion. No provider calls."""
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import shutil
+from lib.acceptance import ROOT, attempt, command, source_hashes, write_json
+from lib.builds import retain_builds, verify_running
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    if (
+        any(p.is_symlink() for p in (path, *path.parents))
+        or not path.is_file()
+        or path.stat().st_size > 4 * 1024 * 1024
+    ):
+        raise ValueError('Expected a bounded regular review file')
+    return json.loads(path.read_text())
+
+
+def run(args, output, name, expected=0):
+    response = command(args, directory=output, name=name, timeout=240)
+    if response.returncode != expected:
+        raise ValueError(name + ' failed; inspect the retained log')
+    return response.stdout
+
+
+def resolve(name):
+    if not re.fullmatch(r'[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}', name):
+        raise ValueError('RUN must be a host discovery folder name under tmp/discovery-runs')
+    host = ROOT / 'tmp/discovery-runs' / name
+    report = read(host / 'report.json')
+    if (
+        report['status'] != 'passed'
+        or report['provenance'] != 'real-openai-goal-discovery'
+        or report.get('inputDispatchUncertain')
+    ):
+        raise ValueError('A successful genuine discovery is required')
+    reference = Path(report['desktopRun'])
+    if len(reference.parts) != 1 or not re.fullmatch(
+        r'[0-9]{8}T[0-9]{6}Z-discovery-[a-f0-9]{8}', str(reference)
+    ):
+        raise ValueError('Invalid desktop evidence reference')
+    desktop = ROOT / 'tmp/desktop-artifacts' / reference
+    candidate = desktop / 'candidate/capability.json'
+    cap = read(candidate)
+    provenance = cap['provenance']
+    summary = read(desktop / 'summary.json')
+    if (
+        report['candidate']['sha256'] != digest(candidate)
+        or report['responsesCompleted'] != provenance['requests']
+        or [r['id'] for r in report['responses']] != provenance['responseIds']
+        or summary['runId'] != provenance['runId']
+    ):
+        raise ValueError('Provider, recorder and candidate provenance differ')
+    build = read(host / 'build-preflight.json')
+    image = build['images']['desktop']
+    runtime = {key: image[key] for key in ('format', 'sources', 'runtime')}
+    if (
+        hashlib.sha256((json.dumps(runtime, indent=2) + '\n').encode()).hexdigest()
+        != provenance['runtimeManifestSha256']
+    ):
+        raise ValueError('Discovery runtime fingerprint differs')
+    return host, desktop, candidate, cap, build
+
+
+def evaluate(name):
+    host, desktop, candidate, cap, _ = resolve(name)
+    output = attempt('candidate-reviews')
+    result = dict(
+        format='candidate-evaluation-v1',
+        status='running',
+        candidateSha256=digest(candidate),
+        modelCalls=0,
+        cases=[],
+        sourceManifest=source_hashes(),
+    )
+    try:
+        builds = retain_builds(output)
+        result['images'] = {k: v['imageId'] for k, v in builds.items()}
+        container_path = '/artifacts/' + desktop.name + '/candidate/capability.json'
+        run(
+            ['./scripts/desktop', 'review-validate', '--capability', container_path],
+            output,
+            'validate',
+        )
+        oracle = {
+            k: v
+            for k, v in read(ROOT / 'apps/bank-fixture/tests/oracle.json')['successes'][1].items()
+            if k in ('memberId', 'memberName', 'accountType', 'currency', 'amountMinor')
+        }
+        for scenario in ('default', 'translated'):
+            run(['./scripts/desktop', 'reset', 'bank', scenario], output, scenario + '-reset')
+            verify_running(output)
+            raw = run(
+                [
+                    './scripts/desktop',
+                    'replay',
+                    '--review',
+                    '--capability',
+                    container_path,
+                    '--member-id',
+                    oracle['memberId'],
+                ],
+                output,
+                scenario + '-replay',
+            )
+            state = json.loads(raw)
+            directory = (
+                ROOT / 'tmp/desktop-artifacts' / Path(state['evidence']).relative_to('/artifacts')
+            )
+            report, business = read(directory / 'report.json'), read(directory / 'result.json')
+            if (
+                report['admission'] != 'candidate-review'
+                or report['modelCalls'] != 0
+                or report['capabilitySha256'] != digest(candidate)
+                or business != {'status': 'success', 'output': oracle}
+            ):
+                raise ValueError('Candidate evaluation did not match exact member-B output')
+            retained = output / scenario
+            retained.mkdir()
+            for filename in ('report.json', 'result.json', 'events.jsonl'):
+                shutil.copyfile(directory / filename, retained / filename)
+            result['cases'].append(
+                dict(
+                    scenario=scenario,
+                    status='passed',
+                    files={
+                        filename: digest(retained / filename)
+                        for filename in ('report.json', 'result.json', 'events.jsonl')
+                    },
+                )
+            )
+            print('PASS candidate member B: ' + scenario, flush=True)
+        if (
+            source_hashes() != result['sourceManifest']
+            or digest(candidate) != result['candidateSha256']
+        ):
+            raise ValueError('Source or candidate changed during evaluation')
+        result['status'] = 'passed'
+        write_json(host / 'review-location.json', {'directory': output.name})
+    finally:
+        write_json(output / 'evaluation.json', result)
+        print('Review evidence: ' + str(output), flush=True)
+    print(
+        'Inspect candidate/review.json, REVIEW.md and each static anchor before make promote. Evaluation alone does not approve the candidate.'
+    )
+
+
+def promote(name, reviewer):
+    host, desktop, candidate, cap, build = resolve(name)
+    location = read(host / 'review-location.json')['directory']
+    if not re.fullmatch(r'[0-9]{8}T[0-9]{6}Z-[a-f0-9]{8}', location):
+        raise ValueError('Invalid review reference')
+    output = ROOT / 'tmp/candidate-reviews' / location
+    evaluation = read(output / 'evaluation.json')
+    if (
+        evaluation['status'] != 'passed'
+        or evaluation['candidateSha256'] != digest(candidate)
+        or evaluation['sourceManifest'] != source_hashes()
+        or [c['scenario'] for c in evaluation['cases']] != ['default', 'translated']
+    ):
+        raise ValueError('Review is stale, incomplete or belongs to another candidate')
+    for case in evaluation['cases']:
+        for filename, expected in case['files'].items():
+            if (
+                filename not in ('report.json', 'result.json', 'events.jsonl')
+                or digest(output / case['scenario'] / filename) != expected
+            ):
+                raise ValueError('Evaluation evidence changed')
+    run(
+        [
+            './scripts/desktop',
+            'review-validate',
+            '--capability',
+            '/artifacts/' + desktop.name + '/candidate/capability.json',
+        ],
+        output,
+        'promotion-validation',
+    )
+    steps = cap['steps']
+    boundaries = [
+        (a, b)
+        for a, b in zip(steps, steps[1:])
+        if a['precondition'] == 'input-entered'
+        and any(
+            p['checkpoint'] == 'member-ready' and p.get('outcome') is None
+            for p in a.get('postconditions', [])
+        )
+        and b['action'] == 'click'
+        and b['precondition'] == 'member-ready'
+        and cap['targets'][b['target']]['region']['relativeTo'] == 'savings-button'
+    ]
+    if len(boundaries) != 1:
+        raise ValueError('No unique reviewed member-overview continuation')
+    before, after = boundaries[0]
+    target = ROOT / 'capabilities/generated/savings-balance'
+    approval_path = ROOT / 'capabilities/approvals/discovered-savings.json'
+    if target.exists() or approval_path.exists():
+        raise ValueError('Existing promotion is preserved; use a separately reviewed revision')
+    approval = dict(
+        format='promotion-v1',
+        id='discovered-savings',
+        capabilityFile='generated/savings-balance/capability.json',
+        candidateSha256=digest(candidate),
+        capabilitySha256=digest(candidate),
+        capabilityVersion=cap['capabilityVersion'],
+        assets={k: v['sha256'] for k, v in cap['assets'].items()},
+        policy='bank-read-only-v2',
+        decision='approved',
+        reviewer=reviewer,
+        reviewEdits=[],
+        provenance=cap['provenance'],
+        source=dict(
+            sourceManifestSha256=digest(host / 'source-manifest.json'),
+            buildEvidenceSha256=digest(host / 'build-preflight.json'),
+            desktopImage=build['images']['desktop']['imageId'],
+            fixtureImage=build['images']['fixture']['imageId'],
+            reviewEvidenceSha256=digest(output / 'evaluation.json'),
+        ),
+        environment=cap['environment'],
+        allowedIds=dict(
+            step=[s['id'] for s in steps],
+            target=list(cap['targets']),
+            field=list(cap['fields']),
+            checkpoint=list(cap['checkpoints']),
+        ),
+        continuation=dict(
+            interruptedStep=before['id'], nextStep=after['id'], checkpoint='member-ready'
+        ),
+    )
+    target.mkdir(parents=True)
+    (target / 'anchors').mkdir()
+    shutil.copyfile(candidate, target / 'capability.json')
+    for asset in cap['assets'].values():
+        source = candidate.parent / asset['file']
+        if digest(source) != asset['sha256']:
+            raise ValueError('Reviewed asset changed')
+        shutil.copyfile(source, target / asset['file'])
+    shutil.copyfile(candidate.parent / 'review.json', target / 'recording-review.json')
+    write_json(
+        target / 'promotion-review.json',
+        dict(
+            decision='approved',
+            reviewer=reviewer,
+            reviewEdits=[],
+            candidateSha256=digest(candidate),
+            evaluationSha256=digest(output / 'evaluation.json'),
+            staticCropsReviewed=True,
+            reusedAnnotationsReviewed=True,
+            scope='Fixed bank profile; recorded inputs; agent review is not a real-person attestation',
+        ),
+    )
+    write_json(approval_path, approval)  # Authority is written last, outside the bundle.
+    print('PROMOTED discovered-savings (' + reviewer + '). Run make build before replay.')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('operation', choices=('review', 'promote'))
+    parser.add_argument('--run', required=True)
+    parser.add_argument(
+        '--reviewer', choices=('agent-review', 'user-review'), default='user-review'
+    )
+    args = parser.parse_args()
+    if args.operation == 'review':
+        evaluate(args.run)
+    else:
+        promote(args.run, args.reviewer)
+
+
+if __name__ == '__main__':
+    main()

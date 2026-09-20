@@ -15,25 +15,39 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('status')
     commands.add_parser('stop')
+    review = commands.add_parser('review-validate')
+    review.add_argument('--capability', required=True)
     export = commands.add_parser('export-evidence')
     export.add_argument('--run', required=True, help='Replay directory name under /artifacts')
     action = commands.add_parser('action')
     action.add_argument('--session', required=True)
     action.add_argument('--json', required=True)
     validate = commands.add_parser('validate-capability')
-    validate.add_argument(
-        '--capability', default='/opt/capabilities/poc/savings-balance/capability.json'
-    )
+    validate.add_argument('--capability', default=None)
     replay = commands.add_parser('replay')
-    replay.add_argument(
-        '--capability', default='/opt/capabilities/poc/savings-balance/capability.json'
-    )
+    replay.add_argument('--capability', default=None)
     replay.add_argument('--session')
+    replay.add_argument(
+        '--pause-for-human',
+        action='store_true',
+        help='Treat a verified resumable expiry pause as a successful demo launch',
+    )
+    replay.add_argument(
+        '--review',
+        action='store_true',
+        help='Explicit evaluation of a staged recorded candidate; never approves it',
+    )
     inputs = replay.add_mutually_exclusive_group(required=True)
     inputs.add_argument('--member-id')
     inputs.add_argument('--inputs-json')
     args = parser.parse_args()
     try:
+        if args.command == 'review-validate':
+            from .policy.candidate import review_candidate
+
+            bundle, _ = review_candidate(args.capability)
+            print(json.dumps({'status': 'valid-candidate', 'sha256': bundle.sha256}))
+            return 0
         if args.command == 'export-evidence':
             from .policy.evidence import export_bundle
 
@@ -47,6 +61,13 @@ def main():
             path = export_bundle(root / args.run, exports / args.run)
             print(json.dumps({'status': 'exported', 'evidence': str(path)}))
             return 0
+        if args.command in ('replay', 'validate-capability'):
+            from .policy.admission import capability_path
+
+            if args.capability is None:
+                args.capability = str(capability_path())
+            elif '/' not in args.capability:
+                args.capability = str(capability_path(args.capability))
         if args.command == 'replay':
             from .replay.command import replay as run
 

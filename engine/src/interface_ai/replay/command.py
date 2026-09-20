@@ -14,8 +14,6 @@ from interface_ai.policy.bank import admit, POLICY_ID
 from interface_ai.policy.evidence import safe_code
 from .loader import ReplayError, load_bundle, strict_json, validate_inputs
 
-DEFAULT_CAPABILITY = '/opt/capabilities/poc/savings-balance/capability.json'
-
 
 def replay(args, *, output_root=Path('/artifacts')):
     run_id = (
@@ -35,13 +33,19 @@ def replay(args, *, output_root=Path('/artifacts')):
         except (ValueError, RecursionError):
             raise ReplayError('invalid_input', 'Input JSON is invalid') from None
         inputs = validate_inputs(data)
-        admit(bundle)
+        if getattr(args, 'review', False):
+            from interface_ai.policy.candidate import review_candidate
+
+            bundle, admission = review_candidate(args.capability)
+        else:
+            admission = admit(bundle)
         report.update(
             policy=POLICY_ID,
             capability=bundle.capability.name,
             capabilityVersion=bundle.capability.capabilityVersion,
             capabilitySha256=bundle.sha256,
-            provenance=bundle.capability.provenance,
+            provenance=bundle.capability.model_dump()['provenance'],
+            admission=admission.scope,
             environment=bundle.capability.environment.model_dump(),
         )
         session = read_session()
@@ -57,7 +61,9 @@ def replay(args, *, output_root=Path('/artifacts')):
             raise ReplayError('stopped', 'Reset the desktop before replay')
         # An uncertain transport failure cannot be labeled as zero dispatched input.
         report.update(phase='dispatch', actionsCompleted=None)
-        state = run_coordinated(args.capability, inputs.memberId, session['id'])
+        state = run_coordinated(
+            args.capability, inputs.memberId, session['id'], review=getattr(args, 'review', False)
+        )
         result = state['result']
         if not result:
             raise ReplayError('execution_failed', 'Coordinator returned no run outcome')
@@ -72,6 +78,13 @@ def replay(args, *, output_root=Path('/artifacts')):
                 )
             )
         )
+        if (
+            getattr(args, 'pause_for_human', False)
+            and state['phase'] == 'awaiting_human'
+            and state.get('resumable')
+            and result.get('code') == 'intervention_required'
+        ):
+            return 0
         return 1 if result['status'] == 'failure' else 0
     except Exception as exc:
         result = Failure(code=safe_code(getattr(exc, 'code', 'preflight_failed')))

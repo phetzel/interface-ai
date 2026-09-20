@@ -29,7 +29,7 @@ def handle(handler):
         if not 0 < size <= 4096:
             raise ValueError()
         data = strict_json(handler.rfile.read(size))
-        if handler.path.startswith('/run/'):
+        if handler.path.startswith(('/run/', '/review/')):
             result = run_request(server.controller, handler.path, data)
             handler.reply(200, result)
             return
@@ -80,6 +80,8 @@ def handle(handler):
 
 
 def run_request(controller, path, data):
+    review = path.startswith('/review/')
+    path = path.replace('/review/', '/run/', 1)
     fields = {
         '/run/start': {'session', 'capability', 'memberId'},
         '/run/status': {'session', 'runId'},
@@ -90,13 +92,20 @@ def run_request(controller, path, data):
         if data['session'] != controller.session['id']:
             raise DesktopError('stale_session', 'Refresh the desktop session')
         if path == '/run/start':
-            bundle = load_bundle(data['capability'])
+            admission = None
+            if review:
+                from interface_ai.policy.candidate import review_candidate
+
+                bundle, admission = review_candidate(data['capability'])
+            else:
+                bundle = load_bundle(data['capability'])
             state = controller.ownership.read()
             controller.start(
                 data['memberId'],
                 {'session': state['session'], 'epoch': state['epoch']},
                 bundle=bundle,
                 origin='cli',
+                admission=admission,
             )
         elif controller.directory is None or data['runId'] != controller.directory.name:
             raise DesktopError('invalid_transition', 'The requested run is not active')

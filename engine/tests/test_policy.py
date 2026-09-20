@@ -17,7 +17,10 @@ from io import StringIO
 
 from PIL import Image, ImageDraw
 from interface_ai.desktop import Desktop, DesktopError
-from interface_ai.policy.bank import BankPolicy, POLICY_ID, APPROVED_SHA256, REVIEWED_PATH
+from interface_ai.policy.bank import BankPolicy, POLICY_ID, REVIEWED_PATH
+from interface_ai.policy.admission import reference_bundle
+
+APPROVED_SHA256 = reference_bundle().sha256
 from interface_ai.policy.evidence import checked_event, export_bundle, safe_code
 from interface_ai.policy.gateway import Gateway, allowed_request, upstream_response
 from interface_ai.replay.command import replay
@@ -213,6 +216,8 @@ class EvidenceTests(unittest.TestCase):
         os.mkfifo(self.source / 'report.json')
         script = """
 import sys
+from interface_ai.policy.admission import reference_bundle
+APPROVED_SHA256 = reference_bundle().sha256
 from interface_ai.policy.evidence import export_bundle
 from interface_ai.desktop import DesktopError
 try:

@@ -1,0 +1,10 @@
+{
+  "decision": "approved",
+  "reviewer": "agent-review",
+  "reviewEdits": [],
+  "candidateSha256": "a3e6acd5dfd97d7e420bf9a9287ff60f62b2ea66d4a7b930db8ab9bfa6ca25ca",
+  "evaluationSha256": "80444142465fd02884095c37aef886606ffe4d7ac9a1980969e753311c30f5dc",
+  "staticCropsReviewed": true,
+  "reusedAnnotationsReviewed": true,
+  "scope": "Fixed bank profile; recorded inputs; agent review is not a real-person attestation"
+}

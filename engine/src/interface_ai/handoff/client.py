@@ -18,7 +18,7 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def replay(capability, member_id, session):
+def replay(capability, member_id, session, *, review=False):
     credentials = strict_json(read_regular(RUNTIME / 'discovery-capability.json', 1024))
     if credentials.get('session') != session or not re.fullmatch(
         '[a-f0-9]{64}', credentials.get('token', '')
@@ -28,7 +28,7 @@ def replay(capability, member_id, session):
 
     def post(operation, data):
         req = Request(
-            'http://127.0.0.1:6081/run/' + operation,
+            'http://127.0.0.1:6081/' + ('review/' if review else 'run/') + operation,
             data=json.dumps(data).encode(),
             headers={'Content-Type': 'application/json', 'X-Discovery-Token': credentials['token']},
         )

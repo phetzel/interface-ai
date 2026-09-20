@@ -7,7 +7,8 @@ from pathlib import Path
 from interface_ai.desktop.adapter import DesktopError
 from interface_ai.files import read_regular
 from interface_ai.replay.loader import strict_json
-from .bank import APPROVED_SHA256, POLICY_ID
+from .admission import approval_for_digest, read_approval, APPROVALS, DEFAULT_ID
+from interface_ai.contracts.approval import POLICY_ID
 
 CODES = frozenset(
     """busy checkpoint_timeout deadline display_changed input_failed
@@ -25,41 +26,6 @@ ENUMS = {
     'kind': {'action', 'step', 'target', 'reading', 'checkpoint'},
     'status': {'started', 'completed', 'rejected', 'failed', 'matched', 'satisfied', 'unsatisfied'},
     'action': {'click', 'move', 'type', 'press', 'hotkey', 'scroll', 'extract'},
-    'step': {
-        'focus-member',
-        'select-input',
-        'enter-member',
-        'search-member',
-        'open-savings',
-        'read-balance',
-    },
-    'target': {
-        'search-heading',
-        'member-heading',
-        'account-heading',
-        'member-field',
-        'member-input',
-        'savings-label',
-        'savings-button',
-        'not-found',
-    },
-    'field': {
-        'entered-id',
-        'member-id',
-        'account-member-id',
-        'member-name',
-        'account-type',
-        'currency',
-        'balance',
-        'missing-message',
-    },
-    'checkpoint': {
-        'search-ready',
-        'input-entered',
-        'member-ready',
-        'account-ready',
-        'member-not-found',
-    },
     'code': CODES,
 }
 NUMBERS = {
@@ -80,18 +46,23 @@ def safe_code(value):
     return value if isinstance(value, str) and value in CODES else 'execution_failed'
 
 
-def checked_event(event):
+def checked_event(event, allowed_ids=None):
+    enums = ENUMS | (
+        allowed_ids
+        if allowed_ids is not None
+        else read_approval(APPROVALS / (DEFAULT_ID + '.json')).allowedIds.model_dump()
+    )
     if (
         not isinstance(event, dict)
         or not event
-        or set(event) - (ENUMS.keys() | NUMBERS.keys() | {'box'})
+        or set(event) - (enums.keys() | NUMBERS.keys() | {'box'})
     ):
         reject()
     for key, value in event.items():
-        if key in ENUMS:
+        if key in enums:
             if value is None and key in ('step', 'action'):
                 continue
-            if not isinstance(value, str) or value not in ENUMS[key]:
+            if not isinstance(value, str) or value not in enums[key]:
                 reject()
         elif key in NUMBERS:
             if (
@@ -136,8 +107,16 @@ def export_bundle(source, destination):
         reject()
     try:
         report = strict_json(_read(source / 'report.json', 65536))
+        if not isinstance(report, dict):
+            reject()
+        approval = (
+            approval_for_digest(report.get('capabilitySha256'))
+            if report.get('phase') == 'execution'
+            else None
+        )
+        allowed_ids = approval.allowedIds.model_dump() if approval else None
         events = [
-            checked_event(strict_json(line))
+            checked_event(strict_json(line), allowed_ids)
             for line in _read(source / 'events.jsonl', 4 * 1024 * 1024).splitlines()
         ]
         if (
@@ -147,11 +126,13 @@ def export_bundle(source, destination):
             or type(report.get('modelCalls')) is not int
             or report['modelCalls'] != 0
             or type(report.get('actionsCompleted')) is not int
-            or not 0 <= report['actionsCompleted'] <= 5
+            or not 0
+            <= report['actionsCompleted']
+            <= (len(approval.allowedIds.step) - 1 if approval else 0)
         ):
             reject()
         if report['phase'] == 'execution' and (
-            report.get('policy') != POLICY_ID or report.get('capabilitySha256') != APPROVED_SHA256
+            report.get('policy') != POLICY_ID or report.get('admission', 'approved') != 'approved'
         ):
             reject()
         if report['phase'] == 'preflight' and (
@@ -166,8 +147,8 @@ def export_bundle(source, destination):
                 reject()
             summary['code'] = report['code']
         if report['phase'] == 'execution':
-            summary.update(policy=POLICY_ID, capabilitySha256=APPROVED_SHA256)
-    except (ValueError, TypeError, KeyError, RecursionError):
+            summary.update(policy=POLICY_ID, capabilitySha256=approval.capabilitySha256)
+    except (ValueError, TypeError, KeyError, RecursionError, DesktopError):
         reject()
     # All data is validated before creating an output directory. No source
     # filenames, run labels, raw exceptions, results, or pixels are copied.

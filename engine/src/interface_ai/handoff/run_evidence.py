@@ -14,14 +14,15 @@ def write_replay(controller, result):
     events = []
     for entry in controller.audit:
         if entry['kind'] == 'interpreter':
-            events.append(checked_event(entry['event']))
+            events.append(checked_event(entry['event'], controller.admission.allowed_ids))
         elif entry['kind'] == 'automation':
             events.append(
                 checked_event(
                     {
                         'kind': 'action',
                         **{k: v for k, v in entry.items() if k not in ('kind', 'elapsedMs')},
-                    }
+                    },
+                    controller.admission.allowed_ids,
                 )
             )
     report = dict(
@@ -36,7 +37,9 @@ def write_replay(controller, result):
         capability=bundle.capability.name,
         capabilityVersion=bundle.capability.capabilityVersion,
         capabilitySha256=bundle.sha256,
-        provenance=bundle.capability.provenance,
+        provenance=bundle.capability.model_dump()['provenance'],
+        admission=controller.admission.scope,
+        approvalId=controller.admission.approval_id,
         environment=bundle.capability.environment.model_dump(),
         sessionId=controller.session['id'],
         elapsedSeconds=round(time.monotonic() - controller.started, 3),

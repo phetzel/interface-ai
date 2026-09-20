@@ -1,3 +1,5 @@
+**M4-05 update (2026-09-20):** [recorded artifact promoted](../evidence/m4-05-promotion/README.md) after unchanged member-B and translated-layout review replays. Ordinary approved replay passes. M4-06 integrated evidence and regression remain next.
+
 **M4-04 update (2026-09-20):** [genuine recorded candidate](../evidence/m4-04-recorded-candidate/README.md) validates and remains unapproved. Review, second-member/translated replay and promotion are next.
 
 **M4-03 update (2026-09-20):** [genuine goal-driven discovery passed](../evidence/m4-03-goal-discovery/README.md): three model requests, four native inputs, exact local member-A result. Recorder, reviewed promotion and generated-artifact offline reuse remain next.
