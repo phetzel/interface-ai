@@ -1,0 +1,45 @@
+{
+  "provenance": "agent-operated-browser-and-real-Docker-shutdown",
+  "realHumanWitnessed": false,
+  "modelCalls": 0,
+  "manualReplay": {
+    "session": "79c8b2e2-eef2-4da8-ab52-b3a9e7ec8374",
+    "phase": "success",
+    "step": "read-balance",
+    "result": {
+      "status": "success",
+      "output": {
+        "memberId": "00456",
+        "memberName": "Demo Member B",
+        "accountType": "Savings",
+        "currency": "USD",
+        "amountMinor": 9807
+      }
+    }
+  },
+  "jobBeforeShutdown": {
+    "id": "b7c4c85ec5044c62a1ee466b096a9174",
+    "kind": "switch",
+    "status": "running",
+    "stage": "Starting desktop",
+    "app": "bank-translated"
+  },
+  "activeBeforeShutdown": true,
+  "downExitCode": 0,
+  "downSeconds": 20.32,
+  "immediatelyAfter": {
+    "portsClosed": {
+      "6081": true,
+      "6082": true
+    },
+    "containersAbsent": true
+  },
+  "eightSecondsLater": {
+    "portsClosed": {
+      "6081": true,
+      "6082": true
+    },
+    "containersAbsent": true
+  },
+  "status": "passed"
+}

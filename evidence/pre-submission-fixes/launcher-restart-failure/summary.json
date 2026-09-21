@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "name": "policy-reset",
+      "status": "failed",
+      "errorType": "AssertionError"
+    }
+  ],
+  "errorType": "AssertionError"
+}

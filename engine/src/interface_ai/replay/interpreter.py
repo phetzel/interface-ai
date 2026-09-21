@@ -39,6 +39,22 @@ class Interpreter(Recognition):
         )
         self.capture_sink = capture_sink or (lambda name, image: None)
         self.pause_check = pause_check
+        self.checking_precondition = False
+
+    def before_action(self):
+        while True:
+            observation = self.observe()
+            matched = observation.checkpoint(self.step.precondition)
+            self.guard()
+            if matched:
+                return observation
+            if getattr(observation, 'checkpoint_error', None) != 'ocr_uncertain':
+                raise ReplayError(
+                    'precondition_failed', 'Required screen checkpoint is not satisfied'
+                )
+            # Re-observe only uncertain OCR. Never repeat input, accept a wrong
+            # identity, or extend the original step deadline.
+            time.sleep(min(0.05, max(0, self.step_deadline - self.clock())))
 
     def wait_after_action(self):
         while True:
@@ -66,11 +82,9 @@ class Interpreter(Recognition):
                 self.step = step
                 self.step_deadline = self.clock() + step.timeoutSeconds
                 self.emit('step', action=step.action, status='started')
-                observation = self.observe()
-                if not observation.checkpoint(step.precondition):
-                    raise ReplayError(
-                        'precondition_failed', 'Required screen checkpoint is not satisfied'
-                    )
+                self.checking_precondition = True
+                observation = self.before_action()
+                self.checking_precondition = False
                 self.guard()
                 if isinstance(step, Extract):
                     values = {
@@ -112,7 +126,7 @@ class Interpreter(Recognition):
             code = safe_code(code)
             expected = (
                 [self.step.precondition]
-                if code == 'precondition_failed'
+                if self.checking_precondition
                 else [p.checkpoint for p in getattr(self.step, 'postconditions', [])]
             )
             if isinstance(self.step, Extract) and code != 'precondition_failed':

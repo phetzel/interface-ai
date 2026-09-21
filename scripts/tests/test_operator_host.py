@@ -12,6 +12,8 @@ from urllib.error import HTTPError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from lib import operator_host as host  # noqa: E402
+from lib.discovery_flow import run_discovery
+import test_discovery_flow as flow
 
 
 class HostTests(unittest.TestCase):
@@ -74,6 +76,59 @@ class HostTests(unittest.TestCase):
             self.assertEqual(jobs.job['status'], 'stopped')
             operator.return_value.post.assert_called_with('/stop')
             self.assertFalse(jobs.active)
+
+    def test_incomplete_recording_flow_is_not_advertised_as_reviewable(self):
+        # The real host flow classifies the worker's incomplete-recording response;
+        # even a stale zero exit code must not make the launcher call it a candidate.
+        jobs = host.Jobs()
+        jobs.job = dict(id='recording-test', kind='discover', status='running')
+        jobs.active = True
+        with (
+            tempfile.TemporaryDirectory() as folder,
+            patch.object(host, 'ROOT', Path(folder)),
+            patch.object(host, 'Operator') as operator,
+        ):
+            operator.return_value.status.return_value = dict(session='new')
+            evidence = Path(folder) / 'tmp/discovery-runs/test'
+            evidence.mkdir(parents=True)
+
+            def execute(args, log, timeout):
+                if args[0] == './scripts/desktop':
+                    return 0
+                transport = flow.Transport(complete=True)
+                post = transport.post
+
+                def incomplete(op, data):
+                    frame = post(op, data)
+                    if op == 'propose':
+                        frame['candidate'] = dict(status='incomplete', code='recording_incomplete')
+                    return frame
+
+                transport.post = incomplete
+                saved = flow.report()
+                result = run_discovery(
+                    flow.FlowTests().client(),
+                    transport,
+                    saved,
+                    lambda: (evidence / 'report.json').write_text(json.dumps(saved)),
+                    '00123',
+                )
+                self.assertEqual(result['status'], 'success')
+                log.write_text('Evidence: ' + str(evidence) + '\n')
+                return 0
+
+            with patch.object(jobs, 'execute', side_effect=execute):
+                jobs.run(dict(kind='discover', goal='Find the savings balance for member 00123'))
+            self.assertEqual(jobs.job['status'], 'failed')
+            self.assertFalse(jobs.job['candidate'])
+            self.assertIn('recording incomplete', jobs.job['stage'])
+            self.assertIn('no reviewable candidate', jobs.job['stage'])
+
+    def test_closing_idle_launcher_does_not_stop_a_new_cli_desktop(self):
+        jobs = host.Jobs()
+        with patch.object(host, 'Operator') as operator:
+            jobs.close()
+            operator.assert_not_called()
 
 
 class HTTPTests(unittest.TestCase):

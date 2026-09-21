@@ -1,0 +1,13 @@
+{
+  "provenance": "simulated-provider-and-OS-recorder-fault",
+  "modelCalls": 0,
+  "desktopStatus": "failed",
+  "lookupStatus": "success",
+  "candidateFileExists": false,
+  "cliExitCode": 1,
+  "hostStatus": "failed",
+  "code": "recording_incomplete",
+  "launcherStatus": "failed",
+  "launcherStage": "Lookup succeeded; recording incomplete \u00b7 no reviewable candidate",
+  "reviewableCandidate": false
+}

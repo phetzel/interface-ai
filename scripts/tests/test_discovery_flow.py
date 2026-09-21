@@ -9,7 +9,7 @@ from unittest.mock import Mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from lib.discovery import ProbeError
-from lib.discovery_flow import goal, run_discovery
+from lib.discovery_flow import goal, run_discovery, recorded_candidate
 from lib.discovery_request import DiscoveryRequest
 from test_discovery import FIRST, Transport as ProbeTransport
 
@@ -24,6 +24,7 @@ class Transport(ProbeTransport):
         frame.update(directory='discovery-test', actionsCompleted=1)
         if self.complete and op == 'propose':
             frame['result'] = {'status': 'success', 'output': {'amountMinor': 123456}}
+            frame['candidate'] = dict(status='candidate', directory='candidate', sha256='a' * 64)
         return frame
 
 
@@ -66,6 +67,33 @@ class FlowTests(unittest.TestCase):
         self.assertIn(request.goal, prompt)
         self.assertIn(request.entry_point, prompt)
         self.assertNotIn(request.goal, json.dumps(saved))
+
+    def test_incomplete_recording_preserves_lookup_but_fails_discovery(self):
+        for candidate in (
+            None,
+            {},
+            {'status': 'incomplete', 'code': 'recording_incomplete'},
+            {'status': 'candidate'},
+            {'status': 'candidate', 'directory': '../wrong', 'sha256': 'a' * 64},
+        ):
+            with self.subTest(candidate=candidate):
+                transport = Transport(complete=True)
+                post = transport.post
+
+                def missing_recording(op, data):
+                    frame = post(op, data)
+                    if op == 'propose':
+                        frame['candidate'] = candidate
+                    return frame
+
+                transport.post = missing_recording
+                saved = report()
+                result = run_discovery(self.client(), transport, saved, lambda: None, '00123')
+                self.assertEqual(result['status'], 'success')
+                self.assertEqual(result['output']['amountMinor'], 123456)
+                self.assertEqual(saved['status'], 'failed')
+                self.assertEqual(saved['code'], 'recording_incomplete')
+                self.assertFalse(recorded_candidate(saved['candidate']))
 
     def test_twenty_request_budget_is_enforced(self):
         client = self.client()

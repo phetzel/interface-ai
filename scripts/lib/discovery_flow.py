@@ -1,6 +1,7 @@
 """Bounded goal-driven provider loop. No scripted UI path or business-result parsing."""
 
 import time
+import re
 from .discovery_request import DiscoveryRequest
 
 from .discovery import (
@@ -16,6 +17,17 @@ from .discovery import (
 
 def goal(member):
     return DiscoveryRequest.parse(member_id=member).prompt()
+
+
+def recorded_candidate(candidate):
+    """Completion requires the recorder's reference, not a truthy error record."""
+    return (
+        isinstance(candidate, dict)
+        and candidate.get('status') == 'candidate'
+        and candidate.get('directory') == 'candidate'
+        and isinstance(candidate.get('sha256'), str)
+        and re.fullmatch('[0-9a-f]{64}', candidate['sha256']) is not None
+    )
 
 
 def run_discovery(client, transport, report, save, member, *, request=None, clock=time.monotonic):
@@ -87,8 +99,13 @@ def run_discovery(client, transport, report, save, member, *, request=None, cloc
         report['inputDispatchUncertain'] = False
         if frame.get('result') is not None:
             report['candidate'] = frame.get('candidate')
-            report['status'] = 'passed' if frame['result']['status'] == 'success' else 'failed'
             report['resultStatus'] = frame['result']['status']
+            complete = report['resultStatus'] == 'success' and recorded_candidate(
+                report['candidate']
+            )
+            report['status'] = 'passed' if complete else 'failed'
+            if report['resultStatus'] == 'success' and not complete:
+                report['code'] = 'recording_incomplete'
             save()
             return frame['result']
         append_observation(history, response, call['call_id'], frame)

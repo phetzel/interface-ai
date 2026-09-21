@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "modelCalls": 0,
+  "checks": [
+    {
+      "suite": "policy",
+      "status": "passed",
+      "evidence": "policy"
+    },
+    {
+      "suite": "replay",
+      "status": "passed",
+      "evidence": "replay"
+    },
+    {
+      "suite": "manual-replay",
+      "status": "passed",
+      "evidence": "manual-replay"
+    },
+    {
+      "suite": "handoff",
+      "status": "passed",
+      "evidence": "handoff"
+    },
+    {
+      "suite": "manual-handoff",
+      "status": "passed",
+      "evidence": "manual-handoff"
+    },
+    {
+      "suite": "discovery",
+      "status": "passed",
+      "evidence": "discovery"
+    },
+    {
+      "suite": "lifecycle",
+      "status": "passed",
+      "evidence": "lifecycle"
+    },
+    {
+      "suite": "operator",
+      "status": "passed",
+      "evidence": "operator"
+    }
+  ]
+}

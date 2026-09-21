@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import secrets
 import shutil
+import signal
 import subprocess
 import threading
 import time
@@ -20,11 +21,14 @@ import uuid
 from .acceptance import ROOT
 from .discovery import load_key
 from .discovery_request import DiscoveryRequest
+from .discovery_flow import recorded_candidate
 from .operator import Operator
 
 ADDRESS = ('127.0.0.1', 6082)
 ORIGIN = 'http://127.0.0.1:6081'
 BASE = 'http://127.0.0.1:6082'
+SHUTDOWN_DRAIN_SECONDS = 200
+SHUTDOWN_CLEANUP_SECONDS = 40
 APPS = {
     'bank': ('bank', 'default', 'Northstar bank'),
     'bank-iframe': ('bank', 'iframe', 'Bank · nested iframes'),
@@ -68,6 +72,11 @@ class Jobs:
     def __init__(self):
         self.lock = threading.Lock()
         self.cancel = threading.Event()
+        self.closing = threading.Event()
+        self.forced = threading.Event()
+        self.process_lock = threading.Lock()
+        self.process = None
+        self.worker = None
         self.job = None
         self.session = None
         self.active = False
@@ -79,6 +88,7 @@ class Jobs:
                 root=str(ROOT),
                 fingerprint=FINGERPRINT,
                 active=self.active,
+                shuttingDown=self.closing.is_set(),
                 apps=[{'id': key, 'label': value[2]} for key, value in APPS.items()],
                 job=dict(self.job) if self.job else None,
                 session=self.session,
@@ -108,6 +118,8 @@ class Jobs:
             except Exception:
                 raise RequestError('Set OPENAI_API_KEY in the private .env file first') from None
         with self.lock:
+            if self.closing.is_set():
+                raise RequestError('Launcher is shutting down')
             if self.active:
                 raise RequestError('An operator job is already running')
             self.cancel.clear()
@@ -131,7 +143,8 @@ class Jobs:
                 app=data.get('app', 'bank'),
             )
             self.session = current['session']
-            threading.Thread(target=self.run, args=(data,), daemon=True).start()
+            self.worker = threading.Thread(target=self.run, args=(data,), daemon=False)
+            self.worker.start()
 
     def update(self, **values):
         with self.lock:
@@ -142,21 +155,64 @@ class Jobs:
         environment['INTERFACE_AI_HOST_CHILD'] = '1'
         environment['CAPABILITY'] = 'discovered-savings'
         with log.open('wb') as stream:
-            process = subprocess.Popen(
-                args, cwd=ROOT, env=environment, stdout=stream, stderr=stream
-            )
+            with self.process_lock:
+                if self.forced.is_set():
+                    raise ValueError('Launcher shutdown cancelled the job')
+                process = self.process = subprocess.Popen(
+                    args,
+                    cwd=ROOT,
+                    env=environment,
+                    stdout=stream,
+                    stderr=stream,
+                    start_new_session=True,
+                )
             try:
                 # Reset is allowed to drain on Stop, then the new session is stopped.
                 # Discovery polls the revoked desktop lease before every model call.
                 return process.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
-                process.terminate()
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    process.kill()
-                    process.wait()
+                with self.process_lock:
+                    self.terminate_process(process)
                 raise ValueError('Job timed out; reset before retrying') from None
+            finally:
+                with self.process_lock:
+                    self.process = None
+
+    @staticmethod
+    def terminate_process(process):
+        # Each child has its own process group, including shell/uv descendants.
+        for sig in (signal.SIGTERM, signal.SIGKILL):
+            try:
+                os.killpg(process.pid, sig)
+            except ProcessLookupError:
+                pass
+            if sig == signal.SIGTERM:
+                try:
+                    process.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    pass
+        process.wait(timeout=3)
+
+    def close(self, timeout=SHUTDOWN_DRAIN_SECONDS):
+        self.closing.set()
+        self.cancel.set()
+        with self.lock:
+            worker = self.worker
+            active = self.active
+        if not active:
+            return
+        self.stop_desktop()
+        if worker is None:
+            raise RuntimeError('Active launcher job has no supervisor; desktop teardown withheld')
+        worker.join(timeout)
+        if worker.is_alive():
+            self.forced.set()
+            with self.process_lock:
+                if self.process is not None:
+                    self.terminate_process(self.process)
+            worker.join(SHUTDOWN_CLEANUP_SECONDS)
+        if worker.is_alive():
+            raise RuntimeError('Launcher job cleanup did not finish; desktop teardown withheld')
 
     def run(self, data):
         directory = ROOT / 'tmp/operator-jobs' / self.job['id']
@@ -172,7 +228,6 @@ class Jobs:
             with self.lock:
                 self.session = current['session']
             if self.cancel.is_set():
-                operator.post('/stop')
                 self.update(status='stopped', stage='Stopped')
                 return
             if data['kind'] == 'switch':
@@ -204,15 +259,28 @@ class Jobs:
             ):
                 raise ValueError('Discovery ended without a report; inspect the operator job log')
             report = json.loads((evidence / 'report.json').read_text())
-            passed = code == 0 and report['status'] == 'passed' and not self.cancel.is_set()
+            candidate = recorded_candidate(report.get('candidate'))
+            passed = (
+                code == 0
+                and report['status'] == 'passed'
+                and candidate
+                and not self.cancel.is_set()
+            )
+            stage = (
+                'Candidate recorded · review required' if passed else 'Discovery stopped or failed'
+            )
+            if (
+                not self.cancel.is_set()
+                and report.get('resultStatus') == 'success'
+                and not candidate
+            ):
+                stage = 'Lookup succeeded; recording incomplete · no reviewable candidate'
             self.update(
                 status='passed' if passed else ('stopped' if self.cancel.is_set() else 'failed'),
-                stage='Candidate recorded · review required'
-                if passed
-                else 'Discovery stopped or failed',
+                stage=stage,
                 evidence=str(evidence.relative_to(ROOT)),
                 requests=report['requestsAttempted'],
-                candidate=bool(report.get('candidate')),
+                candidate=candidate,
             )
         except Exception as exc:
             self.update(
@@ -302,10 +370,12 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == '/jobs':
                 self.server.jobs.start(data)
             elif self.path in ('/stop', '/shutdown') and data == {}:
-                if self.path == '/stop' or self.server.jobs.active:
+                if self.path == '/stop':
                     self.server.jobs.stop()
                 if self.path == '/shutdown':
-                    threading.Thread(target=self.server.shutdown, daemon=True).start()
+                    self.server.jobs.closing.set()
+                    self.server.jobs.cancel.set()
+                    threading.Thread(target=self.server.shutdown, daemon=False).start()
             else:
                 raise ValueError('Unknown operation')
             self.reply(200, self.server.jobs.snapshot())
@@ -324,6 +394,14 @@ class Server(ThreadingHTTPServer):
         self.jobs = Jobs()
         self.token = secrets.token_hex(32)
         super().__init__(address, Handler)
+
+    def shutdown(self):
+        self.jobs.close()
+        super().shutdown()
+
+    def server_close(self):
+        self.jobs.close()
+        super().server_close()
 
 
 def local_request(path='/status', body=None, token=None):
@@ -352,7 +430,24 @@ def lifecycle(operation):
         or status.get('fingerprint') != FINGERPRINT
     ):
         local_request('/shutdown', {}, status['token'])
-        time.sleep(0.6)
+        deadline = time.monotonic() + SHUTDOWN_DRAIN_SECONDS + SHUTDOWN_CLEANUP_SECONDS + 20
+        while True:
+            try:
+                remaining = local_request()
+            except OSError as exc:
+                reason = getattr(exc, 'reason', exc)
+                if isinstance(reason, ConnectionRefusedError):
+                    break
+                if not isinstance(reason, ConnectionResetError):
+                    raise
+                # A closing listener may reset an accepted connection first.
+                # Only refusal confirms closure; keep observing until then.
+            else:
+                if remaining.get('token') != status['token']:
+                    raise RuntimeError('Launcher changed during shutdown; retry desktop teardown')
+            if time.monotonic() >= deadline:
+                raise RuntimeError('Launcher shutdown is still pending; desktop teardown withheld')
+            time.sleep(0.1)
         status = None
     if operation == 'stop' or status:
         return

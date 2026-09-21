@@ -1,0 +1,16 @@
+{
+  "format": "handoff-v2",
+  "status": "success",
+  "resultStatus": "success",
+  "reason": null,
+  "step": "extract-result",
+  "lastCheckpoint": "account-ready",
+  "modelCalls": 0,
+  "sessionId": "c37e3bd9-c31c-40bf-8ea9-a7cf7f953ae7",
+  "sessionUnchanged": true,
+  "capabilitySha256": "a3e6acd5dfd97d7e420bf9a9287ff60f62b2ea66d4a7b930db8ab9bfa6ca25ca",
+  "auditEvents": 98,
+  "humanActions": 13,
+  "automationActions": 4,
+  "resultSha256": "65e76ae463ee2c8bd4c0999c03e5929bdc3618feeb55c395157c41946f50eefa"
+}

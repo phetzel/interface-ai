@@ -1,0 +1,9 @@
+{
+  "status": "failure",
+  "code": "ocr_uncertain",
+  "step": "extract-result",
+  "expected": [
+    "validated-output"
+  ],
+  "observed": "rejected"
+}

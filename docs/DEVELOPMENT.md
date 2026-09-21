@@ -55,7 +55,7 @@ The full runner sequences work against the single desktop and links child eviden
 OPENAI_API_KEY=your-key
 ```
 
-Use your editor rather than putting the key in shell history, then run `chmod 600 .env`. An existing `OPENAI_API_KEY` environment variable is also supported. Do not put the key in Compose, the fixture, an artifact or evidence.
+Use your editor rather than putting the key in shell history, then run `chmod 600 .env`. The operator requires this private file. CLI discovery also supports an existing `OPENAI_API_KEY` environment variable; the operator launcher deliberately removes inherited `OPENAI_` variables. Do not put the key in Compose, the fixture, an artifact or evidence.
 
 ```sh
 make discover GOAL="Read the savings balance for member 00456"

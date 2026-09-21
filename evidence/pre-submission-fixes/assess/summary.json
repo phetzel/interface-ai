@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "command": "make assess",
+  "provenance": "agent-operated-local-CLI-and-browser",
+  "realHumanWitnessed": false,
+  "modelCalls": 0,
+  "capability": "discovered-savings",
+  "observedOperatorStatus": "Lookup complete",
+  "observedDisplay": "Demo Member B / 00456 / Savings / USD / $98.07",
+  "buildCheck": "passed",
+  "restoredAfterShutdownTest": true
+}

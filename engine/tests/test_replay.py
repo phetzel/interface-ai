@@ -25,7 +25,7 @@ from interface_ai.replay.loader import (
     strict_json,
     validate_inputs,
 )
-from interface_ai.vision import Box
+from interface_ai.vision import Box, VisionError
 
 BUNDLE_PATH = (
     Path(__file__).resolve().parents[2] / 'capabilities/poc/savings-balance/capability.json'
@@ -396,9 +396,14 @@ class InterpreterTests(unittest.TestCase):
 
         desktop = FakeDesktop()
         iterator = iter(readings)
-        ocr = SimpleNamespace(
-            line=lambda *a, **kw: SimpleNamespace(text=next(iterator), confidence=95.0)
-        )
+
+        def line(*a, **kw):
+            reading = next(iterator)
+            if isinstance(reading, Exception):
+                raise reading
+            return SimpleNamespace(text=reading, confidence=95.0)
+
+        ocr = SimpleNamespace(line=line)
         runner = Interpreter(
             self.bundle,
             MemberInput(memberId='00340'),
@@ -409,6 +414,47 @@ class InterpreterTests(unittest.TestCase):
             **({} if clock is None else {'clock': clock}),
         )
         return runner, desktop
+
+    def test_uncertain_precondition_reobserves_without_repeating_completed_input(self):
+        runner, desktop = self.identity_runner(
+            ['00340', VisionError('ocr_uncertain', 'Synthetic transient'), '00340']
+        )
+        result = runner.run()
+        self.assertEqual(result.status, 'success')
+        self.assertEqual(
+            [a['type'] for a in desktop.actions], ['click', 'hotkey', 'type', 'press', 'click']
+        )
+        self.assertTrue(any(e.get('code') == 'ocr_uncertain' for e in self.events))
+
+    def test_uncertain_precondition_keeps_deadline_and_stop_guards(self):
+        for stop in (False, True):
+            with self.subTest(stop=stop):
+                now = [0]
+                runner, desktop = self.identity_runner(
+                    ['00340'] + [VisionError('ocr_uncertain', 'Synthetic transient')] * 100
+                )
+
+                def clock():
+                    if runner.step is not None and runner.step.id == 'search-member':
+                        now[0] += 0.1
+                        if stop and any(e.get('code') == 'ocr_uncertain' for e in self.events):
+                            desktop.stop_after = 3
+                    return now[0]
+
+                runner.clock = clock
+                self.events.clear()
+                result = runner.run()
+                self.assertEqual(result.code, 'stopped' if stop else 'checkpoint_timeout')
+                self.assertEqual(result.expected, ['input-entered'])
+                self.assertEqual(len(desktop.actions), 3)
+
+    def test_wrong_identity_after_uncertainty_is_not_retried_or_accepted(self):
+        runner, desktop = self.identity_runner(
+            ['00340', VisionError('ocr_uncertain', 'Synthetic transient'), '00912', '00340']
+        )
+        result = runner.run()
+        self.assertEqual(result.code, 'precondition_failed')
+        self.assertEqual(len(desktop.actions), 3)
 
     def test_transient_malformed_and_wrong_id_wait_for_exact_checkpoint_without_retyping(self):
         runner, desktop = self.identity_runner(['00340|', '00912', '00340', '00340'])

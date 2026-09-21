@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "approvalId": "discovered-savings",
+  "capabilitySha256": "a3e6acd5dfd97d7e420bf9a9287ff60f62b2ea66d4a7b930db8ab9bfa6ca25ca",
+  "operatorProvenance": "automated-test-through-operator-api",
+  "modelCalls": 0,
+  "realHumanWitnessed": false,
+  "cases": [
+    {
+      "case": "member-a-adversarial",
+      "status": "passed",
+      "sameSession": true,
+      "exactOracleMatch": true,
+      "noRepeatedAutomationInput": true,
+      "noAutomationDuringHuman": true,
+      "sanitizedInterpreterTrace": true,
+      "operatorStepContext": true,
+      "sensitiveValuesAbsent": true,
+      "wrongScreenAndMemberRejected": true
+    },
+    {
+      "case": "member-b",
+      "status": "passed",
+      "sameSession": true,
+      "exactOracleMatch": true,
+      "noRepeatedAutomationInput": true,
+      "noAutomationDuringHuman": true,
+      "sanitizedInterpreterTrace": true,
+      "operatorStepContext": true,
+      "sensitiveValuesAbsent": true,
+      "wrongScreenAndMemberRejected": false
+    }
+  ]
+}

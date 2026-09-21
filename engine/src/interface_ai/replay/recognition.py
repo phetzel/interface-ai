@@ -85,6 +85,7 @@ class Observation:
         return self.fields[name]
 
     def checkpoint(self, name):
+        self.checkpoint_error = None
         checkpoint = self.runner.cap.checkpoints[name]
         try:
             for target in checkpoint.targets:
@@ -100,6 +101,8 @@ class Observation:
             return True
         except VisionError as exc:
             if exc.code in ('target_missing', 'ocr_uncertain'):
+                self.checkpoint_error = exc.code
+                self.runner.emit('checkpoint', checkpoint=name, status='unsatisfied', code=exc.code)
                 return False
             raise
         except ReplayError as exc:

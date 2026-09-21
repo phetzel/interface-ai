@@ -50,3 +50,7 @@ The public command surface is now eight commands; one named-suite runner replace
 ## Operator workspace
 
 The operator now starts bounded goal discovery, lists independently admitted saved workflows, and switches between the existing synthetic bank variants and native input pad. A local host service starts/stops with the existing desktop commands; SDK/key/Docker access remain outside the isolated runtime. App switching replaces the session, while takeover preserves it. See [operator design and validation](OPERATOR_WORKSPACE.md).
+
+## Pre-submission audit follow-up
+
+The independent audit of `5ef8f68` confirmed the required scope and successful full regression/clean-source rehearsal, while identifying three defects. Local corrections distinguish incomplete recording from lookup success, supervise child jobs through launcher shutdown, and allow bounded re-observation of uncertain OCR before input. Operator `.env` requirements are now explicit. See [the correction and verification record](../evidence/pre-submission-fixes/README.md) for exact tested bytes and outcomes. The audit's original failed attempts and approved capability bytes remain unchanged. Publication and submission remain author actions.

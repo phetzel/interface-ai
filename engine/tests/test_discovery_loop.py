@@ -6,13 +6,14 @@ import tempfile
 import time
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from PIL import Image
 from interface_ai.contracts.models import SavingsOutput, Success
 from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.discovery.actions import normalize
 from interface_ai.discovery.worker import Discovery
 from interface_ai.handoff.controller import Controller
+from interface_ai.replay.loader import ReplayError
 from test_desktop import Backend
 
 CLICK = {'type': 'click', 'button': 'left', 'x': 100, 'y': 200}
@@ -149,6 +150,27 @@ class DiscoveryLoopTests(unittest.TestCase):
             self.send(frame, [CLICK])
         self.assertEqual(self.backend.calls, [])
         self.assertEqual(self.c.snapshot()['phase'], 'stopped')
+
+    def test_recorder_failure_preserves_result_and_reports_incomplete_discovery(self):
+        frame = self.start()
+        self.discovery.recorder = SimpleNamespace(
+            observe=lambda *_: None,
+            finish=Mock(side_effect=ReplayError('recording_incomplete', 'Synthetic failure')),
+        )
+        frame = self.send(
+            frame,
+            [CLICK, {'type': 'type', 'text': '00123'}, {'type': 'keypress', 'keys': ['ENTER']}],
+        )
+        frame = self.send(frame, [dict(CLICK, x=900, y=600)])
+        self.discovery.worker.join(2)
+        self.assertEqual(frame['result']['output']['amountMinor'], 123456)
+        self.assertEqual(frame['candidate']['status'], 'incomplete')
+        summary = json.loads((self.discovery.directory / 'summary.json').read_text())
+        result = json.loads((self.discovery.directory / 'result.json').read_text())
+        self.assertEqual(summary['status'], 'failed')
+        self.assertEqual(summary['code'], 'recording_incomplete')
+        self.assertEqual(result['status'], 'success')
+        self.assertFalse((self.discovery.directory / 'candidate/capability.json').exists())
 
     def test_human_takeover_drops_late_response_and_new_observations(self):
         frame = self.start()

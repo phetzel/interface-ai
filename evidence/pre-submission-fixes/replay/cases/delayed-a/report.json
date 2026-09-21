@@ -1,0 +1,64 @@
+{
+  "runId": "20260921T064914Z-replay-8228bf01",
+  "modelCalls": 0,
+  "phase": "execution",
+  "actionsCompleted": 4,
+  "status": "success",
+  "policy": "bank-read-only-v2",
+  "capability": "savings-balance-discovered",
+  "capabilityVersion": "0.1.0",
+  "capabilitySha256": "a3e6acd5dfd97d7e420bf9a9287ff60f62b2ea66d4a7b930db8ab9bfa6ca25ca",
+  "provenance": {
+    "kind": "recorded-openai-discovery",
+    "runId": "e746dd79-c7cc-4a4b-ab3e-51fb2fde8b2a",
+    "sessionId": "d39926d1-4e21-4f5c-9008-9d8bb7f07c11",
+    "provider": "openai",
+    "model": "gpt-5.6-sol",
+    "requests": 3,
+    "responseIds": [
+      "resp_0b5532e2a420e628016aafb0ac47d087d0a1dd3170e7814d69",
+      "resp_0b5532e2a420e628016aafb0af505887d09ffeb9b83a2df84d",
+      "resp_0b5532e2a420e628016aafb0b45b1887d0aafa69fd7542e48f"
+    ],
+    "executedActions": [
+      "action-001",
+      "action-002",
+      "action-003",
+      "action-004"
+    ],
+    "inputBindings": [
+      {
+        "sourceAction": "action-002",
+        "step": "action-002",
+        "input": "memberId"
+      }
+    ],
+    "trajectorySha256": "2b8088ef5f3a8ef4262d5195567b60d3fc778ecf3409ed3b9257bfa49113bb28",
+    "observationsSha256": "78b85bd2f6b70880428f9de26e56a5fe0c85230dbe9f34fb3cd2ae09022c321e",
+    "runtimeManifestSha256": "504cba6b5a931c0c7511f92290404c301c7d9658d4842ca6504c2e8078bc8e86",
+    "recognitionProfileSha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+    "derivation": "bank-static-label-review-v1"
+  },
+  "admission": "approved",
+  "approvalId": "discovered-savings",
+  "environment": {
+    "platform": "linux-x11",
+    "width": 1280,
+    "height": 800,
+    "locale": "en-US",
+    "scale": 1,
+    "ocrModelSha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "minimumConfidence": 80.0,
+    "ocrScale": 3,
+    "ocrPSM": 7,
+    "totalTimeoutSeconds": 45.0
+  },
+  "sessionId": "9353e7dc-d51a-492d-b676-a160eb4c6709",
+  "elapsedSeconds": 5.141,
+  "packages": {
+    "pydantic": "2.12.5",
+    "opencv-python-headless": "4.12.0.88",
+    "numpy": "2.2.6",
+    "Pillow": "11.3.0"
+  }
+}

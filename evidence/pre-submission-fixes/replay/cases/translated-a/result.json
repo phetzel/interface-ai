@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "output": {
+    "memberId": "00123",
+    "memberName": "Demo Member A",
+    "accountType": "Savings",
+    "currency": "USD",
+    "amountMinor": 123456
+  }
+}

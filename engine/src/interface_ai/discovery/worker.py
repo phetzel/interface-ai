@@ -353,9 +353,13 @@ class Discovery(Reservation):
                     self.candidate = self.recorder.finish(self)
                 except (ReplayError, ValidationError, KeyError, ValueError):
                     self.candidate = dict(status='incomplete', code='recording_incomplete')
+                    self.code = 'recording_incomplete'
             with self.controller.mutex:
                 if self.controller.phase == 'running':
-                    self.status = 'passed' if self.result.status == 'success' else 'failed'
+                    self.status = (
+                        'passed' if self.result.status == 'success' and not self.code else 'failed'
+                    )
+                    # Keep the verified business result, even when recording failed.
                     self.controller.finalize(self.result)
                 else:
                     raise DesktopError('ownership_revoked', 'Discovery lost ownership')

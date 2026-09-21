@@ -1,0 +1,69 @@
+ Container interface-ai-fixture-1  Recreate
+ Container interface-ai-fixture-1  Recreated
+ Container interface-ai-fixture-1  Starting
+ Container interface-ai-fixture-1  Started
+ Container interface-ai-fixture-1  Waiting
+ Container interface-ai-fixture-1  Healthy
+Fixture ready: http://fixture:4173 inside the desktop network; scenario=policy. Reload any open fixture page after reset.
+ Container interface-ai-gateway-1  Recreate
+ Container interface-ai-gateway-1  Recreated
+ Container interface-ai-gateway-1  Starting
+ Container interface-ai-gateway-1  Started
+ Container interface-ai-gateway-1  Waiting
+ Container interface-ai-gateway-1  Healthy
+ Container interface-ai-desktop-1  Recreate
+ Container interface-ai-desktop-1  Recreated
+ Container interface-ai-operator-1  Recreate
+ Container interface-ai-operator-1  Recreated
+ Container interface-ai-desktop-1  Starting
+ Container interface-ai-desktop-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-operator-1  Starting
+ Container interface-ai-operator-1  Started
+ Container interface-ai-operator-1  Waiting
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-operator-1  Healthy
+{"id": "c58fa579-4e96-45ca-98a6-b31b80a0a25d", "display": ":99", "width": 1280, "height": 800, "operator": "http://127.0.0.1:6081/", "mode": "bank", "windowId": 2097155, "windowClass": ["chromium (/tmp/interface-ai/chromium-profile)", "Chromium"], "appPid": 21, "sandbox": {"browserFilterCount": 1, "renderers": [{"pid": 140, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 149, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 158, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}]}, "pids": {"display": 9, "window manager": 14, "Chromium": 21}, "inputStopped": false}
+Traceback (most recent call last):
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 1346, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1257, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1303, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1252, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 1012, in _send_output
+    self.send(msg)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 952, in send
+    self.connect()
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/client.py", line 923, in connect
+    self.sock = self._create_connection(
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 843, in create_connection
+    raise err
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socket.py", line 831, in create_connection
+    sock.connect(sa)
+ConnectionResetError: [Errno 54] Connection reset by peer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/phillip/interview/interface-ai/scripts/operator-host", line 14, in <module>
+    lifecycle(args.operation)
+  File "/Users/phillip/interview/interface-ai/scripts/lib/operator_host.py", line 436, in lifecycle
+    remaining = local_request()
+  File "/Users/phillip/interview/interface-ai/scripts/lib/operator_host.py", line 414, in local_request
+    with build_opener(ProxyHandler({})).open(request, timeout=10) as response:
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 517, in open
+    response = self._open(req, data)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 534, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 494, in _call_chain
+    result = func(*args)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 1375, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+  File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/urllib/request.py", line 1349, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 54] Connection reset by peer>
