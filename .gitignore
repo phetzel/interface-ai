@@ -16,3 +16,9 @@ tmp/
 evidence/raw/
 
 .ruff_cache/
+
+# Personal preparation belongs outside the public source tree.
+/docs/manual-acceptance.html
+/docs/repository-audit.html
+/docs/SUBMISSION.md
+/private-preparation/

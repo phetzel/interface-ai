@@ -1,12 +1,14 @@
-**2026-09-20 update:** genuine discovery, recorded capability and reviewed second-member replay are implemented in M4. Integrated acceptance and full M1–M3 regressions passed; see [current plan](CURRENT_PLAN.md) and [current evidence](../evidence/README.md). The dated phase descriptions below retain the original planning context.
+**2026-09-20 update:** genuine discovery, recorded capability and reviewed second-member replay are implemented in M4. Integrated acceptance and full M1–M3 regressions passed; see [current plan](../CURRENT_PLAN.md) and [current evidence](../../evidence/README.md). The dated phase descriptions below retain the original planning context.
+
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
 
 # Roadmap, proof-of-concept gates, and dependencies
 
-Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. M3 now implements PoC D with live simulated-operator checks; its [specification](MILESTONE_3.md) distinguishes automated validation from the real-person demonstration. OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 was committed and pushed as `3726347`.
+Update 2026-09-15: **M2/PoC B passes its bounded acceptance gate.** Its [specification](MILESTONE_2.md) records options, primary-source research, selected boundaries, and implementation findings; [evidence](../../evidence/poc-m2/README.md) retains failed/passing attempts and final hardening checks. M3 now implements PoC D with live simulated-operator checks; its [specification](MILESTONE_3.md) distinguishes automated validation from the real-person demonstration. OpenAI discovery (PoC E) remains pending and needs reviewed outbound observations plus artifact promotion. M2 was committed and pushed as `3726347`.
 
 The first bounded implementation slice is specified in [MILESTONE_1.md](MILESTONE_1.md), covering the minimal fixture, desktop control, and model-free visual replay. Later roadmap requirements remain in scope for subsequent milestones.
 
-M1 completion record, 2026-09-12: **M1 is complete**, including PoC C's repeated/reproducibility gate. The corrected full run passed 47 tests, ten alternating-member baselines, seven scenarios, and seven rejection cases; both the initial failed attempt and successful rerun are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). PoC A is proven for the tested desktop. PoC B, D, and E were pending at M1 completion; the M2 update above records subsequent progress. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request.
+M1 completion record, 2026-09-12: **M1 is complete**, including PoC C's repeated/reproducibility gate. The corrected full run passed 47 tests, ten alternating-member baselines, seven scenarios, and seven rejection cases; both the initial failed attempt and successful rerun are retained in [M1-06 evidence](../../evidence/poc-m1/acceptance/README.md). PoC A is proven for the tested desktop. PoC B, D, and E were pending at M1 completion; the M2 update above records subsequent progress. M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request.
 
 ## Objective and order of work
 
@@ -172,11 +174,11 @@ Do not build production orchestration, multiple model providers, multiple operat
 
 ## Current dependency update (2026-09-20)
 
-M1–M4 are implemented. The user completed the M1–M3 manual acceptance checklist, including real-person takeover. M4 adds genuine discovery, a recorded candidate, agent-reviewed promotion, offline second-member replay and generated-artifact handoff. Its integrated gate and full earlier regressions passed; see [current evidence](../evidence/m4-06-integration/README.md). The operator at 6081 is the only desktop surface; the separate 6080 VNC viewer was retired.
+M1–M4 are implemented. The user completed the M1–M3 manual acceptance checklist, including real-person takeover. M4 adds genuine discovery, a recorded candidate, agent-reviewed promotion, offline second-member replay and generated-artifact handoff. Its integrated gate and full earlier regressions passed; see [current evidence](../../evidence/m4-06-integration/README.md). The operator at 6081 is the only desktop surface; the separate 6080 VNC viewer was retired.
 
 ## What is blocking the final assessment?
 
-[M5: assessment readiness](MILESTONE_5.md) is the final implementation/packaging milestone. Goal/target admission, operator sizing, the required report, the one-command assessor demo, final regressions and a complete fresh-checkout discovery/replay rehearsal are finished. [M5 evidence](../evidence/m5-readiness/README.md) records the exact source and limits.
+[M5: assessment readiness](MILESTONE_5.md) is the final implementation/packaging milestone. Goal/target admission, operator sizing, the required report, the one-command assessor demo, final regressions and a complete fresh-checkout discovery/replay rehearsal are finished. [M5 evidence](../../evidence/m5-readiness/README.md) records the exact source and limits.
 
 | Remaining work | Owner | Completion |
 | --- | --- | --- |
@@ -186,4 +188,4 @@ M1–M4 are implemented. The user completed the M1–M3 manual acceptance checkl
 | Checklist export and optional demo video | User | Preserve browser-local self-reports; video is optional |
 | Final public repository and submission email | User approval | Private preparation ends only after review; send the link from the application email address |
 
-The scaled click issue now has fit/actual-size viewing and a compact responsive control layout, with automated coordinate/Stop checks. Personal comfort with the newer layout still needs feedback. Named test suites replace milestone commands, and the same bank has a nested local-iframe variant; see [cleanup validation](../evidence/assessment-cleanup/README.md). The earlier phase descriptions above preserve the original planning context.
+The scaled click issue now has fit/actual-size viewing and a compact responsive control layout, with automated coordinate/Stop checks. Personal comfort with the newer layout still needs feedback. Named test suites replace milestone commands, and the same bank has a nested local-iframe variant; see [cleanup validation](../../evidence/assessment-cleanup/README.md). The earlier phase descriptions above preserve the original planning context.

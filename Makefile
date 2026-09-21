@@ -22,7 +22,7 @@ help: ## Show the assessment commands
 
 help-dev:
 	@echo 'build, start, up, reset, ready, operator, logs, stop, validate, replay, demo, export'
-	@echo 'fixture-install, fixture-dev, fixture-preview, fixture-test, build-check, quality, format, audit-setup'
+	@echo 'fixture-install, fixture-dev, fixture-preview, fixture-test, build-check, quality, format, dev-setup'
 
 start: build
 	./scripts/desktop reset bank default
@@ -32,12 +32,12 @@ start: build
 assess: build ## Build and demonstrate the generated capability for member B; no key required
 	$(MAKE) demo MEMBER_ID=00456
 
-audit-setup: fixture-install build
+dev-setup: fixture-install build
 	./apps/bank-fixture/node_modules/.bin/playwright install chromium
 	$(MAKE) check SUITE=quick
 	./scripts/desktop reset bank default
 	./scripts/desktop validate-capability --capability "$$CAPABILITY"
-	@echo 'Audit setup complete. Continue with the banking UI section of docs/manual-acceptance.html.'
+	@echo 'Development setup complete. See docs/DEMO.md for the walkthrough.'
 
 build:
 	./scripts/desktop build
@@ -126,4 +126,4 @@ quick-check:
 	$(MAKE) check SUITE=quick
 handoff-demo: handoff
 
-.PHONY: help help-dev start assess audit-setup build up reset ready operator discover handoff logs stop down validate replay demo check export fixture-install fixture-dev fixture-preview fixture-test build-check quality format review promote quick-check handoff-demo
+.PHONY: help help-dev start assess dev-setup build up reset ready operator discover handoff logs stop down validate replay demo check export fixture-install fixture-dev fixture-preview fixture-test build-check quality format review promote quick-check handoff-demo

@@ -21,10 +21,10 @@
 
 ## Working and verification
 
-Start with [README](README.md), [current plan](docs/CURRENT_PLAN.md), [evidence index](evidence/README.md) and the [cleanup audit](docs/CLEANUP_AUDIT_2026-09-17.md). The milestone documents preserve design/history; the README and latest evidence record describe current behavior.
+Start with [README](README.md), [current plan](docs/CURRENT_PLAN.md), [evidence index](evidence/README.md) and the [cleanup audit](docs/history/CLEANUP_AUDIT_2026-09-17.md). The milestone documents preserve design/history; the README and latest evidence record describe current behavior.
 
 - `make quality` checks pinned formatting and Python correctness rules; `make format` formats active source.
 - After image input changes, `make build`; `make build-check` rejects stale images and verifies shipped bytes, including compiled fixture assets.
 - `make check` runs formatting/lint, host harness tests, Linux engine tests, schema drift checks and fixture typechecking without a live desktop.
 - For fixture changes run `make fixture-test`. For execution/policy/ownership/harness changes run the affected live gates (`make check SUITE=policy`, `make check SUITE=handoff`) and panel checks. Keep one live desktop suite at a time; do not edit executable source while a gate freezes its source manifest.
-- Both HTML checklists are standalone, independent reviewer self-reports. Update their source links/instructions when behavior changes; do not confuse testing the pages with completing either human audit.
+- Keep personal preparation forms, reviewer exports and submission drafts outside this repository. Public documentation should explain setup, design, supported behavior and evidence provenance.

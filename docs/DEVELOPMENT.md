@@ -4,14 +4,14 @@ The [README](../README.md) and [demo](DEMO.md) are the assessor entry points. Hi
 
 ## Setup
 
-The offline demo needs Docker Desktop/Compose and Make. Development checks also need Python 3.9+, Node 22 (`.nvmrc` pins the tested version) and `uv`. From the repository root:
+The offline demo needs Docker Desktop/Compose, Make and Python 3.9+. Development checks also need Node 22 (`.nvmrc` pins the tested version) and `uv`. From the repository root:
 
 ```sh
 nvm use
-make audit-setup
+make dev-setup
 ```
 
-This installs fixture dependencies and Playwright Chromium, builds both images, runs the quick checks, and resets/validates a fresh bank desktop. It stops on failure. Playwright is a UI test dependency; the automation engine uses native input and pixels. For the original manual-artifact checklist, use `make audit-setup CAPABILITY=manual-savings` instead.
+This installs fixture dependencies and Playwright Chromium, builds both images, runs the quick checks, and resets/validates a fresh bank desktop. It stops on failure. Playwright is a UI test dependency; the automation engine uses native input and pixels. Select `CAPABILITY=manual-savings` to validate the historical baseline instead.
 
 For React work, `make fixture-dev` starts Vite. `make fixture-preview` builds and serves the standalone fixture on port 4173. This preview is separate from the isolated desktop and is unnecessary for the assessor demo.
 

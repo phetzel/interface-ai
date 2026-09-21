@@ -1,6 +1,8 @@
 # Milestone 2: Policy enforcement and safe evidence
 
-Status: **M2-01 through M2-04 complete for the declared environment**, 2026-09-15. This is the bounded PoC B from the roadmap. [Acceptance evidence](../evidence/poc-m2/README.md) retains the failed and passing full attempts and final two-file hardening verification: 63 engine tests, 14 fixture tests, ten baselines, seven scenarios, seven rejection cases, live policy checks, and safe export. No model calls or human takeover were added. M2 was committed and pushed as `3726347` at the user’s request.
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
+Status: **M2-01 through M2-04 complete for the declared environment**, 2026-09-15. This is the bounded PoC B from the roadmap. [Acceptance evidence](../../evidence/poc-m2/README.md) retains the failed and passing full attempts and final two-file hardening verification: 63 engine tests, 14 fixture tests, ten baselines, seven scenarios, seven rejection cases, live policy checks, and safe export. No model calls or human takeover were added. M2 was committed and pushed as `3726347` at the user’s request.
 
 ## Outcome and scope
 

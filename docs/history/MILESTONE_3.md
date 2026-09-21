@@ -1,6 +1,8 @@
 # M3 — Same-session human takeover
 
-Status: the M3 baseline (`ec2b56e`) and pre-audit Stop/diagnostic repair (`a63a143`) are committed and pushed. The September 17 repository cleanup adds terminal evidence, input error classification, readable panel assets and verified build provenance. Consult the [current evidence index](../evidence/README.md) for current counts and limitations. This document preserves the milestone's design/history; a real-person demonstration remains pending.
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
+Status: the M3 baseline (`ec2b56e`) and pre-audit Stop/diagnostic repair (`a63a143`) are committed and pushed. The September 17 repository cleanup adds terminal evidence, input error classification, readable panel assets and verified build provenance. Consult the [current evidence index](../../evidence/README.md) for current counts and limitations. This document preserves the milestone's design/history; a real-person demonstration remains pending.
 
 ## Pre-audit repair, 17 September 2026
 
@@ -12,7 +14,7 @@ Expiry maintenance retries after the active action releases the mutex, even if t
 
 Handoff now records `kind: interpreter` entries with a nested event validated by the same closed metadata rules as CLI replay. These include reviewed step/target/checkpoint identifiers, confidence and recognition-region boxes, never OCR values, typed text, raw keys or human input coordinates. Input action totals remain separate. The panel displays the current/last observed step, last verified checkpoint, and reason; the last verified checkpoint is historical context, not a claim about the present screen. Resume verification also records satisfied/unsatisfied checkpoint metadata.
 
-See [pre-audit validation](../evidence/pre-audit-2026-09-17/README.md). The checklist now tests panel Stop separately from CLI Stop and inspects an ordinary failed handoff run. It uses a new local-storage version so earlier checklist marks do not silently carry into this revised pass. CLI/coordinator unification, expanded failure routing, artifact promotion and genuine discovery remain subsequent work.
+See [pre-audit validation](../../evidence/pre-audit-2026-09-17/README.md). The checklist now tests panel Stop separately from CLI Stop and inspects an ordinary failed handoff run. It uses a new local-storage version so earlier checklist marks do not silently carry into this revised pass. CLI/coordinator unification, expanded failure routing, artifact promotion and genuine discovery remain subsequent work.
 
 ## Scope and acceptance
 

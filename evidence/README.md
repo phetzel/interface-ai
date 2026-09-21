@@ -1,6 +1,24 @@
-# Evidence index
+# Evidence
 
-Use this index to distinguish a claim from the exact source and environment that support it. Failed attempts are retained alongside corrections. Historical counts are not current test totals. Raw local attempts live under ignored `tmp/`; curated records below identify their source revision or working-tree hashes.
+Start with these records. Each identifies its source revision or hashes, environment and provenance. Runtime corrections are committed as `ccb4a6d`; older records retain the limits of the version they tested.
+
+| Question | Record |
+| --- | --- |
+| Did the model actually discover and record the workflow? | [Genuine discovery and candidate](m4-04-recorded-candidate/README.md): three provider responses, four executed inputs and explicit reused annotations |
+| Was the same candidate reviewed and reused for another member? | [Promotion](m4-05-promotion/README.md): unchanged candidate, member-B/shifted-layout evaluation and separate agent approval |
+| Does current replay and handoff pass? | [Latest corrections and verification](pre-submission-fixes/README.md): 133 engine tests, 36 host tests, eight live suites, operator shutdown and offline demo |
+| Can setup work from a clean checkout? | [Setup rehearsal](m5-readiness/clean-checkout/summary.json): offline demo plus genuine discovery/review/promotion/replay on the tested machine and caches |
+| What was operated through the UI? | [Operator workspace](operator-workspace/README.md): agent-operated goals, workflows, app switching, native input and recovery |
+| What did a person observe? | [Human takeover observations](../docs/HUMAN_OBSERVATIONS.md): author reports, separately labeled from automated and agent-operated checks |
+
+## Reading the evidence
+
+Routine reports/events contain sanitized metadata; separate result files intentionally contain synthetic business values. Provider IDs and trajectory hashes establish lineage. Reviewed static crops and historical synthetic fixture captures are retained where explicitly identified. No API key, assignment PDF or personal reviewer export is part of the package.
+
+A passing replay does not establish arbitrary-app support. Promotion is agent review, simulated handoff is automated, and reported human observation is a separate claim. Intermittent native startup failures remain unresolved and are preserved alongside subsequent passes. Raw local attempts are ignored under `tmp/`.
+
+<details>
+<summary>Earlier validation and implementation history</summary>
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
@@ -22,14 +40,6 @@ Use this index to distinguish a claim from the exact source and environment that
 | M2 baseline `3726347` | [M2 record](poc-m2/README.md) | Bounded policy, isolation, safe export and M1 regression | Synthetic fixed environment; no general redaction or arbitrary-page authorization |
 | Original M1 gate | [M1 acceptance](poc-m1/acceptance/README.md) | Native/browser desktop primitives, manual capability, OCR, repeated replay and rejections | Manually authored capability, fixed Linux ARM64 environment |
 
-## Human observations and remaining work
+</details>
 
-The user reports the M1–M3 manual checklist passed, including real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results. Preserve the exported reviewer checklist before final submission. The generated promotion is explicitly agent-reviewed; generated takeover automation is not a second real-person attestation.
-
-Genuine discovery, recording and reviewed second-member reuse now have the records above. M5 completed `REPORT.md`, the clean-clone rehearsal and agent-owned packaging. The author reported generated-artifact takeover #41 complete on September 20. Remaining author work is preserving exported self-reports, the repository/interview walkthrough, feedback on the newer operator layout and public submission. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
-
-Both [manual acceptance](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) now include unverified M4 supplements. Automated tests do not complete those self-reports. Routine metadata excludes typed values, raw OCR and screenshots; separate synthetic business results and reviewed static crops have explicit retention boundaries. Historical limits in the table describe their original revisions, not the current implementation.
-
-## Operator workspace
-
-[Goal entry, saved workflows and app switching](operator-workspace/README.md) records agent-operated UI checks, two genuine provider runs, startup-race corrections and affected regression results. It preserves the difference between new unapproved recordings and admitted saved replay.
+Historical counts, commands and preparation references describe their original revisions. Current instructions are in the [development guide](../docs/DEVELOPMENT.md); the [coverage map](../docs/ASSESSMENT_CHECK.md) links requirements directly to current proof.

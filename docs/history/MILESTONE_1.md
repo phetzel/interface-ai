@@ -1,6 +1,8 @@
 # Milestone 1: Isolated desktop and model-free banking replay
 
-Status: **M1-01 through M1-06 complete** for the declared environment on 2026-09-12 Pacific time. The full acceptance gate passed 47 tests, ten alternating-member clean-reset baselines, seven scenario replays, seven zero-action rejection cases, and lifecycle/input/viewer/isolation checks. The first attempt exposed a transient OCR identity error; a bounded checkpoint correction passed the complete rerun with the same artifact and recognition settings. Both attempts and the mapping to every criterion below are retained in [M1-06 evidence](../evidence/poc-m1/acceptance/README.md). M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. All replay uses zero model calls.
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
+Status: **M1-01 through M1-06 complete** for the declared environment on 2026-09-12 Pacific time. The full acceptance gate passed 47 tests, ten alternating-member clean-reset baselines, seven scenario replays, seven zero-action rejection cases, and lifecycle/input/viewer/isolation checks. The first attempt exposed a transient OCR identity error; a bounded checkpoint correction passed the complete rerun with the same artifact and recognition settings. Both attempts and the mapping to every criterion below are retained in [M1-06 evidence](../../evidence/poc-m1/acceptance/README.md). M1-04 was pushed as `1d89ba8`; M1-05 (`2ea242a`) and M1-06 are committed and pushed at the user's request. All replay uses zero model calls.
 
 ## Outcome
 
@@ -77,7 +79,7 @@ Use visibly synthetic labels such as Demo Member A/B. Preserve leading zeroes in
 
 The app does not require a backend in M1. Scenario configuration and data reset belong to the test harness, not the replay action contract. The harness may read expected values and configure failure scenarios; the runner may not obtain results from fixture source, app state, DOM, browser evaluation, an HTTP API, or hidden metadata. The interpreter sees only declared inputs, its artifact, screenshots, and local recognition results.
 
-Implemented variants: default (250 ms search), delayed (1,800 ms), permanently blocked search, duplicated savings target in the same account list, unreadable balance, and +40 px main-content translation on both axes at desktop widths. Controls are launch-time environment settings, not UI or query-string options. The app and expected-result oracle are tested independently of the future replay engine; see [fixture README](../apps/bank-fixture/README.md).
+Implemented variants: default (250 ms search), delayed (1,800 ms), permanently blocked search, duplicated savings target in the same account list, unreadable balance, and +40 px main-content translation on both axes at desktop widths. Controls are launch-time environment settings, not UI or query-string options. The app and expected-result oracle are tested independently of the future replay engine; see [fixture README](../../apps/bank-fixture/README.md).
 
 ## Minimal contracts
 
@@ -142,7 +144,7 @@ The reset helper may relaunch the trusted fixture entry point and choose a scena
 
 ## Definition of done
 
-All criteria below passed in the corrected M1-06 acceptance run; see the [criterion-to-evidence table](../evidence/poc-m1/acceptance/README.md). Counts are engineering gates, not assignment requirements or statistical reliability claims. `./scripts/m1-check` reproduces the full gate.
+All criteria below passed in the corrected M1-06 acceptance run; see the [criterion-to-evidence table](../../evidence/poc-m1/acceptance/README.md). Counts are engineering gates, not assignment requirements or statistical reliability claims. `./scripts/m1-check` reproduces the full gate.
 
 1. **Environment:** a fresh start opens the fixture in the isolated desktop; the viewer shows the same session; readiness, reset, shutdown, and repeated start work.
 2. **Input:** screenshot/input coordinates agree; a native text-entry smoke and the browser fixture use the same low-level adapter; a stop request prevents subsequent actions.

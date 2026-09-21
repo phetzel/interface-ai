@@ -1,6 +1,6 @@
 # Repository cleanup audit evidence
 
-See the [full audit and ordered recommendations](../../docs/CLEANUP_AUDIT_2026-09-17.md). Baseline: `a63a143` plus the existing local React refactor; no implementation changes were made by this audit.
+See the [full audit and ordered recommendations](../../docs/history/CLEANUP_AUDIT_2026-09-17.md). Baseline: `a63a143` plus the existing local React refactor; no implementation changes were made by this audit.
 
 | Record | Scope |
 | --- | --- |

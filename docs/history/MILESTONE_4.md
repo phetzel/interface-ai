@@ -1,6 +1,8 @@
 # M4 — Discover, record, review, and replay
 
-Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../evidence/m4-03-goal-discovery/README.md). M4-04 [recorded candidate passed](../evidence/m4-04-recorded-candidate/README.md). M4-05 [review and promotion passed](../evidence/m4-05-promotion/README.md). M4-06 [integrated acceptance and full regressions passed](../evidence/m4-06-integration/README.md). [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
+Status: M4-01 provider/transport code and [genuine OpenAI acceptance](../../evidence/m4-01-live-provider/README.md) passed 2026-09-20. M4-02 shared lifecycle is implemented and [validated](../../evidence/m4-02-shared-lifecycle/README.md). M4-03 [genuine goal discovery passed](../../evidence/m4-03-goal-discovery/README.md). M4-04 [recorded candidate passed](../../evidence/m4-04-recorded-candidate/README.md). M4-05 [review and promotion passed](../../evidence/m4-05-promotion/README.md). M4-06 [integrated acceptance and full regressions passed](../../evidence/m4-06-integration/README.md). [M4-01 setup, decisions and limits](M4_01_PROVIDER_PROBE.md). This specification was prepared 2026-09-19 after the M1–M3 manual acceptance pass.
 
 ## Outcome
 
@@ -8,7 +10,7 @@ Given the goal “Find the savings balance for member 00123” and the running s
 
 At milestone planning, the largest remaining assessment requirement was: genuine goal-driven discovery and an artifact demonstrably derived from it. M1–M3 already establish desktop input, manual-artifact replay, policy/evidence controls and same-session takeover. The real-person member-A recovery has now been witnessed; preserve that evidence rather than treating another simulated run as its replacement.
 
-M4 is one complete savings-lookup workflow on the current Linux ARM64 desktop. It includes the lifecycle and artifact-admission changes needed to support that workflow. Cross-platform support, arbitrary workflow recovery, another provider, a workflow editor and operator click-targeting polish remain outside this milestone. The reported click difficulty remains tracked as UX-01 in [manual audit notes](MANUAL_AUDIT_NOTES.md).
+M4 is one complete savings-lookup workflow on the current Linux ARM64 desktop. It includes the lifecycle and artifact-admission changes needed to support that workflow. Cross-platform support, arbitrary workflow recovery, another provider, a workflow editor and operator click-targeting polish remain outside this milestone. The reported click difficulty remains tracked as UX-01 in [manual audit notes](../HUMAN_OBSERVATIONS.md).
 
 ## Research and decisions
 

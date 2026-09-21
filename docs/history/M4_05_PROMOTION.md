@@ -1,5 +1,7 @@
 # M4-05 — Review and promotion
 
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
 The recorder writes an unapproved candidate under its private desktop run. `make review RUN=<host-discovery-folder>` cross-checks real provider metadata, candidate/trajectory digests and the discovery image fingerprint. It then uses an explicitly scoped review route to replay the exact candidate for member B on default and translated layouts. This route uses the ordinary coordinator, desktop policy, ownership epochs and interpreter, without a provider client. It grants no ordinary approval or resumable takeover.
 
 After inspecting `candidate/REVIEW.md`, `review.json`, the static anchor images and the evaluation results, `make promote RUN=<host-discovery-folder>` makes the local approval decision. It preserves the candidate bytes and records an empty review delta when no edits were needed. The checked-in first promotion uses `agent-review`: Codex inspected the crops and annotations. That is distinct from a real person witnessing takeover or reviewing the code. The command defaults to `user-review` when the user explicitly performs this review and promotion themselves.

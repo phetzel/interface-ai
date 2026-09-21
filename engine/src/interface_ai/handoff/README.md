@@ -28,4 +28,4 @@ CLI replay, panel runs and discovery reservations now share this coordinator. `r
 
 The host-only `/probe/*`, `/discover/*`, `/run/*` and `/review/*` routes use a separate private capability absent from HTML/model context. Probe remains a one-click connection test. Discovery has a bounded goal-driven worker and recorder; it can transfer human control, but has no automatically inferred continuation. Its provider call count is unknown to the desktop and is recorded by the host. `/review/*` admits only a validated staged candidate for explicit local evaluation; it cannot grant ordinary approval or resume authority.
 
-[Discovery design](../../../../docs/M4_03_DISCOVERY.md) · [Review/promotion](../../../../docs/M4_05_PROMOTION.md) · [Current evidence](../../../../evidence/README.md).
+[Discovery design](../../../../docs/history/M4_03_DISCOVERY.md) · [Review/promotion](../../../../docs/history/M4_05_PROMOTION.md) · [Current evidence](../../../../evidence/README.md).

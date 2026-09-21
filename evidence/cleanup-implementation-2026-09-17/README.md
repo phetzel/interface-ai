@@ -1,6 +1,6 @@
 # Repository cleanup implementation · September 17, 2026
 
-This record follows the [repository audit](../../docs/CLEANUP_AUDIT_2026-09-17.md). The prior React refactor/audit was committed and pushed as `d0a4f21`. Mechanical formatting is separated in `f4f8e99`: all 46 Python syntax trees are unchanged, and fixture typechecking passed. Behavioral cleanup is identified by the source/build manifests and the subsequent implementation commit containing this record.
+This record follows the [repository audit](../../docs/history/CLEANUP_AUDIT_2026-09-17.md). The prior React refactor/audit was committed and pushed as `d0a4f21`. Mechanical formatting is separated in `f4f8e99`: all 46 Python syntax trees are unchanged, and fixture typechecking passed. Behavioral cleanup is identified by the source/build manifests and the subsequent implementation commit containing this record.
 
 ## Resolution
 

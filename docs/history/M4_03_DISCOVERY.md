@@ -1,5 +1,7 @@
 # M4-03 — Bounded goal-driven discovery
 
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
 From a built workspace with the host key in `.env`, run `make discover MEMBER_ID=00123`. This resets the synthetic bank and invokes the pinned host Python/OpenAI environment. The desktop keeps no provider key, SDK, or external network route. The operator at port 6081 shows the run and retains Stop/takeover.
 
 The host sends the goal and a permitted screenshot to Responses with `store: false`. It retains required encrypted reasoning/tool items only in bounded process memory. A native computer-tool response can contain up to four primitives. The desktop normalizes supported actions, consumes the observation lease, checks current ownership and the visible control before each input, and verifies its effect from pixels. Provider prose never supplies the business result.
@@ -14,4 +16,4 @@ The actual provider returned click/type/Enter batches and trailing waits. A wait
 
 A strict visual allowlist limits flexibility but gives an inspectable boundary for this first workflow. The alternative—accepting arbitrary coordinates or generated code—would make the recorder and safety proof harder to explain. This is a fixed-environment demonstration, not a general computer agent.
 
-[Validation and genuine provider evidence](../evidence/m4-03-goal-discovery/README.md). The later [recorder evidence](../evidence/m4-04-recorded-candidate/README.md) and [promotion implementation](M4_05_PROMOTION.md) now establish generated artifact reuse. Provider data controls remain separate from local retention: `store: false` is not a promise of zero provider retention.
+[Validation and genuine provider evidence](../../evidence/m4-03-goal-discovery/README.md). The later [recorder evidence](../../evidence/m4-04-recorded-candidate/README.md) and [promotion implementation](M4_05_PROMOTION.md) now establish generated artifact reuse. Provider data controls remain separate from local retention: `store: false` is not a promise of zero provider retention.

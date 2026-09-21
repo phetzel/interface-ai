@@ -1,6 +1,8 @@
 # M4-01: provider and guarded transport proof
 
-Implemented 2026-09-20. This tests **one model-selected click**, then a request carrying the resulting screenshot. It also permits one initial screenshot-only request from the model. It does not discover a savings workflow or record a capability. [Genuine OpenAI acceptance passed](../evidence/m4-01-live-provider/README.md) on 2026-09-20; offline results retain separate provenance.
+> Historical design record. Use the [current setup and commands](../DEVELOPMENT.md).
+
+Implemented 2026-09-20. This tests **one model-selected click**, then a request carrying the resulting screenshot. It also permits one initial screenshot-only request from the model. It does not discover a savings workflow or record a capability. [Genuine OpenAI acceptance passed](../../evidence/m4-01-live-provider/README.md) on 2026-09-20; offline results retain separate provenance.
 
 ## Run the real proof
 
@@ -54,7 +56,7 @@ The visual policy supports the fixed synthetic fixture only. Reviewed static anc
 
 ## Evidence and validation
 
-[Dated validation record](../evidence/m4-01-provider-transport/README.md): 107 engine tests, 11 host tests with the SDK, five transport cases and the existing M1–M3 gates passed. It preserves exact source hashes and its then-pending live status. The [live follow-up](../evidence/m4-01-live-provider/README.md) records the genuine pass, 15 host tests and six transport checks after the protocol correction.
+[Dated validation record](../../evidence/m4-01-provider-transport/README.md): 107 engine tests, 11 host tests with the SDK, five transport cases and the existing M1–M3 gates passed. It preserves exact source hashes and its then-pending live status. The [live follow-up](../../evidence/m4-01-live-provider/README.md) records the genuine pass, 15 host tests and six transport checks after the protocol correction.
 
 Host evidence contains request counts, response/model IDs, returned token totals, safe codes and source/image fingerprints. Desktop evidence contains closed native-action metadata and a summary. Screenshots, raw responses, encrypted reasoning, prompts and keys stay out of evidence. The desktop reports `modelCalls: null` because only the host knows provider usage. Simulations explicitly report zero actual calls. `store: false` does not guarantee zero provider retention; see [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data).
 

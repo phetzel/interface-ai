@@ -1,9 +1,14 @@
-# Documentation map
+# Documentation
 
-For the assessment, read [the demo](DEMO.md), [the report](../REPORT.md), [coverage](ASSESSMENT_CHECK.md), then [delivery](SUBMISSION.md). [Development](DEVELOPMENT.md) is the current command reference; [current plan](CURRENT_PLAN.md) tracks remaining author work.
+| Guide | Purpose |
+| --- | --- |
+| [Demo](DEMO.md) | Run offline replay, inspect its origin and try human takeover |
+| [Report](../REPORT.md) | Architecture, tradeoffs and supported boundaries |
+| [Coverage](ASSESSMENT_CHECK.md) | Assessment requirements mapped to code and proof |
+| [Development](DEVELOPMENT.md) | Setup, test suites and troubleshooting |
+| [Operator](OPERATOR_WORKSPACE.md) | Goal entry, saved workflows, app switching and cancellation |
+| [Evidence](../evidence/README.md) | Source-bound validation and discovery provenance |
+| [Human observations](HUMAN_OBSERVATIONS.md) | Reported real-person takeover, distinct from automated tests |
+| [Capture policy](CANDIDATE_CAPTURE_POLICY.md) | What candidate recording retains |
 
-The [manual checklist](manual-acceptance.html) records observed behavior. The [repository checklist](repository-audit.html) guides code understanding. Both preserve browser-local results independently; changed instructions do not attest a new test run.
-
-`MILESTONE_*`, `M4_*`, `DECISIONS`, `ROADMAP` and the dated cleanup audit preserve project history and design reasoning. Their commands/counts describe their original revisions and may have been superseded. Use the current development guide rather than reconstructing setup from milestones. The [evidence index](../evidence/README.md) identifies the source and provenance behind each retained claim.
-
-[Candidate capture policy](CANDIDATE_CAPTURE_POLICY.md) explains retained static crops; [manual audit notes](MANUAL_AUDIT_NOTES.md) separate user reports from agent-operated checks.
+[Implementation status](CURRENT_PLAN.md) summarizes the current scope. [Design history](history/README.md) retains earlier milestones and decisions; its commands and test counts describe those revisions.

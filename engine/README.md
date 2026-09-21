@@ -47,10 +47,10 @@ The CLI admits only independently approved bundle/asset digests before desktop a
 
 Keyboard permission belongs to the current acquired `Desktop` object. Separate single-action CLI processes do not share that permission. Native calibration and the fixed browser smoke harness are trusted developer tests; their calibration override is not exposed in action JSON or the CLI.
 
-Routine replay events pass a closed vocabulary before persistence. `export-evidence --run RUN_ID` reconstructs a small metadata export, excluding raw screenshots, business results, arbitrary source metadata, and additional files. Ordinary screenshot persistence is denied. See [M2 design and limits](../docs/MILESTONE_2.md).
+Routine replay events pass a closed vocabulary before persistence. `export-evidence --run RUN_ID` reconstructs a small metadata export, excluding raw screenshots, business results, arbitrary source metadata, and additional files. Ordinary screenshot persistence is denied. See [M2 design and limits](../docs/history/MILESTONE_2.md).
 
 ## Same-session ownership
 
 `Desktop(..., epoch=observed_epoch)` pins queued actions to the ownership generation observed when they were proposed. The constructor captures the current epoch if omitted; a future model caller must capture before the model request, not when a delayed response arrives. Every input and checkpoint checks owner/epoch. Only the trusted operator gateway constructs `role="human"` contexts; the action CLI and future model tool have no role override. Human input keeps session/focus/application/stop guards and destination restrictions, with explicit manual authority instead of the automation-only bank action allowlist.
 
-The coordinator exposes one reviewed continuation after synthetic member-search expiry. It releases the old automation context, transfers ownership after quiescence, verifies `member-ready` against the original typed input, and resumes at the approval's declared next step in the same session. Generic mid-step recovery is rejected. See [M3 scope, research and limits](../docs/MILESTONE_3.md).
+The coordinator exposes one reviewed continuation after synthetic member-search expiry. It releases the old automation context, transfers ownership after quiescence, verifies `member-ready` against the original typed input, and resumes at the approval's declared next step in the same session. Generic mid-step recovery is rejected. See [M3 scope, research and limits](../docs/history/MILESTONE_3.md).

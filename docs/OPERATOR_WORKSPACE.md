@@ -36,4 +36,4 @@ App switching deliberately resets rather than preserving several running desktop
 
 ## Validation
 
-See [operator workspace evidence](../evidence/operator-workspace/README.md) for automated boundaries, the genuine provider run and agent-operated UI observations. These do not fill in either personal checklist. The native pad and same-origin iframe bank are implemented surfaces; arbitrary cross-origin applications and framesets remain outside demonstrated coverage.
+See [operator workspace evidence](../evidence/operator-workspace/README.md) for automated boundaries, the genuine provider run and agent-operated UI observations. They remain distinct from real-person observations. The native pad and same-origin iframe bank are implemented surfaces; arbitrary cross-origin applications and framesets remain outside demonstrated coverage.

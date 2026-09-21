@@ -16,4 +16,4 @@ Based on pushed commit `4646f05` plus the M4-01 working-tree changes. [Executabl
 
 Earlier SDK test attempts are retained in ignored `tmp/m4-01-sdk-tests*.log`: the installed SDK uses `httpx2`, so the older `httpx` import was corrected before the final tests. No screenshot, raw response transcript, API key, private transport token or human input is included here. Existing M1–M3 real-person audit results are unchanged.
 
-Next: supply the key locally and pass `make discovery-probe` on a fresh bank search. Require two real provider responses, one guarded click and a successful stateless screenshot return. Full discovery, recording, review/promotion and second-member generated-artifact replay remain M4-02 through M4-06. [Implementation guide](../../docs/M4_01_PROVIDER_PROBE.md).
+Next: supply the key locally and pass `make discovery-probe` on a fresh bank search. Require two real provider responses, one guarded click and a successful stateless screenshot return. Full discovery, recording, review/promotion and second-member generated-artifact replay remain M4-02 through M4-06. [Implementation guide](../../docs/history/M4_01_PROVIDER_PROBE.md).

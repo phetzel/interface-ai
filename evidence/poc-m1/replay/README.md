@@ -6,7 +6,7 @@ The [capability](../../../capabilities/poc/savings-balance/capability.json) has 
 
 ## Real desktop integration
 
-The [host-only harness](../../../scripts/replay-check) compared success outputs with the fixture's separate oracle. The oracle is not available to the replay command. [summary.json](summary.json) preserves run IDs, timings, and assertions; each directory below contains its original report, sanitized event log, and typed result.
+The [host-only harness](https://github.com/phetzel/interface-ai/blob/613ee9cec4868be03dacd606de89e5e88dce5e4e/scripts/replay-check) compared success outputs with the fixture's separate oracle. The oracle is not available to the replay command. [summary.json](summary.json) preserves run IDs, timings, and assertions; each directory below contains its original report, sanitized event log, and typed result.
 
 | Case | Result | Completed input actions | Seconds |
 | --- | --- | ---: | ---: |

@@ -10,7 +10,7 @@ Start Docker Desktop. From the repository root:
 make assess
 ```
 
-Open [the operator](http://127.0.0.1:6081/). Expect **Lookup complete**, Demo Member B / `00456`, Savings, **$98.07 USD**. The printed evidence directory contains the separate exact result and a report with `modelCalls: 0`, four completed inputs and the promoted capability digest. Docker/Compose and Make are sufficient for this offline demonstration; no host SDK or key is needed.
+Open [the operator](http://127.0.0.1:6081/). Expect **Lookup complete**, Demo Member B / `00456`, Savings, **$98.07 USD**. The printed evidence directory contains the separate exact result and a report with `modelCalls: 0`, four completed inputs and the promoted capability digest. Docker/Compose, Make and Python 3 are sufficient for this offline demonstration; no host SDK or key is needed.
 
 To show relative targeting, run `make assess SCENARIO=translated`. The result remains exact while the content moves 40 pixels on both axes. `make assess SCENARIO=iframe` wraps the same bank in two nested local iframes; replay still uses pixels/native input. This is bounded same-origin coverage, not proof of arbitrary legacy applications.
 
@@ -43,10 +43,10 @@ The command starts the lookup and pauses at **Session expired**. Refresh the ope
 4. On Demo Member A / `00123`’s overview, choose **Verify & resume**.
 5. Expect **$1,234.56 USD**, **Lookup complete**, and the same session UUID.
 
-Finish within the 15-minute human-control window. Wrong screen or wrong member cannot resume. Arbitrary interruption has no declared continuation and requires reset. Choose **Actual size** above the image when targets are small, then scroll inside that viewport. **Fit to panel** restores the compact view. The explicit Enter button avoids aiming at a small submit button. The responsive panel puts controls beside the desktop on wide screens and below it in narrow panes. Personal comfort with that new arrangement still needs author feedback.
+Finish within the 15-minute human-control window. Wrong screen or wrong member cannot resume. Arbitrary interruption has no declared continuation and requires reset. Choose **Actual size** above the image when targets are small, then scroll inside that viewport. **Fit to panel** restores the compact view. The explicit Enter button avoids aiming at a small submit button. The responsive panel puts controls beside the desktop on wide screens and below it in narrow panes.
 
 ## Evidence and cleanup
 
 `make check SUITE=generated` runs generated replay scenarios, simulated takeover, offline provider transport and export checks. `make check SUITE=full` runs all automated coverage once, including the historical manual baseline. Neither calls OpenAI or attests a real human test. See the [suite table](DEVELOPMENT.md#one-check-runner) and [evidence index](../evidence/README.md).
 
-Use `make down` when finished. The [manual acceptance checklist](manual-acceptance.html) and [repository/interview checklist](repository-audit.html) are optional internal reviews. Read [REPORT.md](../REPORT.md) and [assessment coverage](ASSESSMENT_CHECK.md); [author review and delivery](SUBMISSION.md) lists the remaining personal steps.
+Use `make down` when finished. [REPORT.md](../REPORT.md) explains the design; [assessment coverage](ASSESSMENT_CHECK.md) maps the implementation to the brief.
