@@ -15,7 +15,8 @@ from PIL import Image
 
 from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.ownership import Ownership
-from interface_ai.discovery.probe import Probe, SearchPolicy, click, provision, credentials
+from interface_ai.discovery.transport_diagnostic import TransportDiagnostic, SearchPolicy, click
+from interface_ai.discovery.credentials import provision, credentials
 from interface_ai.handoff.server import Server, HOST, ORIGIN
 from test_desktop import Backend
 
@@ -67,9 +68,11 @@ class ProbeTests(unittest.TestCase):
             lease, dict(session=self.session['id'], epoch=self.controller.ownership.read()['epoch'])
         )
         self.controller.stop = self.stop_controller
-        self.probe = Probe(self.controller, desktop_factory=self.desktop, policy_factory=Policy)
+        self.probe = TransportDiagnostic(
+            self.controller, desktop_factory=self.desktop, policy_factory=Policy
+        )
         for target in (
-            'interface_ai.discovery.probe.request_stop',
+            'interface_ai.discovery.transport_diagnostic.request_stop',
             'interface_ai.handoff.server.request_stop',
         ):
             patcher = patch(target, self.stop.touch)
@@ -288,7 +291,7 @@ class ProbeTests(unittest.TestCase):
 
     def test_bootstrap_token_is_private_and_replaced_on_restart(self):
         path = self.root / 'capability.json'
-        with patch('interface_ai.discovery.probe.CREDENTIALS', path):
+        with patch('interface_ai.discovery.credentials.CREDENTIALS', path):
             first = provision('session-a')
             second = provision('session-b')
             self.assertNotEqual(first, second)

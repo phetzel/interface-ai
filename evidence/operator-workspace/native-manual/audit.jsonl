@@ -1,0 +1,11 @@
+{"kind": "lifecycle", "elapsedMs": 42095, "status": "started"}
+{"kind": "lifecycle", "elapsedMs": 42096, "status": "human", "epoch": 2}
+{"kind": "human", "elapsedMs": 51982, "sequence": 1, "action": "click", "status": "completed", "durationMs": 15.256}
+{"kind": "human", "elapsedMs": 52015, "sequence": 2, "action": "click", "status": "completed", "durationMs": 14.634}
+{"kind": "human", "elapsedMs": 70781, "sequence": 3, "action": "click", "status": "completed", "durationMs": 14.504}
+{"kind": "human", "elapsedMs": 86989, "sequence": 4, "action": "click", "status": "completed", "durationMs": 14.752}
+{"kind": "human", "elapsedMs": 103242, "sequence": 5, "action": "type", "status": "completed", "durationMs": 288.277}
+{"kind": "human", "elapsedMs": 113298, "sequence": 6, "action": "press", "status": "completed", "durationMs": 12.443}
+{"kind": "human", "elapsedMs": 123792, "sequence": 7, "action": "click", "status": "completed", "durationMs": 15.717}
+{"kind": "human", "elapsedMs": 141089, "sequence": 8, "action": "scroll", "status": "completed", "durationMs": 15.602}
+{"kind": "lifecycle", "elapsedMs": 151016, "status": "stopped", "code": "stopped"}

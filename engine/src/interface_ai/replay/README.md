@@ -1,6 +1,6 @@
 # Bounded artifact interpreter · M1-05
 
-The loader validates the complete capability and anchor bundle before any desktop acquisition. The interpreter then traverses its finite step list, resolves declared targets afresh from screenshots, dispatches through `Desktop.execute`, verifies postconditions, and returns the strict success/business-outcome/failure union. It imports local vision primitives, not the fixture-specific `BankVision` workflow.
+The loader validates the complete capability and anchor bundle before any desktop acquisition. The interpreter then traverses its finite step list, resolves declared targets afresh from screenshots, dispatches through `Desktop.execute`, verifies postconditions, and returns the strict success/business-outcome/failure union. It imports local vision primitives; the obsolete scripted bank-vision workflow has been removed.
 
 `Observation` caches matches and OCR readings only within one screenshot. Parent anchors define relative regions; every click and extraction therefore starts from newly observed context. A final extraction reads and checks one image, preventing fields from different pages from being combined. Input bindings preserve leading zeroes. Only the artifact's named member-not-found alternative can finish without an output; it must include an exact input-bound identity assertion.
 

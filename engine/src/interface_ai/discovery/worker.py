@@ -16,7 +16,7 @@ from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.policy.evidence import checked_event, safe_code
 from interface_ai.replay.loader import validate_inputs
 from interface_ai.handoff.evidence import atomic_write
-from .probe import Probe
+from .reservation import Reservation
 from .policy import DiscoveryPolicy
 from .actions import normalize
 from .recorder import Recorder
@@ -24,7 +24,7 @@ from interface_ai.replay.loader import ReplayError
 from pydantic import ValidationError
 
 
-class Discovery(Probe):
+class Discovery(Reservation):
     def __init__(
         self,
         controller,

@@ -6,7 +6,7 @@ Scope: finish the work that can be validated independently, then hand the author
 | --- | --- | --- |
 | M5-01 | Brief-to-code review; explicit bounded goal/target input; cleanup | Implemented; [coverage map](ASSESSMENT_CHECK.md), request tests and operator actual-size checks pass |
 | M5-02 | Seven-heading, approximately 1–3 page `REPORT.md` | Written; author must agree with and explain its claims |
-| M5-03 | Generated-artifact personal review and takeover | Automated coverage passes; real-person check and checklist export remain with the user |
+| M5-03 | Generated-artifact personal review and takeover | Automated coverage passes; the author reported #41 complete September 20. Checklist export remains with the user |
 | M5-04 | Fresh checkout, offline setup, genuine discovery/review/new promotion/replay rehearsal | Passed on `2987382`; [complete rehearsal](../evidence/m5-readiness/clean-checkout/summary.json) |
 | M5-05 | Curated evidence and concise assessor path | [One-command demo](DEMO.md), requirement map and [final evidence](../evidence/m5-readiness/README.md) complete |
 | M5-06 | Interview route and repository checklist | [Route prepared](SUBMISSION.md#interview-route); personal understanding cannot be completed by an agent |
@@ -22,4 +22,4 @@ Only metadata, separate synthetic results and reviewed static crops may enter th
 
 ## Author finish
 
-Read [the report](../REPORT.md), perform the generated capability's manual takeover in section 10 of [the manual checklist](manual-acceptance.html#m4), confirm whether Actual size helps, work through [the repository checklist](repository-audit.html), and export both self-reports. [Delivery instructions and email draft](SUBMISSION.md) finish the process.
+Read [the report](../REPORT.md), preserve the reported section-10 takeover result in [the manual checklist](manual-acceptance.html#m4), give feedback on the newer operator layout, work through [the repository checklist](repository-audit.html), and export both self-reports. [Delivery instructions and email draft](SUBMISSION.md) finish the process.

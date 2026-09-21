@@ -71,7 +71,7 @@
     <div><p class="eyebrow">Interface AI / M1 · M2 · M3</p><h1>One pass through<br>everything we’ve built.</h1><p>Work from top to bottom. Run each command yourself, check the visible result, and record what actually happened. Progress and notes stay in this browser; export the report when you finish or hit an issue. For a short assessor walkthrough, use the <a href="DEMO.md">demo guide</a>.</p></div>
     <div class="scope"><strong>What this covers</strong><p>Desktop control, the banking fixture, offline replay, policy, same-session takeover and the M4 discovery/promotion supplement. Cross-OS support and final submission packaging remain outside these checks.</p></div>
   </header>
-  <p class="note">2026-09-20: M4 discovery, recording and promotion are implemented. The new M4 section starts unverified. Saved results remain observations of the revision you tested; updated instructions do not attest a new run. See the <a href="MILESTONE_4.md">milestone specification</a> and <a href="DEMO.md">short demo</a>.</p>
+  <p class="note">2026-09-20: Commands now use one named-suite runner. Sections 1–9 explicitly select the historical manual capability; section 10 uses the generated artifact. Saved results remain observations of the revision you tested; updated instructions do not attest a new run. See the <a href="MILESTONE_4.md">milestone specification</a> and <a href="DEMO.md">short demo</a>.</p>
   <div class="toolbar">
     <button class="primary" id="export">Export report · JSON</button><button id="print">Print / save PDF</button><button id="expand">Expand all</button><button id="collapse">Collapse all</button><button id="new">New pass</button>
     <span id="storage" class="storage" role="status">Checking local storage…</span>
@@ -109,7 +109,7 @@ const GROUPS = [
           "Close old operator/fixture tabs and stop any previous fixture preview servers. Run the combined setup below and keep its output open for the next two checks. If it fails, save the output in notes."
         ],
         "commands": [
-          "cd /Users/phillip/interview/interface-ai\nmake audit-setup"
+          "cd /Users/phillip/interview/interface-ai\nmake audit-setup CAPABILITY=manual-savings"
         ],
         "expected": [
           "The command installs fixture dependencies and Playwright Chromium, builds both images, runs the quick gate, and starts a fresh validated bank desktop. It stops on the first failure.",
@@ -221,7 +221,7 @@ const GROUPS = [
         "title": "Open the native calibration surface",
         "kind": "manual",
         "commands": [
-          "make reset MODE=native\nmake ready"
+          "make reset MODE=native CAPABILITY=manual-savings\nmake ready"
         ],
         "actions": [
           "Open the operator and inspect its Live desktop image of the native pad. Without starting a lookup, try clicking a blue target and typing into the image."
@@ -258,7 +258,7 @@ const GROUPS = [
         "title": "Watch the same adapter control Chromium",
         "kind": "harness",
         "commands": [
-          "make reset MODE=bank SCENARIO=default",
+          "make reset MODE=bank SCENARIO=default CAPABILITY=manual-savings",
           "./scripts/desktop browser-smoke --member-id 00123"
         ],
         "actions": [
@@ -281,8 +281,8 @@ const GROUPS = [
         "title": "Get the exact savings balance for member A",
         "kind": "command",
         "commands": [
-          "make reset MODE=bank SCENARIO=default\nmake validate",
-          "make replay MEMBER_ID=00123"
+          "make reset MODE=bank SCENARIO=default CAPABILITY=manual-savings\nmake validate CAPABILITY=manual-savings",
+          "make replay MEMBER_ID=00123 CAPABILITY=manual-savings"
         ],
         "actions": [
           "Watch the operator’s live image. Open this run’s result.json and report.json from the printed evidence path. Save the successful run folder name below for the export check."
@@ -304,7 +304,7 @@ const GROUPS = [
         "title": "Reuse the unchanged artifact for member B",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=default MEMBER_ID=00456"
+          "make demo SCENARIO=default MEMBER_ID=00456 CAPABILITY=manual-savings"
         ],
         "expected": [
           "Success: memberId 00456, Demo Member B, Savings, USD, amountMinor 9807; the screen shows $98.07.",
@@ -316,9 +316,9 @@ const GROUPS = [
         "title": "Reject invalid invocation inputs before UI changes",
         "kind": "command",
         "commands": [
-          "make reset MODE=bank SCENARIO=default",
-          "make replay MEMBER_ID=123",
-          "./scripts/desktop replay --inputs-json '{\"memberId\":123}'"
+          "make reset MODE=bank SCENARIO=default CAPABILITY=manual-savings",
+          "make replay MEMBER_ID=123 CAPABILITY=manual-savings",
+          "./scripts/desktop replay --inputs-json '{\"memberId\":123}' --capability manual-savings"
         ],
         "expected": [
           "Both invocations exit nonzero with invalid_input. Their reports show preflight failure and zero completed actions.",
@@ -331,7 +331,7 @@ const GROUPS = [
         "title": "Handle a member who does not exist",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=default MEMBER_ID=00999"
+          "make demo SCENARIO=default MEMBER_ID=00999 CAPABILITY=manual-savings"
         ],
         "expected": [
           "Named business_outcome: member_not_found, with no account click or fabricated output.",
@@ -343,8 +343,8 @@ const GROUPS = [
         "title": "Find targets after the supported layout shift",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=translated MEMBER_ID=00123",
-          "make demo SCENARIO=translated MEMBER_ID=00456"
+          "make demo SCENARIO=translated MEMBER_ID=00123 CAPABILITY=manual-savings",
+          "make demo SCENARIO=translated MEMBER_ID=00456 CAPABILITY=manual-savings"
         ],
         "actions": [
           "Run and inspect each command separately. Observe that content has moved 40 pixels right and down."
@@ -359,7 +359,7 @@ const GROUPS = [
         "title": "Wait for slow rendering within the existing bounds",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=delayed MEMBER_ID=00123"
+          "make demo SCENARIO=delayed MEMBER_ID=00123 CAPABILITY=manual-savings"
         ],
         "expected": [
           "“Searching…” remains visible longer than the default scenario (configured delay 1.8 seconds).",
@@ -371,7 +371,7 @@ const GROUPS = [
         "title": "Stop on two indistinguishable Savings targets",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=duplicate MEMBER_ID=00123"
+          "make demo SCENARIO=duplicate MEMBER_ID=00123 CAPABILITY=manual-savings"
         ],
         "expected": [
           "Two Savings targets are visible. The run exits nonzero with ambiguous_target at open-savings.",
@@ -383,7 +383,7 @@ const GROUPS = [
         "title": "Refuse to invent an unreadable balance",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=unreadable MEMBER_ID=00123"
+          "make demo SCENARIO=unreadable MEMBER_ID=00123 CAPABILITY=manual-savings"
         ],
         "expected": [
           "The account shows Balance unavailable rather than an amount.",
@@ -395,7 +395,7 @@ const GROUPS = [
         "title": "Stop a search that never resolves",
         "kind": "command",
         "commands": [
-          "make demo SCENARIO=blocked MEMBER_ID=00123"
+          "make demo SCENARIO=blocked MEMBER_ID=00123 CAPABILITY=manual-savings"
         ],
         "expected": [
           "The app remains on loading. The run exits nonzero with checkpoint_timeout at search-member.",
@@ -414,7 +414,7 @@ const GROUPS = [
         "title": "Deny a risky control and a browser shortcut",
         "kind": "command",
         "commands": [
-          "make reset MODE=bank SCENARIO=policy\nmake ready",
+          "make reset MODE=bank SCENARIO=policy CAPABILITY=manual-savings\nmake ready",
           "./scripts/desktop action --session '{{POLICY_SESSION}}' --json '{\"type\":\"click\",\"x\":1070,\"y\":710}'",
           "./scripts/desktop action --session '{{POLICY_SESSION}}' --json '{\"type\":\"hotkey\",\"keys\":[\"ctrl\",\"l\"]}'"
         ],
@@ -470,7 +470,7 @@ const GROUPS = [
         "title": "Explain invalid panel input without starting automation",
         "kind": "manual",
         "commands": [
-          "make handoff-demo"
+          "make handoff CAPABILITY=manual-savings"
         ],
         "actions": [
           "Reload the operator panel, replace Member with 123 and choose Start lookup. Observe the message and unchanged desktop.",
@@ -492,7 +492,7 @@ const GROUPS = [
         "title": "Reach expiry and record the original session",
         "kind": "manual",
         "commands": [
-          "make handoff-demo"
+          "make handoff CAPABILITY=manual-savings"
         ],
         "actions": [
           "Open or reload the operator panel (port 6081). Enter member 00123 and choose Start lookup.",
@@ -586,7 +586,7 @@ const GROUPS = [
         "title": "Repeat the positive handoff for member B",
         "kind": "manual",
         "commands": [
-          "make handoff-demo"
+          "make handoff CAPABILITY=manual-savings"
         ],
         "actions": [
           "Reload the operator panel. Start a lookup for 00456, take control at expiry, send demo into the desktop training-code field, and restore the workspace.",
@@ -602,7 +602,7 @@ const GROUPS = [
         "title": "Stop from the panel while text input is pending",
         "kind": "manual",
         "commands": [
-          "make handoff-demo",
+          "make handoff CAPABILITY=manual-savings",
           "python3 -c \"print('x' * 256)\"",
           "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/summary.json\"\ncat \"$HANDOFF_DIR/result.json\""
         ],
@@ -624,7 +624,7 @@ const GROUPS = [
         "title": "Stop through the CLI while a human owns the desktop",
         "kind": "manual",
         "commands": [
-          "make handoff-demo",
+          "make handoff CAPABILITY=manual-savings",
           "make stop"
         ],
         "actions": [
@@ -642,7 +642,7 @@ const GROUPS = [
         "title": "Refuse to guess a continuation after an arbitrary interruption",
         "kind": "manual",
         "commands": [
-          "make reset MODE=bank SCENARIO=blocked"
+          "make reset MODE=bank SCENARIO=blocked CAPABILITY=manual-savings"
         ],
         "actions": [
           "Reload the operator panel. Start a lookup and immediately choose Take control while it is running (before the five-second blocked-search timeout).",
@@ -659,7 +659,7 @@ const GROUPS = [
         "title": "Inspect the context of a failed panel run",
         "kind": "manual",
         "commands": [
-          "make reset MODE=bank SCENARIO=blocked",
+          "make reset MODE=bank SCENARIO=blocked CAPABILITY=manual-savings",
           "HANDOFF_DIR=\"$(ls -td tmp/desktop-artifacts/*-handoff-* | head -n 1)\"\ncat \"$HANDOFF_DIR/result.json\"\ncat \"$HANDOFF_DIR/audit.jsonl\""
         ],
         "actions": [
@@ -686,7 +686,7 @@ const GROUPS = [
         "kind": "command",
         "commands": [
           "make ready",
-          "make reset MODE=bank SCENARIO=default",
+          "make reset MODE=bank SCENARIO=default CAPABILITY=manual-savings",
           "./scripts/desktop action --session '{{STALE_SESSION}}' --json '{\"type\":\"click\",\"x\":200,\"y\":200}'"
         ],
         "capture": "staleSession",
@@ -710,41 +710,41 @@ const GROUPS = [
         "title": "Run the full fixture test suite",
         "kind": "harness",
         "commands": [
-          "make fixture-test"
+          "make check SUITE=fixture"
         ],
         "expected": [
-          "All 15 fixture tests pass at this revision, including expiry, validation, navigation and all configured rendering scenarios.",
+          "All 16 fixture tests pass at this revision, including expiry, validation, navigation and all configured rendering scenarios.",
           "A nonzero exit or failed test is recorded as failed/blocked, not skipped silently."
         ],
         "note": "audit-setup installs Playwright Chromium. If you set PLAYWRIGHT_BROWSERS_PATH yourself, use the same value during setup and this test."
       },
       {
         "id": "policy-suite",
-        "title": "Run M2 plus the complete M1 regression once",
+        "title": "Run desktop and policy regressions",
         "kind": "harness",
         "commands": [
-          "make policy-check"
+          "make check SUITE=desktop\nmake check SUITE=policy"
         ],
         "actions": [
-          "Let the entire command finish. Open its retained summary and the embedded m1-regression summary."
+          "Let both suites finish. Open each printed summary; the runners do not nest or duplicate one another."
         ],
         "expected": [
-          "The M2 gate passes operation/application checks, fixed-route and direct-origin denials, browser restrictions, and safe export.",
-          "The embedded M1 gate passes lifecycle, native/browser input, server view-only, session/focus/stop/exclusivity checks, runtime/isolation verification, the current engine suite, ten baseline replays, seven scenario replays, and seven rejection cases.",
-          "Invalid/unapproved artifacts, input typing, symlink/FIFO export handling and closed metadata rules are covered by the engine tests. A fresh bank search screen is left at the end.",
-          "Both image fingerprints and actual running container IDs match reviewed source before acceptance input. Artifact FIFOs, verified image-byte snapshots and terminal finalization are included in regressions."
+          "The policy suite passes action/application checks, fixed-route and direct-origin denials, browser restrictions and safe export.",
+          "The desktop suite passes lifecycle, native/browser input, session/focus/Stop/exclusivity, isolation, ten baseline replays, seven scenario replays and seven rejection cases.",
+          "Engine unit tests and schema checks were covered by the quick suite during setup; invalid artifacts, input types, unsafe files and terminal finalization remain covered there.",
+          "Image fingerprints and running container IDs match the source before acceptance input."
         ],
-        "note": "policy-check already invokes the full M1 gate. Do not also run make check or replay-check just to duplicate it. Preserve a failed attempt before rerunning a corrected setup."
+        "note": "Preserve failed attempts. For a future complete regression, make check SUITE=full schedules all suites once; no need to run that again after this sectional pass."
       },
       {
         "id": "handoff-suite",
         "title": "Run the adversarial takeover harness",
         "kind": "harness",
         "commands": [
-          "make handoff-check"
+          "./scripts/check --suite handoff --capability manual-savings"
         ],
         "expected": [
-          "the current engine suite and both simulated-operator handoff cases pass.",
+          "Both simulated-operator handoff cases pass. The engine tests are covered once by the quick suite.",
           "The checks cover in-flight input draining, modifier release, stale epochs, immediate pause revocation, duplicate requests, expiry without browser polling, HTTP Stop during in-flight typing/hotkeys, status-poll contention, HTTP request protection, sanitized interpreter traces, wrong-member return and exact completion.",
           "The evidence labels its operator as automated-test-through-operator-api. It is separate from the real-person handoffs you performed above."
         ]
@@ -761,7 +761,7 @@ const GROUPS = [
         "title": "Reset, record issues, and export your checklist",
         "kind": "command",
         "commands": [
-          "make reset MODE=bank SCENARIO=default\nmake ready"
+          "make reset MODE=bank SCENARIO=default CAPABILITY=manual-savings\nmake ready"
         ],
         "actions": [
           "Record the manual handoff folders and harness evidence directories in the relevant notes. For each issue, include expected versus actual behavior and the screen/phase where it happened.",
@@ -855,7 +855,7 @@ const GROUPS = [
         "title": "Take over and resume the generated artifact yourself",
         "kind": "manual",
         "commands": [
-          "make handoff-demo CAPABILITY=discovered-savings MEMBER_ID=00123"
+          "make handoff CAPABILITY=discovered-savings MEMBER_ID=00123"
         ],
         "actions": [
           "Refresh the operator after reset. The command already starts the generated lookup. Record the UUID, take control and verify that resuming while expired is rejected.",
@@ -882,18 +882,21 @@ const GROUPS = [
         "title": "Review generated integration and the offline boundary",
         "kind": "harness",
         "commands": [
-          "make m4-check"
+          "make check SUITE=generated"
         ],
         "expected": [
-          "Nine generated replay scenarios and both simulated-operator handoffs pass, including missing member, ambiguity, unreadable output, blocked loading and wrong resume state.",
-          "The fake-provider transport checks are labeled simulated. The desktop has no provider SDK/key and cannot reach the provider. Safe export excludes business values and images."
+          "The replay, handoff, discovery-transport and offline suites all pass.",
+          "Generated replay includes both members on default, translated and nested local-iframe layouts, plus delayed and negative cases; outputs remain exact with zero model calls.",
+          "Both simulated same-session handoffs pass. The replay container has no provider SDK/key/egress, and safe export excludes business values.",
+          "These are automated checks, not a new real-person takeover or genuine provider run."
         ],
         "links": [
           [
             "M4 evidence",
             "../evidence/m4-06-integration/README.md"
           ]
-        ]
+        ],
+        "note": "This replaces the old make m4-check entry point. Historical results stay tied to their original revision; the new runner links child evidence without duplicating it."
       },
       {
         "id": "m4-close",
@@ -927,6 +930,53 @@ const GROUPS = [
             "Author steps",
             "SUBMISSION.md"
           ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "operator-workspace",
+    "title": "11 / Use the operator workspace",
+    "intro": "Optional follow-up for the new launcher. Agent-operated checks are recorded separately; existing personal results remain unchanged.",
+    "steps": [
+      {
+        "id": "operator-saved",
+        "title": "Choose an app and saved workflow",
+        "kind": "manual",
+        "actions": [
+          "Open the operator, expand Apps & workflows, choose Bank · nested iframes and Open app / reset session. Wait for the page to reconnect.",
+          "Select discovered-savings, enter 00456 and Start lookup. Inspect the desktop result. Repeat with the manual baseline only if you want to compare its provenance."
+        ],
+        "expected": [
+          "The selected app survives the automatic refresh. Approved workflows show version and provenance.",
+          "Member B has $98.07 USD; ordinary replay makes zero model calls. App switching is disabled during execution."
+        ]
+      },
+      {
+        "id": "operator-goal",
+        "title": "Enter a bounded goal from the operator",
+        "kind": "manual",
+        "actions": [
+          "Expand Discover from a goal. Try an unsupported request; it must leave the desktop unchanged and explain the supported savings goal.",
+          "With your private key configured, submit Find the savings balance for member 00123. This starts a new session and incurs OpenAI usage."
+        ],
+        "expected": [
+          "The model chooses actions on the visible bank. Completion provides an evidence folder and a candidate that still requires review.",
+          "The saved-workflow list does not automatically admit the new candidate. Stop remains available."
+        ]
+      },
+      {
+        "id": "operator-native",
+        "title": "Switch to and control the native app",
+        "kind": "manual",
+        "actions": [
+          "After stopping or finishing the previous run, select Native input pad and Open app / reset session.",
+          "Take control. Click the three targets, focus the input, send synthetic text and press Enter. Click the scroll area then use Scroll down. Try Actual size and Fit to panel.",
+          "Press Stop, then reopen Northstar bank."
+        ],
+        "expected": [
+          "Targets turn green, text is submitted, rows scroll, and Stop returns the desktop to view-only.",
+          "No bank replay is offered on the native pad. Switching creates a different session; it is not same-session takeover."
         ]
       }
     ]
@@ -983,7 +1033,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' checks passed. '+counts.failed+' failed, '+counts.blocked+' blocked, '+counts.skipped+' skipped, '+counts['not-run']+' not run.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-m5-readiness',scope:['M1','M2','M3','M4','M5-readiness'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-manual-acceptance-v3',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-operator-workspace',scope:['M1','M2','M3','M4','M5-readiness'],provenance:'reviewer-self-report',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionTested:state.revision,date:state.date,manualAttestation:state.attested,overall:overall(),capturedReferences:state.captures,checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id)}))),limitations:['No application test is executed or verified by this checklist.','Harness results are separate from manual UI observations.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-manual-pass-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

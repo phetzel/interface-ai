@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "source": "clean export of uncommitted working tree",
+  "keyCopied": false,
+  "nodeModulesCopied": false,
+  "priorRuntimeStateCopied": false,
+  "dockerBuildCacheReused": true,
+  "newMachineClaim": false,
+  "missingKeyFeedbackObservedThroughUI": true
+}

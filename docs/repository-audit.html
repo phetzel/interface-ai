@@ -172,7 +172,7 @@ const GROUPS = [
         "title": "Trace the public ways to start work",
         "kind": "code",
         "actions": [
-          "Trace make start (Docker demo), audit-setup (development dependencies, quick gate, fresh desktop) and fixture-preview (host UI). Explain why assessors only need the demo path.",
+          "Trace make assess (generated Docker demo), audit-setup (development dependencies, quick gate, fresh desktop) and fixture-preview (host UI). Explain why assessors only need the demo path.",
           "Follow make replay through the shell wrapper to the Python CLI and replay command.",
           "Follow Start lookup in the panel through /start to the controller. Mark where these paths diverge today."
         ],
@@ -554,7 +554,7 @@ const GROUPS = [
         "title": "Separate calibration tools from production replay",
         "kind": "code",
         "actions": [
-          "Find the fixed-coordinate/native calibration path and the earlier bank vision helper. Compare them with the artifact interpreter used by replay.",
+          "Find the fixed-coordinate/native calibration path and local vision primitives. Compare them with the artifact interpreter used by replay.",
           "Trace imports/call sites before labeling older helpers redundant. Record any confusing names or unclear ownership."
         ],
         "expected": [
@@ -574,12 +574,12 @@ const GROUPS = [
             "../infra/desktop/browser_smoke.py"
           ],
           [
-            "infra/desktop/vision_probe.py",
-            "../infra/desktop/vision_probe.py"
+            "engine/src/interface_ai/replay/recognition.py",
+            "../engine/src/interface_ai/replay/recognition.py"
           ],
           [
-            "engine/src/interface_ai/vision/bank.py",
-            "../engine/src/interface_ai/vision/bank.py"
+            "engine/src/interface_ai/vision/primitives.py",
+            "../engine/src/interface_ai/vision/primitives.py"
           ],
           [
             "engine/src/interface_ai/replay/interpreter.py",
@@ -587,7 +587,7 @@ const GROUPS = [
           ]
         ],
         "commands": [
-          "rg -n \"BankVision|wait_for_heading|Interpreter|browser_smoke\" engine infra scripts"
+          "rg -n \"unique_match|checkpoint|Interpreter|browser_smoke\" engine infra scripts"
         ]
       }
     ]
@@ -630,8 +630,8 @@ const GROUPS = [
             "../infra/desktop/operator_relay.py"
           ],
           [
-            "scripts/checks/m2_runtime.py",
-            "../scripts/checks/m2_runtime.py"
+            "scripts/checks/policy_runtime.py",
+            "../scripts/checks/policy_runtime.py"
           ]
         ]
       },
@@ -809,8 +809,8 @@ const GROUPS = [
             "../capabilities/poc/savings-balance/capability.json"
           ],
           [
-            "scripts/m3-check",
-            "../scripts/m3-check"
+            "scripts/checks/handoff.py",
+            "../scripts/checks/handoff.py"
           ]
         ]
       },
@@ -843,8 +843,8 @@ const GROUPS = [
             "../engine/tests/test_handoff.py"
           ],
           [
-            "scripts/checks/m3_operator_stop.mjs",
-            "../scripts/checks/m3_operator_stop.mjs"
+            "scripts/checks/operator_stop.mjs",
+            "../scripts/checks/operator_stop.mjs"
           ],
           [
             "evidence/pre-audit-2026-09-17/README.md",
@@ -1006,16 +1006,16 @@ const GROUPS = [
         ],
         "links": [
           [
-            "scripts/m1-check",
-            "../scripts/m1-check"
+            "scripts/checks/desktop.py",
+            "../scripts/checks/desktop.py"
           ],
           [
-            "scripts/m2-check",
-            "../scripts/m2-check"
+            "scripts/checks/policy.py",
+            "../scripts/checks/policy.py"
           ],
           [
-            "scripts/m3-check",
-            "../scripts/m3-check"
+            "scripts/checks/handoff.py",
+            "../scripts/checks/handoff.py"
           ],
           [
             "docs/manual-acceptance.html",
@@ -1061,7 +1061,7 @@ const GROUPS = [
           ],
           [
             "Quick gate",
-            "../scripts/quick-check"
+            "../scripts/checks/quick.py"
           ],
           [
             "Shared host helpers",
@@ -1158,6 +1158,7 @@ const GROUPS = [
         "kind": "review",
         "actions": [
           "Follow event handlers, busy state, polling, image scaling, text clearing and error messages. Explain the phase-specific controls, persistent Stop button and collapsed Run details.",
+          "Trace scripts/lib/operator_host.py: fixed app allowlist, supported goal admission, session checks, cancellation, and host-only key/SDK. Explain the 6081 UI versus the 6082 local launcher and why candidates cannot self-promote.",
           "Read the HTML, CSS and JavaScript sources, then trace server assembly into one nonce-protected document. Explain why this adds no asset routes or token URLs, and why Stop stays enabled during pending input."
         ],
         "expected": [
@@ -1178,12 +1179,12 @@ const GROUPS = [
             "../engine/src/interface_ai/handoff/server.py"
           ],
           [
-            "scripts/checks/m3_operator_ui.mjs",
-            "../scripts/checks/m3_operator_ui.mjs"
+            "scripts/checks/operator_ui.mjs",
+            "../scripts/checks/operator_ui.mjs"
           ],
           [
-            "scripts/checks/m3_operator_stop.mjs",
-            "../scripts/checks/m3_operator_stop.mjs"
+            "scripts/checks/operator_stop.mjs",
+            "../scripts/checks/operator_stop.mjs"
           ],
           [
             "Operator JavaScript",
@@ -1194,8 +1195,8 @@ const GROUPS = [
             "../engine/src/interface_ai/handoff/operator.css"
           ],
           [
-            "Shared panel test helpers",
-            "../scripts/checks/operator_helpers.mjs"
+            "Host launcher and job boundaries",
+            "../scripts/lib/operator_host.py"
           ]
         ]
       },
@@ -1268,7 +1269,7 @@ const GROUPS = [
         "title": "Explain discovery evidence and remaining submission work",
         "kind": "design",
         "actions": [
-          "Compare the M4-01 connection probe with the genuine M4-03/04 goal-driven run. Explain host-only credentials, bounded observations and stale-action rejection.",
+          "Compare the retained historical one-click connection evidence with the genuine goal-driven run. The standalone probe command is removed; transport_diagnostic.py remains internal to automated tests. Explain host-only credentials, bounded observations and stale-action rejection.",
           "Trace candidate recording → explicit review/promotion → second-member replay without model access. Separate observed actions from manually supplied exception rules."
         ],
         "expected": [
@@ -1537,7 +1538,7 @@ function update(){
   const withoutNotes=STEPS.filter(s=>['failed','blocked','skipped'].includes(result(s.id).status)&&!result(s.id).notes.trim()).length;
   $('review').textContent=counts.passed+' of '+STEPS.length+' topics understood. '+counts.failed+' need work, '+counts.blocked+' blocked, '+counts.skipped+' deferred, '+counts['not-run']+' not reviewed.'+(withoutNotes?' Add notes for '+withoutNotes+' unresolved result(s).':'')+' Overall: '+verdict.replace('-',' ')+'.';
 }
-function report(){return {format:'interface-ai-repository-review-v2',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-m5-readiness',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
+function report(){return {format:'interface-ai-repository-review-v2',baseline:'Mixed revision review; see check notes and source-bound evidence',checklistRevision:'2026-09-20-operator-workspace',scope:['repository-understanding','maintainability','interview-preparation'],provenance:'reviewer-self-assessment',startedAt:state.startedAt,exportedAt:new Date().toISOString(),reviewer:state.reviewer,revisionReviewed:state.revision,date:state.date,understandingAttestation:state.attested,overall:overall(),checks:GROUPS.flatMap(g=>g.steps.map(s=>({id:s.id,section:g.title,title:s.title,kind:s.kind,...result(s.id),understanding:LABELS[result(s.id).status]}))),limitations:['No application test or code change is performed by this checklist.','This is self-assessed understanding, not manual app acceptance or assignment sign-off.','User-written notes are not automatically redacted.']};}
 function download(){const blob=new Blob([JSON.stringify(report(),null,2)+'\n'],{type:'application/json'}),url=URL.createObjectURL(blob),a=element('a',{href:url,download:'interface-ai-repository-review-'+new Date().toISOString().slice(0,10)+'.json'});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Report downloaded as '+overall().replace('-',' ')+'.');}
 $('attest').addEventListener('change',()=>{state.attested=$('attest').checked;save();update();});
 $('filter').addEventListener('change',update);$('export').onclick=$('export-bottom').onclick=download;

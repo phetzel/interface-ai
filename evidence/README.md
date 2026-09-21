@@ -1,9 +1,10 @@
 # Evidence index
 
-Use this index to distinguish a claim from the exact source and environment that support it. Failed attempts are retained alongside corrections. Historical counts are not current test totals. Raw local attempts live under ignored `tmp/`; reviewed records below are committed.
+Use this index to distinguish a claim from the exact source and environment that support it. Failed attempts are retained alongside corrections. Historical counts are not current test totals. Raw local attempts live under ignored `tmp/`; curated records below identify their source revision or working-tree hashes.
 
 | Claim / revision | Reviewed record | What it establishes | Limit |
 | --- | --- | --- | --- |
+| Assessment cleanup, working tree after `7ff4035` | [Consolidation and iframe validation](assessment-cleanup/README.md) | Named suites, generated defaults, responsive operator, 11 generated replay cases including nested frames, clean-source offline demo | Automated checks; earlier native startup timeout remains unresolved; exact verification sequence and corrected iframe-title failure retained |
 | M5 readiness, executable commit `2987382` | [Final assessment preparation](m5-readiness/README.md) | Full regressions, actual-size UI, fresh-clone one-command demo and new genuine discovery → review → agent promotion → offline replay | Existing host/caches; two retained native startup timeouts remain unresolved; personal generated takeover and submission remain |
 | M4-06 integrated acceptance | [Generated integration](m4-06-integration/README.md) | Nine generated replay cases, both generated handoffs, offline/export proof, full M1–M3 regressions and operator UI checks passed | No real-person generated takeover claimed |
 | M4-05 promotion after `03527b3` | [Independent review and promotion](m4-05-promotion/README.md) | Same candidate replayed for B and translated layout before agent approval; ordinary approved replay passes | Agent review, not a user attestation; one fixed bank workflow |
@@ -24,6 +25,10 @@ Use this index to distinguish a claim from the exact source and environment that
 
 The user reports the M1–M3 manual checklist passed, including real-person member-A takeover. [Manual audit observations](../docs/MANUAL_AUDIT_NOTES.md) separate that observation from agent-operated UI checks and terminal/harness results. Preserve the exported reviewer checklist before final submission. The generated promotion is explicitly agent-reviewed; generated takeover automation is not a second real-person attestation.
 
-Genuine discovery, recording and reviewed second-member reuse now have the records above. M5 completed `REPORT.md`, the clean-clone rehearsal and agent-owned packaging. Remaining author work is the personal generated-artifact takeover, preserving exported self-reports, the repository/interview walkthrough and public submission. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
+Genuine discovery, recording and reviewed second-member reuse now have the records above. M5 completed `REPORT.md`, the clean-clone rehearsal and agent-owned packaging. The author reported generated-artifact takeover #41 complete on September 20. Remaining author work is preserving exported self-reports, the repository/interview walkthrough, feedback on the newer operator layout and public submission. The [M4 specification](../docs/MILESTONE_4.md) states the supported scope and cuts.
 
 Both [manual acceptance](../docs/manual-acceptance.html) and [repository review](../docs/repository-audit.html) now include unverified M4 supplements. Automated tests do not complete those self-reports. Routine metadata excludes typed values, raw OCR and screenshots; separate synthetic business results and reviewed static crops have explicit retention boundaries. Historical limits in the table describe their original revisions, not the current implementation.
+
+## Operator workspace
+
+[Goal entry, saved workflows and app switching](operator-workspace/README.md) records agent-operated UI checks, two genuine provider runs, startup-race corrections and affected regression results. It preserves the difference between new unapproved recordings and admitted saved replay.

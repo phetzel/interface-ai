@@ -15,7 +15,7 @@ from .admission import admit as admit, capability_path, reference_bundle
 from interface_ai.contracts.approval import POLICY_ID as POLICY_ID
 
 # Compatibility name for the environment profile; its path is operator-owned.
-REVIEWED_PATH = capability_path()
+REVIEWED_PATH = capability_path('manual-savings')
 
 
 class BankPolicy:

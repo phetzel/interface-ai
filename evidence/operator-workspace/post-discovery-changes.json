@@ -1,0 +1,10 @@
+{
+  "engine/src/interface_ai/handoff/operator.js": {
+    "tested": "dad375facfbfbf498c53eceb81c1005b8641dc1f6ffbd5199253aee838826a93",
+    "final": "2a82d316da30069cf2589f860324007eb089262741578eee84132fbd086247ec"
+  },
+  "ruff.toml": {
+    "tested": "a85e15b021ce871b6f9c91d1e65bed03f6083bf7f065a5037ff14df86f938c25",
+    "final": "d0ec24cb206826f2fbe7ec7f2d23fd527dd25652c78f6ba2d993f15616cb378f"
+  }
+}

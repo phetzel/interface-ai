@@ -4,126 +4,115 @@ SHELL := /bin/sh
 MODE ?= bank
 SCENARIO ?= default
 MEMBER_ID ?= 00123
-CAPABILITY ?= manual-savings
+CAPABILITY ?= discovered-savings
 PROMOTION_ID ?= discovered-savings
+SUITE ?= quick
 RUN ?=
 GOAL ?=
 TARGET ?= synthetic-bank
-export MODE SCENARIO MEMBER_ID RUN CAPABILITY PROMOTION_ID GOAL TARGET
+export MODE SCENARIO MEMBER_ID RUN CAPABILITY PROMOTION_ID GOAL TARGET SUITE
 
 # These commands share one desktop session, including when invoked with make -j.
 .NOTPARALLEL:
-.PHONY: help assess start audit-setup build up reset ready operator handoff-demo handoff-check logs stop down validate replay demo test check policy-check export replay-check fixture-install fixture-dev fixture-preview fixture-test build-check quick-check quality format discovery-probe discovery-check discover review promote m4-check
 
-help: ## Show available commands (the default target)
-	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <target> [MODE=bank|native] [SCENARIO=default] [MEMBER_ID=00123]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-18s %s\n", $$1, $$2 }' Makefile
+help: ## Show the assessment commands
+	@awk 'BEGIN { FS = ":.*## "; print "Usage: make <command> [NAME=value]\n" } /^[a-zA-Z][a-zA-Z0-9_-]*:.*## / { printf "  %-14s %s\n", $$1, $$2 }' Makefile
+	@echo 'Checks: SUITE=quick|full|desktop|policy|replay|handoff|discovery|operator|generated'
+	@echo 'Development commands: make help-dev'
 
-start: build ## Build and launch a fresh bank demo; requires Docker and Make
+help-dev:
+	@echo 'build, start, up, reset, ready, operator, logs, stop, validate, replay, demo, export'
+	@echo 'fixture-install, fixture-dev, fixture-preview, fixture-test, build-check, quality, format, audit-setup'
+
+start: build
 	./scripts/desktop reset bank default
-	./scripts/desktop validate-capability
+	./scripts/desktop validate-capability --capability "$$CAPABILITY"
 	@echo 'Ready: open http://127.0.0.1:6081/ and choose Start lookup.'
 
 assess: build ## Build and demonstrate the generated capability for member B; no key required
-	$(MAKE) demo CAPABILITY=discovered-savings MEMBER_ID=00456
+	$(MAKE) demo MEMBER_ID=00456
 
-audit-setup: fixture-install build ## Install audit tools, run quick checks, then launch a fresh bank desktop
+audit-setup: fixture-install build
 	./apps/bank-fixture/node_modules/.bin/playwright install chromium
-	$(MAKE) quick-check
+	$(MAKE) check SUITE=quick
 	./scripts/desktop reset bank default
-	./scripts/desktop validate-capability
+	./scripts/desktop validate-capability --capability "$$CAPABILITY"
 	@echo 'Audit setup complete. Continue with the banking UI section of docs/manual-acceptance.html.'
 
-build: ## Build both Docker images
+build:
 	./scripts/desktop build
 	./scripts/fixture build
 
-up: ## Start the selected desktop and operator; MODE defaults to bank
+up:
 	./scripts/desktop up "$$MODE" "$$SCENARIO"
 
-reset: ## Recreate the selected desktop with a fresh session
+reset:
 	./scripts/desktop reset "$$MODE" "$$SCENARIO"
 
-ready: ## Check desktop readiness and print session status
+ready:
 	./scripts/desktop ready
 
-operator: ## Print the same-session operator panel URL
+operator:
 	./scripts/desktop operator
 
 discover: ## Reset the synthetic bank and run bounded online goal discovery; host key + uv required
-	uv run --locked --script scripts/discover --reset --member-id "$$MEMBER_ID" --goal "$$GOAL" --target "$$TARGET"
+	uv run --locked --script scripts/discover --reset $(if $(filter command line environment,$(origin MEMBER_ID)),--member-id "$$MEMBER_ID",) --goal "$$GOAL" --target "$$TARGET"
 
-discovery-probe: ## Test one real OpenAI-selected click on the current fresh bank desktop; host key + uv required
-	uv run --locked --script scripts/discovery-probe
 
-discovery-check: ## Test discovery transport with a simulated provider and real desktop; resets between cases
-	python3 scripts/discovery-check
-
-handoff-demo: ## Launch expiry; generated CAPABILITY starts its lookup and pauses for takeover
+handoff: ## Reset and pause the generated workflow for same-session takeover
 	./scripts/desktop reset bank expired
 	@if [ "$$CAPABILITY" != manual-savings ]; then ./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID" --pause-for-human; fi
 	@echo 'Open http://127.0.0.1:6081/; start a lookup if idle, then take control when paused.'
 
-handoff-check: ## Run same-session acceptance with a simulated human operator
-	./scripts/m3-check
 
-logs: ## Show recent desktop and operator logs
+logs:
 	./scripts/desktop logs
 
-stop: ## Stop further automation input; reset is required to resume
+stop:
 	./scripts/desktop stop-input
 
 down: ## Stop project services; keep images and evidence
 	./scripts/desktop down
 
-validate: ## Validate the bundled capability and anchor assets
-	./scripts/desktop validate-capability
+validate:
+	./scripts/desktop validate-capability --capability "$$CAPABILITY"
 
-replay: ## Replay MEMBER_ID on the current bank screen; no automatic reset
+replay:
 	./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID"
 
-demo: ## Reset the bank scenario, then replay MEMBER_ID
+demo:
 	./scripts/desktop reset bank "$$SCENARIO"
 	./scripts/desktop replay --capability "$$CAPABILITY" --member-id "$$MEMBER_ID"
 
-test: ## Run the engine tests inside the running desktop
-	./scripts/desktop test
+check: ## Run automated checks (SUITE=quick by default; full includes live tests)
+	./scripts/check --suite "$$SUITE"
 
-check: ## Run full M1 acceptance; resets the synthetic desktop
-	./scripts/m1-check
-
-policy-check: ## Run M2 policy/evidence acceptance and the full M1 regression
-	./scripts/m2-check
-
-export: ## Export safe replay evidence; requires RUN=<replay-directory-name>
+export:
 	@test -n "$$RUN" || { echo 'Usage: make export RUN=<replay-directory-name>' >&2; exit 2; }
 	./scripts/desktop export-evidence --run "$$RUN"
 
-replay-check: ## Run nine integration cases; ends on blocked loading
-	./scripts/replay-check
 
-fixture-install: ## Install the host React fixture dependencies (requires Node 22)
+fixture-install:
 	npm --prefix apps/bank-fixture ci
 
-fixture-dev: ## Start the host React development server
+fixture-dev:
 	npm --prefix apps/bank-fixture run dev
 
-fixture-preview: ## Build and serve the host banking UI; run audit-setup or fixture-install first
+fixture-preview:
 	npm --prefix apps/bank-fixture run build
 	npm --prefix apps/bank-fixture run preview
 
-fixture-test: ## Build and run the fixture's Playwright tests on the host
+fixture-test:
 	npm --prefix apps/bank-fixture test
 
-build-check: ## Reject stale images and verify shipped engine/fixture bytes
+build-check:
 	./scripts/build-check
 
-quick-check: ## Run quality, unit, schema and type checks without a live desktop
-	./scripts/quick-check
 
-quality: ## Check active source formatting and Python correctness lint
+quality:
 	./scripts/quality
 
-format: ## Format active source; never rewrites historical evidence
+format:
 	./scripts/quality --write
 
 review: ## Validate and evaluate a recorded candidate for member B and translated layout
@@ -132,5 +121,9 @@ review: ## Validate and evaluate a recorded candidate for member B and translate
 promote: ## Approve the exact evaluated candidate after reviewing its static crops and annotations
 	python3 scripts/review-capability promote --run "$$RUN" --id "$$PROMOTION_ID"
 
-m4-check: ## Check generated replay, same-session recovery, offline boundary and simulated provider rejection
-	./scripts/m4-check
+# Transitional aliases; new documentation uses check/handoff.
+quick-check:
+	$(MAKE) check SUITE=quick
+handoff-demo: handoff
+
+.PHONY: help help-dev start assess audit-setup build up reset ready operator discover handoff logs stop down validate replay demo check export fixture-install fixture-dev fixture-preview fixture-test build-check quality format review promote quick-check handoff-demo

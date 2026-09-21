@@ -1,0 +1,9 @@
+{
+  "provenance": "agent-operated-ui",
+  "realHumanWitnessed": false,
+  "app": "bank-translated",
+  "selectedWorkflow": "discovered-savings",
+  "observed": "Lookup complete; Demo Member B; $98.07 USD; view only",
+  "sessionId": "5a4a62df-8847-489e-99a3-850fed1f161d",
+  "sourceManifest": "../final-source-manifest.json"
+}

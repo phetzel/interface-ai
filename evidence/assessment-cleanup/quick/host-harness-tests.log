@@ -1,0 +1,29 @@
+test_new_untracked_source_changes_build_fingerprint (test_checks.CheckTests) ... ok
+test_schema_drift_fails_without_rewriting_published_files (test_checks.CheckTests) ... ok
+test_stale_image_rejected_even_with_unchanged_image_id (test_checks.CheckTests) ... ok
+test_timed_out_command_retains_partial_output (test_checks.CheckTests) ... ok
+test_bootstrap_subprocess_cannot_inherit_provider_key (test_discovery.DiscoveryTests) ... ok
+test_empty_modifiers_are_normalized_without_mutating_provider_history (test_discovery.DiscoveryTests) ... ok
+test_env_file_is_data_not_shell_and_symlinks_are_rejected (test_discovery.DiscoveryTests) ... ok
+test_initial_screenshot_round_trip_remains_bounded_to_one_click (test_discovery.DiscoveryTests) ... ok
+test_late_response_after_stop_cannot_reach_second_provider_request (test_discovery.DiscoveryTests) ... ok
+test_pinned_sdk_serializes_both_requests_with_mock_http (test_discovery.DiscoveryTests) ... skipped 'Optional host SDK; also run in the pinned discovery script environment'
+test_provider_failure_is_counted_once_and_raw_error_never_escapes (test_discovery.DiscoveryTests) ... ok
+test_rejects_batches_unsupported_tools_refusals_and_safety_checks (test_discovery.DiscoveryTests) ... ok
+test_repeated_screenshot_request_cannot_loop_or_dispatch (test_discovery.DiscoveryTests) ... ok
+test_stateless_round_trip_binds_call_id_and_keeps_transcript_out_of_report (test_discovery.DiscoveryTests) ... ok
+test_stop_before_initial_screenshot_return_blocks_continuation (test_discovery.DiscoveryTests) ... ok
+test_explicit_goal_reaches_model_but_is_not_retained_in_metadata (test_discovery_flow.FlowTests) ... ok
+test_goal_has_input_but_no_script_or_manual_artifact (test_discovery_flow.FlowTests) ... ok
+test_late_response_cannot_trigger_another_provider_call (test_discovery_flow.FlowTests) ... ok
+test_local_validation_ends_loop_without_trusting_model_balance (test_discovery_flow.FlowTests) ... ok
+test_provider_warning_is_not_acknowledged (test_discovery_flow.FlowTests) ... ok
+test_twenty_request_budget_is_enforced (test_discovery_flow.FlowTests) ... ok
+test_cli_checks_request_without_optional_sdk_or_desktop (test_discovery_request.RequestTests) ... ok
+test_goal_variants_keep_exact_typed_id_and_target (test_discovery_request.RequestTests) ... ok
+test_unsupported_intent_target_and_mismatched_binding_are_rejected (test_discovery_request.RequestTests) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.225s
+
+OK (skipped=1)

@@ -2,6 +2,23 @@ import { test, expect, type Page } from '@playwright/test';
 import { spawnSync } from 'node:child_process';
 import oracle from './oracle.json' with { type: 'json' };
 
+test('legacy shell nests the bank in two same-origin frames without broadening embedding elsewhere', async ({
+  page,
+  request,
+}) => {
+  const ordinary = await request.get('http://127.0.0.1:4180/');
+  expect(ordinary.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
+  const wrapper = await page.goto('http://127.0.0.1:4188/');
+  expect(wrapper!.headers()['content-security-policy']).toContain("frame-ancestors 'self'");
+  const bank = page.frameLocator('iframe').frameLocator('iframe');
+  await bank.getByLabel('Member ID', { exact: true }).fill('00456');
+  await bank.getByRole('button', { name: 'Search', exact: true }).click();
+  await bank.getByRole('button', { name: 'View savings', exact: true }).click();
+  await expect(bank.getByText('$98.07', { exact: true })).toBeVisible();
+  expect(page.frames()).toHaveLength(3);
+  expect((await request.get('http://127.0.0.1:4188/other-frame.html')).status()).toBe(404);
+});
+
 test('expiry requires manual restoration and preserves the searched member', async ({ page }) => {
   await page.goto('http://127.0.0.1:4187/');
   await search(page, '00456');

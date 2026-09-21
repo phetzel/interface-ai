@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Run named assessment checks sequentially against one shared desktop.
+
+Examples: scripts/check; scripts/check --suite full; scripts/check --suite replay.
+Checks never call a live provider, rebuild stale images, or mark a human checklist.
+"""
+
+import argparse
+from pathlib import Path
+import runpy
+import sys
+
+from lib.acceptance import ROOT, attempt, command, source_hashes, write_json
+
+SUITES = (
+    'quick',
+    'desktop',
+    'policy',
+    'replay',
+    'handoff',
+    'discovery',
+    'lifecycle',
+    'operator',
+    'offline',
+    'fixture',
+)
+GROUPS = {
+    'generated': ['replay', 'handoff', 'discovery', 'offline'],
+    'full': [
+        'quick',
+        'fixture',
+        'desktop',
+        'policy',
+        'replay',
+        'handoff',
+        'handoff-manual',
+        'discovery',
+        'lifecycle',
+        'operator',
+        'offline',
+    ],
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--suite', choices=(*SUITES, *GROUPS), default='quick')
+    args, extra = parser.parse_known_args()
+    if args.suite in SUITES and args.suite != 'fixture':
+        sys.argv = [str(ROOT / 'scripts/checks' / (args.suite + '.py')), *extra]
+        runpy.run_path(sys.argv[0], run_name='__main__')
+        return 0
+    if extra:
+        parser.error('Extra options are accepted only by individual suites')
+    if args.suite == 'fixture':
+        result = command(['npm', '--prefix', 'apps/bank-fixture', 'test'], timeout=300)
+        print(result.stdout + result.stderr)
+        return result.returncode
+    output = attempt('checks')
+    frozen = source_hashes()
+    write_json(output / 'source-manifest.json', frozen)
+    summary = dict(
+        status='running', suite=args.suite, modelCalls=0, realHumanWitnessed=False, checks=[]
+    )
+    try:
+        for name in GROUPS[args.suite]:
+            suite = 'handoff' if name == 'handoff-manual' else name
+            options = ['--capability', 'manual-savings'] if name == 'handoff-manual' else []
+            result = command(
+                [sys.executable, 'scripts/check', '--suite', suite, *options],
+                directory=output,
+                name=name,
+                timeout=1800,
+            )
+            evidence = next(
+                (
+                    line[10:]
+                    for line in reversed(result.stdout.splitlines())
+                    if line.startswith('Evidence: ')
+                ),
+                None,
+            )
+            item = dict(name=name, status='passed' if result.returncode == 0 else 'failed')
+            if evidence:
+                path = Path(evidence).resolve()
+                if ROOT / 'tmp' not in path.parents:
+                    raise ValueError('Unexpected evidence path')
+                item['evidence'] = str(path.relative_to(ROOT))
+            summary['checks'].append(item)
+            write_json(output / 'summary.json', summary)
+            print(item['status'].upper() + ' ' + name, flush=True)
+            if result.returncode:
+                raise ValueError(name + ' failed; inspect retained logs')
+        if source_hashes() != frozen:
+            raise ValueError('Executable source changed during checks')
+        summary['status'] = 'passed'
+    except Exception as exc:
+        summary.update(status='failed', failure=str(exc))
+    finally:
+        write_json(output / 'summary.json', summary)
+        print('Evidence: ' + str(output), flush=True)
+    return 0 if summary['status'] == 'passed' else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

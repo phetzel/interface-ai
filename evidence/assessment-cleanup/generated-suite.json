@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "suite": "generated",
+  "modelCalls": 0,
+  "realHumanWitnessed": false,
+  "checks": [
+    {
+      "name": "replay",
+      "status": "passed",
+      "evidence": "tmp/replay-checks/20260921T015413Z-44219c8b"
+    },
+    {
+      "name": "handoff",
+      "status": "passed",
+      "evidence": "tmp/handoff-checks/20260921T015824Z-2f9da2f7"
+    },
+    {
+      "name": "discovery",
+      "status": "passed",
+      "evidence": "tmp/discovery-checks/20260921T015914Z-7bd533d0"
+    },
+    {
+      "name": "offline",
+      "status": "passed",
+      "evidence": "tmp/offline-checks/20260921T020108Z-9df955e1"
+    }
+  ]
+}

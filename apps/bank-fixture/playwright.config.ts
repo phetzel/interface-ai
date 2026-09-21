@@ -9,6 +9,7 @@ const scenarios = [
   "translated",
   "policy",
   "expired",
+  "iframe",
 ];
 export default defineConfig({
   testDir: "./tests",

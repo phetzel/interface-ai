@@ -1,0 +1,9 @@
+file:///Users/phillip/interview/interface-ai/scripts/checks/operator_helpers.mjs:8
+    throw Error('Operator UI checkpoint deadline');
+          ^
+
+Error: Operator UI checkpoint deadline
+    at poll (file:///Users/phillip/interview/interface-ai/scripts/checks/operator_helpers.mjs:8:11)
+    at async file:///Users/phillip/interview/interface-ai/scripts/checks/operator_ui.mjs:33:3
+
+Node.js v22.17.1

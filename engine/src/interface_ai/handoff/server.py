@@ -4,6 +4,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 import json
 from pathlib import Path
+import os
 import secrets
 import threading
 
@@ -11,9 +12,12 @@ from interface_ai.desktop import DesktopError
 from interface_ai.desktop.backend import X11Backend
 from interface_ai.desktop.session import request_stop
 from interface_ai.discovery.http import handle as handle_probe
-from interface_ai.discovery.probe import Probe, provision
+from interface_ai.discovery.transport_diagnostic import TransportDiagnostic
+from interface_ai.discovery.credentials import provision
 from interface_ai.discovery.worker import Discovery
 from interface_ai.policy.evidence import safe_code
+from interface_ai.policy.admission import approvals, capability_path, admit
+from interface_ai.replay.loader import load_bundle
 from interface_ai.replay.loader import ReplayError, strict_json
 from .controller import Controller
 
@@ -41,7 +45,7 @@ class Handler(BaseHTTPRequestHandler):
             'Content-Security-Policy',
             "default-src 'none'; script-src 'nonce-"
             + self.server.token
-            + "'; style-src 'unsafe-inline'; img-src blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+            + "'; style-src 'unsafe-inline'; img-src blob:; connect-src 'self' http://127.0.0.1:6082; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
         )
         self.end_headers()
         self.wfile.write(data)
@@ -78,6 +82,22 @@ class Handler(BaseHTTPRequestHandler):
                     '__TOKEN__', self.server.token
                 )
                 self.reply(200, html.encode(), 'text/html; charset=utf-8')
+            elif self.path == '/workflows':
+                workflows = []
+                for approval in approvals():
+                    bundle = load_bundle(capability_path(approval.id))
+                    admit(bundle)
+                    workflows.append(
+                        dict(
+                            id=approval.id,
+                            version=approval.capabilityVersion,
+                            provenance=approval.provenance
+                            if isinstance(approval.provenance, str)
+                            else approval.provenance.kind,
+                            digest=bundle.sha256,
+                        )
+                    )
+                self.reply(200, workflows)
             elif self.path == '/status':
                 # Polling must not occupy request slots waiting behind input.
                 # Leave capacity for /stop, which signals before taking mutex.
@@ -134,12 +154,24 @@ class Handler(BaseHTTPRequestHandler):
             if (
                 not isinstance(data, dict)
                 or self.path not in fields
-                or set(data) != fields[self.path]
+                or (
+                    set(data) != fields[self.path]
+                    and not (
+                        self.path == '/start' and set(data) == {'lease', 'memberId', 'capability'}
+                    )
+                )
             ):
                 raise ValueError()
             controller = self.server.controller
             if self.path == '/start':
-                controller.start(data['memberId'], data['lease'])
+                bundle = (
+                    load_bundle(capability_path(data['capability']))
+                    if 'capability' in data
+                    else None
+                )
+                controller.start(
+                    data['memberId'], data['lease'], **({'bundle': bundle} if bundle else {})
+                )
             elif self.path == '/takeover':
                 controller.takeover(data['lease'])
             elif self.path == '/action':
@@ -215,11 +247,18 @@ class Server(ThreadingHTTPServer):
 
 
 if __name__ == '__main__':
-    controller = Controller()
+    from interface_ai.policy.admission import capability_path
+    from interface_ai.replay.loader import load_bundle
+
+    controller = Controller(
+        bundle=load_bundle(
+            capability_path(os.environ.get('DESKTOP_CAPABILITY', 'discovered-savings'))
+        )
+    )
     with Server(
         ('0.0.0.0', 6081),
         controller,
-        probe=Probe(controller),
+        probe=TransportDiagnostic(controller),
         discovery=Discovery(controller),
         probe_token=provision(controller.session['id']),
     ) as server:

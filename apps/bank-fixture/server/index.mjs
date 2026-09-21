@@ -6,6 +6,14 @@ import { scenarioConfig } from './scenarios.mjs';
 
 const root = fileURLToPath(new URL('../dist/', import.meta.url));
 const config = scenarioConfig(process.env.FIXTURE_SCENARIO ?? 'default');
+const framed = process.env.FIXTURE_SCENARIO === 'iframe';
+// A fixed local legacy wrapper: two nested frames in table-based shells. The
+// bank itself and its geometry stay unchanged so replay must use desktop pixels.
+function legacyShell(source) {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Northstar · Legacy member terminal</title>
+  <style>html,body,table,tbody,tr,td{margin:0;padding:0;width:100%;height:100%;border:0;border-spacing:0}body{overflow:hidden}iframe{display:block;width:100%;height:100%;border:0}</style>
+  </head><body><table role="presentation"><tr><td><iframe title="Member terminal" src="${source}"></iframe></td></tr></table></body></html>`;
+}
 const host = process.env.HOST ?? '127.0.0.1';
 const port = Number(process.env.PORT ?? 4173);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Invalid PORT');
@@ -23,7 +31,7 @@ const server = createServer(async (request, response) => {
   response.setHeader('X-Content-Type-Options', 'nosniff');
   response.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'",
+    `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'self'; frame-ancestors ${framed ? "'self'" : "'none'"}; base-uri 'none'`,
   );
   if (!['GET', 'HEAD'].includes(request.method)) {
     response.writeHead(405, { Allow: 'GET, HEAD' }).end();
@@ -31,6 +39,15 @@ const server = createServer(async (request, response) => {
   }
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://fixture').pathname);
+    if (framed && (pathname === '/' || pathname === '/legacy-frame.html')) {
+      response.setHeader('Content-Type', 'text/html; charset=utf-8');
+      response.end(
+        request.method === 'HEAD'
+          ? undefined
+          : legacyShell(pathname === '/' ? '/legacy-frame.html' : '/index.html'),
+      );
+      return;
+    }
     if (pathname === '/healthz' || pathname === '/fixture-config.json') {
       response.setHeader('Content-Type', 'application/json');
       response.end(

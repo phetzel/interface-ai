@@ -5,7 +5,7 @@ The repository remains private during preparation. The final submission requires
 ## Author steps
 
 1. Read [REPORT.md](../REPORT.md). Check that you agree with the tradeoffs and can explain the boundaries, especially reused recognition annotations, agent review, the fixed goal grammar and the single continuation boundary.
-2. Follow [the M4 manual supplement](manual-acceptance.html#m4) for generated replay and one real-person takeover. Use **Actual size** if targets are small. Save your observations honestly; generated automated handoffs do not complete this personal review.
+2. Preserve the completed generated-artifact takeover reported for [manual check #41](manual-acceptance.html#m4). Give feedback on the newer compact operator layout; automated checks cannot establish personal comfort.
 3. Work through [the repository/interview checklist](repository-audit.html). Use the route below for a shorter first pass. Export both checklists from the browser where you completed them; their state is browser-local.
 4. Review the [assessment coverage](ASSESSMENT_CHECK.md) and [evidence index](../evidence/README.md). Decide whether to record a short demo video; it is optional.
 5. After the final push, verify the repository is public before submission. Send the draft below yourself or explicitly authorize its final recipient/body and visibility change.
@@ -39,15 +39,15 @@ Phillip
 
 Confirm that this URL is publicly accessible before sending. The draft is not a sent message.
 
-## Your remaining hands-on check
+## Repeating the takeover if needed
 
-Keep your previous checklist results. The remaining manual supplement is section 10, checks 38–43. Checks 38 and 42 are evidence reviews; the automated M5 records support the command checks. Record what you actually reviewed or observed rather than rerunning a paid discovery just for the checklist.
+The author reported #41 complete and supplied a passing terminal result for #42 on September 20. Keep those results. Export the checklists (#43), finish the repository/interview review, and assess the newer responsive operator layout. The sequence below is a reference if you choose to repeat takeover; a new paid discovery is unnecessary.
 
 From `/Users/phillip/interview/interface-ai`, open the checklists in the same browser you used before:
 
 ```sh
 open -a "Google Chrome" docs/manual-acceptance.html docs/repository-audit.html
-make handoff-demo CAPABILITY=discovered-savings MEMBER_ID=00123
+make handoff
 ```
 
 For check 41, finish the following in one session, within 15 minutes of taking control. Do not reset between these steps:

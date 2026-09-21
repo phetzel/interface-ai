@@ -1,4 +1,4 @@
-"""Host-only M4-01 provider protocol. Raw frames and response items stay in memory."""
+"""Host-only provider protocol and internal one-action transport diagnostic. Raw frames and response items stay in memory."""
 
 import base64
 import json

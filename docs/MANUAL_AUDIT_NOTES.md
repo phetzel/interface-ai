@@ -67,3 +67,15 @@ These are automated/agent-operated regressions of the operator-only revision. Sa
 ## 2026-09-20 — M5 actual-size view
 
 M5 adds an Actual size / Fit to panel control with a scrollable desktop viewport. The automated operator test verifies fit and actual-size clicks, correct coordinates after resizing to a narrow panel and scrolling, successful recovery, and unchanged Stop behavior. This mitigates small rendered targets without changing ownership or native input. The original cause of the user's difficulty remains unconfirmed; personal usability acceptance is still pending. Earlier audit observations and saved checklist results are unchanged.
+
+## 2026-09-20 — Generated-artifact author review
+
+The author reported checklist #41 complete. Supplied screenshots show a premature-resume rejection, restoration to member A's overview, a return to the search screen, and final Lookup complete with Savings / $1,234.56 and view-only mode. The author's completion report covers the remaining prescribed checks; screenshots alone do not independently prove every rejection or same-session assertion. No checklist selections were changed by automation.
+
+The supplied #42 terminal output reports all three original `make m4-check` groups passed at `tmp/m4-checks/20260920T233530Z-ed595663`. This remains automated evidence. The subsequent cleanup replaces that command with `make check SUITE=generated`, adds a nested-frame scenario, and rearranges the operator layout. Earlier results retain their original revision/provenance; comfort with the new layout awaits user feedback.
+
+## 2026-09-20 — Operator workspace follow-up
+
+At the user's request, Codex operated the new goal/workflow/app controls. Saved manual replay, native pointer/typing/scrolling/Stop, nested-iframe generated replay, unsupported-goal rejection and genuine goal discovery were observed through the UI. The recovery variant passed all three resume rejections and same-session completion. Actual-size clicking and fit mode were exercised in the narrow pane; personal comfort remains the author's judgment.
+
+The operator-triggered member-B discovery used three provider requests and four inputs, returning 9807 USD minor units. A second member-A run also completed before an attempted Stop; it is not claimed as an in-flight cancellation. An app reset stopped midway did leave the replacement desktop stopped. [The evidence record](../evidence/operator-workspace/README.md) separates these observations from automated race, cancellation and regression checks. Existing checklist results were not marked or changed.

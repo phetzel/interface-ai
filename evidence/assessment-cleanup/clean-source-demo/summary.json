@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "provenance": "clean-source-export-of-uncommitted-work",
+  "command": "make assess SCENARIO=iframe",
+  "scenario": "iframe",
+  "hostDependenciesCopied": false,
+  "keyCopied": false,
+  "modelCalls": 0,
+  "actionsCompleted": 4,
+  "exactMemberBResult": true,
+  "executableSourceMatches": true,
+  "reusesInstalledDockerAndBuildCache": true,
+  "freshMachineClaim": false
+}

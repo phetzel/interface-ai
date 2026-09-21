@@ -98,7 +98,7 @@ canvas.create_text(
 canvas.create_text(
     64,
     750,
-    text='Banking workflow and LLM discovery are not implemented in this step.',
+    text='Use the operator app selector for bank workflows and goal discovery.',
     anchor='w',
     fill='#64748b',
     font=('DejaVu Sans', 11),

@@ -1,0 +1,212 @@
+{
+  "kind": "desktop-foundation",
+  "status": "passed",
+  "startedAt": "2026-09-21T01:38:44.086151+00:00",
+  "scope": "Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data",
+  "checks": [
+    {
+      "name": "provenance",
+      "status": "passed",
+      "sourceFilesHashed": 175,
+      "elapsedSeconds": 0.623
+    },
+    {
+      "name": "shutdown-fresh-start-repeated-start",
+      "status": "passed",
+      "freshSession": "24459c49-b63a-49f8-936e-277ac5f1da44",
+      "repeatedStartPreservesSession": true,
+      "shutdownRemovedServices": true,
+      "elapsedSeconds": 13.677
+    },
+    {
+      "name": "native-input-operator-stop",
+      "status": "passed",
+      "evidence": "native-smoke",
+      "checksPassed": 8,
+      "sessionId": "24459c49-b63a-49f8-936e-277ac5f1da44",
+      "elapsedSeconds": 2.309
+    },
+    {
+      "name": "live-session-exclusivity-stop-guards",
+      "status": "passed",
+      "evidence": "native-guards",
+      "checksPassed": 6,
+      "sessionId": "0a9385e1-c6cd-4a82-984f-f3fef470bfe5",
+      "elapsedSeconds": 12.044
+    },
+    {
+      "name": "browser-input-and-sandbox",
+      "status": "passed",
+      "evidence": "browser-smoke",
+      "checksPassed": 8,
+      "sessionId": "8af7f8f8-3aba-447a-a1df-c37ec31b116a",
+      "elapsedSeconds": 21.243
+    },
+    {
+      "name": "isolation-and-runtime-source",
+      "status": "passed",
+      "evidence": "runtime-isolation.json",
+      "runtimeFilesChecked": 103,
+      "prohibitedConnectionsBlocked": 4,
+      "elapsedSeconds": 0.408
+    },
+    {
+      "name": "validate-capability",
+      "status": "passed",
+      "capability": "savings-balance",
+      "sha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+      "elapsedSeconds": 0.248
+    },
+    {
+      "name": "ten-baselines-seven-scenarios",
+      "status": "passed",
+      "evidence": "replay/summary.json",
+      "baselinePasses": 10,
+      "scenarioPasses": 7,
+      "baselineSeconds": {
+        "min": 3.542,
+        "median": 3.7,
+        "max": 3.856
+      },
+      "elapsedSeconds": 390.906
+    },
+    {
+      "name": "preflight-stale-and-stopped-rejections",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "numeric-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/numeric-id"
+        },
+        {
+          "name": "short-id",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/short-id"
+        },
+        {
+          "name": "extra-input",
+          "code": "invalid_input",
+          "actionsCompleted": 0,
+          "evidence": "rejections/extra-input"
+        },
+        {
+          "name": "unsupported-version",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-version"
+        },
+        {
+          "name": "unsupported-action",
+          "code": "invalid_capability",
+          "actionsCompleted": 0,
+          "evidence": "rejections/unsupported-action"
+        },
+        {
+          "name": "stale-session",
+          "code": "stale_session",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stale-session"
+        },
+        {
+          "name": "stopped-replay",
+          "code": "stopped",
+          "actionsCompleted": 0,
+          "evidence": "rejections/stopped-replay"
+        }
+      ],
+      "elapsedSeconds": 41.099
+    },
+    {
+      "name": "final-source-results-and-reset",
+      "status": "passed",
+      "sourceUnchanged": true,
+      "typedResultsValidated": 24,
+      "finalDesktop": "fresh-bank-search",
+      "evidence": "final-runtime.json",
+      "elapsedSeconds": 19.135
+    }
+  ],
+  "fullAcceptance": true,
+  "sourceCommit": "7ff40352c195d530d657a426c5b1bd6799d57d0d",
+  "uncommittedFiles": [
+    " M .github/workflows/quality.yml",
+    " M AGENTS.md",
+    " M Makefile",
+    " M README.md",
+    " M REPORT.md",
+    " M apps/bank-fixture/README.md",
+    " M apps/bank-fixture/playwright.config.ts",
+    " M apps/bank-fixture/server/index.mjs",
+    " M apps/bank-fixture/server/scenarios.mjs",
+    " M apps/bank-fixture/tests/fixture.spec.ts",
+    " M compose.yaml",
+    " M docs/ASSESSMENT_CHECK.md",
+    " M docs/CURRENT_PLAN.md",
+    " M docs/DEMO.md",
+    " M docs/DEVELOPMENT.md",
+    " M docs/MANUAL_AUDIT_NOTES.md",
+    " M docs/SUBMISSION.md",
+    " M engine/README.md",
+    " M engine/src/interface_ai/discovery/credentials.py",
+    " D engine/src/interface_ai/discovery/probe.py",
+    " M engine/src/interface_ai/discovery/worker.py",
+    " M engine/src/interface_ai/handoff/controller.py",
+    " M engine/src/interface_ai/handoff/operator.css",
+    " M engine/src/interface_ai/handoff/operator.html",
+    " M engine/src/interface_ai/handoff/server.py",
+    " M engine/src/interface_ai/policy/admission.py",
+    " M engine/src/interface_ai/policy/bank.py",
+    " M engine/src/interface_ai/policy/evidence.py",
+    " M engine/src/interface_ai/policy/gateway.py",
+    " M engine/src/interface_ai/replay/README.md",
+    " M engine/src/interface_ai/vision/README.md",
+    " D engine/src/interface_ai/vision/bank.py",
+    " M engine/tests/test_discovery_probe.py",
+    " M engine/tests/test_handoff.py",
+    " M engine/tests/test_vision.py",
+    " D infra/desktop/vision_probe.py",
+    " M ruff.toml",
+    " D scripts/checks/m1_runtime.py",
+    " D scripts/checks/m2_runtime.py",
+    " D scripts/checks/m3_operator_stop.mjs",
+    " D scripts/checks/m3_operator_ui.mjs",
+    " M scripts/desktop",
+    " D scripts/discovery-check",
+    " D scripts/discovery-probe",
+    " D scripts/discovery-probe.lock",
+    " M scripts/fixture",
+    " M scripts/lib/discovery.py",
+    " D scripts/lifecycle-check",
+    " D scripts/m1-check",
+    " D scripts/m2-check",
+    " D scripts/m3-check",
+    " D scripts/m4-check",
+    " D scripts/quick-check",
+    " D scripts/replay-check",
+    " D scripts/vision-check",
+    "?? engine/src/interface_ai/discovery/reservation.py",
+    "?? engine/src/interface_ai/discovery/transport_diagnostic.py",
+    "?? engine/src/interface_ai/policy/profile.py",
+    "?? scripts/check",
+    "?? scripts/checks/desktop.py",
+    "?? scripts/checks/desktop_guards.py",
+    "?? scripts/checks/desktop_runtime.py",
+    "?? scripts/checks/discovery.py",
+    "?? scripts/checks/handoff.py",
+    "?? scripts/checks/lifecycle.py",
+    "?? scripts/checks/offline.py",
+    "?? scripts/checks/operator.py",
+    "?? scripts/checks/operator_stop.mjs",
+    "?? scripts/checks/operator_ui.mjs",
+    "?? scripts/checks/policy.py",
+    "?? scripts/checks/policy_runtime.py",
+    "?? scripts/checks/quick.py",
+    "?? scripts/checks/replay.py",
+    "?? scripts/lib/operator.py"
+  ],
+  "capabilitySha256": "94d37e09907c839e3c04bd1662003ae6529d087e137952e4e844a673d32d9c17",
+  "finishedAt": "2026-09-21T01:47:05.783417+00:00"
+}

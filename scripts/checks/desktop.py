@@ -1,0 +1,443 @@
+#!/usr/bin/env python3
+"""Run the desktop foundation acceptance gate against local Docker; reset the synthetic desktop.
+
+Requires Python 3.9+ on the host and built desktop/fixture images. Every attempt
+gets its own ignored evidence directory. A failure stops the gate and is retained;
+the harness never retries a replay or edits recognition settings.
+"""
+
+from datetime import datetime, timezone
+import argparse
+import json
+from pathlib import Path
+import shutil
+import statistics
+import sys
+import time
+import uuid
+
+from lib.acceptance import source_hashes, command as run_command
+from lib.builds import retain_builds, verify_running
+
+from lib.acceptance import ROOT
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    '--rejections-only',
+    action='store_true',
+    help='Focused preflight/Stop regression; not the full acceptance gate',
+)
+args = parser.parse_args()
+RUN_ID = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+OUTPUT = ROOT / 'tmp/desktop-checks' / RUN_ID
+OUTPUT.mkdir(parents=True)
+ARTIFACTS = ROOT / 'tmp/desktop-artifacts'
+ARTIFACTS.mkdir(parents=True, exist_ok=True)
+SUMMARY = {
+    'kind': 'desktop-foundation',
+    'status': 'running',
+    'startedAt': datetime.now(timezone.utc).isoformat(),
+    'scope': 'Fixed 1280x800 Linux X11, en-US, 100% scale, trusted manual capability, synthetic data',
+    'checks': [],
+    'fullAcceptance': not args.rejections_only,
+}
+manifest_path = ARTIFACTS / ('desktop-manifest-' + RUN_ID + '.json')
+temporary_artifacts = []
+
+
+def save():
+    (OUTPUT / 'summary.json').write_text(json.dumps(SUMMARY, indent=2) + '\n')
+
+
+def command(arguments, *, timeout=180, script=None):
+    return run_command(arguments, timeout=timeout, script=script)
+
+
+def logged(name, arguments, *, timeout=180, script=None):
+    result = command(arguments, timeout=timeout, script=script)
+    (OUTPUT / (name + '.log')).write_text(result.stdout + result.stderr)
+    if result.returncode:
+        raise RuntimeError(f'{name} exited {result.returncode}; see its log')
+    return result.stdout
+
+
+def desktop(*arguments):
+    return [
+        './scripts/desktop',
+        *arguments,
+        *(
+            ['--capability', 'manual-savings']
+            if arguments
+            and arguments[0] in ('replay', 'validate-capability')
+            and '--capability' not in arguments
+            else []
+        ),
+    ]
+
+
+def container_script(name, path, *arguments):
+    return logged(
+        name,
+        ['docker', 'compose', 'exec', '-T', 'desktop', 'python', '-', *arguments],
+        script=path.read_text(),
+    )
+
+
+def ready():
+    return json.loads(logged('ready', desktop('ready')))
+
+
+def retain_command_bundle(name, stdout):
+    raw = next(
+        line[len('Evidence: ') :] for line in stdout.splitlines() if line.startswith('Evidence: ')
+    )
+    source = ARTIFACTS / Path(raw).relative_to('/artifacts')
+    shutil.copytree(source, OUTPUT / name)
+    report = json.loads((source / 'report.json').read_text())
+    assert report['status'] == 'passed' and report['modelCalls'] == 0
+    return {
+        'evidence': name,
+        'checksPassed': len(report['checks']),
+        'sessionId': report['sessionId'],
+    }
+
+
+def check(name, operation):
+    item = {'name': name, 'status': 'running'}
+    SUMMARY['checks'].append(item)
+    save()
+    print('RUN ' + name, flush=True)
+    started = time.monotonic()
+    try:
+        item.update(operation() or {})
+        item['status'] = 'passed'
+    except Exception as exc:
+        item.update(status='failed', error=type(exc).__name__, message=str(exc))
+        raise
+    finally:
+        item['elapsedSeconds'] = round(time.monotonic() - started, 3)
+        save()
+        print(item['status'].upper() + ' ' + name, flush=True)
+
+
+def sources():
+    return source_hashes()
+
+
+def provenance():
+    retain_builds(OUTPUT)
+    SUMMARY['sourceCommit'] = logged('source-commit', ['git', 'rev-parse', 'HEAD']).strip()
+    SUMMARY['uncommittedFiles'] = logged(
+        'source-status', ['git', 'status', '--porcelain']
+    ).splitlines()
+    (OUTPUT / 'docker-version.txt').write_text(logged('docker-version', ['docker', 'version']))
+    (OUTPUT / 'compose-version.txt').write_text(
+        logged('compose-version', ['docker', 'compose', 'version'])
+    )
+    images = logged(
+        'images',
+        [
+            'docker',
+            'image',
+            'inspect',
+            'interface-ai-desktop:local',
+            'interface-ai-bank-fixture:local',
+            '--format',
+            '{"id":{{json .Id}},"tags":{{json .RepoTags}},"architecture":{{json .Architecture}}}',
+        ],
+    )
+    (OUTPUT / 'images.json').write_text(
+        json.dumps([json.loads(line) for line in images.splitlines()], indent=2) + '\n'
+    )
+    frozen = sources()
+    (OUTPUT / 'source-sha256.json').write_text(json.dumps(frozen, indent=2) + '\n')
+    runtime = {}
+    for name, digest in frozen.items():
+        if name.startswith(('engine/', 'capabilities/')):
+            runtime['/opt/' + name] = digest
+        elif name.startswith('infra/desktop/') and (
+            name.endswith('.py') or name.endswith('requirements.lock')
+        ):
+            runtime['/opt/desktop/' + Path(name).name] = digest
+        elif name == 'infra/desktop/chromium-policy.json':
+            runtime['/etc/chromium/policies/managed/interface-ai.json'] = digest
+    manifest_path.write_text(json.dumps({'runtimeFiles': runtime, 'results': []}, indent=2) + '\n')
+    SUMMARY['capabilitySha256'] = frozen['capabilities/poc/savings-balance/capability.json']
+    return {'sourceFilesHashed': len(frozen)}
+
+
+def lifecycle():
+    logged('shutdown', desktop('down'))
+    assert not logged(
+        'after-shutdown', ['docker', 'compose', '--profile', 'bank', 'ps', '-q']
+    ).strip()
+    logged('fresh-native-start', desktop('up', 'native'))
+    first = ready()
+    logged('repeated-native-start', desktop('up', 'native'))
+    second = ready()
+    assert first['id'] == second['id'] and second['mode'] == 'native' and not second['inputStopped']
+    (OUTPUT / 'native-session.json').write_text(json.dumps(second, indent=2) + '\n')
+    return {
+        'freshSession': second['id'],
+        'repeatedStartPreservesSession': True,
+        'shutdownRemovedServices': True,
+    }
+
+
+def native_guards():
+    old = ready()['id']
+    logged('guard-reset-native', desktop('reset', 'native'))
+    result = container_script(
+        'native-guards',
+        ROOT / 'scripts/checks/desktop_guards.py',
+        '--stale-session',
+        old,
+    )
+    return retain_command_bundle('native-guards', result)
+
+
+def browser():
+    old = ready()['id']
+    logged('browser-reset', desktop('reset', 'bank'))
+    current = ready()
+    assert current['id'] != old and not current['inputStopped']
+    (OUTPUT / 'bank-session.json').write_text(json.dumps(current, indent=2) + '\n')
+    return retain_command_bundle(
+        'browser-smoke', logged('browser-smoke', desktop('browser-smoke', '--member-id', '00123'))
+    )
+
+
+def isolation():
+    verify_running(OUTPUT)
+    ids = logged(
+        'container-ids', ['docker', 'compose', '--profile', 'bank', 'ps', '-q']
+    ).splitlines()
+    inspected = command(['docker', 'inspect', *ids])
+    assert inspected.returncode == 0
+    configs = json.loads(inspected.stdout)
+    observations = []
+    for config in configs:
+        service = config['Config']['Labels']['com.docker.compose.service']
+        host = config['HostConfig']
+        assert host['CapDrop'] == ['ALL'] and not host['Privileged']
+        assert any(option.startswith('no-new-privileges') for option in host['SecurityOpt'])
+        if service == 'desktop':
+            assert config['Config']['User'] == 'desktop'
+            assert len(config['Mounts']) == 1
+            mount = config['Mounts'][0]
+            assert mount['Destination'] == '/artifacts' and mount['Source'].endswith(str(ARTIFACTS))
+            assert not host['PortBindings']
+            networks = list(config['NetworkSettings']['Networks'])
+            assert len(networks) == 1
+            network = json.loads(command(['docker', 'network', 'inspect', networks[0]]).stdout)[0]
+            assert network['Internal'] is True
+            assert any(option.startswith('seccomp=') for option in host['SecurityOpt'])
+        else:
+            assert not config['Mounts']
+        if service == 'operator':
+            assert host['PortBindings'] == {
+                '6081/tcp': [{'HostIp': '127.0.0.1', 'HostPort': '6081'}]
+            }
+        observations.append(
+            {
+                'service': service,
+                'user': config['Config']['User'],
+                'capabilitiesDropped': host['CapDrop'],
+                'privileged': False,
+                'mounts': [m['Destination'] for m in config['Mounts']],
+                'networks': list(config['NetworkSettings']['Networks']),
+                'portBindings': host['PortBindings'],
+            }
+        )
+    assert {o['service'] for o in observations} == {'desktop', 'fixture', 'gateway', 'operator'}
+    (OUTPUT / 'container-boundaries.json').write_text(json.dumps(observations, indent=2) + '\n')
+    stdout = container_script(
+        'runtime-isolation',
+        ROOT / 'scripts/checks/desktop_runtime.py',
+        '--manifest',
+        '/artifacts/' + manifest_path.name,
+    )
+    report = json.loads(stdout)
+    (OUTPUT / 'runtime-isolation.json').write_text(stdout)
+    return {
+        'evidence': 'runtime-isolation.json',
+        'runtimeFilesChecked': report['runtimeFileHashesChecked'],
+        'prohibitedConnectionsBlocked': len(report['tcpProbes']),
+    }
+
+
+def replays():
+    response = command(
+        ['./scripts/check', '--suite', 'replay', '--capability', 'manual-savings', '--acceptance'],
+        timeout=900,
+    )
+    (OUTPUT / 'repeated-replays.log').write_text(response.stdout + response.stderr)
+    source = Path(
+        next(
+            line[len('Evidence: ') :]
+            for line in response.stdout.splitlines()
+            if line.startswith('Evidence: ')
+        )
+    )
+    shutil.copytree(source, OUTPUT / 'replay')
+    summary = json.loads((source / 'summary.json').read_text())
+    assert (
+        response.returncode == 0
+        and summary['status'] == 'passed'
+        and len(summary['cases']) == 17
+        and summary['uniqueSessions'] == 17
+    )
+    assert summary['capabilitySha256'] == SUMMARY['capabilitySha256']
+    baselines = summary['cases'][:10]
+    assert all(c['scenario'] == 'default' and c['exactOracleMatch'] for c in baselines)
+    elapsed = [c['elapsedSeconds'] for c in baselines]
+    return {
+        'evidence': 'replay/summary.json',
+        'baselinePasses': 10,
+        'scenarioPasses': 7,
+        'baselineSeconds': {
+            'min': min(elapsed),
+            'median': round(statistics.median(elapsed), 3),
+            'max': max(elapsed),
+        },
+    }
+
+
+def rejection(name, arguments, code, *, phase='preflight'):
+    response = command(desktop('replay', *arguments))
+    (OUTPUT / (name + '.log')).write_text(response.stdout + response.stderr)
+    raw = json.loads(response.stdout)['evidence']
+    source = ARTIFACTS / Path(raw).relative_to('/artifacts')
+    shutil.copytree(source, OUTPUT / 'rejections' / name)
+    report = json.loads((source / 'report.json').read_text())
+    result = json.loads((source / 'result.json').read_text())
+    events = [json.loads(line) for line in (source / 'events.jsonl').read_text().splitlines()]
+    assert response.returncode == 1 and result['status'] == 'failure' and result['code'] == code
+    assert (
+        report['actionsCompleted'] == 0 and report['phase'] == phase and report['modelCalls'] == 0
+    )
+    assert not any(e['kind'] == 'action' for e in events)
+    if code in ('invalid_input', 'invalid_capability'):
+        assert not events and 'sessionId' not in report
+    return {'name': name, 'code': code, 'actionsCompleted': 0, 'evidence': 'rejections/' + name}
+
+
+def rejections():
+    logged('preflight-reset', desktop('reset', 'bank'))
+    cases = []
+    for name, value in [
+        ('numeric-id', {'memberId': 123}),
+        ('short-id', {'memberId': '123'}),
+        ('extra-input', {'memberId': '00123', 'unexpected': True}),
+    ]:
+        cases.append(rejection(name, ['--inputs-json', json.dumps(value)], 'invalid_input'))
+    capability = json.loads((ROOT / 'capabilities/poc/savings-balance/capability.json').read_text())
+    for name in ('unsupported-version', 'unsupported-action'):
+        altered = json.loads(json.dumps(capability))
+        if name == 'unsupported-version':
+            altered['schemaVersion'] = '2.0'
+        else:
+            altered['steps'][0]['action'] = 'shell'
+        path = ARTIFACTS / ('desktop-' + name + '-' + RUN_ID + '.json')
+        path.write_text(json.dumps(altered))
+        temporary_artifacts.append(path)
+        cases.append(
+            rejection(
+                name,
+                ['--member-id', '00123', '--capability', '/artifacts/' + path.name],
+                'invalid_capability',
+            )
+        )
+    old = ready()['id']
+    logged('stale-reset', desktop('reset', 'bank'))
+    assert ready()['id'] != old
+    cases.append(
+        rejection('stale-session', ['--member-id', '00123', '--session', old], 'stale_session')
+    )
+    logged('stop-input', desktop('stop-input'))
+    assert ready()['inputStopped']
+    cases.append(
+        rejection('stopped-replay', ['--member-id', '00123'], 'stopped', phase='execution')
+    )
+    return {'cases': cases}
+
+
+def final_verification():
+    frozen = json.loads((OUTPUT / 'source-sha256.json').read_text())
+    assert sources() == frozen, 'Executable source changed during acceptance; start a new attempt'
+    manifest = json.loads(manifest_path.read_text())
+    run_ids = {
+        report['runId']
+        for r in OUTPUT.rglob('report.json')
+        if 'runId' in (report := json.loads(r.read_text()))
+    }
+    manifest['results'] = [
+        '/artifacts/' + p.parent.name + '/result.json'
+        for p in ARTIFACTS.glob('*/report.json')
+        if p.parent.name in run_ids and p.with_name('result.json').exists()
+    ]
+    expected_results = 7 if args.rejections_only else 24
+    assert len(manifest['results']) == expected_results
+    manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
+    logged('final-reset', desktop('reset', 'bank'))
+    session = ready()
+    assert session['mode'] == 'bank' and not session['inputStopped']
+    (OUTPUT / 'final-session.json').write_text(json.dumps(session, indent=2) + '\n')
+    stdout = container_script(
+        'final-runtime',
+        ROOT / 'scripts/checks/desktop_runtime.py',
+        '--manifest',
+        '/artifacts/' + manifest_path.name,
+    )
+    (OUTPUT / 'final-runtime.json').write_text(stdout)
+    (OUTPUT / 'system-packages.txt').write_text(
+        logged(
+            'system-packages',
+            [
+                'docker',
+                'compose',
+                'exec',
+                '-T',
+                'desktop',
+                'cat',
+                '/opt/desktop/system-packages.txt',
+            ],
+        )
+    )
+    return {
+        'sourceUnchanged': True,
+        'typedResultsValidated': expected_results,
+        'finalDesktop': 'fresh-bank-search',
+        'evidence': 'final-runtime.json',
+    }
+
+
+try:
+    check('provenance', provenance)
+    if not args.rejections_only:
+        check('shutdown-fresh-start-repeated-start', lifecycle)
+        check(
+            'native-input-operator-stop',
+            lambda: retain_command_bundle('native-smoke', logged('native-smoke', desktop('smoke'))),
+        )
+        check('live-session-exclusivity-stop-guards', native_guards)
+        check('browser-input-and-sandbox', browser)
+        check('isolation-and-runtime-source', isolation)
+        check(
+            'validate-capability',
+            lambda: json.loads(logged('validate-capability', desktop('validate-capability')))
+            | {'status': 'passed'},
+        )
+        check('ten-baselines-seven-scenarios', replays)
+    check('preflight-stale-and-stopped-rejections', rejections)
+    check('final-source-results-and-reset', final_verification)
+    SUMMARY['status'] = 'passed'
+except Exception as exc:
+    SUMMARY.update(status='failed', error=type(exc).__name__, message=str(exc))
+finally:
+    for path in [manifest_path, *temporary_artifacts]:
+        path.unlink(missing_ok=True)
+    SUMMARY['finishedAt'] = datetime.now(timezone.utc).isoformat()
+    save()
+    print('Evidence: ' + str(OUTPUT), flush=True)
+sys.exit(0 if SUMMARY['status'] == 'passed' else 1)

@@ -6,11 +6,16 @@ from interface_ai.contracts.approval import Approval, Continuation, POLICY_ID
 from interface_ai.contracts.generated import GeneratedCapability
 from interface_ai.desktop.adapter import DesktopError
 from interface_ai.files import read_regular, safe_path
-from interface_ai.replay.loader import strict_json, load_bundle
+from interface_ai.replay.loader import strict_json
+from .profile import (
+    RECOGNITION_PROFILE_ID as RECOGNITION_PROFILE_ID,
+    reference_bundle as reference_bundle,
+    validate_profile,
+)
 
 ROOT = Path(__file__).resolve().parents[4] / 'capabilities'
 APPROVALS = ROOT / 'approvals'
-DEFAULT_ID = 'manual-savings'
+DEFAULT_ID = 'discovered-savings'
 
 
 def denied():
@@ -70,30 +75,6 @@ def capability_path(identifier=DEFAULT_ID):
     if len(matches) != 1:
         denied()
     return ROOT / matches[0].capabilityFile
-
-
-def reference_bundle():
-    bundle = load_bundle(capability_path())
-    admit(bundle)
-    return bundle
-
-
-def validate_profile(bundle):
-    """This recorder reuses these semantics; review cannot silently weaken them."""
-    if not isinstance(bundle.capability, GeneratedCapability):
-        denied()
-    cap = bundle.capability
-    reference = reference_bundle()
-    if cap.provenance.recognitionProfileSha256 != reference.sha256:
-        denied()
-    for key in ('environment', 'inputSchema', 'outputSchema', 'fields', 'checkpoints'):
-        if cap.model_dump()[key] != reference.capability.model_dump()[key]:
-            denied()
-    for name, target in reference.capability.targets.items():
-        if name == 'member-input':
-            continue
-        if cap.targets.get(name) != target:
-            denied()
 
 
 def validate_continuation(cap, continuation):

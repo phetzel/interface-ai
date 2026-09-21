@@ -8,7 +8,7 @@ from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import re
 
-ROUTES = frozenset(('/', '/index.html', '/fixture-config.json', '/healthz'))
+ROUTES = frozenset(('/', '/index.html', '/legacy-frame.html', '/fixture-config.json', '/healthz'))
 ASSET = re.compile(r'/assets/[A-Za-z0-9_-]+\.(?:js|css|woff2?|png|svg)')
 MAX_BODY = 4 * 1024 * 1024
 RESPONSE_HEADERS = ('Content-Type', 'Content-Security-Policy', 'X-Content-Type-Options')

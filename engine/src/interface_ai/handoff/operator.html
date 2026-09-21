@@ -13,12 +13,60 @@
       <header class="app-header">
         <div>
           <h1>Interface AI</h1>
-          <p class="hint">Desktop operator <span aria-hidden="true">·</span> Synthetic bank demo</p>
+          <p class="hint">Desktop operator <span aria-hidden="true">·</span> Synthetic demos</p>
         </div>
         <button id="stop" class="danger" disabled>Stop</button>
       </header>
       <div class="workspace">
+        <section class="desktop-panel" aria-label="Live desktop">
+          <div class="desktop-heading">
+            <h2>Live desktop</h2>
+            <button id="desktop-size" aria-pressed="false" aria-controls="desktop-viewport">
+              Actual size
+            </button>
+            <span id="input-mode" class="mode">View only</span>
+          </div>
+          <div id="desktop-viewport" tabindex="0" role="region" aria-label="Desktop viewport">
+            <img
+              id="screen"
+              alt="Live isolated desktop. Click to interact when you own control."
+              draggable="false"
+            />
+          </div>
+          <p id="screen-help" class="hint">Watch the same desktop the automation uses.</p>
+        </section>
         <section class="control-panel" aria-label="Lookup controls">
+          <details id="launcher" open>
+            <summary>Apps &amp; workflows</summary>
+            <div class="control-group">
+              <label for="app-choice">Desktop app</label>
+              <select id="app-choice">
+                <option value="bank">Northstar bank</option>
+              </select>
+              <button id="switch-app" disabled>Open app / reset session</button>
+              <p class="hint">
+                Starts a fresh desktop. Stop any active run or human control first.
+              </p>
+              <label for="workflow">Saved workflow</label>
+              <select id="workflow" disabled></select>
+              <p id="workflow-info" class="hint"></p>
+            </div>
+            <details id="discovery-controls">
+              <summary>Discover from a goal</summary>
+              <div class="control-group">
+                <label for="goal">Goal for Northstar bank</label>
+                <textarea id="goal" maxlength="160" rows="3">
+Find the savings balance for member 00123</textarea>
+                <p class="hint">
+                  Supports savings-balance lookups for five-digit member IDs. Starts a fresh bank
+                  desktop and uses your host’s OpenAI key (paid usage). The candidate needs review
+                  before it becomes a saved workflow.
+                </p>
+                <button id="discover" disabled>Start discovery</button>
+              </div>
+            </details>
+            <p id="host-status" class="hint" role="status">Connecting to local launcher…</p>
+          </details>
           <p class="eyebrow">Savings balance lookup</p>
           <h2 id="status-title" aria-live="polite">Connecting…</h2>
           <p id="guidance">Loading desktop state…</p>
@@ -41,10 +89,7 @@
           <p id="message" role="status" aria-live="polite"></p>
           <div id="human-controls" class="control-group" hidden>
             <h3>Control the desktop</h3>
-            <p class="hint" id="input-help">
-              Click a field in the desktop image first. Then send text here; your keyboard does not
-              type directly into the image.
-            </p>
+            <p class="hint" id="input-help">Click a desktop field, then send text or keys here.</p>
             <label for="text">Text to send</label>
             <input
               id="text"
@@ -61,26 +106,11 @@
               <button data-key="tab" disabled>Tab</button>
               <button data-key="backspace" disabled>Backspace</button>
               <button id="select" disabled>Select all</button>
+              <button id="scroll-up" disabled>Scroll up</button>
+              <button id="scroll-down" disabled>Scroll down</button>
             </div>
             <p class="hint">Sent text clears from this panel and is not saved in the audit.</p>
           </div>
-        </section>
-        <section class="desktop-panel" aria-label="Live desktop">
-          <div class="desktop-heading">
-            <h2>Live desktop</h2>
-            <button id="desktop-size" aria-pressed="false" aria-controls="desktop-viewport">
-              Actual size
-            </button>
-            <span id="input-mode" class="mode">View only</span>
-          </div>
-          <div id="desktop-viewport" tabindex="0" role="region" aria-label="Desktop viewport">
-            <img
-              id="screen"
-              alt="Live isolated desktop. Click to interact when you own control."
-              draggable="false"
-            />
-          </div>
-          <p id="screen-help" class="hint">Watch the same desktop the automation uses.</p>
         </section>
         <details id="run-details" class="diagnostics">
           <summary>Run details</summary>

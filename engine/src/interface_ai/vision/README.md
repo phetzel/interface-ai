@@ -1,17 +1,8 @@
-# Local visual primitives · M1-04
+# Local visual primitives
 
-`primitives.py` provides bounded-region template matching and explicit missing/ambiguous outcomes. `ocr.py` reads a declared screenshot region using local Tesseract and parses exact USD text into integer cents. `bank.py` composes those primitives for the small synthetic fixture; it consumes only screenshots and the requested member ID, and emits no input itself.
+`primitives.py` provides bounded template matching with explicit missing/ambiguous outcomes. `ocr.py` reads declared screenshot regions with Tesseract and parses exact USD amounts into integer cents. The [capability-driven recognizer](../replay/recognition.py) composes these primitives; the former scripted `BankVision` path and visual-probe command have been removed.
 
-The operator probe connects recognition to the existing desktop adapter:
-
-```sh
-./scripts/desktop build
-./scripts/desktop reset bank
-./scripts/desktop vision-probe --member-id 00123
-./scripts/vision-check
-```
-
-The second command starts the default fixture. `reset bank translated` selects the translated variant. `vision-check` runs the eight-case host harness, resetting between cases and checking outputs against the independent fixture oracle. The oracle is never passed to the container probe. These commands exercise a manually authored Python sequence; no capability JSON, interpreter, discovery, or general recovery logic exists yet.
+Run `make check` for primitive/OCR tests and `make check SUITE=replay` for live generated replay. Native and browser smoke utilities remain separate fixed-coordinate tests of OS input. The [manual bundle](../../../../capabilities/poc/savings-balance/README.md) remains the approved profile referenced by generated provenance; its historical bytes are unchanged.
 
 ## Matching and geometry
 
@@ -33,6 +24,4 @@ Every recognized word must have confidence at least 80; absent or uncertain read
 
 Visual heading waits have a five-second limit. Only a missing target is retried; ambiguity and other errors stop immediately. The desktop wait also rechecks stop, session, focus, and deadlines after a predicate completes, so a late successful observation cannot escape the wait deadline. Already-running OCR may finish before stop is observed; no subsequent input bypasses the adapter.
 
-Routine events contain target/field names, boxes, scores, confidences, action types, and failure codes. They omit recognized text and typed values. Explicit synthetic results are written separately to `result.json`. The current primitive probe suppresses captures; separate native/browser calibration utilities can still retain known synthetic screenshots. This is not general sensitive-screen redaction.
-
-M1-05 added the validated manual artifact/interpreter and member-not-found branch; M1-06 added the repeated gate. `BankVision` remains the legacy primitive/calibration path, while capability-driven replay uses the interpreter. Current policy and human ownership are covered by M2/M3; model discovery and a real-person demonstration remain pending. See the [current evidence index](../../../../evidence/README.md).
+Routine events omit recognized text and typed values. Explicit synthetic results are written separately to `result.json`; ordinary replay does not persist captures. Separate native/browser calibration utilities retain deliberately synthetic debug images. This is not general sensitive-screen redaction. See the [current evidence index](../../../../evidence/README.md).

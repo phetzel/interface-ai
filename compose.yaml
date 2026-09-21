@@ -65,6 +65,7 @@ services:
       - seccomp:./infra/desktop/chromium-seccomp.json
     environment:
       DESKTOP_APP: ${DESKTOP_APP:-native}
+      DESKTOP_CAPABILITY: ${CAPABILITY:-discovered-savings}
       DISPLAY: :99
       XAUTHORITY: /tmp/interface-ai/Xauthority
       XDG_SESSION_TYPE: x11

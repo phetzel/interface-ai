@@ -11,7 +11,7 @@ from interface_ai.contracts.models import Failure
 from interface_ai.desktop import Desktop, DesktopError
 from interface_ai.desktop.ownership import Ownership
 from interface_ai.desktop.session import LOCK, RUNTIME, STOP, read_session, request_stop
-from interface_ai.policy.bank import REVIEWED_PATH, admit
+from interface_ai.policy.admission import capability_path, admit
 from interface_ai.policy.evidence import checked_event, safe_code
 from interface_ai.replay.interpreter import Interpreter
 from interface_ai.replay.loader import load_bundle, validate_inputs
@@ -32,7 +32,7 @@ class Controller:
         self.directory = None
         self.output_root = output_root
         self.inputs = None
-        self.bundle = bundle or load_bundle(REVIEWED_PATH)
+        self.bundle = bundle or load_bundle(capability_path())
         self.admission = admit(self.bundle)
         self.resume_at = None
         self.human_sequence = 0
@@ -92,6 +92,8 @@ class Controller:
             state = self.ownership.read()
             return dict(
                 session=self.session['id'],
+                app=self.session['mode'],
+                capability=self.admission.approval_id,
                 epoch=state['epoch'],
                 owner=state['owner'],
                 phase=self.phase,
@@ -136,6 +138,21 @@ class Controller:
             return
         result = self.result or self.interruption
         if self.directory is None or result is None:
+            return
+        if self.run_kind == 'native_manual':
+            write_terminal(
+                self.directory,
+                result,
+                dict(
+                    format='native-manual-v1',
+                    status=self.phase,
+                    sessionId=self.session['id'],
+                    modelCalls=0,
+                    humanActions=sum(
+                        e['kind'] == 'human' and e.get('status') == 'completed' for e in self.audit
+                    ),
+                ),
+            )
             return
         try:
             session_unchanged = read_session()['id'] == self.session['id']
@@ -335,10 +352,16 @@ class Controller:
         # releasing input.lock. Mark the phase first so the worker cannot resume.
         with self.mutex:
             state = self.verify(lease)
-            if self.phase not in ('running', 'awaiting_human'):
+            native_idle = self.phase == 'idle' and self.session['mode'] == 'native'
+            if self.phase not in ('running', 'awaiting_human') and not native_idle:
                 raise DesktopError(
                     'invalid_transition', 'There is no running or paused workflow to take over'
                 )
+            if native_idle:
+                self.run_kind = 'native_manual'
+                self.directory = self.output_root / ('native-manual-' + uuid.uuid4().hex)
+                self.directory.mkdir(mode=0o700)
+                self.record('lifecycle', status='started')
             if self.phase == 'running':
                 self.resume_at = None  # An arbitrary interruption has no proven continuation.
                 self.interruption = Failure(code='intervention_required', step=self.current_step)

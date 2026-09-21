@@ -8,6 +8,7 @@ export const scenarioNames = [
   'translated',
   'policy',
   'expired',
+  'iframe',
 ];
 
 export function scenarioConfig(name) {

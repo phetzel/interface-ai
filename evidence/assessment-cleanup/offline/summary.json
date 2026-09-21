@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "provenance": "automated-integration-of-genuine-recorded-artifact",
+  "modelCalls": 0,
+  "realHumanWitnessed": false,
+  "offlineBoundary": {
+    "providerSDKAbsent": true,
+    "providerKeyAbsent": true,
+    "providerEgressBlocked": true
+  }
+}

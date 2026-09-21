@@ -35,10 +35,18 @@ The core M1–M4 implementation is complete. M5 closes the goal/target input gap
 ## Remaining author work
 
 1. Read the report and verify that its explanations match your understanding.
-2. Perform the M4 generated-artifact takeover yourself and assess the Actual size control. The previous real-person manual-artifact test is preserved separately.
+2. The author reported generated-artifact takeover #41 complete on September 20. Preserve that observation and give feedback on the subsequent responsive operator layout; it does not require repeating all earlier tests.
 3. Complete the repository/interview checklist and export both checklists from your browser.
 4. Review the publication-ready repository, approve public visibility and send the submission email from your application address.
 
 The [author review and delivery guide](SUBMISSION.md) provides the route and an unsent email draft. A new app, production orchestration and tenant infrastructure remain outside scope. UX-01 now has a tested actual-size mitigation, with personal usability acceptance pending.
 
 [Full roadmap and original comparisons](ROADMAP.md) · [M4 specification](MILESTONE_4.md) · [M5 readiness](MILESTONE_5.md) · [manual audit observations](MANUAL_AUDIT_NOTES.md).
+
+## Assessment cleanup
+
+The public command surface is now eight commands; one named-suite runner replaces milestone-specific launchers and duplicate nested gates. The generated capability is the default. The historical manual bundle remains unchanged as the recognition/provenance baseline. Obsolete scripted bank vision and the standalone provider probe were removed; shared discovery reservation and internal transport diagnostics are separate. A nested same-origin iframe scenario exercises the existing bank without introducing a second business application. See [current development commands](DEVELOPMENT.md) and [cleanup validation](../evidence/assessment-cleanup/README.md).
+
+## Operator workspace
+
+The operator now starts bounded goal discovery, lists independently admitted saved workflows, and switches between the existing synthetic bank variants and native input pad. A local host service starts/stops with the existing desktop commands; SDK/key/Docker access remain outside the isolated runtime. App switching replaces the session, while takeover preserves it. See [operator design and validation](OPERATOR_WORKSPACE.md).

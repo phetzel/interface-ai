@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "provenance": "automated-operator-ui-test",
+  "realHumanWitnessed": false,
+  "modelCalls": 0,
+  "checks": [
+    "operator_ui",
+    "operator_stop"
+  ]
+}

@@ -1,0 +1,13 @@
+ Network interface-ai_desktop  Creating
+ Network interface-ai_desktop  Created
+ Network interface-ai_operator  Creating
+ Network interface-ai_operator  Created
+ Container interface-ai-desktop-1  Creating
+ Container interface-ai-desktop-1  Created
+ Container interface-ai-operator-1  Creating
+ Container interface-ai-operator-1  Created
+ Container interface-ai-desktop-1  Starting
+ Container interface-ai-desktop-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Error
+dependency failed to start: container interface-ai-desktop-1 exited (1)

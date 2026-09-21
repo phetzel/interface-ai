@@ -181,9 +181,9 @@ M1–M4 are implemented. The user completed the M1–M3 manual acceptance checkl
 | Remaining work | Owner | Completion |
 | --- | --- | --- |
 | Fresh-checkout and final evidence validation | Agent — complete | Source-bound offline setup, genuine new discovery/review/promotion/replay and full regressions passed |
-| Generated-artifact real-person takeover | User | Same-session recovery on the generated artifact, recorded in the M4 checklist supplement |
+| Generated-artifact real-person takeover | User — reported complete September 20 | Check #41 completion and screenshots recorded separately from automated tests |
 | Report and repository/interview understanding | User | Explain the artifact, policy, replay and control-transfer decisions without relying on a script |
 | Checklist export and optional demo video | User | Preserve browser-local self-reports; video is optional |
 | Final public repository and submission email | User approval | Private preparation ends only after review; send the link from the application email address |
 
-The scaled click issue has an Actual size / Fit to panel mitigation with automated coordinate checks. Personal usability confirmation remains pending. The earlier phase descriptions above preserve the original planning context.
+The scaled click issue now has fit/actual-size viewing and a compact responsive control layout, with automated coordinate/Stop checks. Personal comfort with the newer layout still needs feedback. Named test suites replace milestone commands, and the same bank has a nested local-iframe variant; see [cleanup validation](../evidence/assessment-cleanup/README.md). The earlier phase descriptions above preserve the original planning context.

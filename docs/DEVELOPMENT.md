@@ -1,36 +1,93 @@
 # Development and verification
 
-The [root README](../README.md) is the current setup/status entry point. The milestone documents preserve decisions and historical evidence. Docker/Linux ARM64 is the supported runtime; package metadata does not imply a tested standalone wheel.
+The [README](../README.md) and [demo](DEMO.md) are the assessor entry points. Historical milestone documents explain earlier decisions; their commands describe those revisions. The supported runtime is Docker/Linux ARM64, not a standalone Python wheel.
 
-## Quick and live checks
+## Setup
 
-For the short generated-artifact demo, `make assess` only needs Docker/Compose and Make; see the [assessor walkthrough](DEMO.md). For the full internal manual audit, `make audit-setup` installs the host fixture dependencies and Playwright Chromium, builds both images, runs `make quick-check`, and then resets/validates a fresh bank desktop. It stops at the first failed command. The demo and audit startup commands replace the current desktop session. Use `make fixture-preview` in a second terminal for the direct fixture UI checks.
+The offline demo needs Docker Desktop/Compose and Make. Development checks also need Python 3.9+, Node 22 (`.nvmrc` pins the tested version) and `uv`. From the repository root:
 
-`make quick-check` requires Docker, host Python 3.9+, Node 22 and `uv` (tested with 0.9.18). Run `make fixture-install` and `make build` first. It runs pinned Ruff 0.12.12 and Prettier 3.9.6, host harness tests, Linux engine tests in a disposable network-disabled image, six published-schema comparisons and fixture typechecking. It starts no live desktop and rewrites no artifacts. `make format` covers active source only; no historical evidence is reformatted.
+```sh
+nvm use
+make audit-setup
+```
 
-Ruff uses a small correctness/unused-name rule set rather than an expansive style backlog. Prettier is an exact development dependency, as recommended by its [installation guide](https://prettier.io/docs/install); configuration follows [Ruff's configuration reference](https://docs.astral.sh/ruff/configuration/). The Python runtime lock remains separate from development tools. CI pins official actions and uses the [documented ARM64 runner](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+This installs fixture dependencies and Playwright Chromium, builds both images, runs the quick checks, and resets/validates a fresh bank desktop. It stops on failure. Playwright is a UI test dependency; the automation engine uses native input and pixels. For the original manual-artifact checklist, use `make audit-setup CAPABILITY=manual-savings` instead.
 
-Live gates remain explicit: `make policy-check` includes the full M1 suite; `make handoff-check` simulates both members through the operator API. Reset to `make handoff-demo` before each panel browser script. No two live suites should manipulate the shared desktop concurrently. Keep executable source frozen during acceptance; the harness records/rechecks it. `make fixture-test` is an independent browser UI gate against the host preview.
+For React work, `make fixture-dev` starts Vite. `make fixture-preview` builds and serves the standalone fixture on port 4173. This preview is separate from the isolated desktop and is unnecessary for the assessor demo.
 
-## Operator-only desktop
+## One check runner
 
-The operator at `http://127.0.0.1:6081/` is the only desktop page. `make operator` prints its URL. The relay forwards only to `desktop:6081`; it keeps the desktop on its internal network. VNC, noVNC, websockify and the old `make viewer`/`DESKTOP_PORT` configuration are removed. Reset prunes the old viewer container automatically; existing evidence is retained. An unused legacy `interface-ai_viewer` network from an earlier checkout can be removed with `docker network rm interface-ai_viewer` after the viewer container is gone.
+```sh
+make check SUITE=full
+```
 
-The native calibration smoke now compares the operator PNG to X11, attempts input without human ownership and asserts ports 5900/6080 are closed. The M1 runtime probe also checks the removed programs/assets are absent, and Compose acceptance permits only loopback 6081 on the operator relay. Historic VNC evidence describes its original revision and remains unchanged.
+| Suite | Coverage |
+| --- | --- |
+| `quick` (default) | Pinned Ruff/Prettier checks, host tests, Linux engine tests, six schemas and TypeScript |
+| `fixture` | Browser UI tests of the sample bank, including nested frames |
+| `desktop` | Native/browser input, isolation, session/Stop guards, 17 historical manual replays and rejection cases |
+| `policy` | Action and route restrictions, direct-origin denial and safe export |
+| `replay` | Generated artifact: both members, translated/nested-iframe layouts, delays and negative outcomes |
+| `handoff` | Both generated-artifact same-session recoveries through a simulated operator |
+| `discovery` | Offline fake-provider transport, late responses, focus loss and Stop; no real model |
+| `lifecycle` | CLI/panel coordination and competing starts |
+| `operator` | Responsive panel, fit/actual-size pointer mapping, recovery and pending-input Stop |
+| `offline` | No provider SDK/key/egress in replay; generated replay and sanitized export |
+| `generated` | `replay`, `handoff`, `discovery`, `offline` |
+| `full` | Every suite, plus the historical manual-artifact handoff |
 
-## Build identity
+Individual suite options remain available through `scripts/check`, for example:
 
-`infra/desktop/build_manifest.py` enumerates desktop image inputs and records their hashes during Docker build. The image includes `/opt/build-manifest.json` with source fingerprints and shipped runtime hashes. Fixture build inputs are declared in `apps/bank-fixture/package.json`; its build-time generator binds those inputs to compiled assets and server files. Its manifest is outside `dist` and is not a permitted HTTP route. Neither manifest exposes fixture source or test-oracle values to the execution agent.
+```sh
+./scripts/check --suite handoff --capability manual-savings
+./scripts/check --suite desktop --rejections-only
+```
 
-`scripts/lib/builds.py` compares current source, including untracked files in the declared source trees, with manifests read from immutable image IDs. It verifies shipped bytes in disposable network-disabled containers and checks that Compose actually launched those image IDs. Acceptance retains the manifest in `build-preflight.json`. A stale image fails with a rebuild instruction before desktop input.
+The full runner sequences work against the single desktop and links child evidence directories instead of copying entire nested suites. Do not operate the panel or run another suite concurrently. Keep executable source frozen during acceptance. Each attempt retains logs under `tmp/`; failures are preserved. Stale images fail explicitly—checks never silently rebuild, relax assertions or mark human results.
 
-These fingerprints establish the relationship between this trusted local build and tested source. They are not signatures, remote build attestations or proof against a malicious host. Base images/Python dependencies are pinned; apt package selection can change on a fresh build. Preserve image IDs/package manifests with acceptance results and validate rebuilds.
+`make quality` checks formatting/basic correctness; `make format` formats active source only. Historical evidence is excluded. CI runs the quick suite on Linux ARM64. `make help-dev` lists lower-level controls; normal demonstrations need only `assess`, `handoff` and `down`.
 
-Schemas are copied from the repository, not silently regenerated during Docker builds. `make quick-check` compares those exports with runtime Pydantic output. Review an intentional schema change, generate it explicitly using the [replay guide](../engine/src/interface_ai/replay/README.md), rebuild, and rerun checks.
+## Online discovery
 
-## Public-image credential-helper workaround
+`uv` installs the pinned host SDK using `scripts/discover.lock`. The desktop image contains no provider SDK/key. Create a private `.env` in the repository root (it is ignored by Git):
 
-On the tested Mac, Docker's credential helper has occasionally stalled while resolving public image metadata. This uses a temporary anonymous client configuration without modifying saved credentials:
+```text
+OPENAI_API_KEY=your-key
+```
+
+Use your editor rather than putting the key in shell history, then run `chmod 600 .env`. An existing `OPENAI_API_KEY` environment variable is also supported. Do not put the key in Compose, the fixture, an artifact or evidence.
+
+```sh
+make discover GOAL="Read the savings balance for member 00456"
+```
+
+`TARGET=synthetic-bank` is implicit. `http://fixture:4173/` is the other accepted spelling. The member ID is derived from the goal; an explicit `MEMBER_ID` must match. Accepted verbs are find/read/get/look up, with the limited variants described by `python3 scripts/discover --help`. Other intents fail before reset/provider use. To validate only:
+
+```sh
+python3 scripts/discover --check-request --goal "Find the savings balance for member 00123"
+```
+
+Review and promote using the commands in the README. A provider run is paid and sends admitted synthetic observations to OpenAI. `store: false` is not a promise of zero provider retention. The old standalone one-click probe has been retired; its bounded transport diagnostic remains an internal automated test.
+
+## Desktop and build identity
+
+Port 6081 is the sole desktop/operator page. Python 3 starts a loopback-only launcher on 6082 automatically with `up`/`reset`; `make down` stops it. The launcher accepts fixed app resets and bounded goal discovery from the authenticated 6081 UI. It does not expose a shell, arbitrary paths, promotion, or provider credentials. `make reset` creates a new session; `make replay` uses the current screen, while `make demo` resets first. Both select the generated capability by default; `CAPABILITY=manual-savings` explicitly selects the historical artifact. `make reset MODE=native` starts the calibration pad. `make stop` blocks further input until reset; `make down` stops services while retaining evidence.
+
+After runtime changes, run `make build` before reset/checks. `make build-check` compares source fingerprints, immutable image IDs and shipped runtime bytes. Live suites also verify running containers. Schemas are published deliberately, never rewritten by builds; see the [replay guide](../engine/src/interface_ai/replay/README.md).
+
+The desktop has no default route or provider key. The fixed-upstream gateway permits specific fixture routes, including the local nested-frame shell; unknown routes remain denied. Only the operator relay publishes loopback 6081. No VNC/noVNC server remains. Historical viewer evidence describes its original revision.
+
+Build manifests establish tested source/image identity within a trusted host. They are not signatures or bit-for-bit reproducible OS package builds. Preserve image IDs with acceptance results and validate rebuilds.
+
+## Troubleshooting
+
+- Start Docker Desktop if `make ready` cannot reach it; inspect `make logs`.
+- For stale builds: `make build`, then reset.
+- For wrong screens, stopped input or expired human ownership: reset and refresh the operator.
+- Free port 6081 if another local service owns it. Port 6080 is unused.
+- Native calibration has historically had intermittent startup timeouts. Preserve a failure record and diagnose it; do not treat a later pass as proof the issue disappeared.
+
+Docker's macOS credential helper has occasionally stalled on public image metadata. This temporary anonymous configuration leaves saved credentials untouched:
 
 ```sh
 (
@@ -44,4 +101,4 @@ JSON
 )
 ```
 
-Use this only for the public images in the current build. A missing runtime image or mismatched fingerprint requires a successful build, not bypassing verification.
+Use it only for these public build images; never bypass build verification.

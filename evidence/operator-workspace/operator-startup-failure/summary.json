@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "provenance": "automated-operator-ui-test",
+  "realHumanWitnessed": false,
+  "modelCalls": 0,
+  "checks": [],
+  "failure": "operator_ui failed; inspect its retained log"
+}

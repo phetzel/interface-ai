@@ -14,10 +14,10 @@
 }
 body {
   margin: 0;
-  padding: 0 28px 28px;
+  padding: 0 18px 18px;
 }
 main {
-  max-width: 1480px;
+  max-width: 1660px;
   margin: auto;
 }
 h1,
@@ -39,7 +39,9 @@ h3 {
   font-size: 15px;
 }
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
   border: 1px solid #9eafad;
   border-radius: 8px;
@@ -65,7 +67,9 @@ summary:focus-visible {
   outline: 3px solid #287b71;
   outline-offset: 3px;
 }
-input {
+input,
+select,
+textarea {
   min-width: 0;
   width: 100%;
   background: #fff;
@@ -95,14 +99,14 @@ label {
 }
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 310px;
-  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  gap: 16px;
   align-items: start;
 }
 .control-panel {
   grid-column: 2;
   grid-row: 1;
-  padding: 24px;
+  padding: 16px;
   border: 1px solid #d7e1de;
   border-radius: 14px;
   background: #fff;
@@ -113,7 +117,7 @@ label {
   font-size: 10px;
   font-weight: 700;
   color: #526a6b;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 #guidance {
   margin-top: 12px;
@@ -122,14 +126,14 @@ label {
 .control-group {
   display: grid;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 12px;
 }
 .run-actions {
   display: grid;
   gap: 10px;
 }
 .run-actions button {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 .primary {
   background: #155e55;
@@ -177,7 +181,7 @@ label {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 .desktop-heading h2 {
@@ -252,62 +256,124 @@ summary {
     12px/1.6 ui-monospace,
     monospace;
 }
-@media (max-width: 1100px) {
+/* Keep the image primary; only very narrow panes stack the compact controls. */
+.control-panel {
+  position: sticky;
+  top: 88px;
+  max-height: calc(100dvh - 106px);
+  overflow: auto;
+}
+.control-panel h2 {
+  font-size: 20px;
+}
+#launcher {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #d7e1de;
+}
+#discovery-controls,
+#host-status {
+  margin-top: 12px;
+}
+#host-status {
+  overflow-wrap: anywhere;
+}
+textarea {
+  resize: vertical;
+}
+#guidance {
+  font-size: 13px;
+  margin-top: 8px;
+}
+.eyebrow {
+  margin-bottom: 8px;
+}
+#desktop-viewport {
+  max-height: calc(100dvh - 170px);
+}
+@media (max-width: 860px) {
   .workspace {
     grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-  }
-  .control-panel {
-    grid-column: 1;
-    grid-row: 1;
+    gap: 12px;
   }
   .desktop-panel {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
   }
-  .control-group,
-  .run-actions {
-    max-width: 520px;
+  .control-panel {
+    grid-column: 1;
+    grid-row: 2;
+    position: static;
+    max-height: none;
+    padding: 14px;
+  }
+  #desktop-viewport {
+    max-height: 44dvh;
+  }
+  .desktop-heading {
+    gap: 8px;
+  }
+  .desktop-heading h2 {
+    font-size: 14px;
+  }
+  #screen-help {
+    font-size: 12px;
+  }
+  .eyebrow,
+  #member-help {
+    display: none;
+  }
+  .control-panel h2 {
+    font-size: 18px;
+  }
+  .control-group {
+    margin-top: 10px;
   }
   #lookup-controls {
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
   }
   #lookup-controls label {
     grid-column: 1 / -1;
   }
-  #member {
-    grid-column: 1;
-    grid-row: 2;
+  #human-controls {
+    grid-template-columns: minmax(0, 1fr) auto;
   }
-  #start {
-    grid-column: 2;
-    grid-row: 2;
+  #human-controls h3,
+  #input-help {
+    display: none;
   }
-  #member-help {
+  #human-controls label,
+  #human-controls .hint,
+  .key-controls {
     grid-column: 1 / -1;
+  }
+  #text {
+    grid-column: 1;
+  }
+  #send {
+    grid-column: 2;
   }
   .key-controls {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+  .run-actions {
+    max-width: none;
+  }
+  .app-header {
+    padding: 12px 0;
+  }
 }
 @media (max-width: 520px) {
   body {
-    padding: 0 14px 20px;
-  }
-  .app-header {
-    padding: 14px 0;
+    padding: 0 10px 12px;
   }
   .app-header .hint {
     font-size: 11px;
   }
-  .control-panel {
-    padding: 18px;
+  .mode {
+    font-size: 11px;
   }
-  h2 {
-    font-size: 21px;
-  }
-  .key-controls {
-    grid-template-columns: 1fr 1fr;
+  #desktop-size {
+    font-size: 11px;
   }
 }

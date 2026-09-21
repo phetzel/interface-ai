@@ -1,0 +1,6 @@
+{
+  "apps/bank-fixture/server/index.mjs": {
+    "before": "1bb3d517ba9d4ebf01c2da31ec711444d6497498c209df6226095bfb2de80006",
+    "after": "658eb5a09974cd1aa215bade814442087eb3da0205cab579254be6cae2d8fb3c"
+  }
+}

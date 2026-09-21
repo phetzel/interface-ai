@@ -6,7 +6,9 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from interface_ai.vision import Box, VisionError, find_matches, unique_match, OCR, parse_usd
-from interface_ai.vision.bank import ENGLISH_SHA256, validate_member_id
+from interface_ai.policy.profile import reference_bundle
+
+ENGLISH_SHA256 = reference_bundle().capability.environment.ocrModelSha256
 
 
 class VisionTests(unittest.TestCase):
@@ -85,11 +87,6 @@ class VisionTests(unittest.TestCase):
             '$1.00\n',
         ]:
             self.assert_code('invalid_amount', lambda: parse_usd(text))
-
-    def test_member_input_preserves_leading_zeroes_and_rejects_coercion(self):
-        validate_member_id('00340')
-        for value in [340, '', '340', ' 00340', '００３４０']:
-            self.assert_code('invalid_member_id', lambda: validate_member_id(value))
 
     def test_model_hash_mismatch_fails_before_ocr(self):
         self.assert_code('ocr_environment', lambda: OCR(expected_data_hash='incorrect'))

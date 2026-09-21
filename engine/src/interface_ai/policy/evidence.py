@@ -7,7 +7,7 @@ from pathlib import Path
 from interface_ai.desktop.adapter import DesktopError
 from interface_ai.files import read_regular
 from interface_ai.replay.loader import strict_json
-from .admission import approval_for_digest, read_approval, APPROVALS, DEFAULT_ID
+from .admission import approval_for_digest, read_approval, APPROVALS, RECOGNITION_PROFILE_ID
 from interface_ai.contracts.approval import POLICY_ID
 
 CODES = frozenset(
@@ -50,7 +50,7 @@ def checked_event(event, allowed_ids=None):
     enums = ENUMS | (
         allowed_ids
         if allowed_ids is not None
-        else read_approval(APPROVALS / (DEFAULT_ID + '.json')).allowedIds.model_dump()
+        else read_approval(APPROVALS / (RECOGNITION_PROFILE_ID + '.json')).allowedIds.model_dump()
     )
     if (
         not isinstance(event, dict)

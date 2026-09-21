@@ -1,0 +1,168 @@
+./scripts/desktop build
+#1 [internal] load local bake definitions
+#1 reading from stdin 679B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.46kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 206B done
+#4 DONE 0.0s
+
+#5 [ 1/11] FROM docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171
+#5 resolve docker.io/library/debian:bookworm-slim@sha256:88200866dfff7ea7f5cbcb6ec7c8a701889efe6fe859fe64d6990e4b07ea4171 done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 583.08kB 0.0s done
+#6 DONE 0.0s
+
+#7 [ 9/11] COPY . /build-source
+#7 CACHED
+
+#8 [ 4/11] RUN python3 -m venv /opt/venv     && pip install --no-cache-dir --require-hashes -r /opt/desktop/requirements.lock     && useradd --create-home --uid 1000 desktop     && mkdir /artifacts /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix     && chown desktop:desktop /artifacts     && dpkg-query -W > /opt/desktop/system-packages.txt
+#8 CACHED
+
+#9 [ 2/11] RUN apt-get update && apt-get install -y --no-install-recommends     ca-certificates chromium fonts-dejavu-core tesseract-ocr=5.3.0-2 tesseract-ocr-eng=1:4.1.0-2     openbox scrot x11-utils xauth xvfb     python3 python3-dev python3-tk python3-venv     && rm -rf /var/lib/apt/lists/*
+#9 CACHED
+
+#10 [ 3/11] COPY infra/desktop/requirements.lock /opt/desktop/requirements.lock
+#10 CACHED
+
+#11 [ 5/11] COPY infra/desktop/*.py /opt/desktop/
+#11 CACHED
+
+#12 [ 8/11] COPY capabilities /opt/capabilities/
+#12 CACHED
+
+#13 [ 7/11] COPY engine /opt/engine/
+#13 CACHED
+
+#14 [10/11] RUN python /build-source/infra/desktop/build_manifest.py /build-source /opt/build-manifest.json     && rm -rf /build-source
+#14 CACHED
+
+#15 [ 6/11] COPY infra/desktop/chromium-policy.json /etc/chromium/policies/managed/interface-ai.json
+#15 CACHED
+
+#16 [11/11] WORKDIR /home/desktop
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:121426f76bebd5e75c2bb706ec29f7f576f4c9a149b4b4a59f628f054a4553ce done
+#17 exporting config sha256:57ecef74ae8314a982a29dc9318d85797a6f2551fc7875b0c1fe28a23a3c754a done
+#17 exporting attestation manifest sha256:b9ac2cbafe45b6a2a511ac7e46691b97bba66c8ba557fb97b1acb2f16664c1bc done
+#17 exporting manifest list sha256:8e0f6e8ff08b11e557acf1ead8d5a06b967711981d933cc13881be901952831e done
+#17 naming to docker.io/library/interface-ai-desktop:local done
+#17 unpacking to docker.io/library/interface-ai-desktop:local done
+#17 DONE 0.0s
+
+#18 resolving provenance for metadata file
+#18 DONE 0.0s
+ interface-ai-desktop:local  Built
+./scripts/fixture build
+#1 [internal] load local bake definitions
+#1 reading from stdin 706B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 709B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 101B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 1.22kB done
+#5 DONE 0.0s
+
+#6 [build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5
+#6 resolve docker.io/library/node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 done
+#6 DONE 0.0s
+
+#7 [stage-1 2/6] WORKDIR /app
+#7 CACHED
+
+#8 [build 6/6] RUN npm run build && node server/build-manifest.mjs
+#8 CACHED
+
+#9 [stage-1 4/6] COPY --from=build /build/build-manifest.json ./build-manifest.json
+#9 CACHED
+
+#10 [build 4/6] RUN npm ci --no-audit --no-fund
+#10 CACHED
+
+#11 [build 2/6] WORKDIR /build
+#11 CACHED
+
+#12 [stage-1 3/6] COPY --from=build /build/dist ./dist
+#12 CACHED
+
+#13 [build 3/6] COPY package.json package-lock.json ./
+#13 CACHED
+
+#14 [build 5/6] COPY . .
+#14 CACHED
+
+#15 [stage-1 5/6] COPY server/index.mjs server/scenarios.mjs ./server/
+#15 CACHED
+
+#16 [stage-1 6/6] COPY INTER-LICENSE.txt ./INTER-LICENSE.txt
+#16 CACHED
+
+#17 exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:3b6f2d018796084d4cb7498bf94f4411c21f18947da992d72b5340faf04480d2 done
+#17 exporting config sha256:e224a3cb2d31b52bf6b93a1fee356ddb7c15c64935ac961a9c0921194fd191c0 done
+#17 exporting attestation manifest sha256:8c73de859f0bcbb75891e127efe10bd56ac4dd982fb7bc43cf9ea6614f56eb88 done
+#17 exporting manifest list sha256:2c2fbf978e23725c1b575b98963f145207ad1a99906b9315e7060a095204a27c
+#17 exporting manifest list sha256:2c2fbf978e23725c1b575b98963f145207ad1a99906b9315e7060a095204a27c done
+#17 naming to docker.io/library/interface-ai-bank-fixture:local done
+#17 unpacking to docker.io/library/interface-ai-bank-fixture:local done
+#17 DONE 0.0s
+
+#18 resolving provenance for metadata file
+#18 DONE 0.0s
+ interface-ai-bank-fixture:local  Built
+/Applications/Xcode.app/Contents/Developer/usr/bin/make demo MEMBER_ID=00456
+./scripts/desktop reset bank "$SCENARIO"
+ Container interface-ai-fixture-1  Recreate
+ Container interface-ai-fixture-1  Recreated
+ Container interface-ai-fixture-1  Starting
+ Container interface-ai-fixture-1  Started
+ Container interface-ai-fixture-1  Waiting
+ Container interface-ai-fixture-1  Healthy
+Fixture ready: http://fixture:4173 inside the desktop network; scenario=iframe. Reload any open fixture page after reset.
+ Container interface-ai-gateway-1  Recreate
+ Container interface-ai-gateway-1  Recreated
+ Container interface-ai-gateway-1  Starting
+ Container interface-ai-gateway-1  Started
+ Container interface-ai-gateway-1  Waiting
+ Container interface-ai-gateway-1  Healthy
+ Container interface-ai-desktop-1  Recreate
+ Container interface-ai-desktop-1  Recreated
+ Container interface-ai-operator-1  Recreate
+ Container interface-ai-operator-1  Recreated
+ Container interface-ai-desktop-1  Starting
+ Container interface-ai-desktop-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-operator-1  Starting
+ Container interface-ai-operator-1  Started
+ Container interface-ai-desktop-1  Waiting
+ Container interface-ai-operator-1  Waiting
+ Container interface-ai-desktop-1  Healthy
+ Container interface-ai-operator-1  Healthy
+{"id": "b5bf3f43-2ccc-498b-afcf-687504781966", "display": ":99", "width": 1280, "height": 800, "operator": "http://127.0.0.1:6081/", "mode": "bank", "windowId": 2097155, "windowClass": ["chromium (/tmp/interface-ai/chromium-profile)", "Chromium"], "appPid": 21, "sandbox": {"browserFilterCount": 1, "renderers": [{"pid": 140, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 149, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}, {"pid": 158, "noNewPrivileges": true, "seccompMode": 2, "filterCount": 2, "pidNamespaceDepth": 3, "effectiveCapabilities": "0000000000000000", "disableSandboxFlag": false}]}, "pids": {"display": 9, "window manager": 14, "Chromium": 21}, "inputStopped": false}
+Operator: http://127.0.0.1:6081/
+./scripts/desktop replay --capability "$CAPABILITY" --member-id "$MEMBER_ID"
+{"status": "success", "code": null, "outcome": null, "phase": "success", "evidence": "/artifacts/20260921T020551Z-replay-aa4b186a"}

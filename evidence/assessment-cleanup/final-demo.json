@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "scenario": "iframe",
+  "mainProjectRestored": true,
+  "run": "tmp/desktop-artifacts/20260921T020741Z-replay-b2f34502",
+  "result": {
+    "status": "success",
+    "output": {
+      "memberId": "00456",
+      "memberName": "Demo Member B",
+      "accountType": "Savings",
+      "currency": "USD",
+      "amountMinor": 9807
+    }
+  },
+  "modelCalls": 0,
+  "actionsCompleted": 4
+}

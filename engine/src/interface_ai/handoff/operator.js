@@ -3,6 +3,13 @@ const $ = (id) => document.getElementById(id);
 let state = null,
   busy = false,
   frameURL = null;
+let appInitialized = false;
+let workflowInitialized = false;
+let pendingJob = null;
+let host = null,
+  hostBusy = false,
+  workflows = [];
+const hostURL = 'http://127.0.0.1:6082';
 const headers = { 'X-Operator-Token': token };
 async function read(path) {
   const r = await fetch(path, { headers, cache: 'no-store' });
@@ -41,16 +48,18 @@ function render() {
     .filter(Boolean)
     .join(' · ');
   const human = state.phase === 'human' && !busy;
-  $('lookup-controls').hidden = state.phase !== 'idle';
+  const nativeIdle = state.app === 'native' && state.phase === 'idle';
+  $('lookup-controls').hidden = state.phase !== 'idle' || state.app === 'native';
   $('human-controls').hidden = state.phase !== 'human';
-  $('takeover').hidden = !['running', 'awaiting_human', 'quiescing'].includes(state.phase);
-  $('resume').hidden = state.phase !== 'human';
-  $('start').disabled = busy || state.phase !== 'idle';
+  $('takeover').hidden =
+    !nativeIdle && !['running', 'awaiting_human', 'quiescing'].includes(state.phase);
+  $('resume').hidden = state.phase !== 'human' || state.runKind === 'native_manual';
   $('member').disabled = state.phase !== 'idle';
-  $('takeover').disabled = busy || !['running', 'awaiting_human'].includes(state.phase);
+  $('takeover').disabled =
+    busy || (!nativeIdle && !['running', 'awaiting_human'].includes(state.phase));
   $('resume').disabled = !human || !state.resumable;
   $('stop').disabled = state.phase === 'stopped';
-  for (const id of ['send', 'select', 'text']) $(id).disabled = !human;
+  for (const id of ['send', 'select', 'text', 'scroll-up', 'scroll-down']) $(id).disabled = !human;
   document.querySelectorAll('[data-key]').forEach((b) => (b.disabled = !human));
   $('screen').classList.toggle('human', human);
   $('input-mode').textContent =
@@ -89,9 +98,120 @@ function render() {
     probe_failed: 'The transport test ended. See the host report, then reset the desktop.',
   };
   $('guidance').textContent = messages[state.phase] || state.phase;
+  if (nativeIdle)
+    $('guidance').textContent =
+      'Take control to try native clicking, typing and scrolling. Saved bank workflows and discovery use Northstar bank.';
+  if (state.runKind === 'native_manual' && state.phase === 'human')
+    $('guidance').textContent =
+      'You control the native test pad. Stop when finished, then choose another app.';
   if (state.evidenceStatus === 'failed')
     $('guidance').textContent =
       'Input stopped because run evidence could not be saved. Inspect storage and reset the desktop.';
+  renderLauncher();
+}
+function renderLauncher() {
+  if (!workflowInitialized && state && workflows.length) {
+    $('workflow').value = state.capability;
+    workflowInitialized = true;
+  }
+  if (!appInitialized && host && state && $('app-choice').options.length === host.apps.length) {
+    $('app-choice').value =
+      host.session === state.session && host.job?.app ? host.job.app : state.app;
+    appInitialized = true;
+  }
+  const ready = !!host && !!state && !hostBusy && !busy && !host.active;
+  $('start').disabled =
+    !state ||
+    !workflows.length ||
+    busy ||
+    hostBusy ||
+    host?.active ||
+    state.phase !== 'idle' ||
+    state.app === 'native';
+  const terminal = [
+    'idle',
+    'success',
+    'failure',
+    'business_outcome',
+    'stopped',
+    'probe_complete',
+    'probe_failed',
+  ].includes(state?.phase);
+  $('switch-app').disabled = !ready || !terminal;
+  $('discover').disabled = !ready || !terminal;
+  if (state) $('stop').disabled = state.phase === 'stopped' && !host?.active;
+  $('workflow').disabled =
+    !state || state.phase !== 'idle' || state.app !== 'bank' || !workflows.length;
+  const selected = workflows.find((w) => w.id === $('workflow').value);
+  $('workflow-info').textContent = selected
+    ? `${selected.version} · ${selected.provenance} · approved · zero-model replay`
+    : 'Loading approved workflows…';
+}
+async function hostCommand(path, body) {
+  if (!host || (hostBusy && path !== '/stop')) return;
+  hostBusy = true;
+  renderLauncher();
+  try {
+    const response = await fetch(hostURL + path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Host-Token': host.token },
+      body: JSON.stringify(body),
+    });
+    const result = await response.json();
+    if (!response.ok) throw Error(result.message || 'Launcher rejected this request');
+    host = { ...result, token: host.token };
+    if (path === '/jobs') pendingJob = host.job.id;
+    $('message').textContent = '';
+  } catch (error) {
+    $('message').textContent = error.message + ' — request was not retried.';
+  } finally {
+    hostBusy = false;
+    renderLauncher();
+  }
+}
+async function refreshHost() {
+  try {
+    const response = await fetch(hostURL + '/status', { cache: 'no-store' });
+    if (!response.ok) throw Error();
+    host = await response.json();
+    if ($('app-choice').options.length !== host.apps.length) {
+      $('app-choice').replaceChildren(...host.apps.map((app) => new Option(app.label, app.id)));
+    }
+    const job = host.job;
+    if (host.active && job?.stage === 'Starting desktop') pendingJob = job.id;
+    $('host-status').textContent = job
+      ? `${job.stage}${job.evidence ? ' · ' + job.requests + ' model requests · Evidence: ' + job.evidence : ''}`
+      : 'Local launcher ready. Your API key stays on the host.';
+    // Refresh only a job this page observed replacing its desktop. An old host
+    // result must not reload a new page after an unrelated CLI reset.
+    if (
+      state &&
+      job &&
+      pendingJob === job.id &&
+      job.stage !== 'Starting desktop' &&
+      host.session !== state.session
+    ) {
+      location.reload();
+      return;
+    }
+    renderLauncher();
+  } catch {
+    host = null;
+    $('host-status').textContent =
+      'Local launcher unavailable. Run make up from this checkout. Existing desktop controls still work.';
+    renderLauncher();
+  } finally {
+    setTimeout(refreshHost, 1000);
+  }
+}
+async function loadWorkflows() {
+  try {
+    workflows = await (await read('/workflows')).json();
+    $('workflow').replaceChildren(...workflows.map((w) => new Option(w.id, w.id)));
+    renderLauncher();
+  } catch {
+    $('workflow-info').textContent = 'Approved workflows unavailable';
+  }
 }
 function errorMessage(code) {
   const messages = {
@@ -147,10 +267,19 @@ $('desktop-size').onclick = () => {
   $('desktop-size').setAttribute('aria-pressed', String(actual));
   $('desktop-size').textContent = actual ? 'Fit to panel' : 'Actual size';
 };
-$('start').onclick = () => command('/start', { memberId: $('member').value });
+$('start').onclick = () =>
+  command('/start', { memberId: $('member').value, capability: $('workflow').value });
+$('workflow').onchange = renderLauncher;
+$('switch-app').onclick = () =>
+  hostCommand('/jobs', { kind: 'switch', session: state.session, app: $('app-choice').value });
+$('discover').onclick = () =>
+  hostCommand('/jobs', { kind: 'discover', session: state.session, goal: $('goal').value });
 $('takeover').onclick = () => command('/takeover');
 $('resume').onclick = () => command('/resume');
-$('stop').onclick = () => command('/stop');
+$('stop').onclick = () => {
+  hostCommand('/stop', {});
+  command('/stop');
+};
 $('send').onclick = () => {
   const text = $('text').value;
   $('text').value = '';
@@ -160,6 +289,8 @@ document
   .querySelectorAll('[data-key]')
   .forEach((b) => (b.onclick = () => action({ type: 'press', key: b.dataset.key })));
 $('select').onclick = () => action({ type: 'hotkey', keys: ['ctrl', 'a'] });
+$('scroll-up').onclick = () => action({ type: 'scroll', amount: 3 });
+$('scroll-down').onclick = () => action({ type: 'scroll', amount: -3 });
 $('screen').onclick = (event) => {
   if (!state || state.phase !== 'human' || busy) return;
   action({ type: 'click', ...desktopPoint(event) });
@@ -182,3 +313,5 @@ async function refresh() {
   }
 }
 refresh();
+refreshHost();
+loadWorkflows();

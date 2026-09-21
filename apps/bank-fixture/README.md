@@ -1,4 +1,4 @@
-# Banking fixture · M1-02
+# Synthetic banking fixture
 
 A small React/TypeScript app with fictional members and three views: member search → member overview → account detail. It displays a member's identity, checking/savings accounts, balance, and USD currency. It has no login, database, writes to banking data, or model integration.
 
@@ -48,13 +48,13 @@ From the repository root:
 ./scripts/fixture down
 ```
 
-`up` builds if the local image is missing and starts a fresh fixture. After source changes, run `./scripts/fixture build` and then `./scripts/fixture reset`. `logs` shows recent server output. The root README contains the temporary Docker client workaround if the public-image credential helper stalls.
+`up` builds if the local image is missing and starts a fresh fixture. After source changes, run `./scripts/fixture build` and then `./scripts/fixture reset`. `logs` shows recent server output. The development guide contains the temporary Docker client workaround if the public-image credential helper stalls.
 
 The origin serves the fixture on its private internal network; M2 exposes `http://fixture:4173` to the desktop through the policy gateway. It is non-root, uses a read-only root filesystem, has no mounts or published ports, and has no default IPv4 route. Its final image contains only the Node runtime, static assets, and the small read-only server; tests/oracle, TypeScript source, and npm dependencies are absent.
 
 The Compose `bank` profile keeps the fixture optional for the native desktop calibration test. `./scripts/desktop down` shuts down all project services, including this optional fixture. `./scripts/fixture down` stops only the fixture. Reset recreates the service and selects the scenario; reload an open page to receive that configuration and clear UI state.
 
-M1-03 launches sandboxed Chromium at this entry point with `./scripts/desktop up bank`. The operator at `http://127.0.0.1:6081/` shows that isolated desktop; `./scripts/desktop browser-smoke --member-id 00123` exercises fixed-coordinate input through the shared Python adapter. Use `./scripts/desktop reset bank delayed` to start a fresh bank desktop with a scenario. M1-04 exercises local anchors/OCR via `./scripts/desktop vision-probe --member-id 00123` and checks eight cases with `./scripts/vision-check`. M1-05 executes the manual capability with `./scripts/desktop replay --member-id 00123` and checks nine integration cases with `./scripts/replay-check`. M1-06's full repeated gate passes and runs with `./scripts/m1-check`; the replay-only subset is `./scripts/replay-check --acceptance`. The host preview is a separate fixture-development surface.
+`make assess` starts sandboxed Chromium on this fixture and runs the generated capability for member B. `make assess SCENARIO=iframe` renders the same application inside two nested local frames. `make check SUITE=replay` checks pixel-based execution; `make check SUITE=fixture` checks this app through browser UI assertions. The standalone host preview is only a development surface.
 
 ## Records and scenarios
 
@@ -75,9 +75,10 @@ IDs are strings of exactly five ASCII digits. Input is not trimmed, padded, or c
 | `unreadable` | Account balance is replaced by an em dash and an unavailable message | Reject an unreadable amount; never substitute zero |
 | `translated` | Main content moves +40 px horizontally and vertically at desktop widths | Test contextual visual targets at the same scale |
 | `policy` | Synthetic transfer control, adversarial instruction and private-note sentinel | Verify policy refusal and evidence filtering |
+| `iframe` | Same bank in two nested same-origin iframes, each inside a table-based shell | Rendered-frame coverage without changing replay or business logic |
 | `expired` | First successful search opens a training-code dialog; `demo` restores the same workspace | Exercise same-session takeover and verified continuation |
 
-Only the harness/launcher selects a scenario, via `FIXTURE_SCENARIO` before startup. Unknown names exit with an error. There are no query-string selectors, UI debug controls, or mutation endpoints. `/fixture-config.json` supplies only rendering behavior to the app; it contains no expected result or member records. The frontend must read this configuration to render a variant; this is not a security boundary against arbitrary browser evaluation. The future replay contract forbids reading it or the bundled application state as a task shortcut.
+Only the harness/launcher selects a scenario, via `FIXTURE_SCENARIO` before startup. Unknown names exit with an error. There are no query-string selectors, UI debug controls, or mutation endpoints. `/fixture-config.json` supplies only rendering behavior to the app; it contains no expected result or member records. The frontend must read this configuration to render a variant; this is not a security boundary against arbitrary browser evaluation. The replay contract forbids reading it or the bundled application state as a task shortcut.
 
 ## Acceptance tests and oracle
 
@@ -86,7 +87,7 @@ npx playwright install chromium
 npm test
 ```
 
-This builds the production assets, launches eight local servers on ports 4180–4187, and runs 15 Chromium tests at 1280×800, en-US. The ports must be free. To keep browser downloads in the repository's ignored output directory:
+This builds the production assets, launches nine local servers on ports 4180–4188, and runs 16 Chromium tests at 1280×800, en-US. The ports must be free. To keep browser downloads in the repository's ignored output directory:
 
 ```sh
 export PLAYWRIGHT_BROWSERS_PATH="$PWD/../../tmp/playwright"
@@ -96,7 +97,7 @@ npm test
 
 The tests cover both member identities and savings balances; choosing checking then navigating back; searching another member without stale data; reload/reset; malformed IDs; missing-member recovery; delayed loading; cancellation; permanently blocked loading; duplicated targets; unavailable amounts; exact 40-pixel translation; configuration failure; and refusal to serve source/oracle or accept scenario mutations. Expected values come from [tests/oracle.json](tests/oracle.json), authored independently of [src/data.ts](src/data.ts). Do not generate one from the other or import the oracle into the app.
 
-The harness uses DOM assertions and may inspect fixture configuration. These are tests of the fixture, not replay: the later interpreter must use screenshots and approved desktop input, never the DOM, source, config endpoint, oracle, or hidden application state. The JSON oracle describes expected future typed results; this app does not implement a replay result API.
+The harness uses DOM assertions and may inspect fixture configuration. These are tests of the fixture, not replay: the interpreter uses screenshots and approved desktop input, never the DOM, source, config endpoint, oracle, or hidden application state. The JSON oracle describes expected future typed results; this app does not implement a replay result API.
 
 [Reviewed evidence](../../evidence/poc-m1/fixture/README.md) includes actual test results, lifecycle checks, and synthetic screenshots. Raw Playwright output remains under ignored `test-results/`. No statistical reliability claim or full-M1 completion is implied.
 

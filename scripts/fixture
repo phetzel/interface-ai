@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-usage() { echo 'Usage: ./scripts/fixture {up|reset|build|ready|logs|down|preview} [default|delayed|blocked|duplicate|unreadable|translated|policy|expired]'; }
+usage() { echo 'Usage: ./scripts/fixture {up|reset|build|ready|logs|down|preview} [default|delayed|blocked|duplicate|unreadable|translated|policy|expired|iframe]'; }
 command_name="${1:-help}"
 scenario="${2:-default}"
 case "$command_name" in
@@ -9,7 +9,7 @@ case "$command_name" in
   up|reset|build|ready|logs|down|preview) ;;
   *) usage >&2; exit 2 ;;
 esac
-case "$scenario" in default|delayed|blocked|duplicate|unreadable|translated|policy|expired) ;; *) echo "Unknown fixture scenario: $scenario" >&2; usage >&2; exit 2 ;; esac
+case "$scenario" in default|delayed|blocked|duplicate|unreadable|translated|policy|expired|iframe) ;; *) echo "Unknown fixture scenario: $scenario" >&2; usage >&2; exit 2 ;; esac
 export FIXTURE_SCENARIO="$scenario"
 if [[ "$command_name" == preview ]]; then
   cd apps/bank-fixture

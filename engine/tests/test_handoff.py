@@ -188,8 +188,27 @@ class OperatorHTTPTests(unittest.TestCase):
         self.assertIn("frame-ancestors 'none'", headers['Content-Security-Policy'])
 
     def test_frames_and_status_require_operator_token(self):
-        for path in ['/status', '/frame']:
+        for path in ['/status', '/frame', '/workflows']:
             self.assertEqual(self.request(path, headers={'X-Operator-Token': ''})[0], 403)
+
+    def test_workflow_catalog_only_contains_admitted_approvals(self):
+        status, body, _ = self.request('/workflows')
+        self.assertEqual(status, 200)
+        items = json.loads(body)
+        self.assertEqual({item['id'] for item in items}, {'manual-savings', 'discovered-savings'})
+        self.assertTrue(all(len(item['digest']) == 64 for item in items))
+
+    def test_unknown_workflow_cannot_start(self):
+        status, _, _ = self.request(
+            '/start',
+            body=json.dumps(
+                dict(
+                    lease=dict(session='a', epoch=1), memberId='00123', capability='../../candidate'
+                )
+            ).encode(),
+        )
+        self.assertEqual(status, 409)
+        self.controller.start.assert_not_called()
 
 
 class ControllerTests(unittest.TestCase):
@@ -208,12 +227,28 @@ class ControllerTests(unittest.TestCase):
             patcher = patch('interface_ai.handoff.controller.' + name, value)
             patcher.start()
             self.addCleanup(patcher.stop)
-        self.controller = Controller(output_root=self.root)
+        from interface_ai.replay.loader import load_bundle
+        from interface_ai.policy.bank import REVIEWED_PATH
+
+        self.controller = Controller(output_root=self.root, bundle=load_bundle(REVIEWED_PATH))
         self.controller.launch = Mock()
         self.lease = {'session': 'session', 'epoch': 0}
         self.controller.start('00123', self.lease)
         self.controller.phase = 'awaiting_human'
         self.controller.resume_at = 4
+
+    def test_native_idle_control_has_no_bank_resume_or_bank_evidence_claim(self):
+        self.session['mode'] = 'native'
+        controller = Controller(output_root=self.root, bundle=self.controller.bundle)
+        controller.takeover(self.lease)
+        state = controller.snapshot()
+        self.assertEqual(state['phase'], 'human')
+        self.assertEqual(state['runKind'], 'native_manual')
+        self.assertFalse(state['resumable'])
+        controller.stop()
+        summary = json.loads((controller.directory / 'summary.json').read_text())
+        self.assertEqual(summary['format'], 'native-manual-v1')
+        self.assertNotIn('capabilitySha256', summary)
 
     def human(self):
         self.controller.takeover(self.lease)
